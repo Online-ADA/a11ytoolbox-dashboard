@@ -7,8 +7,8 @@ export default {
   state: {
     agent_id: false,
     redirect: "/",
-    site: "toolboxdashboard.ngrok.io",
-    api: 'https://oadaaccounts.ngrok.io',
+    site: "oadatoolboxx.ngrok.io",
+    api: 'https://oadaaccountss.ngrok.io',
     user: false,
     roles: false,
     token: Cookies.get('oada_UID') || false,
@@ -20,9 +20,6 @@ export default {
     setAuthState(state,payload) {
         state[payload.key] = payload.value
     },
-    // resetState (state) {
-    //     Object.assign(state, getDefaultState())
-    // },
   },
   actions: {
       check({state,dispatch},router) {
@@ -39,13 +36,13 @@ export default {
         })
         .catch(function (error) {
             if(error.response && error.response.status === 401){
-                // state.redirect = window.location.pathname
-                // dispatch('login',router)
+                 state.redirect = window.location.pathname
+                 dispatch('login',router)
             }
         });
     },
     login({state}){
-      window.location = state.api + "/signin/?oada_signout=1&oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth" 
+      window.location = state.api + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth" 
     },
     setToken({state}, payload){
       Cookies.set('oada_UID', payload.token, { expires: 365 })
