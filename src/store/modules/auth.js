@@ -5,13 +5,17 @@ import Vue from 'vue'
 export default {
   namespaced:true,
   state: {
-    agent_id: false,
     redirect: "/",
-    site: "oadatoolboxx.ngrok.io",
-    api: 'https://oadaaccountss.ngrok.io',
+    site: "toolboxdashboard.ngrok.io",
+    api: 'https://oadaaccounts.ngrok.io',
     user: false,
     roles: false,
     token: Cookies.get('oada_UID') || false,
+    routeValidation: {
+      auth: true,
+      role: true,
+      permission: true
+    }
   },
   mutations: {
     setState(state,payload) {
@@ -22,27 +26,72 @@ export default {
     },
   },
   actions: {
-      check({state,dispatch},router) {
+      resolveAuth({state}){
         axios.get(state.api+'/api/users/check')
         .then(function (response) {
             if(response.data.success == '1'){
+                console.log("everything came back bonny");
                 state.user = response.data.user
-                state.roles = response.data.roles
+                state.routeValidation.auth = true
             }
-            else{
-                // state.redirect = window.location.pathname
-                // dispatch('login',router)
-            }
+            // else{
+            //     state.redirect = window.location.pathname
+            //     dispatch('login')
+            // }
         })
-        .catch(function (error) {
-            if(error.response && error.response.status === 401){
-                 state.redirect = window.location.pathname
-                 dispatch('login',router)
+        // .catch(function (error) {
+        //     if(error.response && error.response.status === 401){
+        //           state.redirect = window.location.pathname
+        //           dispatch('login')
+        //     }
+        // });
+        console.log("finished resolving");
+      },
+      check({state,dispatch},key, payload) {
+
+        switch (key) {
+          case "auth":
+            
+            if( !this.getters["auth/isAuthenticated"] || !state.user ){
+              state.routeValidation.auth = false
+              dispatch("resolveAuth")
             }
-        });
+            break;
+          case "role":
+            
+            break;
+          case "permission":
+
+            break;
+          default:
+
+            break;
+        }
+        // axios.get(state.api+'/api/users/check')
+        // .then(function (response) {
+        //     if(response.data.success == '1'){
+        //         console.log("setting user: "+response.data.user);
+        //         state.user = response.data.user
+        //         state.roles = response.data.roles
+        //     }
+        //     else{
+        //         state.redirect = window.location.pathname
+        //         dispatch('login',router)
+        //     }
+        // })
+        // .catch(function (error) {
+        //     if(error.response && error.response.status === 401){
+        //          state.redirect = window.location.pathname
+        //          dispatch('login',router)
+        //     }
+        // });
     },
-    login({state}){
-      window.location = state.api + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth" 
+    login({state}, redirect){
+      if( redirect ){
+        state.redirect = redirect
+      }
+      
+      window.location = state.api + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth"
     },
     setToken({state}, payload){
       Cookies.set('oada_UID', payload.token, { expires: 365 })
@@ -60,14 +109,19 @@ export default {
           payload.router.push({path: state.redirect})
       }
     },
-    logout({state}){
+    logout({state}, router){
       state.token = false
       Cookies.remove('oada_UID')
+      router.push({path: "/"})
   },
   },
   getters: {
     isAuthenticated: state => {
         return !!state.token
     },
+    routeIsValid: state => {
+      console.log(state.routeValidation, state.routeValidation.auth, state.routeValidation.role, state.routeValidation.permission, state.routeValidation.auth && state.routeValidation.role && state.routeValidation.permission);
+      return state.routeValidation.auth && state.routeValidation.role && state.routeValidation.permission
+    }
 },
 }

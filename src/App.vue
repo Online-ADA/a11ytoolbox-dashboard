@@ -2,7 +2,11 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <template v-if="$store.getters['auth/isAuthenticated']">
+        <router-link to="/manage">Manage</router-link> | 
+      </template>
+      <a v-if="$store.getters['auth/isAuthenticated']" class="nav-link" href="#" @click.stop.prevent="$store.dispatch('auth/logout', $router)">Logout</a>
+      <a v-else class="nav-link" href="#" @click.stop.prevent="$store.dispatch('auth/login')">Log in</a>
     </div>
     <router-view/>
   </div>
