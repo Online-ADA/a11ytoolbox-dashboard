@@ -14,7 +14,6 @@ const routes = [
     path: '/manage',
     name: 'Manage',
     meta: {
-      auth: true,
       role: "manager"
     },
     // route level code-splitting
@@ -27,6 +26,7 @@ const routes = [
         name: "ManageUsers",
         component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Users.vue'),
         meta: {
+          role: "manager",
           permission: {
             entity: "users",
             action: "read"

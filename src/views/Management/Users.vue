@@ -11,8 +11,8 @@ export default {
     data: () => ({
     }),
     computed: {
-        user() {
-            return this.$store.state.auth.user
+        users() {
+            return this.$store.state.admin.users
         },
     },
     props: [],
@@ -21,6 +21,7 @@ export default {
     methods: {
     },
     created() {
+      this.$store.dispatch("admin/getUsers", this.$router)
     },
     mounted() {
     },

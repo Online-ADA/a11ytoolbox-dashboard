@@ -7,15 +7,15 @@ export default {
   state: {
     redirect: "/",
     site: "toolboxdashboard.ngrok.io",
-    api: 'https://oadaaccounts.ngrok.io',
+    accapi: 'https://oadaaccounts.ngrok.io',
+    toolboxapi: "https://apitoolbox.ngrok.io",
     user: false,
-    roles: false,
+    accountsRoles: [],
+    accountsPermissions: [],
     token: Cookies.get('oada_UID') || false,
-    routeValidation: {
-      auth: true,
-      role: true,
-      permission: true
-    }
+    account: false,
+    accounts: [],
+    authMessage: ""
   },
   mutations: {
     setState(state,payload) {
@@ -26,74 +26,36 @@ export default {
     },
   },
   actions: {
-      resolveAuth({state}){
-        axios.get(state.api+'/api/users/check')
+      check({state}) {
+        axios.get(state.accapi+'/api/users/check')
         .then(function (response) {
             if(response.data.success == '1'){
-                console.log("everything came back bonny");
                 state.user = response.data.user
-                state.routeValidation.auth = true
+                axios.get(state.toolboxapi+'/api/state/init', {
+                  params: {
+                    user: state.user.id
+                  }
+                }).then( (response)=>{
+                  state.accountsRoles = response.data.details.roles.accounts
+                  state.accountsPermissions = response.data.details.permissions.accounts
+                  state.accounts = response.data.details.accounts
+                }).catch( (error)=>{
+                  console.log(error)
+                })
             }
-            // else{
-            //     state.redirect = window.location.pathname
-            //     dispatch('login')
-            // }
         })
-        // .catch(function (error) {
-        //     if(error.response && error.response.status === 401){
-        //           state.redirect = window.location.pathname
-        //           dispatch('login')
-        //     }
-        // });
-        console.log("finished resolving");
-      },
-      check({state,dispatch},key, payload) {
-
-        switch (key) {
-          case "auth":
-            
-            if( !this.getters["auth/isAuthenticated"] || !state.user ){
-              state.routeValidation.auth = false
-              dispatch("resolveAuth")
-            }
-            break;
-          case "role":
-            
-            break;
-          case "permission":
-
-            break;
-          default:
-
-            break;
-        }
-        // axios.get(state.api+'/api/users/check')
-        // .then(function (response) {
-        //     if(response.data.success == '1'){
-        //         console.log("setting user: "+response.data.user);
-        //         state.user = response.data.user
-        //         state.roles = response.data.roles
-        //     }
-        //     else{
-        //         state.redirect = window.location.pathname
-        //         dispatch('login',router)
-        //     }
-        // })
-        // .catch(function (error) {
-        //     if(error.response && error.response.status === 401){
-        //          state.redirect = window.location.pathname
-        //          dispatch('login',router)
-        //     }
-        // });
+        .catch(function (error) {
+          console.log(error)
+        });
     },
     login({state}, redirect){
       if( redirect ){
         state.redirect = redirect
       }
       
-      window.location = state.api + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth"
+      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth"
     },
-    setToken({state}, payload){
+    setToken({state, dispatch}, payload){
       Cookies.set('oada_UID', payload.token, { expires: 365 })
       state.token = payload.token
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
@@ -108,20 +70,35 @@ export default {
       }else{
           payload.router.push({path: state.redirect})
       }
+
+      dispatch("check")
     },
     logout({state}, router){
       state.token = false
+      state.account = false
+      state.accounts = []
+      state.accountsRoles = []
+      state.accountsPermissions = []
+      state.user = false
       Cookies.remove('oada_UID')
-      router.push({path: "/"})
+      if( router.app._route.path != "/" ){
+        router.push({path: "/"})
+      }
   },
   },
   getters: {
     isAuthenticated: state => {
-        return !!state.token
+        return !!state.token && !!state.user
     },
-    routeIsValid: state => {
-      console.log(state.routeValidation, state.routeValidation.auth, state.routeValidation.role, state.routeValidation.permission, state.routeValidation.auth && state.routeValidation.role && state.routeValidation.permission);
-      return state.routeValidation.auth && state.routeValidation.role && state.routeValidation.permission
+    isManager: (state, getters) => {
+      if( state.account && getters.isAuthenticated ){
+        return state.accountsRoles[state.account].includes("manager")
+      }
+      return false
+    },
+    account: state=> {
+      let account = state.accounts.find( acc => acc.id == state.account)
+      return account ? account.name : false
     }
-},
+  },
 }
