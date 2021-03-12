@@ -1,13 +1,15 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
+    <div id="nav" class="d-flex align-items-center justify-content-center">
+      <router-link class="nav-link" to="/">Home</router-link>
+      <span >|</span>
       <template v-if="$store.getters['auth/isManager']">
-        <router-link to="/manage">Manage</router-link> | 
+        <router-link class="nav-link" to="/manage">Manage</router-link>
+        <span>|</span>
       </template>
       <a v-if="$store.getters['auth/isAuthenticated']" class="nav-link" href="#" @click.stop.prevent="$store.dispatch('auth/logout', $router)">Logout</a>
       <a v-else class="nav-link" href="#" @click.stop.prevent="$store.dispatch('auth/login')">Log in</a>
-      <span v-if="$store.state.auth.account"> | Account: {{$store.getters["auth/account"]}}</span>
+      <span v-if="$store.state.auth.account"><span class="pr-3">|</span>Account: {{$store.getters["auth/account"]}}</span>
     </div>
     <router-view/>
   </div>

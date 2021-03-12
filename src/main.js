@@ -98,19 +98,6 @@ async function run(){
     }
     
     next()
-    
-
-    /*
-      if( store.getters['auth/isAuthenticated'] && !!store.state.auth.user ){
-        next()
-      }
-      else if( !store.getters['auth/isAuthenticated'] ){
-        store.dispatch('auth/login', to.path)
-      }
-      else{
-        next()
-      }
-    */
   })
 
   new Vue({

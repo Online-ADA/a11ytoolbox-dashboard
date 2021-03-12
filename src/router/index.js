@@ -24,12 +24,24 @@ const routes = [
       {
         path: "users",
         name: "ManageUsers",
-        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Users.vue'),
+        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Users/Index.vue'),
         meta: {
           role: "manager",
           permission: {
             entity: "users",
             action: "read"
+          }
+        }
+      },
+      {
+        path: "user/:id",
+        name: "ManageUserEdit",
+        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Users/Edit.vue'),
+        meta: {
+          role: "manager",
+          permission: {
+            entity: "users",
+            action: "write"
           }
         }
       }

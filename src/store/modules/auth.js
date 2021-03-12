@@ -15,7 +15,11 @@ export default {
     token: Cookies.get('oada_UID') || false,
     account: false,
     accounts: [],
-    authMessage: ""
+    authMessage: "",
+    authMessages: {
+      incorrect_role: "You do not have the required role",
+      incorrect_permissions: "You do not have the required permissions"
+    }
   },
   mutations: {
     setState(state,payload) {

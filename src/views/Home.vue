@@ -1,12 +1,12 @@
 <template>
   <div class="home">
-    <div class="auth-message" style="color:red">{{$store.state.auth.authMessage}}</div>
+    <div class="danger">{{message}}</div>
     <img alt="Vue logo" src="../assets/logo.png">
     <div v-if="$store.state.auth.user">
       <h2>Choose an Account:</h2>
       
         <div v-for="account in accountsWithRole" :key="'acct-'+account.id">
-          <button @click="setAccount(account.id)">
+          <button class="btn my-1" @click="setAccount(account.id)">
           <div>{{account.name}}</div>
           <small>Roles:</small>
           <span v-for="(role, id) in $store.state.auth.accountsRoles[account.id]" :key="'role'+id">{{role}}<template v-if="id !== $store.state.auth.accountsRoles[account.id].length - 1">,</template></span>
@@ -29,9 +29,15 @@
 
 export default {
   name: 'Home',
+  data(){
+    return {
+      message: ""
+    }
+  },
   methods:{
     setAccount(id){
       this.$store.commit("auth/setState", {key: "account", value: id})
+      this.$store.commit("admin/setState", {key: "adminAPI", value: this.$store.state.admin.adminAPI + this.$store.state.auth.account})
     }
   },
   computed: {
@@ -42,6 +48,23 @@ export default {
         return Object.keys(that.$store.state.auth.accountsRoles).includes(acc.id.toString())
       } )
       
+    },
+    // authMessage(){
+    //   if( this.$store.state.auth.authMessage ){
+    //     this.message = this.$store.state.auth.authMessage
+    //     this.$store.state.auth.authMessage = ""
+    //     return this.message
+    //   }
+
+    //   return this.message
+    // }
+  },
+  watch:{
+    "$store.state.auth.authMessage": {
+      handler: function(newVal){
+        this.message = newVal
+        this.$store.state.auth.authMessage = ""
+      }
     }
   }
 }

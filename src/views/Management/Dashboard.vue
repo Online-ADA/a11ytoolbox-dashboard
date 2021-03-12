@@ -1,11 +1,11 @@
 <template>
   <div class="manage">
-    <router-link to="/manage/users">Manage Users</router-link>
+    <router-link class="nav-link" to="/manage/users">Manage Users</router-link>
     <h1>This is the management dashboard</h1>
     <h2>The logged in user is {{user.first_name}} {{user.last_name}}</h2>
     <h3>Your roles are: </h3>
     
-    <ul>
+    <ul class="list-group">
       <li v-for="role in roles" :key="role.id">{{role}}</li>
     </ul>
     <router-view/>

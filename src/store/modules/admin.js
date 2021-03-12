@@ -1,11 +1,12 @@
 import axios from 'axios'
 import Vue from 'vue'
-import store from '..'
 
 export default {
     namespaced:true,
     state: {
-      users: []
+      users: [],
+      adminAPI: "https://apitoolbox.ngrok.io/api/admin/",
+      roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'}
     },
     mutations: {
       setState(state,payload) {
@@ -13,20 +14,20 @@ export default {
       },
     },
     actions: {
-        getUsers({state}, router){
-          axios.get(store.state.auth.toolboxapi + "/api/admin/" + store.state.auth.account + "/users")
+        getUsers({state, commit, rootState}, router){
+          axios.get(state.adminAPI + "/users")
           .then((re)=>{
-            console.log(re);
-            if( !re.data.success && re.data.details == "incorrect_role" ){
-              store.state.auth.authMessage = "You do not have the required role";
+            if( !re.data.success ){
+              rootState.auth.authMessage = rootState.auth.authMessages[re.data.details]
               router.push({path: "/"})
+              return
             }
 
-            state.users = re.details.users
+            state.users = re.data.details
           }).catch((error) => {console.log(error)})
         }
     },
-    getters: {
+    getters: { 
       
     },
   }
