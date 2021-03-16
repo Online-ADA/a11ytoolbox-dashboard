@@ -1,9 +1,7 @@
 <template>
   <div class="manage">
-    <router-link class="nav-link" to="/manage/users">Manage Users</router-link>
-    <h1>This is the management dashboard</h1>
-    <h2>The logged in user is {{user.first_name}} {{user.last_name}}</h2>
-    <h3>Your roles are: </h3>
+    <h5>The logged in user is {{user.first_name}} {{user.last_name}}</h5>
+    <h6>Your roles are: </h6>
     
     <ul class="list-group">
       <li v-for="role in roles" :key="role.id">{{role}}</li>
@@ -13,7 +11,7 @@
 </template>
 
 <script>
-
+import admin from '../../store/modules/admin'
 export default {
     name: 'Dashboard',
     data: () => ({
@@ -32,6 +30,11 @@ export default {
     methods: {
     },
     created() {
+      this.$store.registerModule('admin', admin)
+      this.$store.commit("admin/setState", {key: "adminAPI", value: this.$store.state.admin.adminAPI + this.$store.state.auth.account})
+    },
+    beforeDestroy(){
+      // this.$store.unregisterModule("admin")
     },
     mounted() {
     },

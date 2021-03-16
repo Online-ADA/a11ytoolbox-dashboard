@@ -11,6 +11,23 @@ const routes = [
     component: Home
   },
   {
+    path: "/projects", //Just this user's projects
+    name: "Projects",
+    component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Index.vue'),
+    children:[
+      {
+        path: "create",
+        name: "ProjectCreate",
+        component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Create.vue')
+      },
+      {
+        path: ":id",
+        name: "ProjectShow",
+        component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Show.vue')
+      },
+    ]
+  },
+  {
     path: '/manage',
     name: 'Manage',
     meta: {
@@ -22,9 +39,33 @@ const routes = [
     component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Dashboard.vue'),
     children:[
       {
+        path: "projects",
+        name: "ManageProjects",
+        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Projects/List.vue'),
+        meta: {
+          role: "manager",
+          permission: {
+            entity: "projects",
+            action: "read"
+          }
+        }
+      },
+      {
+        path: "projects/:id",
+        name: "ManageProjectsEdit",
+        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Projects/Edit.vue'),
+        meta: {
+          role: "manager",
+          permission: {
+            entity: "projects",
+            action: "write"
+          }
+        }
+      },
+      {
         path: "users",
         name: "ManageUsers",
-        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Users/Index.vue'),
+        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Users/List.vue'),
         meta: {
           role: "manager",
           permission: {

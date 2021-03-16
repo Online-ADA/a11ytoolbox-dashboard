@@ -4,7 +4,7 @@
     <h2>Users on this account:</h2>
     <ul class="list-group">
       <li v-for="(user, id) in users" :key="id">
-        <router-link :to="{path: `user/${user.id}`}">{{user.first_name}} {{user.last_name}}</router-link>
+        <router-link :to="{path: `user/${user.user_id}`}">{{user.first_name}} {{user.last_name}}</router-link>
       </li>
     </ul>
   </div>

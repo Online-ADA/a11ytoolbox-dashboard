@@ -6,7 +6,7 @@
       <h2>Choose an Account:</h2>
       
         <div v-for="account in accountsWithRole" :key="'acct-'+account.id">
-          <button class="btn my-1" @click="setAccount(account.id)">
+          <button class="btn btn-secondary my-1" @click="setAccount(account.id)">
           <div>{{account.name}}</div>
           <small>Roles:</small>
           <span v-for="(role, id) in $store.state.auth.accountsRoles[account.id]" :key="'role'+id">{{role}}<template v-if="id !== $store.state.auth.accountsRoles[account.id].length - 1">,</template></span>
@@ -37,7 +37,6 @@ export default {
   methods:{
     setAccount(id){
       this.$store.commit("auth/setState", {key: "account", value: id})
-      this.$store.commit("admin/setState", {key: "adminAPI", value: this.$store.state.admin.adminAPI + this.$store.state.auth.account})
     }
   },
   computed: {
