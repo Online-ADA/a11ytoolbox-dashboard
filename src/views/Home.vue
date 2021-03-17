@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div class="danger">{{message}}</div>
+    <div v-if="message" class="fs-3 text-danger">{{message}}</div>
     <img alt="Vue logo" src="../assets/logo.png">
     <div v-if="$store.state.auth.user">
       <h2>Choose an Account:</h2>
@@ -61,8 +61,13 @@ export default {
   watch:{
     "$store.state.auth.authMessage": {
       handler: function(newVal){
-        this.message = newVal
-        this.$store.state.auth.authMessage = ""
+        if( newVal ){
+          this.message = newVal
+          this.$store.state.auth.authMessage = ""
+          setTimeout(()=>{
+            this.message = ""
+          }, 3000)
+        }
       }
     }
   }

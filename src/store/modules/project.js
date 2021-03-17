@@ -14,6 +14,31 @@ export default {
       },
     },
     actions: {
+        createProject({state}, project, router, vm){
+          state.loading = true;
+          axios.post(state.API + project.account_id + "/projects", {
+            project: project
+          }).then( re=>{
+            state.loading = false
+            if( re.data.success ){
+              vm.$vs.notify({
+                title:'Test',
+                text:'Lorem ipsum dolor sit amet, consectetur',
+                color:"success"
+              })
+              router.push({path: "/projects"})
+
+            }
+          }).catch( error => {
+            console.log(error)
+            state.loading = false
+            vm.$vs.notify({
+              title:'Failed',
+              text:'Lorem ipsum dolor sit amet, consectetur',
+              color:"danger"
+            })
+          })
+        },
         getProjects({state, rootState}){
           state.loading = true
           axios.get(state.API + rootState.auth.account + "/projects", {

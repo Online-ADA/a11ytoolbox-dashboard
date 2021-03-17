@@ -6,6 +6,7 @@ export default {
     state: {
       users: [],
       projects: [],
+      userPermissions: [],
       adminAPI: "https://apitoolbox.ngrok.io/api/admin/",
       roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
       loading:{
@@ -21,6 +22,67 @@ export default {
       },
     },
     actions: {
+        modifyRole({state}, args){
+          state.loading.users = true
+          axios.post(state.adminAPI + "/users/setRole", {
+              "user_id": args.user_id,
+              "role" : args.role
+          }).then(re => {
+              if( re.data.success ){
+                  state.loading.users = false
+                  state.users = re.data.users
+                  args.vm.$vs.notify({
+                    title:'Success',
+                    text:'Role updated successfully',
+                    color:"success",
+                    position: 'top-right'
+                  })
+              }else{
+                args.vm.$vs.notify({
+                  title:'Failed',
+                  text:'Role update failed',
+                  color:"danger"
+                })
+              }
+          }).catch(error => {
+              console.log(error);
+              state.loading.users = false
+              args.vm.$vs.notify({
+                title:'Failed',
+                text:'There was a problem updating the role',
+                color:"danger",
+                position: 'top-right'
+              })
+          })
+        },
+        saveUserPermissions({state}, args){
+          axios.post( state.adminAPI + "/users/setPermissions", {
+            permissions: args.permissions,
+            user_id: args.user_id
+          }).then( re=>{
+            if( re.data.success ){
+              args.vm.$vs.notify({
+                title:'Success',
+                text:'Permissions updated',
+                color:"success"
+              })
+            }
+            else{
+              args.vm.$vs.notify({
+                title:'Failed',
+                text:'Permissions update failed',
+                color:"danger"
+              })
+            }
+          }).catch(error => {
+            console.log(error)
+            args.vm.$vs.notify({
+              title:'Failed',
+              text:'Permissions update failed',
+              color:"danger"
+            })
+          })
+        },
         getUsers({state, rootState}, router){
           state.loading.users = true
           axios.get(state.adminAPI + "/users")

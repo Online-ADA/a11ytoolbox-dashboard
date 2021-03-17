@@ -18,6 +18,12 @@ const routes = [
       {
         path: "create",
         name: "ProjectCreate",
+        meta: {
+          permissions: {
+            entity: "projects",
+            action: "write"
+          }
+        },
         component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Create.vue')
       },
       {
@@ -44,7 +50,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Projects/List.vue'),
         meta: {
           role: "manager",
-          permission: {
+          permissions: {
             entity: "projects",
             action: "read"
           }

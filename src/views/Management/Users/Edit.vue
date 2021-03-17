@@ -18,25 +18,51 @@
             </div>
         </div>
     </div>
+
+    <div class="row mt-3 mb-5">
+        <div class="col-12">
+            <div class="form-group text-start mt-4">
+                <label class="font-weight-bold fs-2" for="permissions">Permissions</label>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <button @click="savePermissions" class="btn btn-success">Save permissions</button>
+                    </div>
+                    <div class="col-lg-6 col-12 mt-3" v-for="(actions, entity) in userData.permissions" :key="entity">
+                        
+                        <div class="fs-4 fw-bold mb-1 text-capitalize">{{entity}}</div>
+                        <ul class="list-group">
+                            <li class="list-group-item" v-for="(permission, label) in actions" :key="entity + '-action-'+label">
+                                <div class="form-check form-switch d-flex ps-0">
+                                    <label class="form-check-label pe-1" :for="entity + '-' + label">{{label}}:</label>
+                                    <input class="form-check-input ps-0 ms-0" type="checkbox" v-model="userData.permissions[entity][label]" :id="entity + '-' + label">
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-12">
+                        <button @click="savePermissions" class="btn btn-success">Save permissions</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+
 export default {
     name: 'ManageUserEdit',
     data(){
         return {
             userData: {
-                role: false
+                permissions: {}
             }
         }
     },
     computed: {
         user() {
-            return this.$store.state.admin.users.find(user => {
-                return user.user_id == this.$route.params.id
-            })
+            return this.$store.state.admin.users[this.$route.params.id]
         },
         role(){
             return this.$store.state.admin.roles[this.user.toolbox_role]
@@ -44,26 +70,29 @@ export default {
         loading() {
             return this.$store.state.admin.loading.users
         },
+        permissions(){
+            return this.$store.state.admin.users[this.$route.params.id].permissions
+        }
     },
     props: [],
     watch: {
     },
     methods: {
-        modifyRole(r){
-            this.$store.state.admin.loading.users = true
-            axios.post(this.$store.state.admin.adminAPI + "/users/setRole", {
-                "user_id": this.user.user_id,
-                "role" : r
-            }).then(re => {
-                if( re.data.success ){
-                    this.$store.state.admin.loading.users = false
-                    this.$store.state.admin.users = re.data.users
-                }
-            }).catch(error => {
-                console.log(error);
-                this.$store.state.admin.loading.users = false
+        savePermissions(){
+            let that = this
+            this.$store.dispatch("admin/saveUserPermissions", {
+                permissions: that.userData.permissions,
+                user_id: that.$route.params.id,
+                vm: that
             })
-            
+        },
+        modifyRole(r){
+            let that = this
+            this.$store.dispatch("admin/modifyRole", {
+                role: r, 
+                user_id: that.$route.params.id,
+                vm: that
+            })
         }
     },
     created() {
@@ -73,6 +102,8 @@ export default {
                 this.userData.role = index
             }
         }
+
+        this.userData.permissions = this.permissions
     },
     mounted() {
     },
@@ -92,5 +123,9 @@ export default {
     .loader-container{
         background-color: rgba(0, 0, 0, .6);
         z-index:10;
+    }
+    .form-check .form-check-input{
+        float:none;
+        cursor: pointer;
     }
 </style>

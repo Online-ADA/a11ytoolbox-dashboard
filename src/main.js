@@ -5,6 +5,10 @@ import store from './store'
 import Axios from 'axios'
 import Cookies from 'js-cookie'
 import axios from 'axios'
+import vuesax from 'vuesax'
+import 'vuesax/dist/vuesax.css' //Vuesax styles
+
+Vue.use(vuesax)
 
 Vue.config.productionTip = false
 Vue.prototype.$http = Axios;
@@ -51,10 +55,10 @@ async function run(){
       return
     }
     
-    if( to.meta.role != undefined && to.meta.permission != undefined ){
+    if( to.meta.role != undefined && to.meta.permissions != undefined ){
       //check for role and permissions
       let hasRole = store.state.auth.accountsRoles[store.state.auth.account].includes(to.meta.role)
-      let hasPermission = store.state.auth.accountsPermissions[store.state.auth.account][to.meta.permission.entity][to.meta.permission.action] === 1
+      let hasPermission = store.state.auth.accountsPermissions[store.state.auth.account][to.meta.permissions.entity][to.meta.permissions.action] === 1
       if( hasRole && hasPermission ){
         next()
         return
@@ -70,6 +74,7 @@ async function run(){
         next()
         return
       }else{
+        store.state.auth.authMessage = store.state.auth.authMessages.incorrect_role
         next("/")
         return
       }
@@ -77,11 +82,12 @@ async function run(){
 
     if(to.meta.permissions != undefined){
       //check for permissions or redirect to login
-      let hasPermission = store.state.auth.accountsPermissions[store.state.auth.account][to.meta.permission.entity][to.meta.permission.action] === 1
+      let hasPermission = store.state.auth.accountsPermissions[store.state.auth.account][to.meta.permissions.entity][to.meta.permissions.action] === 1
       if( hasPermission ){
         next()
         return
       }else{
+        store.state.auth.authMessage = store.state.auth.authMessages.incorrect_permissions
         next("/")
         return
       }
@@ -96,7 +102,6 @@ async function run(){
       next("/")
       return
     }
-    
     next()
   })
 
