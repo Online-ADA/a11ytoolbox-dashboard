@@ -1,16 +1,16 @@
 <template>
     <div class="text-center mt-32">
         <Loader v-if="loading"></Loader>
-        <template v-if="projects.length">
-            <h2>Your Projects:</h2>
+        <template v-if="clients.length">
+            <h2>Your Clients:</h2>
             <ul>
-                <li v-for="(project, id) in projects" :key="id">
-                    <A type="router-link" :to="{path: `${project.id}`}">{{project.name}}</A>
+                <li v-for="(client, id) in clients" :key="id">
+                    <A type="router-link" :to="{path: `${client.id}`}">{{client.name}}</A>
                 </li>
             </ul>
         </template>
-        <template v-if="!loading && !projects.length">
-            <h2>You have no projects</h2>
+        <template v-if="!loading && !clients.length">
+            <h2>You have no clients</h2>
         </template>
     </div>
 </template>
@@ -19,15 +19,14 @@
 import Loader from '../../components/Loader'
 import A from '../../components/Link'
 export default {
-    name: 'ProjectsList',
     data: () => ({
     }),
     computed: {
         loading(){
-            return this.$store.state.projects.loading
+            return this.$store.state.clients.loading
         },
-        projects() {
-            return this.$store.state.projects.all
+        clients() {
+            return this.$store.state.clients.all
         },
     },
     props: [],
@@ -38,7 +37,7 @@ export default {
     created() {
     },
     mounted() {
-        this.$store.dispatch("projects/getProjects", {router: this.$router})
+      this.$store.dispatch("clients/getClients", {router: this.$router})
     },
     components: {
       Loader,

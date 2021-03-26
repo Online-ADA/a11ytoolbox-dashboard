@@ -1,32 +1,24 @@
 <template>
-  <div class="home">
-    <div v-if="message" class="fs-3 text-danger">{{message}}</div>
-    <img alt="Vue logo" src="../assets/logo.png">
-    <div v-if="$store.state.auth.user">
-      <h2>Choose an Account:</h2>
-      
+  <div class="flex flex-col items-center justify-center mt-32">
+    <div v-if="message" class="text-red">{{message}}</div>
+    <h1>Welcome to the OnlineADA Toolbox</h1>
+    <div class="flex flex-col items-center" v-if="$store.state.auth.user">
+      <h2 class="py-3">Choose an Account:</h2>
         <div v-for="account in accountsWithRole" :key="'acct-'+account.id">
-          <button class="btn btn-secondary my-1" @click="setAccount(account.id)">
-          <div>{{account.name}}</div>
-          <small>Roles:</small>
-          <span v-for="(role, id) in $store.state.auth.accountsRoles[account.id]" :key="'role'+id">{{role}}<template v-if="id !== $store.state.auth.accountsRoles[account.id].length - 1">,</template></span>
-          
-          <!-- <small>Permissions</small>
-          <ul>
-            <li v-for="(permissions, entity) in $store.state.auth.accountsPermissions[account.id]" :key="'perm'+entity"><strong>{{entity}}</strong>:
-              <ul>
-                <li v-for="(perm, id) in permissions" :key="'entity'+id">{{id}} - {{perm}}</li>
-              </ul>
-            </li>
-          </ul> -->
-        </button>
+          <Button :hover="true" class="my-1" color="white" @click.native.prevent="setAccount(account.id)">
+            <div>{{account.name}}</div>
+            <small class="pr-1">Roles:</small>
+            <span v-for="(role, id) in $store.state.auth.accountsRoles[account.id]" :key="'role'+id">{{role}}<template v-if="id !== $store.state.auth.accountsRoles[account.id].length - 1">,</template></span>
+          </Button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
+import admin from '../store/modules/admin'
+import Button from '../components/Button'
+// import A from '../components/Link'
 export default {
   name: 'Home',
   data(){
@@ -34,10 +26,24 @@ export default {
       message: ""
     }
   },
+  components: {
+    Button,
+    // A
+  },
   methods:{
     setAccount(id){
       this.$store.commit("auth/setState", {key: "account", value: id})
+      if( this.$store.getters["auth/isManager"] ){
+        this.$store.registerModule('admin', admin)
+        this.$store.commit("admin/setState", {key: "adminAPI", value: this.$store.state.admin.adminAPI + this.$store.state.auth.account})
+        this.$store.dispatch("admin/getProjects", this.$router)
+      }else{
+        this.$store.unregisterModule("admin")
+      }
     }
+  },
+  mounted(){
+    
   },
   computed: {
     accountsWithRole(){
@@ -48,15 +54,6 @@ export default {
       } )
       
     },
-    // authMessage(){
-    //   if( this.$store.state.auth.authMessage ){
-    //     this.message = this.$store.state.auth.authMessage
-    //     this.$store.state.auth.authMessage = ""
-    //     return this.message
-    //   }
-
-    //   return this.message
-    // }
   },
   watch:{
     "$store.state.auth.authMessage": {

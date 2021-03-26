@@ -1,18 +1,10 @@
 <template>
   <div class="text-center mt-32">
     <Loader v-if="loading"></Loader>
-    <template v-if="project">
-      <h2 class="mb-3">{{project.name}}</h2>
+    <template v-if="client">
+      <h2 class="mb-3">{{client.name}}</h2>
       
       <div class="w-full flex">
-        <div class="border border-pallette-grey h-auto p-4 rounded w-1/2 text-center mx-1.5">
-          <h3>Clients</h3>
-          <ul>
-            <li v-for="client in clients" :key="client.id">
-              <A type='router-link' :to="{path: `/clients/:${id}`}">{{client.name}}</A>
-            </li>
-          </ul>
-        </div>
         <div class="border border-pallette-grey h-auto p-4 rounded w-1/2 text-center mx-1.5">
           <h3>Audits</h3>
           <!-- <ul>
@@ -34,21 +26,21 @@ export default {
     data: () => ({
     }),
     computed: {
-      project() {
-        if( this.$store.state.projects.project ){
-          return this.$store.state.projects.project
+      client() {
+        if( this.$store.state.clients.client ){
+          return this.$store.state.clients.client
         }
         return {name: ""}
       },
       clients(){
-        if( this.$store.state.projects.project ){
-          return this.$store.state.projects.project.clients
+        if( this.$store.state.clients.client ){
+          return this.$store.state.clients.client.clients
         }
         return []
       },
       loading(){
-        if( this.$store.state.projects ){
-          return this.$store.state.projects.loading
+        if( this.$store.state.clients ){
+          return this.$store.state.clients.loading
         }
         return false
       },
@@ -59,7 +51,7 @@ export default {
     methods: {
     },
     created() {
-      this.$store.dispatch("projects/getProject", {id: this.$route.params.id, account_id: this.$store.state.auth.account})
+      this.$store.dispatch("clients/getClient", {id: this.$route.params.id, account_id: this.$store.state.auth.account})
     },
     mounted() {
     },

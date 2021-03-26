@@ -1,5 +1,5 @@
 <template>
-    <div class="loader-container position-absolute top-0 bottom-0 start-0 end-0 d-flex justify-content-center align-items-center">
+    <div class="absolute bg-black bg-opacity-60 bottom-0 flex items-center justify-center left-0 right-0 text-6xl top-0">
         <i class="fas fa-circle-notch fa-spin fs-1"></i>
     </div>
 </template>
@@ -11,7 +11,6 @@
 </script>
 <style scoped>
     .fa-circle-notch{
-        /* font-size:50px; */
         color:white;
     }
     .loader-container{

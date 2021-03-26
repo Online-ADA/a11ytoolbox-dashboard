@@ -1,5 +1,5 @@
 <template>
-  <div class="manage">
+  <div class="text-center mt-32">
     <h5>The logged in user is {{user.first_name}} {{user.last_name}}</h5>
     <h6>Your roles are: </h6>
     
@@ -13,7 +13,6 @@
 <script>
 import admin from '../../store/modules/admin'
 export default {
-    name: 'Dashboard',
     data: () => ({
     }),
     computed: {
@@ -31,10 +30,9 @@ export default {
     },
     created() {
       this.$store.registerModule('admin', admin)
-      this.$store.commit("admin/setState", {key: "adminAPI", value: this.$store.state.admin.adminAPI + this.$store.state.auth.account})
     },
     beforeDestroy(){
-      // this.$store.unregisterModule("admin")
+      this.$store.unregisterModule("admin")
     },
     mounted() {
     },

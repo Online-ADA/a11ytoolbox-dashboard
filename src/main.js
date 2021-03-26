@@ -4,11 +4,11 @@ import router from './router'
 import store from './store'
 import Axios from 'axios'
 import Cookies from 'js-cookie'
-import axios from 'axios'
-import vuesax from 'vuesax'
-import 'vuesax/dist/vuesax.css' //Vuesax styles
+import Notifications from 'vue-notification'
+import request from './services/request'
 
-Vue.use(vuesax)
+Vue.use(Notifications)
+window.Request = request
 
 Vue.config.productionTip = false
 Vue.prototype.$http = Axios;
@@ -18,32 +18,40 @@ if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }
 
-async function run(){
+function run(){
   
-  await axios.get(store.state.auth.accapi+'/api/users/check')
-  .then(function (response) {
-      if(response.data.success == '1'){
-          store.commit("auth/setState", {key: "user", value: response.data.user})
-
-          axios.get(store.state.auth.toolboxapi+'/api/state/init', {
-            params: {
-              user: store.state.auth.user.id
-            }
-          }).then( (response)=>{
-            store.commit("auth/setState", {key: "accountsRoles", value: response.data.details.roles.accounts})
-            store.commit("auth/setState", {key: "accountsPermissions", value: response.data.details.permissions.accounts})
-            store.commit("auth/setState", {key: "accounts", value: response.data.details.accounts})
-          }).catch( (error)=>{
-            console.log(error)
-          })
+  Request.get(store.state.auth.toolboxapi+'/api/state/init', {
+    onSuccess: {
+      silent: true,
+      callback: function(response){
+        store.commit("auth/setState", {key: "user", value: response.data.details.user})
+        store.commit("auth/setState", {key: "accountsRoles", value: response.data.details.roles.accounts})
+        store.commit("auth/setState", {key: "accountsPermissions", value: response.data.details.permissions.accounts})
+        store.commit("auth/setState", {key: "accounts", value: response.data.details.accounts})
+        runBeforeEach()
       }
+    },
+    onError: {
+      silent:true,
+      callback: function(){
+        if( router.currentRoute.path != "/" ){
+          router.push("/")
+        }
+      }
+    }
   })
-  .catch(function (error) {
-      console.log(error)
-      return
-  });
 
-  router.beforeEach( async (to, from, next) => {
+  new Vue({
+    router,
+    store,
+    render: h => h(App)
+  }).$mount('#app')
+}
+run()
+
+
+function runBeforeEach(){
+  router.beforeEach( (to, from, next) => {
     if( to.path == "/auth" || from.path == "/auth" ){
       next()
       return
@@ -104,12 +112,4 @@ async function run(){
     }
     next()
   })
-
-  new Vue({
-    router,
-    store,
-    render: h => h(App)
-  }).$mount('#app')
 }
-run()
-

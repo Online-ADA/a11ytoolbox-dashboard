@@ -4,9 +4,8 @@
 
 <script>
 
-import projects from '../../store/modules/project'
+import clients from '../../store/modules/clients'
 export default {
-    name: 'ProjectsIndex',
     data: () => ({
     }),
     computed: {
@@ -17,10 +16,10 @@ export default {
     methods: {
     },
     created() {
-      this.$store.registerModule('projects', projects)
+      this.$store.registerModule('clients', clients)
     },
     beforeDestroy(){
-      this.$store.unregisterModule("projects")
+      this.$store.unregisterModule("clients")
     },
     mounted() {
     },

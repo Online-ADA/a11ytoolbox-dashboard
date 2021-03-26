@@ -6,7 +6,7 @@
       <h2>Projects on this account:</h2>
       <ul class="list-group">
         <li v-for="(project, id) in projects" :key="id">
-          <router-link :to="{path: `/projects/${project.id}`}">{{project.name}}</router-link>
+          <A type="router-link" :to="{path: `/projects/${project.id}`}">{{project.name}}</A>
         </li>
       </ul>
     </div>
@@ -18,16 +18,22 @@
 
 <script>
 import Loader from '../../../components/Loader'
+import A from '../../../components/Link'
 export default {
-    name: 'ManageProjects',
     data: () => ({
     }),
     computed: {
         loading(){
-          return this.$store.state.admin.loading.projects
+          if( this.$store.state.admin ){
+            return this.$store.state.admin.loading.projects
+          }
+          return false
         },
         projects() {
-          return this.$store.state.admin.projects
+          if( this.$store.state.admin ){
+            return this.$store.state.admin.projects
+          }
+          return []
         },
     },
     props: [],
@@ -41,7 +47,8 @@ export default {
     mounted() {
     },
     components: {
-      Loader
+      Loader,
+      A
     },
 }
 </script>

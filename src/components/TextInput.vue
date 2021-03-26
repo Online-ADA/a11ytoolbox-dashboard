@@ -1,0 +1,34 @@
+<template>
+    <input :value="value" @input="emitInput" :autocomplete="autocomplete" class="shadow appearance-none bg-white border border-transparent focus:border-transparent focus:outline-none focus:ring-1 focus:ring-pallette-orange placeholder-gray-400 px-4 py-2 rounded text-base text-gray-700" type="text" />
+</template>
+
+
+<script>
+    export default {
+        data(){
+            return {
+                content: this.value
+            }
+        },
+        props:[
+            'auto',
+            'value'
+        ],
+        methods:{
+            emitInput(e){
+                this.$emit('input', e.target.value)
+            }
+        },
+        computed: {
+            autocomplete(){
+                if( !this.auto ){
+                    return 'off'
+                }
+
+                return this.auto
+            }
+        },
+        components:{
+        }
+    }
+</script>

@@ -13,7 +13,7 @@ export default {
     accountsRoles: [],
     accountsPermissions: [],
     token: Cookies.get('oada_UID') || false,
-    account: false,
+    account: Cookies.get('toolboxAccount') || false,
     accounts: [],
     authMessage: "",
     authMessages: {
@@ -23,6 +23,9 @@ export default {
   },
   mutations: {
     setState(state,payload) {
+      if(payload.key == 'account'){
+        Cookies.set('toolboxAccount', payload.value, 365)
+      }
       Vue.set(state,payload.key,payload.value)
     },
     setAuthState(state,payload) {
@@ -31,26 +34,17 @@ export default {
   },
   actions: {
       check({state}) {
-        axios.get(state.accapi+'/api/users/check')
-        .then(function (response) {
-            if(response.data.success == '1'){
-                state.user = response.data.user
-                axios.get(state.toolboxapi+'/api/state/init', {
-                  params: {
-                    user: state.user.id
-                  }
-                }).then( (response)=>{
-                  state.accountsRoles = response.data.details.roles.accounts
-                  state.accountsPermissions = response.data.details.permissions.accounts
-                  state.accounts = response.data.details.accounts
-                }).catch( (error)=>{
-                  console.log(error)
-                })
+        Request.get(state.toolboxapi+'/api/state/init', {
+          onSuccess: {
+            silent: true,
+            callback: function(response){
+              state.user = response.data.details.user
+              state.accountsRoles = response.data.details.roles.accounts
+              state.accountsPermissions = response.data.details.permissions.accounts
+              state.accounts = response.data.details.accounts
             }
+          }
         })
-        .catch(function (error) {
-          console.log(error)
-        });
     },
     login({state}, redirect){
       if( redirect ){
@@ -63,6 +57,7 @@ export default {
       Cookies.set('oada_UID', payload.token, { expires: 365 })
       state.token = payload.token
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
+      console.log(payload);
       if(payload.user){
           state.user = payload.user
       }

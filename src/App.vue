@@ -1,73 +1,93 @@
 <template>
-  <div id="app">
-    <div id="nav" class="d-flex align-items-center justify-content-center">
-      <router-link class="nav-link" to="/">Home</router-link>
-      <span>|</span>
+  <div id="app" class="container mx-auto">
+    <notifications/>
+    <div id="nav" class="flex place-content-center p-2 items-center">
+      <router-link class="hover:text-gray-500" to="/">Home</router-link>
+      <span class="px-2">|</span>
       <template v-if="$store.getters['auth/isManager']">
-        <div class="dropdown nav-item">
-          <a href="#" @click.prevent class="dropdown-toggle nav-link" id="manage_dropdown" aria-expanded="false">
-            Manage
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="manage_dropdown">
-            <li><router-link class="nav-link dropdown-item" to="/manage">Dashboard</router-link></li>
-            <li><router-link class="nav-link dropdown-item" to="/manage/users">Users</router-link></li>
-            <li><router-link class="nav-link dropdown-item" to="/manage/projects">Projects</router-link></li>
-          </ul>
-        </div>
-        <span>|</span>
+        <Dropdown :children="manageDropdown"><template v-slot:label>Manage</template></Dropdown>
+        <span class="px-2">|</span>
       </template>
       <template v-if="$store.getters['auth/isAuthenticated'] && !!$store.state.auth.account">
-        <div class="dropdown nav-item">
-          <a @click.prevent href="#" class="nav-link dropdown-toggle" id="site_dropdown" aria-expanded="false">
-            Site
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="site_dropdown">
-            <li>
-              <div class="btn-group dropend nav-item">
-                <a href="#" @click.prevent class="nav-link dropdown-toggle" aria-expanded="false">
-                  Projects
-                </a>
-                <ul class="dropdown-menu">
-                  <li><router-link class="nav-link dropdown-item" to="/projects">List</router-link></li>
-                  <li><router-link class="nav-link dropdown-item" to="/projects/create">Create</router-link></li>
-                </ul>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <span>|</span>
+        <Dropdown :children="siteDropdown"><template v-slot:label>Site</template></Dropdown>
+        <span class="px-2">|</span>
       </template>
       
-      <a v-if="$store.getters['auth/isAuthenticated']" class="nav-link" href="#" @click.stop.prevent="$store.dispatch('auth/logout', $router)">Logout</a>
-      <a v-else class="nav-link" href="#" @click.stop.prevent="$store.dispatch('auth/login')">Log in</a>
-      <span v-if="$store.state.auth.account"><span class="pe-3">|</span>Account: {{$store.getters["auth/account"]}}</span>
+      <A v-if="$store.getters['auth/isAuthenticated']" href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
+      <A v-else href="#" @click.native.prevent="$store.dispatch('auth/login')">Log in</A>
+      <span v-if="$store.state.auth.account"><span class="px-2">|</span>Account: {{$store.getters["auth/account"]}}</span>
     </div>
     <router-view/>
   </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+import A from './components/Link'
+import Dropdown from './components/Dropdown'
+export default {
+  data(){
+    return {
+      manageDropdown: [
+        {
+          type: 'router-link',
+          label: 'Dashboard',
+          to: '/manage'
+        },
+        {
+          type: 'router-link',
+          label: 'Users',
+          to: '/manage/users'
+        },
+        {
+          type: 'router-link',
+          label: 'Projects',
+          to: '/manage/projects'
+        },
+        {
+          type: 'router-link',
+          label: 'Clients',
+          to: '/manage/clients'
+        },
+      ],
+      siteDropdown: [
+        {
+          type: 'dropdown',
+          label: 'Projects',
+          children: [
+            {
+              type: 'router-link',
+              label: 'My Projects',
+              to: '/projects/list'
+            },
+            {
+              type: 'router-link',
+              label: 'Create',
+              to: '/projects/create'
+            },
+          ]
+        },
+        {
+          type: 'dropdown',
+          label: 'Clients',
+          children: [
+            {
+              type: 'router-link',
+              label: 'My Clients',
+              to: '/clients/list'
+            },
+            {
+              type: 'router-link',
+              label: 'Create',
+              to: '/clients/create'
+            },
+          ]
+        }
+      ]
+    }
+  },
+  components:{
+    A,
+    Dropdown
+  }
 }
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-.nav-item:hover > .dropdown-menu{
-  display:block;
-}
-</style>
+</script>

@@ -16,6 +16,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Index.vue'),
     children:[
       {
+        path: "list",
+        name: "ProjectList",
+        component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/List.vue')
+      },
+      {
         path: "create",
         name: "ProjectCreate",
         meta: {
@@ -30,6 +35,34 @@ const routes = [
         path: ":id",
         name: "ProjectShow",
         component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Show.vue')
+      },
+    ]
+  },
+  {
+    path: "/clients", //Just this user's clients
+    name: "Clients",
+    component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Index.vue'),
+    children:[
+      {
+        path: "list",
+        name: "ClientList",
+        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/List.vue')
+      },
+      {
+        path: "create",
+        name: "ClientCreate",
+        meta: {
+          permissions: {
+            entity: "clients",
+            action: "write"
+          }
+        },
+        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Create.vue')
+      },
+      {
+        path: ":id",
+        name: "ClientShow",
+        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue')
       },
     ]
   },
@@ -91,7 +124,19 @@ const routes = [
             action: "write"
           }
         }
-      }
+      },
+      {
+        path: "clients",
+        name: "ManageClients",
+        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Clients/List.vue'),
+        meta: {
+          role: "manager",
+          permissions: {
+            entity: "clients",
+            action: "read"
+          }
+        }
+      },
     ]
   },
   {
