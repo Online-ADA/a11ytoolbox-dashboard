@@ -18,30 +18,22 @@ if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }
 
-function run(){
-  
-  Request.get(store.state.auth.toolboxapi+'/api/state/init', {
-    onSuccess: {
-      silent: true,
-      callback: function(response){
-        store.commit("auth/setState", {key: "user", value: response.data.details.user})
-        store.commit("auth/setState", {key: "accountsRoles", value: response.data.details.roles.accounts})
-        store.commit("auth/setState", {key: "accountsPermissions", value: response.data.details.permissions.accounts})
-        store.commit("auth/setState", {key: "accounts", value: response.data.details.accounts})
-        runBeforeEach()
-      }
-    },
-    onError: {
-      silent:true,
-      callback: function(){
-        if( router.currentRoute.path != "/" ){
-          router.push("/")
-        }
-      }
+async function run(){
+  await Request.getPromise(`${store.state.auth.toolboxapi}/api/state/init`, {async: false})
+  .then( response => {
+      store.commit("auth/setState", {key: "user", value: response.data.details.user})
+      store.commit("auth/setState", {key: "accountsRoles", value: response.data.details.roles.accounts})
+      store.commit("auth/setState", {key: "accountsPermissions", value: response.data.details.permissions.accounts})
+      store.commit("auth/setState", {key: "accounts", value: response.data.details.accounts})
+      runBeforeEach()
+  })
+  .catch( () => {
+    if( router.currentRoute.path != "/" ){
+      router.push({path: "/"})
     }
   })
 
-  new Vue({
+  window.App = new Vue({
     router,
     store,
     render: h => h(App)
@@ -59,6 +51,11 @@ function runBeforeEach(){
     
     //Route Heirarchy:check account has been selected, check roles and permissions, then check roles, then check permissions, then check logged in
     if( !store.state.auth.account && to.path != "/" ){
+      next("/")
+      return
+    }
+
+    if( !store.getters["auth/isAuthenticated"] && to.path != "/" ){
       next("/")
       return
     }

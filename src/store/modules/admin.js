@@ -6,6 +6,7 @@ export default {
 		users: [],
 		user : false,
 		projects: [],
+		audits: [],
 		clients: [],
 		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
 		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
@@ -126,6 +127,31 @@ export default {
 					callback: function(response){
 						state.loading.projects = false
 						state.projects = response.data.details
+					}
+				},
+				onWarns: {
+					silent: true,
+					callback: function(response){
+						rootState.auth.authMessage = rootState.auth.authMessages[response.data.details]
+						router.push({path: "/"})
+					}
+				},
+				onError: {
+					silent: true,
+					callback: function(){
+						state.loading.projects = false
+					}
+				}
+			})
+		},
+		getAudits({state, rootState}, router){
+			state.loading.projects = true
+			Request.get( `${state.adminAPI}/${rootState.auth.account}/audits`, {
+				onSuccess: {
+					silent: true,
+					callback: function(response){
+						state.loading.audits = false
+						state.audits = response.data.details
 					}
 				},
 				onWarns: {

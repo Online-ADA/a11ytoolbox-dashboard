@@ -46,15 +46,18 @@ export default {
 				}
 			})
 		},
-		getClient({state}, args){
+		getClient({state, rootState}, args){
 			state.loading = true
-			Request.get(`${state.API}/${args.account_id}/clients/${args.id}`, {
+			Request.get(`${state.API}/${rootState.auth.account}/clients/${args.id}`, {
 				onSuccess: {
 					title:'Success',
 					text:'Client retrieved',
 					callback: function(response){
 						state.loading = false
 						state.client = response.data.client
+						if( args.vm ){
+							args.vm.client = state.client
+						}
 					}
 				},
 				onError: {
@@ -138,7 +141,41 @@ export default {
 					}
 				}
 			})
-		}
+		},
+		updateClient({state, rootState, rootGetters}, args){
+			state.loading = true
+			let requestArgs = {
+				params: {
+					client_id: args.id,
+					data: args.client
+				},
+				onSuccess: {
+					title: "Success",
+					text: "Client updated",
+					callback: function(){
+						state.loading = false
+						if( rootGetters["auth/isManager"] ){
+							args.router.push({path: "/manage/clients"})
+							return
+						}
+						args.router.push({path: "/clients/list"})
+					}
+				},
+				onWarn:{
+					callback: function(){
+						state.loading = false
+					}
+				},
+				onError: {
+					title: "Error",
+					text: "Failed updating client",
+					callback: function(){
+						state.loading = false
+					}
+				}
+			};
+			Request.post(`${state.API}/${rootState.auth.account}/clients/${args.id}`, requestArgs)
+		},
 	},
 	getters: { 
 		

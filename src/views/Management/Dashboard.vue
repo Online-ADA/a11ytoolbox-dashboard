@@ -1,11 +1,9 @@
 <template>
   <div class="text-center mt-32">
     <h5>The logged in user is {{user.first_name}} {{user.last_name}}</h5>
-    <h6>Your roles are: </h6>
+    <h6>Your role is: </h6>
     
-    <ul class="list-group">
-      <li v-for="role in roles" :key="role.id">{{role}}</li>
-    </ul>
+    <span>{{role}}</span>
     <router-view/>
   </div>
 </template>
@@ -19,8 +17,8 @@ export default {
         user() {
             return this.$store.state.auth.user
         },
-        roles() {
-            return this.$store.state.auth.accountsRoles[this.$store.state.auth.account]
+        role() {
+            return this.$store.state.auth.accountsRoles[this.$store.state.auth.account][0]
         },
     },
     props: [],

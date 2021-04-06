@@ -32,6 +32,11 @@ const routes = [
         component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Create.vue')
       },
       {
+        path: ":id/edit",
+        name: "ProjectEdit",
+        component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Edit.vue')
+      },
+      {
         path: ":id",
         name: "ProjectShow",
         component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Show.vue')
@@ -39,33 +44,71 @@ const routes = [
     ]
   },
   {
-    path: "/clients", //Just this user's clients
-    name: "Clients",
-    component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Index.vue'),
+    path: "/audits", //Just this user's audits
+    name: "Audits",
+    component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/Index.vue'),
     children:[
       {
         path: "list",
-        name: "ClientList",
-        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/List.vue')
+        name: "AuditList",
+        component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/List.vue')
       },
       {
         path: "create",
-        name: "ClientCreate",
+        name: "AuditCreate",
         meta: {
           permissions: {
-            entity: "clients",
+            entity: "audits",
             action: "write"
           }
         },
-        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Create.vue')
+        component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/Create.vue')
+      },
+      {
+        path: ":id/edit",
+        name: "AuditEdit",
+        component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/Edit.vue')
       },
       {
         path: ":id",
-        name: "ClientShow",
-        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue')
+        name: "AuditShow",
+        component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/Show.vue')
       },
     ]
   },
+  // {
+  //   path: "/clients", //Just this user's clients
+  //   name: "Clients",
+  //   component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Index.vue'),
+  //   children:[
+  //     {
+  //       path: "list",
+  //       name: "ClientList",
+  //       component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/List.vue')
+  //     },
+  //     {
+  //       path: "create",
+  //       name: "ClientCreate",
+  //       meta: {
+  //         permissions: {
+  //           entity: "clients",
+  //           action: "write"
+  //         }
+  //       },
+  //       component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Create.vue')
+  //     },
+  //     {
+  //       path: ":id/edit",
+  //       name: "ClientEdit",
+  //       component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Edit.vue')
+  //     },
+  //     {
+  //       path: ":id",
+  //       name: "ClientShow",
+  //       component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue')
+  //     },
+  //   ]
+  // },
   {
     path: '/manage',
     name: 'Manage',
@@ -86,18 +129,6 @@ const routes = [
           permissions: {
             entity: "projects",
             action: "read"
-          }
-        }
-      },
-      {
-        path: "projects/:id",
-        name: "ManageProjectsEdit",
-        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Projects/Edit.vue'),
-        meta: {
-          role: "manager",
-          permission: {
-            entity: "projects",
-            action: "write"
           }
         }
       },
@@ -133,6 +164,18 @@ const routes = [
           role: "manager",
           permissions: {
             entity: "clients",
+            action: "read"
+          }
+        }
+      },
+      {
+        path: "audits",
+        name: "ManageAudits",
+        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Audits/List.vue'),
+        meta: {
+          role: "manager",
+          permissions: {
+            entity: "audits",
             action: "read"
           }
         }

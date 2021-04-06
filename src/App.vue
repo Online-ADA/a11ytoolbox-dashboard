@@ -15,7 +15,8 @@
       
       <A v-if="$store.getters['auth/isAuthenticated']" href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
       <A v-else href="#" @click.native.prevent="$store.dispatch('auth/login')">Log in</A>
-      <span v-if="$store.state.auth.account"><span class="px-2">|</span>Account: {{$store.getters["auth/account"]}}</span>
+      
+      <span v-if="account"><span class="px-2">|</span>Account: {{account}}</span>
     </div>
     <router-view/>
   </div>
@@ -43,10 +44,15 @@ export default {
           label: 'Projects',
           to: '/manage/projects'
         },
+        // {
+        //   type: 'router-link',
+        //   label: 'Clients',
+        //   to: '/manage/clients'
+        // },
         {
           type: 'router-link',
-          label: 'Clients',
-          to: '/manage/clients'
+          label: 'Audits',
+          to: '/manage/audits'
         },
       ],
       siteDropdown: [
@@ -68,21 +74,26 @@ export default {
         },
         {
           type: 'dropdown',
-          label: 'Clients',
+          label: 'Audits',
           children: [
             {
               type: 'router-link',
-              label: 'My Clients',
-              to: '/clients/list'
+              label: 'My Audits',
+              to: '/audits/list'
             },
             {
               type: 'router-link',
               label: 'Create',
-              to: '/clients/create'
+              to: '/audits/create'
             },
           ]
         }
       ]
+    }
+  },
+  computed: {
+    account(){
+      return this.$store.getters["auth/account"]
     }
   },
   components:{

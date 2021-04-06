@@ -1,5 +1,6 @@
 import axios from 'axios'
 import Vue from 'vue'
+
 class Request {
     /* Args to pass:
         - params ~ Object: additional data to be sent with the request
@@ -54,11 +55,56 @@ class Request {
         }
     }
 
+    async getPromise(url, args = {onSuccess: true, onError: true, onInfo: true, onWarn: true, async: true}){
+        if( !args.async ){
+            return await new Promise( (resolve, reject)=> {
+                axios.get(url).then(response =>{
+                    if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
+                        if( window.App.$router.currentRoute.path != "/" ){
+                            window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
+                            window.App.$router.push({path: "/"})
+                        }
+                        
+                        return
+                    }
+                    resolve(response)
+                }).catch( response => {
+                    reject(response)
+                })
+            })
+        }
+        else{
+            return new Promise( (resolve, reject)=> {
+                axios.get(url).then(response =>{
+                    if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
+                        if( window.App.$router.currentRoute.path != "/" ){
+                            window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
+                            window.App.$router.push({path: "/"})
+                        }
+                        
+                        return
+                    }
+                    resolve(response)
+                }).catch( response => {
+                    reject(response)
+                })
+            })
+        }
+    }
+
     get(url, args = {onSuccess: true, onError: true, onInfo: true, onWarn: true}){
         let params = args.params || {};
         
         axios.get(url, params)
         .then(response => {
+            if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
+                if( window.App.$router.currentRoute.path != "/" ){
+                    window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
+                    window.App.$router.push({path: "/"})
+                }
+                
+                return
+            }
             if( response.data.success && args.onSuccess ){
                 if( args.onSuccess.type == undefined ){
                     args.onSuccess.type = "success"
@@ -88,6 +134,14 @@ class Request {
         let params = args.params || {};
         axios.post(url, params)
         .then(response => {
+            if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
+                if( window.App.$router.currentRoute.path != "/" ){
+                    window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
+                    window.App.$router.push({path: "/"})
+                }
+                
+                return
+            }
             if( response.data.success && args.onSuccess ){
                 if( args.onSuccess.type == undefined ){
                     args.onSuccess.type = "success"

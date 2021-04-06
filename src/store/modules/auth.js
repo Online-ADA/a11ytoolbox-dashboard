@@ -57,7 +57,7 @@ export default {
       Cookies.set('oada_UID', payload.token, { expires: 365 })
       state.token = payload.token
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
-      console.log(payload);
+      
       if(payload.user){
           state.user = payload.user
       }
@@ -80,6 +80,7 @@ export default {
       state.accountsPermissions = []
       state.user = false
       Cookies.remove('oada_UID')
+      Cookies.remove('toolboxAccount')
       if( router.app._route.path != "/" ){
         router.push({path: "/"})
       }
@@ -87,7 +88,7 @@ export default {
   },
   getters: {
     isAuthenticated: state => {
-        return !!state.token && !!state.user
+      return !!state.token && !!state.user
     },
     isManager: (state, getters) => {
       if( state.account && getters.isAuthenticated ){

@@ -5,7 +5,10 @@
             <h2>Your Projects:</h2>
             <ul>
                 <li v-for="(project, id) in projects" :key="id">
-                    <A type="router-link" :to="{path: `${project.id}`}">{{project.name}}</A>
+                    <span class="text-lg">{{project.name}}</span>
+                    <span class="px-3">-</span>
+                    <A class="pr-2" type="router-link" :to="{path: `${project.id}`}">view</A>
+                    <A v-if="can" type="router-link" :to="{path: `/projects/${project.id}/edit`}">edit</A>
                 </li>
             </ul>
         </template>
@@ -29,6 +32,9 @@ export default {
         projects() {
             return this.$store.state.projects.all
         },
+        can(){
+            return this.$store.state.auth.accountsPermissions[this.$store.state.auth.account].projects.write || this.$store.getters["auth/isManager"]
+        }
     },
     props: [],
     watch: {
