@@ -1,16 +1,20 @@
 <template>
-    <router-link v-if="getType == 'router-link'" class="hover:text-gray-500 transition-colors duration-100" :to="href"><slot></slot></router-link>
-    <a v-else class="hover:text-gray-500 transition-colors duration-100" :href="href" :target="target"><slot></slot></a>
+    <router-link v-if="getType == 'router-link'" :class="getHoverColor" class="transition-colors duration-100" :to="href"><slot></slot></router-link>
+    <a v-else :class="getHoverColor" class="transition-colors duration-100" :href="href" :target="target"><slot></slot></a>
 </template>
 
 
 <script>
     export default {
-        props:[
-            'to',
-            'newTab',
-            'type'
-        ],
+        props: {
+            to: {},
+            newTab: {},
+            type: {},
+            hoverText: {
+                type: String,
+                default: 'text-gray-500'
+            },
+        },
         name: 'Link',
         computed: {
             getType(){
@@ -33,6 +37,9 @@
                 }
 
                 return "#"
+            },
+            getHoverColor(){
+                return "hover:"+this.hoverText
             }
         }
     }

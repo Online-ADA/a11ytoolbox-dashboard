@@ -116,7 +116,7 @@
 				
 			</template>
 
-			<Button hover="true" @click.native.prevent="saveAudit">Save</Button>
+			<Button @click.native.prevent="saveAudit">Save</Button>
 		</Form>
 	</div>
 </template>

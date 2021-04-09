@@ -44,6 +44,11 @@ export default {
           label: 'Projects',
           to: '/manage/projects'
         },
+        {
+          type: 'router-link',
+          label: 'Domains',
+          to: '/manage/domains'
+        },
         // {
         //   type: 'router-link',
         //   label: 'Clients',
@@ -69,6 +74,22 @@ export default {
               type: 'router-link',
               label: 'Create',
               to: '/projects/create'
+            },
+          ]
+        },
+        {
+          type: 'dropdown',
+          label: 'Domains',
+          children: [
+            {
+              type: 'router-link',
+              label: 'My Domains',
+              to: '/domains/list'
+            },
+            {
+              type: 'router-link',
+              label: 'Create',
+              to: '/domains/create'
             },
           ]
         },

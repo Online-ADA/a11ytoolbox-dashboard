@@ -59,16 +59,10 @@ class Request {
         if( !args.async ){
             return await new Promise( (resolve, reject)=> {
                 axios.get(url).then(response =>{
-                    if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
-                        if( window.App.$router.currentRoute.path != "/" ){
-                            window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
-                            window.App.$router.push({path: "/"})
-                        }
-                        
-                        return
-                    }
+                    this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
+                    this.checkForRedirect(response)
                     reject(response)
                 })
             })
@@ -76,16 +70,10 @@ class Request {
         else{
             return new Promise( (resolve, reject)=> {
                 axios.get(url).then(response =>{
-                    if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
-                        if( window.App.$router.currentRoute.path != "/" ){
-                            window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
-                            window.App.$router.push({path: "/"})
-                        }
-                        
-                        return
-                    }
+                    this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
+                    this.checkForRedirect(response)
                     reject(response)
                 })
             })
@@ -97,14 +85,7 @@ class Request {
         
         axios.get(url, params)
         .then(response => {
-            if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
-                if( window.App.$router.currentRoute.path != "/" ){
-                    window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
-                    window.App.$router.push({path: "/"})
-                }
-                
-                return
-            }
+            this.checkForRedirect(response)
             if( response.data.success && args.onSuccess ){
                 if( args.onSuccess.type == undefined ){
                     args.onSuccess.type = "success"
@@ -120,6 +101,7 @@ class Request {
                 return
             }
         }).catch(error => {
+            this.checkForRedirect(error)
             console.log(error)
             if( args.onError ){
                 if( args.onError.type == undefined ){
@@ -132,16 +114,11 @@ class Request {
     }
     post(url, args = {onSuccess: true, onError: true, onInfo: true, onWarn: true}){
         let params = args.params || {};
-        axios.post(url, params)
+        let headers = {headers: args.headers || ""}
+        
+        axios.post(url, params, headers)
         .then(response => {
-            if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
-                if( window.App.$router.currentRoute.path != "/" ){
-                    window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
-                    window.App.$router.push({path: "/"})
-                }
-                
-                return
-            }
+            this.checkForRedirect(response)
             if( response.data.success && args.onSuccess ){
                 if( args.onSuccess.type == undefined ){
                     args.onSuccess.type = "success"
@@ -156,6 +133,7 @@ class Request {
                 return
             }
         }).catch(error => {
+            this.checkForRedirect(error)
             console.log(error)
             if( args.onError ){
                 if( args.onError.type == undefined ){
@@ -180,6 +158,25 @@ class Request {
         
         if( callback ){
             callback(response)
+        }
+    }
+
+    checkForRedirect(response){
+        if( response.response != undefined && response.response.data.message == "Unauthenticated." ){
+            if( window.App.$router.currentRoute.path != "/" ){
+                window.App.$store.state.auth.authMessage = "You've been logged on. Please log in again"
+                window.App.$router.push({path: "/"})
+            }
+            
+            return
+        }
+        if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
+            if( window.App.$router.currentRoute.path != "/" ){
+                window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
+                window.App.$router.push({path: "/"})
+            }
+            
+            return
         }
     }
 }

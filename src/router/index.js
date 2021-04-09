@@ -11,6 +11,33 @@ const routes = [
     component: Home
   },
   {
+    path: "/domains",
+    name: "Domains",
+    component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/Index.vue'),
+    children:[
+      {
+        path: "list",
+        name: "DomainsList",
+        component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/List.vue')
+      },
+      {
+        path: "create",
+        name: "DomainsCreate",
+        component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/Create.vue')
+      },
+      {
+        path: ":id/edit",
+        name: "DomainsEdit",
+        component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/Edit.vue')
+      },
+      {
+        path: ":id",
+        name: "DomainsShow",
+        component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/Show.vue')
+      },
+    ]
+  },
+  {
     path: "/projects", //Just this user's projects
     name: "Projects",
     component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Index.vue'),
@@ -77,7 +104,7 @@ const routes = [
     ]
   },
   // {
-  //   path: "/clients", //Just this user's clients
+  //   path: "/clients",
   //   name: "Clients",
   //   component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Index.vue'),
   //   children:[
@@ -178,6 +205,14 @@ const routes = [
             entity: "audits",
             action: "read"
           }
+        }
+      },
+      {
+        path: "domains",
+        name: "ManageDomains",
+        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Domains/List.vue'),
+        meta: {
+          role: "manager",
         }
       },
     ]

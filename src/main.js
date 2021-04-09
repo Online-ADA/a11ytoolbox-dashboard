@@ -18,6 +18,12 @@ if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }
 
+window.App = new Vue({
+  router,
+  store,
+  render: h => h(App)
+}).$mount('#app')
+
 async function run(){
   await Request.getPromise(`${store.state.auth.toolboxapi}/api/state/init`, {async: false})
   .then( response => {
@@ -33,11 +39,7 @@ async function run(){
     }
   })
 
-  window.App = new Vue({
-    router,
-    store,
-    render: h => h(App)
-  }).$mount('#app')
+  
 }
 run()
 

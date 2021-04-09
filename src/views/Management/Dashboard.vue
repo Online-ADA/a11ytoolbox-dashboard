@@ -18,7 +18,10 @@ export default {
             return this.$store.state.auth.user
         },
         role() {
+          if( this.$store.state.auth.accountsRoles[this.$store.state.auth.account] ){
             return this.$store.state.auth.accountsRoles[this.$store.state.auth.account][0]
+          }
+          return false
         },
     },
     props: [],
@@ -27,7 +30,9 @@ export default {
     methods: {
     },
     created() {
-      this.$store.registerModule('admin', admin)
+      if( this.$store.state.admin == undefined ){
+        this.$store.registerModule('admin', admin)
+      }
     },
     beforeDestroy(){
       this.$store.unregisterModule("admin")

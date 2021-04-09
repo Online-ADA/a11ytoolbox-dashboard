@@ -6,6 +6,7 @@ export default {
 		users: [],
 		user : false,
 		projects: [],
+		domains: [],
 		audits: [],
 		clients: [],
 		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
@@ -14,7 +15,8 @@ export default {
 			users: false,
 			projects: false,
 			audits: false,
-			clients: false
+			clients: false,
+			domains: false
 		}
 	},
 	mutations: {
@@ -67,7 +69,7 @@ export default {
 				}
 			})
 		},
-		getUsers({state, rootState}, router){
+		getUsers({state, rootState}){
 			state.loading.users = true
 			Request.get(`${state.adminAPI}/${rootState.auth.account}/users`, {
 				onSuccess: {
@@ -79,10 +81,6 @@ export default {
 				},
 				onWarns: {
 					silent: true,
-					callback: function(response){
-						rootState.auth.authMessage = rootState.auth.authMessages[response.data.details]
-						router.push({path: "/"})
-					}
 				},
 				onError: {
 					silent: true,
@@ -106,10 +104,6 @@ export default {
 				},
 				onWarns: {
 					silent: true,
-					callback: function(response){
-						rootState.auth.authMessage = rootState.auth.authMessages[response.data.details]
-						args.router.push({path: "/"})
-					}
 				},
 				onError: {
 					silent: true,
@@ -119,7 +113,7 @@ export default {
 				}
 			})
 		},
-		getProjects({state, rootState}, router){
+		getProjects({state, rootState}){
 			state.loading.projects = true
 			Request.get( `${state.adminAPI}/${rootState.auth.account}/projects`, {
 				onSuccess: {
@@ -131,10 +125,6 @@ export default {
 				},
 				onWarns: {
 					silent: true,
-					callback: function(response){
-						rootState.auth.authMessage = rootState.auth.authMessages[response.data.details]
-						router.push({path: "/"})
-					}
 				},
 				onError: {
 					silent: true,
@@ -144,7 +134,7 @@ export default {
 				}
 			})
 		},
-		getAudits({state, rootState}, router){
+		getAudits({state, rootState}){
 			state.loading.projects = true
 			Request.get( `${state.adminAPI}/${rootState.auth.account}/audits`, {
 				onSuccess: {
@@ -156,10 +146,6 @@ export default {
 				},
 				onWarns: {
 					silent: true,
-					callback: function(response){
-						rootState.auth.authMessage = rootState.auth.authMessages[response.data.details]
-						router.push({path: "/"})
-					}
 				},
 				onError: {
 					silent: true,
@@ -169,7 +155,7 @@ export default {
 				}
 			})
 		},
-		getClients({state, rootState}, router){
+		getClients({state, rootState}){
 			state.loading.clients = true
 			Request.get(`${state.adminAPI}/${rootState.auth.account}/clients`, {
 				onSuccess: {
@@ -181,15 +167,32 @@ export default {
 				},
 				onWarns: {
 					silent: true,
-					callback: function(response){
-						rootState.auth.authMessage = rootState.auth.authMessages[response.data.details]
-						router.push({path: "/"})
-					}
 				},
 				onError: {
 					silent: true,
 					callback: function(){
 						state.loading.clients = false
+					}
+				}
+			})
+		},
+		getAllDomains({state, rootState}){
+			state.loading.domains = true
+			Request.get(`${state.adminAPI}/${rootState.auth.account}/domains`, {
+				onSuccess: {
+					silent: true,
+					callback: function(response){
+						state.loading.domains = false
+						state.domains = response.data.details
+					}
+				},
+				onWarns: {
+					silent: true,
+				},
+				onError: {
+					silent: true,
+					callback: function(){
+						state.loading.domains = false
 					}
 				}
 			})
