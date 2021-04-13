@@ -1,19 +1,41 @@
 <template>
-	<div class="text-center mt-32">
+	<div class="text-center mt-32 mb-24">
 		<Loader v-if="loading"></Loader>
 		
 		<A class="pr-3" type='router-link' :to="{path: `/domains/${$route.params.id}`}">View Domain</A>
 		<A type='router-link' :to="{path: `/projects/${domain.project_id}`}">View Project</A>
 		<h2 class="mb-1">{{domain.title}}</h2>
 		<h3 class="mb-3">{{domain.url}}</h3>
+
+		<h3 class="mt-5 mb-3">Add page</h3>
+
+		<div class="w-full flex mb-4">
+			<div class="w-1/12"></div>
+			<div class="w-5/12 px-2">
+				<Label for="description">Description</Label>
+				<TextInput placeholder="All modals" class="w-9/12 ml-1" id="description" v-model="page.description" />
+			</div>
+			<div class="w-5/12 px-2">
+				<Label :stacked="false" class="flex items-center justify-center w-full" for="url"><span class="pr-3">Url</span><small>(Without domain)</small></Label>
+				<div class="flex items-center">
+					<span>{{domain.url}}/</span><TextInput placeholder="contact" class="w-full" id="url" v-model="page.url" />
+					<Button class="ml-2" color="orange" @click.native.prevent="addPage">Add</Button>
+				</div>
+			</div>
+			<div class="w-1/12"></div>
+		</div>
 		
 		<template v-if="domain && domain.pages.length">
-			<h3 class="mb-3">Pages</h3>
-			<ul class="mb-4">
-				<li v-for="page in domain.pages" :key="page.id">
-					<A type='router-link' :to="{path: `/pages/${page.id}`}">{{page.url || page.description}}</A>
-				</li>
-			</ul>
+			<h3 class="mb-3">Sitemap</h3>
+			<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
+				<ul class="mb-4">
+					<li v-for="page in domain.pages" :key="page.id">
+						<A class="w-full" type='router-link' :to="{path: `/pages/${page.id}`}">{{page.url || page.description}}</A>
+						<Button @click.native.prevent="deletePage(page.id)" color="delete" class="ml-4">X</Button>
+					</li>
+				</ul>
+			</Card>
+			<Button @click.native.prevent="emptySitemap" color="delete">Remove all</Button>
 		</template>
 		<template v-else>
 			There are no pages for this domain. <A type="router-link" :to="{path: `/pages/create`}">Create one</A>
@@ -31,10 +53,16 @@ import Label from '../../components/Label'
 import A from '../../components/Link'
 import Button from '../../components/Button'
 import FileInput from '../../components/FileInput'
+import Card from '../../components/Card'
 export default {
 	data: () => ({
 		file: false,
-		data: {}
+		data: {},
+		page: {
+			description: "",
+			url: "",
+			domain_id: ""
+		}
 	}),
 	computed: {
 		loading(){
@@ -59,6 +87,12 @@ export default {
 		}
 	},
 	methods: {
+		addPage(){
+			this.$store.dispatch("domains/addPageToSitemap", {page: this.page, vm: this})
+		},
+		deletePage(id){
+			this.$store.dispatch("domains/removePageFromSitemap", {page_id: id, domain_id: this.$route.params.id})
+		},
 		handleFile(e){
 			this.file = e
 		},
@@ -69,6 +103,9 @@ export default {
 			if( this.file ){
 				this.$store.dispatch("domains/saveSitemap", {id: this.$route.params.id, file: this.file, domain: this.domain.url})
 			}
+		},
+		emptySitemap(){
+			this.$store.dispatch("domains/emptySitemap", {id: this.$route.params.id})
 		},
 		saveDomain(){
 			this.audit.tech_requirements = this.audit.tech_requirements.map(o=>o.name)
@@ -81,6 +118,7 @@ export default {
 	},
 	created() {
 		this.getDomain()
+		this.page.domain_id = this.$route.params.id
 	},
 	mounted() {
 		
@@ -91,7 +129,8 @@ export default {
 		FileInput,
 		Button,
 		TextInput,
-		Label
+		Label,
+		Card
 	},
 }
 </script>

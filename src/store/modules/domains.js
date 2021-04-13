@@ -60,30 +60,37 @@ export default {
 					}
 				})
 			},
-			getProjects({state, rootState}){
+			getProjects({state, dispatch, rootState, rootGetters}){
 				state.loading = true
-				let args = {
-					onSuccess: {
-						silent: true,
-						callback: function(response){
-							state.loading = false
-							state.projects = response.data.details
-						}
-					},
-					onWarn:{
-						callback: function(){
-							state.loading = false
-						}
-					},
-					onError: {
-						title: "Error",
-						text: "Failed getting projects",
-						callback: function(){
-							state.loading = false
-						}
-					}
-				};
-				Request.get(`${state.API}/${rootState.auth.account}/projects`, args)
+				let url = `${state.API}/${rootState.auth.account}/projects`
+				
+				if( rootGetters["auth/isManager"] ){
+					url = `${state.adminAPI}/${rootState.auth.account}/projects`
+				}
+				
+				Request.getPromise(url)
+				.then( re => {
+					state.projects = re.data.details
+					dispatch("getProjectDomains", {project_id: state.projects[0].id})
+				})
+				.catch( error => {
+					state.loading = false
+					console.log(error);
+				})
+			},
+			getProjectDomains({state, rootState}, args){
+				state.loading = true
+				Request.getPromise(`${state.API}/${rootState.auth.account}/domains/${args.project_id}/projectDomains`)
+				.then( re => {
+					state.all = re.data.details
+				})
+				.catch( error => {
+					state.loading = false
+					console.log(error);
+				})
+				.then( ()=>{
+					state.loading = false
+				})
 			},
 			updateProject({state, rootState, rootGetters}, args){
 				state.loading = true
@@ -145,6 +152,57 @@ export default {
 				};
 				Request.get(`${state.API}/${rootState.auth.account}/domains/${args.id}`, requestArgs)
 			},
+			addPageToSitemap({state, rootState}, args){
+				state.loading = true
+				let requestArgs = {
+					params: {
+						page: args.page
+					}
+				}
+				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.page.domain_id}/page`, requestArgs)
+				.then( (response) => {
+					Vue.notify({
+						title: "Success",
+						text: "page saved successfully",
+						type: "success"
+					})
+					state.domain = response.data.details
+				})
+				.catch( response => {
+					Vue.notify({
+						title: "Error",
+						text: response.error,
+						type: "error"
+					})
+				})
+				.then( ()=>{
+					state.loading = false
+					args.vm.page.url = ""
+					args.vm.page.description = ""
+				})
+			},
+			removePageFromSitemap({state, rootState}, args){
+				state.loading = true
+				Request.destroyPromise(`${state.API}/${rootState.auth.account}/domains/${args.domain_id}/page/${args.page_id}`)
+				.then( (response) => {
+					Vue.notify({
+						title: "Success",
+						text: "Page deleted",
+						type: "success"
+					})
+					state.domain = response.data.details
+				})
+				.catch( response => {
+					Vue.notify({
+						title: "Error",
+						text: response.error,
+						type: "error"
+					})
+				})
+				.then( ()=>{
+					state.loading = false
+				})
+			},
 			saveSitemap({state, rootState}, args){
 				state.loading = true
 				let form_data = new FormData()
@@ -177,6 +235,28 @@ export default {
 					}
 				};
 				Request.post(`${state.API}/${rootState.auth.account}/domains/${args.id}/sitemap`, requestArgs)
+			},
+			emptySitemap({state, rootState}, args){
+				state.loading = true
+				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.id}/sitemapEmpty`)
+				.then( response => {
+					Vue.notify({
+						title: "Success",
+						text: "Sitemap deleted",
+						type: "success"
+					})
+					state.domain = response.data.details
+				})
+				.catch( response => {
+					Vue.notify({
+						title: "Error",
+						text: response.error,
+						type: "error"
+					})
+				})
+				.then( () => {
+					state.loading = false
+				})
 			}
 		},
 		getters: { 

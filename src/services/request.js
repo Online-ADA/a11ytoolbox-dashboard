@@ -1,4 +1,3 @@
-import axios from 'axios'
 import Vue from 'vue'
 
 class Request {
@@ -55,10 +54,10 @@ class Request {
         }
     }
 
-    async getPromise(url, args = {onSuccess: true, onError: true, onInfo: true, onWarn: true, async: true}){
-        if( !args.async ){
+    async getPromise(url, args = {}){
+        if( args.async === false ){
             return await new Promise( (resolve, reject)=> {
-                axios.get(url).then(response =>{
+                window.App.$http.get(url).then(response =>{
                     this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
@@ -69,7 +68,55 @@ class Request {
         }
         else{
             return new Promise( (resolve, reject)=> {
-                axios.get(url).then(response =>{
+                window.App.$http.get(url).then(response =>{
+                    this.checkForRedirect(response)
+                    resolve(response)
+                }).catch( response => {
+                    this.checkForRedirect(response)
+                    reject(response)
+                })
+            })
+        }
+    }
+    async postPromise(url, args = {params: {}}){
+        if( args.async === false ){
+            return await new Promise( (resolve, reject)=> {
+                window.App.$http.post(url, args.params || {}).then(response =>{
+                    this.checkForRedirect(response)
+                    resolve(response)
+                }).catch( response => {
+                    this.checkForRedirect(response)
+                    reject(response)
+                })
+            })
+        }
+        else{
+            return new Promise( (resolve, reject)=> {
+                window.App.$http.post(url, args.params || {}).then(response =>{
+                    this.checkForRedirect(response)
+                    resolve(response)
+                }).catch( response => {
+                    this.checkForRedirect(response)
+                    reject(response)
+                })
+            })
+        }
+    }
+    async destroyPromise(url, args = {params: {}}){
+        if( args.async === false ){
+            return await new Promise( (resolve, reject)=> {
+                window.App.$http.delete(url, args.params || {}).then(response =>{
+                    this.checkForRedirect(response)
+                    resolve(response)
+                }).catch( response => {
+                    this.checkForRedirect(response)
+                    reject(response)
+                })
+            })
+        }
+        else{
+            return new Promise( (resolve, reject)=> {
+                window.App.$http.delete(url, args.params || {}).then(response =>{
                     this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
@@ -83,7 +130,7 @@ class Request {
     get(url, args = {onSuccess: true, onError: true, onInfo: true, onWarn: true}){
         let params = args.params || {};
         
-        axios.get(url, params)
+        window.App.$http.get(url, params)
         .then(response => {
             this.checkForRedirect(response)
             if( response.data.success && args.onSuccess ){
@@ -113,10 +160,13 @@ class Request {
         
     }
     post(url, args = {onSuccess: true, onError: true, onInfo: true, onWarn: true}){
-        let params = args.params || {};
-        let headers = {headers: args.headers || ""}
+
+        let requestArgs = {}
+        requestArgs.params = args.params || {}
+        requestArgs.config = {}
+        requestArgs.config.headers = {...Vue.prototype.$http.defaults.headers.common, ...args.headers || {}}
         
-        axios.post(url, params, headers)
+        window.App.$http.post(url, requestArgs.params, requestArgs.config)
         .then(response => {
             this.checkForRedirect(response)
             if( response.data.success && args.onSuccess ){

@@ -103,6 +103,7 @@ export default {
         this.unassigned.push(user)
       },
       createProject(){
+        this.project.assigned = this.assigned;
         this.$store.dispatch("projects/createProject", {project: this.project, router: this.$router, vm: this})
       }
     },

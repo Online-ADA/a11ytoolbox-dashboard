@@ -14,6 +14,7 @@ Vue.config.productionTip = false
 Vue.prototype.$http = Axios;
 const token = Cookies.get('oada_UID')
 Vue.prototype.$http.defaults.headers.common['Accept'] = "application/json"
+
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }

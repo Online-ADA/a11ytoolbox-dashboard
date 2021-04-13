@@ -25,6 +25,28 @@ export default {
 		},
 	},
 	actions: {
+		deleteProject({state, rootState}, args){
+			state.loading.projects = true
+			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/projects/${args.project_id}`)
+			.then( re => {
+				state.loading.projects = false
+				state.projects = re.data.details
+				Vue.notify({
+					title: "Success",
+					text: "Project deleted",
+					type: "success"
+				})
+			})
+			.catch( re => {
+				console.log( re );
+				state.loading.projects = false
+				Vue.notify({
+					title: "Error",
+					text: re.error,
+					type: "error"
+				})
+			} )
+		},
 		modifyRole({state, rootState}, args){
 			state.loading.users = true
 			Request.post(`${state.adminAPI}/${rootState.auth.account}/users/setRole`, {

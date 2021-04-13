@@ -40,6 +40,7 @@ import Label from '../../components/Label'
 import Select from '../../components/Select'
 import Form from '../../components/Form'
 import Button from '../../components/Button'
+import A from '../../components/Link'
 export default {
 	data: () => ({
 		url: "",
@@ -81,6 +82,7 @@ export default {
 		Form,
 		Select,
 		Button,
+		A
 	},
 }
 </script>

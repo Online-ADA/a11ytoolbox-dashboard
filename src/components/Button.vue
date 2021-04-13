@@ -17,7 +17,7 @@
             classes(){
                 let classes = [];
                 if( !this.color || this.color == "white" ){
-                    classes.push("bg-pallette-white");
+                    classes.push("bg-white");
                     classes.push("text-pallette-grey");
                     classes.push("border");
                     classes.push("border-pallette-grey");
@@ -27,6 +27,12 @@
                         classes.push("hover:bg-pallette-orange");
                         classes.push("hover:text-white");
                     }
+                }
+                if( this.color=="delete" ){
+                    classes.push("hover:bg-red-600");
+                    classes.push("hover:text-white");
+                    classes.push("bg-white");
+                    classes.push("text-red-600");
                 }
                 if( this.color == "orange" ){
                     classes.push("bg-pallette-orange");

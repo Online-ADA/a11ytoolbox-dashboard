@@ -16,11 +16,8 @@
 			</ul>
 		</template>
 		<template v-else>
-			There are no pages for this domain. <A type="router-link" :to="{path: `/pages/create`}">Create one</A>
+			There are no pages for this domain.
 		</template>
-
-		<!-- <FileInput @input="handleFile" class="block w-auto mx-auto pb-3" accept=".csv, .xml"></FileInput>
-		<Button color="orange" @click.native.prevent="uploadSitemap">Upload sitemap</Button> -->
 	</div>
 </template>
 

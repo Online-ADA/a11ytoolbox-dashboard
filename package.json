@@ -9,6 +9,7 @@
     "buildcss": "tailwindcss build ./src/assets/tailwind.css -o ./public/tailwind.css"
   },
   "dependencies": {
+    "@burhanahmeed/vue-modal-2": "^1.1.9",
     "autoprefixer": "^9.8.6",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
