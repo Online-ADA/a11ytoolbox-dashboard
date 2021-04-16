@@ -215,6 +215,14 @@ const routes = [
           role: "manager",
         }
       },
+      {
+        path: "articles",
+        name: "ManageArticles",
+        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Articles/Dashboard.vue'),
+        meta: {
+          role: "manager",
+        }
+      },
     ]
   },
   {

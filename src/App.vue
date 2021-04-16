@@ -59,6 +59,11 @@ export default {
           label: 'Audits',
           to: '/manage/audits'
         },
+        {
+          type: 'router-link',
+          label: 'Articles',
+          to: '/manage/articles'
+        },
       ],
       siteDropdown: [
         {

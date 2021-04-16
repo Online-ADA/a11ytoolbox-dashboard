@@ -8,10 +8,15 @@ export default {
 		projects: [],
 		domains: [],
 		audits: [],
+		articles: [],
+		techniques: [],
+		recommendations: [],
 		clients: [],
+		API: "https://apitoolbox.ngrok.io/api/user",
 		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
 		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
 		loading:{
+			articles: false,
 			users: false,
 			projects: false,
 			audits: false,
@@ -25,6 +30,126 @@ export default {
 		},
 	},
 	actions: {
+		getArticles({state, dispatch, rootState}){
+			state.loading.articles = true
+			Request.getPromise(`${state.API}/${rootState.auth.account}/articles`)
+			.then( res => {
+				state.articles = res.data.details
+				dispatch("getTechniques")
+				dispatch("getRecommendations")
+			})
+			.catch(res => {
+				console.log(res.error)
+				Vue.notify({
+					title: 'Error',
+					text: res.error,
+					type: 'error'
+				})
+				state.loading.articles = false
+			})
+		},
+		getTechniques({state, rootState}){
+			Request.getPromise(`${state.API}/${rootState.auth.account}/techniques`)
+			.then( res => {
+				state.techniques = res.data.details
+			})
+			.catch(res => {
+				console.log(res.error)
+				Vue.notify({
+					title: 'Error',
+					text: res.error,
+					type: 'error'
+				})
+				state.loading.articles = false
+			})
+		},
+		getRecommendations({state, rootState}){
+			Request.getPromise(`${state.API}/${rootState.auth.account}/recommendations`)
+			.then( res => {
+				state.recommendations = res.data.details
+				state.loading.articles = false
+				Vue.notify({
+					title: 'Success',
+					text: 'articles retrieved',
+					type: 'success'
+				})
+			})
+			.catch(res => {
+				console.log(res.error)
+				Vue.notify({
+					title: 'Error',
+					text: res.error,
+					type: 'error'
+				})
+				state.loading.articles = false
+			})
+		},
+		deleteArticle({state, rootState}, args){
+			state.loading.articles = false
+			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/articles/${args.id}`)
+			.then( re => {
+				state.loading.articles = false
+				state.articles = re.data.details
+				Vue.notify({
+					title: "Success",
+					text: "Article deleted",
+					type: "success"
+				})
+			})
+			.catch( re => {
+				console.log( re );
+				state.loading.articles = false
+				Vue.notify({
+					title: "Error",
+					text: re.error,
+					type: "error"
+				})
+			} )
+		},
+		deleteTechnique({state, rootState}, args){
+			state.loading.articles = false
+			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/techniques/${args.id}`)
+			.then( re => {
+				state.loading.articles = false
+				state.techniques = re.data.details
+				Vue.notify({
+					title: "Success",
+					text: "Technique deleted",
+					type: "success"
+				})
+			})
+			.catch( re => {
+				console.log( re );
+				state.loading.articles = false
+				Vue.notify({
+					title: "Error",
+					text: re.error,
+					type: "error"
+				})
+			} )
+		},
+		deleteRecommendation({state, rootState}, args){
+			state.loading.articles = false
+			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/recommendations/${args.id}`)
+			.then( re => {
+				state.loading.articles = false
+				state.recommendations = re.data.details
+				Vue.notify({
+					title: "Success",
+					text: "Recommendation deleted",
+					type: "success"
+				})
+			})
+			.catch( re => {
+				console.log( re );
+				state.loading.articles = false
+				Vue.notify({
+					title: "Error",
+					text: re.error,
+					type: "error"
+				})
+			} )
+		},
 		deleteProject({state, rootState}, args){
 			state.loading.projects = true
 			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/projects/${args.project_id}`)
