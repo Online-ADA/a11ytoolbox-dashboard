@@ -29,14 +29,13 @@
 </template>
 
 <script>
-    import Sheets from '../../components/Sheets'
-    import Button from '../../components/Button'
-    import admin from '../../store/modules/admin'
-    import projects from '../../store/modules/project'
-    import audits from '../../store/modules/audits'
+    import Sheets from '../components/Sheets'
+    import Button from '../components/Button'
+    import admin from '../store/modules/admin'
+    import projects from '../store/modules/project'
+    import audits from '../store/modules/audits'
     
     export default {
-        name: "AuditCreate",
         data(){
             return {
                 sheetMessage: "",

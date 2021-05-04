@@ -5,6 +5,7 @@
 <script>
 
 import audits from '../../store/modules/audits'
+
 export default {
     data: () => ({
     }),
@@ -16,7 +17,9 @@ export default {
     methods: {
     },
     created() {
-      this.$store.registerModule('audits', audits)
+      if(this.$store.state.audits === undefined){
+        this.$store.registerModule('audits', audits)
+      }
     },
     beforeDestroy(){
       this.$store.unregisterModule("audits")

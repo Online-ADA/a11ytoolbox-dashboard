@@ -18,9 +18,9 @@ export default {
 			},
 		},
 		actions: {
-			getProject({state}, args){
+			getProject({state, rootState}, args){
 				state.loading = true
-				Request.get(`${state.API}/${args.account_id}/projects/${args.project_id}`, {
+				Request.get(`${state.API}/${rootState.auth.account}/projects/${args.project_id}`, {
 					onSuccess: {
 						title:'Success',
 						text:'Project retrieved',
@@ -45,11 +45,11 @@ export default {
 					}
 				})
 			},
-			getProjects({state, rootGetters}, args){
+			getProjects({state, rootGetters, rootState}){
 				state.loading = true
-				let url = `${state.API}/${args.account_id}/projects`
+				let url = `${state.API}/${rootState.auth.account}/projects`
 				if( rootGetters["auth/isManager"] ){
-					url = `${state.adminAPI}/${args.account_id}/projects`
+					url = `${state.adminAPI}/${rootState.auth.account}/projects`
 				}
 				Request.get(url, {
 					onSuccess: {
@@ -75,9 +75,10 @@ export default {
 					}
 				})
 			},
-			getAudit({state, dispatch, rootGetters}, args){
+			getAudit({state, dispatch, rootState, rootGetters}, args = {withIssues: false}){
 				state.loading = true
-				Request.getPromise(`${state.API}/${args.account_id}/audits/${args.id}`)
+				
+				Request.getPromise(`${state.API}/${rootState.auth.account}/audits/${args.id}`, {params: {withIssues: args.withIssues}})
 				.then( re=>{
 					state.audit = re.data.audit[0]
 					if( args.vm ){
@@ -98,95 +99,74 @@ export default {
 					state.loading = false
 				})
 			},
-			createAudit({state, rootState, rootGetters}, args){
+			createAudit({state, rootState}, args){
 				state.loading = true;
-				Request.post(`${state.API}/${rootState.auth.account}/audits`, {
-					params: {
-						audit: args.audit
-					},
-					onSuccess: {
-						title:'Success',
-						text:'Audits Created. Redirecting to Audits List...',
-						callback: function(){
-							state.loading = false
-							setTimeout(()=>{
-								if( rootGetters["auth/isManager"] ){
-									args.router.push({path: "/manage/audits"})
-									return
-								}
-								args.router.push({path: "/audits/list"})
-							}, 2000)
-						}
-					},
-					onError: {
-						title:'Error',
-						text:'Creating this audit caused an error',
-					},
-					onWarn: {
-						title: "Warning",
-						text: "There was a problem creating the audit" //push back to homepage with incorrect permissions/role
-					}
+				Request.postPromise(`${state.API}/${rootState.auth.account}/audits`, { params: { audit: args.audit } })
+				.then( re=>{
+					Vue.notify({
+						title:"Success",
+						text: "Audit was create successfully. Redirecting to the audit...",
+						type: "success"
+					})
+					setTimeout(()=>{
+						// if( rootGetters["auth/isManager"] ){
+						// 	args.router.push({path: "/manage/audits"})
+						// 	return
+						// }
+						args.router.push({path: `/audits/${re.data.details}`})
+					}, 2000)
+				})
+				.catch(re=>{
+					console.log(re)
+					Vue.notify({
+						title: "Error",
+						text: "There was an error when trying to create the audit. Please see the dev console for more information",
+						type:"error"
+					})
+				})
+				.then( ()=>{
+					state.loading = false
 				})
 			},
 			getAudits({state, rootState}){
 				state.loading = true
-				let args = {
-					params: {
-						params: {
-							user_id: rootState.auth.user.id
-						}
-					},
-					onSuccess: {
+				Request.getPromise(`${state.API}/${rootState.auth.account}/audits`)
+				.then( re => {
+					state.all = re.data.details
+					Vue.notify({
 						title: "Success",
 						text: "Audits retrieved",
-						callback: function(response){
-							state.loading = false
-							state.all = response.data.details
-						}
-					},
-					onWarn:{
-						callback: function(){
-							state.loading = false
-						}
-					},
-					onError: {
+						type: "success"
+					})
+				})
+				.catch( re => {
+					console.log(re);
+					Vue.notify({
 						title: "Error",
-						text: "Failed getting audits",
-						callback: function(){
-							state.loading = false
-						}
-					}
-				};
-				Request.get(`${state.API}/${rootState.auth.account}/audits`, args)
+						text: re.error,
+						type: "error"
+					})
+				})
+				.then( ()=>{
+					state.loading = false
+				})
 			},
 			getAuditors({state, rootState}, args){
 				state.loading = true
-				let resquestArgs = {
-					onSuccess: {
-						title: "Success",
-						text: "Auditors retrieved",
-						callback: function(response){
-							state.loading = false
-							if( args.vm ){
-								state.auditors = response.data.details
-								args.vm.unassigned = response.data.details.filter( o=>!args.vm.assigned.includes(o.id)).map( o=>o.id )
-							}
-						}
-					},
-					onWarn:{
-						callback: function(){
-							state.loading = false
-						}
-					},
-					onError: {
-						title: "Error",
-						text: "Failed getting auditorss",
-						callback: function(){
-							state.loading = false
-						}
+				
+				Request.getPromise(`${state.adminAPI}/${rootState.auth.account}/audits/auditors`)
+				.then( re=>{
+					if( args.vm ){
+						state.auditors = re.data.details
+						args.vm.unassigned = re.data.details.filter( o=>!args.vm.assigned.includes(o.id)).map( o=>o.id )
 					}
-				};
-				Request.get(`${state.adminAPI}/${rootState.auth.account}/audits/auditors`, resquestArgs)
+				})
+				.catch( re=>{
+					console.log(re)
+				})
+				.then( ()=>{
+					state.loading = false
+				})
 			},
 			updateAudit({state, rootState, rootGetters}, args){
 				state.loading = true

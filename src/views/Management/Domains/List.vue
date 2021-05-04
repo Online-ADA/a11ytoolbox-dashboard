@@ -1,5 +1,5 @@
 <template>
-    <div class="text-center mt-32 w-2/3 mx-auto">
+    <div class="text-center mt-32 w-2/3 container mx-auto">
         <Loader v-if="loading"></Loader>
 
         <template v-if="!domains.length">

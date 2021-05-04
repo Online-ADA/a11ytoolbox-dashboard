@@ -4,6 +4,7 @@ export default {
 		namespaced:true,
 		state: {
 			all: [],
+			audits: [],
 			projects: [],
 			domain: false,
 			adminAPI: "https://apitoolbox.ngrok.io/api/admin",
@@ -30,37 +31,27 @@ export default {
 					state.loading = false
 				})
 			},
-			createDomain({state, rootState, rootGetters}, args){
+			createDomain({state, rootState}, args){
 				state.loading = true;
-				Request.post(`${state.API}/${rootState.auth.account}/domains`, {
+				Request.postPromise(`${state.API}/${rootState.auth.account}/domains`, {
 					params: {
 						domain: args.domain
-					},
-					onSuccess: {
-						title:'Success',
-						text:'Domain Created. Redirecting to Domains List...',
-						callback: function(){
-							state.loading = false
-							setTimeout(()=>{
-								if( rootGetters["auth/isManager"] ){
-									args.router.push({path: "/manage/domains"})
-									return
-								}
-								args.router.push({path: "/domains/list"})
-							}, 2000)
-						}
-					},
-					onError: {
-						title:'Error',
-						text:'Creating this domain caused an error',
-					},
-					onWarn: {
-						title: "Warning",
-						text: "There was a problem creating the domain"
 					}
 				})
+				.then( re=>{
+					if( args.vm ){
+						args.vm.domain = re.data.details
+						args.vm.complete = true
+					}
+				})
+				.catch( re=>{
+					console.log(re);
+				})
+				.then( ()=>{
+					state.loading = false;
+				})
 			},
-			getProjects({state, dispatch, rootState, rootGetters}){
+			getProjects({state, dispatch, rootState, rootGetters}, args = {}){
 				state.loading = true
 				let url = `${state.API}/${rootState.auth.account}/projects`
 				
@@ -71,7 +62,13 @@ export default {
 				Request.getPromise(url)
 				.then( re => {
 					state.projects = re.data.details
-					dispatch("getProjectDomains", {project_id: state.projects[0].id})
+					if( args.project_id ){
+						dispatch("getProjectDomains", {project_id: args.project_id})
+					}
+					else{
+						dispatch("getProjectDomains", {project_id: state.projects[0].id})
+					}
+					
 				})
 				.catch( error => {
 					state.loading = false
@@ -125,6 +122,29 @@ export default {
 					}
 				};
 				Request.post(`${state.API}/${rootState.auth.account}/projects/${args.id}`, requestArgs)
+			},
+			updateStructuredSampleItem({state, rootState}, args){
+				state.loading = true
+				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})
+				.then( re=>{
+					console.log(re);
+					Vue.notify({
+						title: "Success",
+						text: "Sample item updated",
+						type: "success"
+					})
+				})
+				.catch( re=>{
+					console.log(re)
+					Vue.notify({
+						title: "Error",
+						text: "Problem updating the sample item. Please see the console for more information",
+						type: "error"
+					})
+				})
+				.then( ()=>{
+					state.loading = false
+				})
 			},
 			getDomain({state, rootState}, args){
 				state.loading = true
@@ -181,6 +201,28 @@ export default {
 					args.vm.page.description = ""
 				})
 			},
+			removeItemFromSample({state, rootState}, args){
+				state.loading = true
+				Request.destroyPromise(`${state.API}/${rootState.auth.account}/domains/${args.domain_id}/item/${args.item_id}`)
+				.then( (response) => {
+					Vue.notify({
+						title: "Success",
+						text: "Item deleted",
+						type: "success"
+					})
+					state.domain = response.data.details
+				})
+				.catch( response => {
+					Vue.notify({
+						title: "Error",
+						text: response.error,
+						type: "error"
+					})
+				})
+				.then( ()=>{
+					state.loading = false
+				})
+			},
 			removePageFromSitemap({state, rootState}, args){
 				state.loading = true
 				Request.destroyPromise(`${state.API}/${rootState.auth.account}/domains/${args.domain_id}/page/${args.page_id}`)
@@ -198,6 +240,36 @@ export default {
 						text: response.error,
 						type: "error"
 					})
+				})
+				.then( ()=>{
+					state.loading = false
+				})
+			},
+			saveSample({state, rootState}, args){
+				state.loading = true
+				let requestArgs = {}
+				if( args.file ){
+					let form_data = new FormData()
+					form_data.append('sample', args.file)
+					form_data.append("domain", args.domain)
+					requestArgs.headers = {
+						'Content-Type': 'multipart/form-data'
+					}
+					requestArgs.params = form_data
+				}
+
+				if( args.sample ){
+					requestArgs.params = {
+						"sample": args.sample
+					}
+				}
+
+				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.id}/sample`, requestArgs)
+				.then( re=>{
+					state.domain = re.data.details
+				})
+				.catch(re=>{
+					console.log(re);
 				})
 				.then( ()=>{
 					state.loading = false
@@ -257,7 +329,74 @@ export default {
 				.then( () => {
 					state.loading = false
 				})
-			}
+			},
+			emptySample({state, rootState}, args){
+				state.loading = true
+				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
+				.then( response => {
+					Vue.notify({
+						title: "Success",
+						text: "Structured sample deleted",
+						type: "success"
+					})
+					state.domain = response.data.details
+				})
+				.catch( response => {
+					Vue.notify({
+						title: "Error",
+						text: response.error,
+						type: "error"
+					})
+				})
+				.then( () => {
+					state.loading = false
+				})
+			},
+			saveDomain({state, rootState}, args){
+				state.loading = true
+				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.id}`, {params: {domain: args.domain}})
+				.then( re=>{
+					state.domain = re.data.details
+					Vue.notify({
+						title: "Success",
+						text: "Domain updated",
+						type: "success"
+					})
+				})
+				.catch( re=>{
+					console.log(re)
+					Vue.notify({
+						title: "Error",
+						text: re,
+						type: "error"
+					})
+				})
+				.then( ()=>{
+					state.loading = false
+				})
+			},
+			getAudits({state, rootState}, args){
+				state.loading = true
+				Request.getPromise(`${state.API}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
+				.then( response => {
+					Vue.notify({
+						title: "Success",
+						text: "Structured sample deleted",
+						type: "success"
+					})
+					state.domain = response.data.details
+				})
+				.catch( response => {
+					Vue.notify({
+						title: "Error",
+						text: response.error,
+						type: "error"
+					})
+				})
+				.then( () => {
+					state.loading = false
+				})
+			},
 		},
 		getters: { 
 			

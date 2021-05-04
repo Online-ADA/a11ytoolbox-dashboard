@@ -17,11 +17,11 @@
         </div> -->
         <div class="border border-pallette-grey h-auto p-4 rounded w-1/2 text-center mx-1.5">
           <h3>Audits</h3>
-          <!-- <ul>
-            <li v-for="audit in [{title: 'Audit 1', id: 1}, {title: 'Audit 2', id: 2}]" :key="audit.id">
-              <A type='router-link' :to="{path: `/audits/:${id}`}">{{audit.title}}</A>
+          <ul>
+            <li v-for="audit in audits" :key="audit.id">
+              <A type='router-link' :to="{path: `/audits/${audit.id}`}">{{audit.title}}</A>
             </li>
-          </ul> -->
+          </ul>
         </div>
       </div>
 
@@ -43,7 +43,10 @@ export default {
         return this.$store.state.projects.project
       },
       audits(){
-        return this.$store.state.projects.project.audits
+        if( this.$store.state.projects ){
+          return this.$store.state.projects.project.audits
+        }
+        return []
       },
       // clients(){
       //   return this.$store.state.projects.project.clients
@@ -61,7 +64,7 @@ export default {
     methods: {
     },
     created() {
-      this.$store.dispatch("projects/getProject", {id: this.$route.params.id, account_id: this.$store.state.auth.account})
+      this.$store.dispatch("projects/getProject", {id: this.$route.params.id})
     },
     mounted() {
     },

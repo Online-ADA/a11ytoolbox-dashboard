@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center mt-32">
+  <div class="flex flex-col items-center justify-center mt-32 container mx-auto">
     <div v-if="message" class="text-red">{{message}}</div>
     <h1>Welcome to the OnlineADA Toolbox</h1>
     <div class="flex flex-col items-center" v-if="$store.state.auth.user">

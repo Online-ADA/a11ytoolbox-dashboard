@@ -1,5 +1,5 @@
 <template>
-	<div class="w-2/3 mx-auto">
+	<div class="w-2/3 container mx-auto">
 		<Loader v-if="loading"></Loader>
 		<h1>This is the User Edit page</h1>
 		<template v-if="user">

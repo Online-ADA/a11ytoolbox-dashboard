@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import router from 'vue-router'
 
 export default {
 		namespaced:true,
@@ -41,12 +42,12 @@ export default {
 					}
 				})
 			},
-			getProject({state, dispatch, rootGetters}, args){
+			getProject({state, dispatch, rootGetters, rootState}, args){
 				state.loading = true
 				
-				Request.getPromise(`${state.API}/${args.account_id}/projects/${args.id}`)
+				Request.getPromise(`${state.API}/${rootState.auth.account}/projects/${args.id}`)
 				.then( re => {
-					state.project = re.data.project[0]
+					state.project = re.data.details[0]
 					if( args.vm ){
 						args.vm.project = state.project
 						args.vm.assigned = state.project.assignees.map( u => u.id )
@@ -64,33 +65,59 @@ export default {
 			},
 			createProject({state, rootState, rootGetters}, args){
 				state.loading = true;
-				Request.post(`${state.API}/${rootState.auth.account}/projects`, {
+				Request.postPromise(`${state.API}/${rootState.auth.account}/projects`, {
 					params: {
 						project: args.project
-					},
-					onSuccess: {
-						title:'Success',
-						text:'Project Created. Redirecting to Projects List...',
-						callback: function(){
-							state.loading = false
-							setTimeout(()=>{
-								if( rootGetters["auth/isManager"] ){
-									args.router.push({path: "/manage/projects"})
-									return
-								}
-								args.router.push({path: "/projects/list"})
-							}, 2000)
-						}
-					},
-					onError: {
-						title:'Error',
-						text:'Creating this project caused an error',
-					},
-					onWarn: {
-						title: "Warning",
-						text: "There was a problem creating the project"
 					}
 				})
+				.then( re=>{
+					args.vm.project = re.data.details
+					args.vm.complete = true
+
+					if( args.redirect ){
+						setTimeout(()=>{
+							if( rootGetters["auth/isManager"] ){
+								router.push({path: "/manage/projects"})
+								return
+							}
+							router.push({path: "/projects/list"})
+						}, 2000)
+					}
+				})
+				.catch( re=>{
+					console.log(re);
+				})
+				.then( ()=>{
+					state.loading = false;
+				})
+
+				// Request.post(`${state.API}/${rootState.auth.account}/projects`, {
+				// 	params: {
+				// 		project: args.project
+				// 	},
+				// 	onSuccess: {
+				// 		title:'Success',
+				// 		text:'Project Created. Redirecting to Projects List...',
+				// 		callback: function(){
+				// 			state.loading = false
+				// 			setTimeout(()=>{
+				// 				if( rootGetters["auth/isManager"] ){
+				// 					args.router.push({path: "/manage/projects"})
+				// 					return
+				// 				}
+				// 				args.router.push({path: "/projects/list"})
+				// 			}, 2000)
+				// 		}
+				// 	},
+				// 	onError: {
+				// 		title:'Error',
+				// 		text:'Creating this project caused an error',
+				// 	},
+				// 	onWarn: {
+				// 		title: "Warning",
+				// 		text: "There was a problem creating the project"
+				// 	}
+				// })
 			},
 			getProjects({state, rootState}){
 				state.loading = true

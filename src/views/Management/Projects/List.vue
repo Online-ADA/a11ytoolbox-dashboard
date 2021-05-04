@@ -1,5 +1,5 @@
 <template>
-  <div class="users">
+  <div class="container mx-auto">
     <Loader v-if="loading"></Loader>
     <h1>This is the Projects management page</h1>
     <div v-if="projects.length">

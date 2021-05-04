@@ -1,20 +1,17 @@
 <template>
-	<div class="text-center mt-32 container mx-auto">
+	<div class="text-center mt-32">
 		<Loader v-if="loading"></Loader>
-		<h1>Edit Audit {{audit.title}}</h1>
-		<Form class="flex flex-wrap" @submit.native.prevent>
-			<div class="w-full">
-				<Label for="project">Project</Label>
-				<Select name="project" id="project" class="mx-auto" :options="projects" valueProp="id" v-model="audit.project_id"></Select>
-			</div>
+		
+		<h1>Create new Audit</h1>
+		<div class="flex flex-wrap w-2/3 mx-auto">
 			<div class="w-1/4"></div>
 			<div class="w-1/4">
 				<Label for="start_date">Start Date</Label>
-				<Date name="start_date" id="start_date" class="mx-auto" @input="changeStartDate" v-model="audit.start_date"></Date>
+				<Date name="start_date" id="start_date" class="mx-auto" @input="changeStartDate"></Date>
 			</div>
 			<div class="w-1/4">
 				<Label for="end_date">End Date</Label>
-				<Date name="end_date" id="end_date" class="mx-auto" @input="changeEndDate" v-model="audit.end_date"></Date>
+				<Date name="end_date" id="end_date" class="mx-auto" @input="changeEndDate"></Date>
 			</div>
 			<div class="w-1/4"></div>
 			<div class="w-full flex justify-center">
@@ -59,7 +56,7 @@
 							<Select :options="software_used_src"  class="mr-1 w-11/12" id="software" name="software" v-model="audit.software_used[i].name"></Select>
 							<Button class="ml-1" :hover="true" @click.native.prevent="removeSoftwareUsed(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
-						
+
 						<Button :hover="true" @click.native.prevent="addNewSoftwareUsed">Add New</Button>
 					</Card>
 				</Label>
@@ -94,7 +91,7 @@
 				
 			</div>
 			
-			<template v-if="$store.getters['auth/isManager']">
+			<template v-if="isManager">
 				<div class="flex my-3 w-full">
 					<Card class="w-1/2">
 					<h3>Auditors</h3>
@@ -116,21 +113,55 @@
 				
 			</template>
 
-			<Button @click.native.prevent="saveAudit">Save</Button>
-		</Form>
+			<div class="flex flex-wrap w-full justify-center">
+				<h2 class="my-2">Working Sample</h2>
+				<span class="text-base my-2">The working sample takes the structured list created with the domain and calculates 10% of the number of items in it. It will then grab that number of pages at random from the sitemap (if it was provided with the domain) and combine them to form the working sample.</span>
+				<Button class="mt-1 mb-3" hover="true" @click.native.prevent="generateWorkingSample">Generate Sample</Button>
+
+				<template v-if="audit.working_sample.length">
+					<Card class="w-full p-4 mb-34 mx-2 flex-wrap items-center flex-col">
+						<!-- <Button class="" color="orange" @click.native.prevent="structuredListModalOpen =true">Add</Button> -->
+						
+						<h4 class="my-3">Items</h4>
+						<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
+							<table class="w-full border border-black table-fixed">
+								<thead>
+									<tr>
+										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-content">Content</span></th>
+										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-screen">Screen</span></th>
+										<th class="text-center border border-black" width="10%" scope="col">Delete</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="(sample, index) in audit.working_sample" :key="'sample-'+index">
+										<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.content" aria-labelledby="sample-content"></TextInput></td>
+										<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.screen" aria-labelledby="sample-screen"></TextInput></td>
+										<td class="p-1.5 overflow-y-auto border border-black"><Button @click.native.prevent="deleteItem(index)" color="delete">X</Button></td>
+									</tr>
+								</tbody>
+							</table>
+						</Card>
+						<Button @click.native.prevent="emptySample" color="delete">Remove all</Button>
+					</Card>
+
+					<h2 class="my-3">Save and go to audit</h2>
+					<Button hover="true" @click.native.prevent="createAudit">Create</Button>
+				</template>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
-import Loader from '../../components/Loader'
-import Card from '../../components/Card'
-import TextInput from '../../components/TextInput'
-import Label from '../../components/Label'
-import Select from '../../components/Select'
-import Form from '../../components/Form'
-import Button from '../../components/Button'
-import Date from '../../components/Date'
-import Textarea from '../../components/TextArea'
+import Loader from '../../../components/Loader'
+import TextInput from '../../../components/TextInput'
+import Label from '../../../components/Label'
+import Select from '../../../components/Select'
+import Button from '../../../components/Button'
+import Textarea from '../../../components/TextArea'
+import Card from '../../../components/Card'
+import Date from '../../../components/Date'
+
 export default {
 	data: () => ({
 		statusSrc: [
@@ -165,27 +196,50 @@ export default {
 			status: "",
 			issue_overview_id: "",
 			project_id: "",
-			sitemap: [],
-			audit_sample: [],
+			working_sample: [],
 			conformance_target: "WCAG 2.1 Level AA"
-		}
+		},
+        complete: false
 	}),
-	computed: {
-		loading(){
-			if( this.$store.state.audits ){
-				return this.$store.state.audits.loading
+    watch:{
+        complete(newVal){
+			if( newVal ){
+				this.$emit("complete", {sheetIndex: this.$parent.index})
 			}
-			return false
 		},
-		projects(){
-			return this.$store.state.audits.projects || []
+		isManager(newVal){
+			if( newVal ){
+				this.$store.dispatch("audits/getAuditors", {vm: this})
+			}
+		}
+    },
+	computed: {
+        loading(){
+            if( this.$store.state.audits ){
+                return this.$store.state.audits.loading
+            }
+            return false
+        },
+        userID(){
+            return this.$store.state.auth.user.id
+        },
+        auditors(){
+            return this.$store.state.audits.auditors || []
+        },
+        isManager(){
+            return this.$store.getters["auth/isManager"]
+        },
+		sheetData(){
+			return this.$parent.$parent.sheetData
 		},
-		auditors(){
-			return this.$store.state.audits.auditors || []
+		structuredSample(){
+			return this.sheetData.sheet2.sample.structured
+		},
+		sitemap(){
+			return this.sheetData.sheet2.sample.sitemap
 		},
 	},
 	props: [],
-	watch: {},
 	methods: {
 		displayUser(id){
 			let user = this.auditors.find( u => u.user_id == id )
@@ -194,13 +248,13 @@ export default {
 		assign(id){
 			let index = this.unassigned.findIndex( v => v == id )
 			let user = this.unassigned.splice(index, 1)[0]
-
+			
 			this.assigned.push(user)
 		},
 		unassign(id){
 			let index = this.assigned.findIndex( v => v == id)
 			let user = this.assigned.splice(index, 1)[0]
-
+			
 			this.unassigned.push(user)
 		},
 		changeStartDate(val){
@@ -212,46 +266,85 @@ export default {
 		addNewSoftwareUsed(){
 			this.audit.software_used.push({name:""})
 		},
-		removeSoftwareUsed(index){
-			this.audit.software_used.splice(index, 1)
-		},
 		addNewTechReq(){
 			this.audit.tech_requirements.push({name:""})
-		},
-		removeTechReq(index){
-			this.audit.tech_requirements.splice(index, 1)
 		},
 		addNewAssistiveTech(){
 			this.audit.assistive_tech.push({name:""})
 		},
-		removeAssistiveTech(index){
-			this.audit.assistive_tech.splice(index, 1)
+		generateWorkingSample(){
+			//Calculate what 10% of the structured list is
+			let tenPercent = parseInt( this.structuredSample.length * .1 )
+			if( tenPercent < 10 ){
+				tenPercent = 10
+			}
+
+			if( !this.sitemap.length ){
+				this.audit.working_sample = this.structuredSample
+				return
+			}
+
+			if( this.sitemap.length <= tenPercent ){
+				this.audit.working_sample = [...this.structuredSample, ...this.sitemap]
+				return
+			}
+			this.$store.state.audits.loading = true
+			
+			let sitemap_sample = []
+			let structured_map = []
+
+			for( let i in this.structuredSample ){
+				let found = structured_map.some( el => el.content == this.structuredSample[i].content)
+				if( !found ){
+					structured_map.push({
+						content: this.structuredSample[i].content,
+						screen: this.structuredSample[i].screen
+					})
+				}
+				
+			}
+
+			while ( sitemap_sample.length <= tenPercent ){
+				let index = Math.floor( Math.random() * (this.sitemap.length - 1)) + 1
+
+				let found = sitemap_sample.some( el => el.content == this.sitemap[index].url)
+				if( !found ){
+					sitemap_sample.push( {
+						content: this.sitemap[index].url,
+						screen: ""
+					})
+				}
+			}
+
+			this.audit.working_sample = [...structured_map, ...sitemap_sample]
+			this.$store.state.audits.loading = false
 		},
-		saveAudit(){
+		deleteItem(index){
+			this.audit.working_sample.splice(index, 1)
+		},
+		createAudit(){
 			this.audit.tech_requirements = this.audit.tech_requirements.map(o=>o.name)
 			this.audit.assistive_tech = this.audit.assistive_tech.map(o=>o.name)
 			this.audit.software_used = this.audit.software_used.map(o=>o.name)
 			this.audit.assigned = this.assigned
+			this.audit.project_id = this.sheetData.sheet0.project
 
-			this.$store.dispatch("audits/updateAudit", {audit: this.audit, router: this.$router, id: this.$route.params.id})
-		}
+			this.$store.dispatch("audits/createAudit", {audit: this.audit, router: this.$router})
+		},
 	},
 	created() {
-		this.$store.dispatch("audits/getProjects", {router: this.$router, account_id: this.$store.state.auth.account, vm: this})
+		
 	},
-	mounted() {
-		this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, account_id: this.$store.state.auth.account, vm: this})
-	},
+	mounted() {},
 	components: {
 		Loader,
 		TextInput,
 		Textarea,
 		Label,
-		Form,
 		Select,
 		Button,
 		Card,
-		Date
+		Date,
 	},
 }
 </script>

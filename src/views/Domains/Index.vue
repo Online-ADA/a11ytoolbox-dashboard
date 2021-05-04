@@ -16,7 +16,9 @@ export default {
     methods: {
     },
     created() {
-      this.$store.registerModule('domains', domains)
+      if( !this.$store.state.domains){
+        this.$store.registerModule('domains', domains)
+      }
     },
     beforeDestroy(){
       this.$store.unregisterModule("domains")

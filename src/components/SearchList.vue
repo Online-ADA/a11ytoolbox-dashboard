@@ -5,13 +5,13 @@
                 <span class="pr-2">Search {{display}}:</span>
                 <TextInput v-model="search" :placeholder="placeholder"></TextInput>
             </label>
-            <div class="flex">
+            <div v-if="displayProps.length && displayProps.length > 1" class="flex">
                 <Button class="mx-1" :style="[prop == display ? activeStyle : '']" :class="[prop == display ? activeClass : '']" @click.native.prevent="changeDisplay(prop)" v-for="(prop, index) in displayProps" :key="index" :hover="true">{{prop}}</Button>
             </div>
         </div>
         <div style="max-height:500px" class="flex w-full flex-wrap justify-center overflow-auto">
             <component :is="tag"
-            @click="$emit( 'click', item )"
+            @click="sendEmit(item)"
             :href="href(item)"
             :target="target"
             style="transition:transform .15s ease-in-out, z-index .15s ease-in-out" 
@@ -44,6 +44,7 @@ import Button from '../components/Button'
 import TextInput from '../components/TextInput'
 export default {
     props: {
+        dataSendBack: {},
         items:{
             type: Array,
             default: function(){
@@ -88,6 +89,9 @@ export default {
         }
     },
     methods: {
+        sendEmit(item){
+            this.$emit( 'click', {item: item, extra: this.dataSendBack} )
+        },
         href(item){
             return this.linkOptions.isLink ? item[this.linkOptions.urlProp] : false
         },
@@ -95,7 +99,7 @@ export default {
             this.display = prop
         },
         getDefaultDisplayProp(){
-            if( !this.displayProps ){
+            if( !this.displayProps.length ){
                 for( let i in this.items[0] ){
                     if( i == "title" ){
                         this.display = i
@@ -105,7 +109,7 @@ export default {
                 }
 
                 if( this.display == '' ){
-                    this.display = this.items[0][0]
+                    this.display = Object.keys(this.items[0])[0]
                 }
             }
             else{
@@ -135,7 +139,8 @@ export default {
         filteredList() {
             if( this.display ){
                 return this.items.filter( item => {
-                    return item[this.display].toLowerCase().includes( this.search.toLowerCase() )
+                    let temp = new String(item[this.display]) //Necessary in case this.display is "id"
+                    return temp.toLowerCase().includes( this.search.toLowerCase() )
                 })
             }
             return []
@@ -144,13 +149,10 @@ export default {
             switch(this.display){
                 case "title":
                     return 'Non-text...'
-                    break
                 case "description":
                     return 'Captions...'
-                    break
                 case "number":
                     return "4.1..."
-                    break
             }
 
             return '';

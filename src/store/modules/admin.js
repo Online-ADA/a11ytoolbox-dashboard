@@ -84,6 +84,56 @@ export default {
 				state.loading.articles = false
 			})
 		},
+		createArticleObject({state, rootState}, args){
+			state.loading.articles = true
+			Request.postPromise(`${state.adminAPI}/${rootState.auth.account}/${args.object.identifier}s`, {
+				params: args.object
+			})
+			.then( re=> {
+				state[`${args.object.identifier}s`] = re.data.details
+				Vue.notify({
+					title: "Success",
+					text: `${args.object.identifier} saved`,
+					type: "success"
+				})
+			})
+			.catch( re=> {
+				console.log( re );
+				Vue.notify({
+					title: "Error",
+					text: re,
+					type: "error"
+				})
+			})
+			.then( () => {
+				state.loading.articles = false
+			})
+		},
+		updateArticleObject({state, rootState}, args){ 
+			state.loading.articles = true
+			Request.postPromise(`${state.adminAPI}/${rootState.auth.account}/${args.object.identifier}s/${args.object.id}`, {
+				params: args.object
+			})
+			.then( re=> {
+				state[`${args.object.identifier}s`] = re.data.details
+				Vue.notify({
+					title: "Success",
+					text: `${args.object.identifier} updated`,
+					type: "success"
+				})
+			})
+			.catch( re=> {
+				console.log( re );
+				Vue.notify({
+					title: "Error",
+					text: re,
+					type: "error"
+				})
+			})
+			.then( () => {
+				state.loading.articles = false
+			})
+		},
 		deleteArticle({state, rootState}, args){
 			state.loading.articles = false
 			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/articles/${args.id}`)

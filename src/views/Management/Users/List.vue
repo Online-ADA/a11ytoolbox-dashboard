@@ -1,5 +1,5 @@
 <template>
-  <div class="users">
+  <div class="container mx-auto">
     <h1>This is the Users management page</h1>
     <h2>Users on this account:</h2>
     <ul class="list-group">

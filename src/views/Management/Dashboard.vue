@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center mt-32">
+  <div class="text-center mt-32 container mx-auto">
     <h5>The logged in user is {{user.first_name}} {{user.last_name}}</h5>
     <h6>Your role is: </h6>
     

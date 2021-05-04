@@ -1,5 +1,4 @@
 import Vue from 'vue'
-
 class Request {
     /* Args to pass:
         - params ~ Object: additional data to be sent with the request
@@ -55,9 +54,9 @@ class Request {
     }
 
     async getPromise(url, args = {}){
-        if( args.async === false ){
+        if( args.async && args.async === false ){
             return await new Promise( (resolve, reject)=> {
-                window.App.$http.get(url).then(response =>{
+                Vue.prototype.$http.get(url, args.params || {}).then(response =>{
                     this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
@@ -68,7 +67,7 @@ class Request {
         }
         else{
             return new Promise( (resolve, reject)=> {
-                window.App.$http.get(url).then(response =>{
+                Vue.prototype.$http.get(url, {params: args.params || {}}).then(response =>{
                     this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
@@ -81,7 +80,7 @@ class Request {
     async postPromise(url, args = {params: {}}){
         if( args.async === false ){
             return await new Promise( (resolve, reject)=> {
-                window.App.$http.post(url, args.params || {}).then(response =>{
+                Vue.prototype.$http.post(url, args.params || {}).then(response =>{
                     this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
@@ -92,7 +91,7 @@ class Request {
         }
         else{
             return new Promise( (resolve, reject)=> {
-                window.App.$http.post(url, args.params || {}).then(response =>{
+                Vue.prototype.$http.post(url, args.params || {}).then(response =>{
                     this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
@@ -105,7 +104,7 @@ class Request {
     async destroyPromise(url, args = {params: {}}){
         if( args.async === false ){
             return await new Promise( (resolve, reject)=> {
-                window.App.$http.delete(url, args.params || {}).then(response =>{
+                Vue.prototype.$http.delete(url, args.params || {}).then(response =>{
                     this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
@@ -116,7 +115,7 @@ class Request {
         }
         else{
             return new Promise( (resolve, reject)=> {
-                window.App.$http.delete(url, args.params || {}).then(response =>{
+                Vue.prototype.$http.delete(url, args.params || {}).then(response =>{
                     this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
@@ -130,7 +129,7 @@ class Request {
     get(url, args = {onSuccess: true, onError: true, onInfo: true, onWarn: true}){
         let params = args.params || {};
         
-        window.App.$http.get(url, params)
+        Vue.prototype.$http.get(url, params)
         .then(response => {
             this.checkForRedirect(response)
             if( response.data.success && args.onSuccess ){
@@ -166,7 +165,7 @@ class Request {
         requestArgs.config = {}
         requestArgs.config.headers = {...Vue.prototype.$http.defaults.headers.common, ...args.headers || {}}
         
-        window.App.$http.post(url, requestArgs.params, requestArgs.config)
+        Vue.prototype.$http.post(url, requestArgs.params, requestArgs.config)
         .then(response => {
             this.checkForRedirect(response)
             if( response.data.success && args.onSuccess ){
@@ -213,17 +212,17 @@ class Request {
 
     checkForRedirect(response){
         if( response.response != undefined && response.response.data.message == "Unauthenticated." ){
-            if( window.App.$router.currentRoute.path != "/" ){
-                window.App.$store.state.auth.authMessage = "You've been logged on. Please log in again"
-                window.App.$router.push({path: "/"})
+            if( Vue.$router.currentRoute.path != "/" ){
+                Vue.$store.state.auth.authMessage = "You've been logged on. Please log in again"
+                Vue.$router.push({path: "/"})
             }
             
             return
         }
         if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
-            if( window.App.$router.currentRoute.path != "/" ){
-                window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
-                window.App.$router.push({path: "/"})
+            if( Vue.$router.currentRoute.path != "/" ){
+                Vue.$store.state.auth.authMessage = Vue.$store.state.auth.authMessages[response.data.details]
+                Vue.$router.push({path: "/"})
             }
             
             return

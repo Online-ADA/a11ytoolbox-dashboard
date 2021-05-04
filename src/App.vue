@@ -1,7 +1,7 @@
 <template>
-  <div id="app" class="container mx-auto">
+  <div id="app" class="p-3.5">
     <notifications/>
-    <div id="nav" class="flex place-content-center p-2 items-center">
+    <div id="nav" class="flex place-content-center p-2 items-center container mx-auto">
       <router-link class="hover:text-gray-500" to="/">Home</router-link>
       <span class="px-2">|</span>
       <template v-if="$store.getters['auth/isManager']">

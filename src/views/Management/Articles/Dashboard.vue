@@ -1,11 +1,12 @@
 <template>
-    <div class="flex flex-wrap">
+    <div class="flex flex-wrap container mx-auto">
+        <Loader v-if="loading"></Loader>
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2 class="mb-2">Articles</h2>
-                <button @click="displayArticlePopup(newArticle)" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <button @click="displayArticlePopup({item: newArticle, extra: 'article'})" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && articles.length">
-                    <SearchList @click="displayArticlePopup" hover-effect="grow" :displayProps="['title', 'number', 'description']" :items="articles"></SearchList>
+                    <SearchList :dataSendBack="'article'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['title', 'number', 'description']" :items="articles"></SearchList>
                 </template>
                 <div v-else>There are no articles</div>
             </Card>
@@ -13,8 +14,9 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2>Techniques</h2>
+                <button @click="displayArticlePopup({item: newTechnique, extra: 'technique'})" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && techniques.length">
-                    <SearchList :items="techniques"></SearchList>
+                    <SearchList :dataSendBack="'technique'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['title', 'number', 'description']" :items="techniques"></SearchList>
                 </template>
                 <div v-else>There are no techniques</div>
             </Card>
@@ -22,53 +24,131 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2>Recommendations</h2>
+                <button @click="displayArticlePopup({item: newRecommendation, extra: 'recommendation'})" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && recommendations.length">
-                    <SearchList :items="recommendations"></SearchList>
+                    <SearchList :dataSendBack="'recommendation'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['description']" :items="recommendations"></SearchList>
                 </template>
                 <div v-else>There are no recommendations</div>
             </Card>
         </div>
-        <Modal :open="articleModalOpen">
-            <div class="bg-white px-4 pt-5 pb-4 p-6 pb-4">
+        <Modal :open="articleModalOpen" :sizeButtons="articleEditItem.identifier == 'recommendation'">
+            <div class="bg-white px-4 pt-5 pb-4 p-6">
                 <div class="flex items-start">
                     <div class="mt-3 text-left w-full">
-                        <div class="w-full">
-                            <Label class="text-lg leading-6 w-full" for="article-title">Title<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
-                            <TextInput required class="w-full" id="article-title" v-model="articleEditItem.title"></TextInput>
-                        </div>
-                        <div class="flex w-full justify-evenly mt-2">
-                            <div class="w-1/3">
-                                <Label class="text-lg leading-6 w-full" for="article-level">Level<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
-                                <TextInput required class="w-full" id="article-level" v-model="articleEditItem.level"></TextInput>
+                        <template v-if="articleEditItem.identifier == 'article'">
+                            <div class="w-full">
+                                <Label class="text-lg leading-6 w-full" for="article-title">Title<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                <TextInput required class="w-full" id="article-title" v-model="articleEditItem.title"></TextInput>
                             </div>
-                            <div class="w-1/3">
-                                <Label class="text-lg leading-6 w-full" for="article-number">Number<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
-                                <TextInput required class="w-full" id="article-number" v-model="articleEditItem.number"></TextInput>
+                            <div class="flex w-full justify-evenly mt-2">
+                                <div class="w-1/3">
+                                    <Label class="text-lg leading-6 w-full" for="article-level">Level<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                    <TextInput required class="w-full" id="article-level" v-model="articleEditItem.level"></TextInput>
+                                </div>
+                                <div class="w-1/3">
+                                    <Label class="text-lg leading-6 w-full" for="article-number">Number<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                    <TextInput required class="w-full" id="article-number" v-model="articleEditItem.number"></TextInput>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mt-2 w-full">
-                            <Label class="text-lg leading-6 w-full" for="article-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small><small class="pl-2">(This can be html or plain text)</small></Label>
-                            <TextArea required rows="6" id="article-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
-                        </div>
-                        <div class="w-full mt-2">
-                            <Label class="text-lg leading-6 w-full" for="article-url">Internal URL</Label>
-                            <TextInput class="w-full" id="article-url" v-model="articleEditItem.url"></TextInput>
-                        </div>
-                        <div class="w-full mt-2">
-                            <Label class="text-lg leading-6 w-full" for="article-ext_url">External URL</Label>
-                            <TextInput class="w-full" id="article-ext_url" v-model="articleEditItem.ext_url"></TextInput>
-                        </div>
+                            <div class="mt-2 w-full">
+                                <Label class="text-lg leading-6 w-full" for="article-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small><small class="pl-2">(This can be html or plain text)</small></Label>
+                                <TextArea required rows="6" id="article-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
+                            </div>
+                            <div class="w-full mt-2">
+                                <Label class="text-lg leading-6 w-full" for="article-url">Internal URL</Label>
+                                <TextInput class="w-full" id="article-url" v-model="articleEditItem.url"></TextInput>
+                            </div>
+                            <div class="w-full mt-2">
+                                <Label class="text-lg leading-6 w-full" for="article-ext_url">External URL</Label>
+                                <TextInput class="w-full" id="article-ext_url" v-model="articleEditItem.ext_url"></TextInput>
+                            </div>
+                        </template>
+                        <template v-else-if="articleEditItem.identifier == 'technique'">
+                            <div class="w-full">
+                                <Label class="text-lg leading-6" for="tech-article">Select success criteria</Label>
+                                <button class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs" @click="changeTechArticleDisplay('title')" aria-label="Change the display of the articles within the select to show the articles' title" aria-controls="tech-article">Title</button>
+                                <button class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs" @click="changeTechArticleDisplay('number')" aria-label="Change the display of the articles within the select to show the articles' number" aria-controls="tech-article">Number</button>
+                                <!-- <Select @input="test" multiple name="tech-article" id="tech-article" class="mx-auto w-full" :options="articles" :displayProp="displayTechArticlesBy" valueProp="id" v-model="articleEditItem.article_ids"></Select> -->
+                                <select name="tech-article" id="tech-article" multiple v-model="articleEditItem.article_ids" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow w-full">
+                                    <option :value="option.id" v-for="(option, index) in articles" :key="index">{{option[displayTechArticlesBy]}}</option>
+                                </select>
+                            </div>
+
+                            <div class="w-full mt-2">
+                                <Label class="text-lg leading-6 w-full" for="tech-title">Title<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                <TextInput required class="w-full" id="tech-title" v-model="articleEditItem.title"></TextInput>
+                            </div>
+                            <div class="flex w-full justify-evenly mt-2">
+                                <div class="w-1/3">
+                                    <Label class="text-lg leading-6 w-full" for="tech-number">Number<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                    <TextInput required class="w-full" id="tech-number" v-model="articleEditItem.number"></TextInput>
+                                </div>
+                            </div>
+                            <div class="mt-2 w-full">
+                                <Label class="text-lg leading-6 w-full" for="tech-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small><small class="pl-2">(This can be html or plain text)</small></Label>
+                                <TextArea required rows="6" id="tech-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
+                            </div>
+                            <div class="w-full mt-2">
+                                <Label class="text-lg leading-6 w-full" for="tech-ext_url">External URL</Label>
+                                <TextInput class="w-full" id="tech-ext_url" v-model="articleEditItem.ext_url"></TextInput>
+                            </div>
+                        </template>
+                        <template v-else-if="articleEditItem.identifier == 'failure'">
+                            <div class="w-full">
+                                <Label class="text-lg leading-6" for="fail-article">Select success criteria</Label>
+                                <button class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs" @click="changeFailArticleDisplay('title')" aria-label="Change the display of the articles within the select to show the articles' title" aria-controls="fail-article">Title</button>
+                                <button class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs" @click="changeFailArticleDisplay('number')" aria-label="Change the display of the articles within the select to show the articles' number" aria-controls="fail-article">Number</button>
+                                <!-- <Select @input="test" multiple name="fail-article" id="fail-article" class="mx-auto w-full" :options="articles" :displayProp="displayTechArticlesBy" valueProp="id" v-model="articleEditItem.article_ids"></Select> -->
+                                <select name="fail-article" id="fail-article" multiple v-model="articleEditItem.article_ids" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow w-full">
+                                    <option :value="option.id" v-for="(option, index) in articles" :key="index">{{option[displayFailArticlesBy]}}</option>
+                                </select>
+                            </div>
+
+                            <div class="w-full mt-2">
+                                <Label class="text-lg leading-6 w-full" for="fail-title">Title<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                <TextInput required class="w-full" id="fail-title" v-model="articleEditItem.title"></TextInput>
+                            </div>
+                            <div class="flex w-full justify-evenly mt-2">
+                                <div class="w-1/3">
+                                    <Label class="text-lg leading-6 w-full" for="fail-number">Number<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                    <TextInput required class="w-full" id="fail-number" v-model="articleEditItem.number"></TextInput>
+                                </div>
+                            </div>
+                            <div class="mt-2 w-full">
+                                <Label class="text-lg leading-6 w-full" for="tech-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small><small class="pl-2">(This can be html or plain text)</small></Label>
+                                <TextArea required rows="6" id="tech-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
+                            </div>
+                            <div class="w-full mt-2">
+                                <Label class="text-lg leading-6 w-full" for="tech-ext_url">External URL</Label>
+                                <TextInput class="w-full" id="tech-ext_url" v-model="articleEditItem.ext_url"></TextInput>
+                            </div>
+                        </template>
+                        <template v-else-if="articleEditItem.identifier == 'recommendation'">
+                            <div class="w-full">
+                                <Label class="text-lg leading-6" for="recc-article">Select success criteria</Label>
+                                <button class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs" @click="changeReccArticleDisplay('title')" aria-label="Change the display of the articles within the select to show the articles' title" aria-controls="recc-article">Title</button>
+                                <button class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs" @click="changeReccArticleDisplay('number')" aria-label="Change the display of the articles within the select to show the articles' number" aria-controls="recc-article">Number</button>
+                                <!-- <Select multiple name="recc-article" id="recc-article" class="mx-auto w-full" :options="articles" :displayProp="displayReccArticlesBy" valueProp="id" v-model="articleEditItem.article_ids"></Select> -->
+                                <select name="recc-article" id="recc-article" multiple v-model="articleEditItem.article_ids" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow w-full">
+                                    <option :value="option.id" v-for="(option, index) in articles" :key="index">{{option[displayReccArticlesBy]}}</option>
+                                </select>
+                            </div>
+                            <div class="mt-2 w-full">
+                                <Label class="text-lg leading-6 w-full" for="recc-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small><small class="pl-2">(This can be html or plain text)</small></Label>
+                                <TextArea required rows="6" id="recc-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
             <div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
-                <button v-if="articleEditItem.id" @click="confirmDelete(articleEditItem, 'article')" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto text-sm">
+                <button v-if="articleEditItem.id" @click="confirmDelete" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto text-sm">
                 Delete
                 </button>
                 <button @click="articleModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
                 Cancel
                 </button>
-                <button @click="saveArticle" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+                <button @click="createOrUpdateItem" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
                 Save
                 </button>
             </div>
@@ -84,11 +164,11 @@
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                         <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                            Confirm Delete {{confirmDeleteItem.title}}
+                            Confirm Delete {{articleEditItem.title}}
                         </h3>
                         <div class="mt-2">
                             <p class="text-sm text-gray-500">
-                                Are you sure you want to delete this {{confirmDeleteType}}?
+                                Are you sure you want to delete this {{articleEditItem.identifier}}?
                             </p>
                         </div>
                     </div>
@@ -108,33 +188,32 @@
 
 <script>
 import Loader from '../../../components/Loader'
-import A from '../../../components/Link'
-import Button from '../../../components/Button'
 import Modal from '../../../components/Modal'
 import SearchList from '../../../components/SearchList'
 import Card from '../../../components/Card'
 import TextInput from '../../../components/TextInput'
 import TextArea from '../../../components/TextArea'
+// import Select from '../../../components/Select'
 
 export default {
     data: () => ({
         newArticle: {title: '', description: '', ext_url: '', url: '', level: '', number: ''},
-        newTechnique: {article_id: '', description: '', number: '', title: ''},
-        newRecommendation: {article_id: '', description: ''},
+        newTechnique: {article_ids: [], description: '', number: '', title: '', ext_url: ''},
+        newFailure: {article_ids: [], description: '', number: '', title: '', ext_url: ''},
+        newRecommendation: {article_ids: [], description: ''},
         articleModalOpen: false,
         articleEditItem: false,
         confirmDeleteModalOpen: false,
         confirmDeleteItem: false,
         confirmDeleteType: false,
-        recommendationEditItem: false,
-        recommendationModalOpen: false,
-        techniqueEditItem: false,
-        techinqueModalOpen: false
+        displayTechArticlesBy: 'title',
+        displayReccArticlesBy: 'title',
+        displayFailArticlesBy: 'title',
     }),
     computed: {
         loading(){
             if( this.$store.state.admin ){
-                return this.$store.state.admin.loading.projects
+                return this.$store.state.admin.loading.articles
             }
             return false
         },
@@ -166,56 +245,55 @@ export default {
         }
     },
     methods: {
+        test(e){
+            console.log(e);
+        },
+        changeTechArticleDisplay(display){
+            this.displayTechArticlesBy = display
+        },
+        changeFailArticleDisplay(display){
+            this.displayFailArticlesBy = display
+        },
+        changeReccArticleDisplay(display){
+            this.displayReccArticlesBy = display
+        },
+        createOrUpdateItem(){
+            this.articleModalOpen = false
+            if( this.articleEditItem.id ){
+                this.$store.dispatch("admin/updateArticleObject", {object: this.articleEditItem})
+            }else{
+                this.$store.dispatch("admin/createArticleObject", {object: this.articleEditItem})
+            }
+            this.articleEditItem = false
+        },
         deleteConfirmed(){
             this.confirmDeleteModalOpen = false
             let action = ""
-            switch( this.confirmDeleteType ){
+            switch( this.articleEditItem.identifier ){
                 case "article":
                     action = "admin/deleteArticle"
                     break;
                 case "technique":
                     action = "admin/deleteTechnique"
                     break;
+                case "failure":
+                    action = "admin/deleteFailure"
+                    break;
                 case "recommendation":
                     action = "admin/deleteRecommendation"
                     break;
             }
-            this.$store.dispatch(action, {id: this.confirmDeleteItem.id})
-        },
-        confirmDelete(item, type){
-            this.closeModals()
-            this.confirmDeleteModalOpen = true
-            this.confirmDeleteItem = item
-            this.confirmDeleteType = type
-        },
-        displayArticlePopup(item){
-            this.articleEditItem = item
-            this.articleModalOpen = true
-        },
-        saveArticle(){
-            this.articleModalOpen = false
-            this.$store.dispatch("admin/saveArticle", {article: this.articleEditItem})
-        },
-        closeModals(){
-            this.articleModalOpen = false
-            this.recommendationModalOpen = false
-            this.techinqueModalOpen = false
-
+            this.$store.dispatch(action, {id: this.articleEditItem.id})
             this.articleEditItem = false
-            this.recommendationEditItem = false
-            this.techniqueEditItem = false
         },
-        deleteArticle(){
-            this.modalOpen = false
-            this.$store.dispatch("admin/deleteArticle", {id: this.deleteID})
+        confirmDelete(){
+            this.articleModalOpen = false
+            this.confirmDeleteModalOpen = true
         },
-        deleteTechnique(){
-            this.modalOpen = false
-            this.$store.dispatch("admin/deleteTechnique", {id: this.deleteID})
-        },
-        deleteRecommendation(){
-            this.modalOpen = false
-            this.$store.dispatch("admin/deleteRecommendation", {id: this.deleteID})
+        displayArticlePopup(data){
+            this.articleEditItem = data.item
+            this.articleEditItem.identifier = data.extra
+            this.articleModalOpen = true
         },
     },
     created() {
@@ -227,13 +305,11 @@ export default {
     },
     components: {
         Loader,
-        A,
-        Button,
         Modal,
         SearchList,
         Card,
         TextInput,
-        TextArea
+        TextArea,
     },
 }
 </script>
