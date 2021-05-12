@@ -1,5 +1,5 @@
 <template>
-	<SitemapCreate></SitemapCreate>
+	<SitemapCreate :independent="true"></SitemapCreate>
 </template>
 
 <script>

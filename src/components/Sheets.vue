@@ -1,7 +1,7 @@
 <template>
     <div class="sheet-holder">
         <Sheet @message="message" :ref="'sheet'+(index)" :index="index" @next="goForward(sheet)" @previous="goBack(sheet)" :req="sheet.requires || false" :showing="showing" v-for="(sheet, index) in sheets" :key="'sheet-' + index">
-            <component :ref="'component'+index" :temp="sheet.template || false" @complete="handleComplete" :independent="false" :is="getComponent(sheet.component)">
+            <component @initialized="setInitialized" :ref="'component'+index" :temp="sheet.template || false" @complete="handleComplete" :independent="false" :is="getComponent(sheet.component)">
             </component>
         </Sheet>
     </div>
@@ -40,6 +40,9 @@
             
         },
         methods: {
+            setInitialized(data){
+                this.$emit("initialized", data)
+            },
             handleComplete(data){
                 if( data ){
                     this.$emit("sheetComplete", data.sheet)
@@ -49,7 +52,7 @@
                 }
             },
             goForward(sheet, directTo = false){
-                if( directTo ){
+                if( directTo !== false ){
                     this.showing = directTo
                 }
                 else{
@@ -59,7 +62,7 @@
                 if( this.showing == 1 ){
                     this.$refs["component1"][0].setFirstDomain()
                 }
-                if( sheet.next ){
+                if( sheet.next && directTo === false ){
                     this.$refs["sheet"+ sheet.next][0].initShow()
                 }
             },

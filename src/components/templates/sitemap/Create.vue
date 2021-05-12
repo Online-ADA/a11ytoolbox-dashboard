@@ -1,5 +1,5 @@
 <template>
-	<div class="text-center pt-32 pb-24 container mx-auto">
+	<div class="text-center mt-20 pb-24 container mx-auto">
 		<Loader v-if="loading"></Loader>
 		
 		<template v-if="independent">
@@ -120,15 +120,18 @@
 				</template>
 
 				<FileInput @input="handleSitemapFile" class="block w-auto mx-auto pb-3" accept=".csv, .xml"></FileInput>
+				<small class="text-xs">Note: If the domain on an entry in the uploaded file does not match this domain, it will not be added to the sitemap.</small>
 				<Button color="orange" @click.native.prevent="uploadSitemap">Upload sitemap</Button>
 			</Card>
 			
 		</div>
 
-		<div class="flex justify-center flex-wrap" v-if="domain && domain.sample.length">
-			<h2 class="my-3 w-full">Now that we have a structured sample, we can create our audit</h2>
-			<Button @click.native.prevent="setComplete" color="orange" :hover="true">Continue</Button>
-		</div>
+		<template v-if="!independent">
+			<div class="flex justify-center flex-wrap" v-if="domain && domain.sample.length">
+				<h2 class="my-3 w-full">Now that we have a structured sample, we can create our audit</h2>
+				<Button @click.native.prevent="setComplete" color="orange" :hover="true">Continue</Button>
+			</div>
+		</template>
 	</div>
 </template>
 

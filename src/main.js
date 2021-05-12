@@ -27,8 +27,8 @@ window.App = new Vue({
   render: h => h(App)
 }).$mount('#app')
 
-async function run(){
-  await Request.getPromise(`${store.state.auth.toolboxapi}/api/state/init`, {async: false})
+function run(){
+  Request.getPromise(`${store.state.auth.toolboxapi}/api/state/init`, {async: false})
   .then( response => {
       store.commit("auth/setState", {key: "user", value: response.data.details.user})
       store.commit("auth/setState", {key: "accountsRoles", value: response.data.details.roles.accounts})
@@ -39,10 +39,9 @@ async function run(){
   .catch( () => {
     if( router.currentRoute.path != "/" ){
       router.push({path: "/"})
+      Request.unmute()
     }
   })
-
-  
 }
 run()
 

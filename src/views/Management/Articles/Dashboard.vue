@@ -3,12 +3,12 @@
         <Loader v-if="loading"></Loader>
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
-                <h2 class="mb-2">Articles</h2>
+                <h2 class="mb-2">Success Critera</h2>
                 <button @click="displayArticlePopup({item: newArticle, extra: 'article'})" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && articles.length">
                     <SearchList :dataSendBack="'article'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['title', 'number', 'description']" :items="articles"></SearchList>
                 </template>
-                <div v-else>There are no articles</div>
+                <div v-else>There are no success criteria</div>
             </Card>
         </div>
         <div class="flex w-full justify-center my-4">
@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                             <div class="mt-2 w-full">
-                                <Label class="text-lg leading-6 w-full" for="article-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small><small class="pl-2">(This can be html or plain text)</small></Label>
+                                <Label class="text-lg leading-6 w-full" for="article-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
                                 <TextArea required rows="6" id="article-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
                             </div>
                             <div class="w-full mt-2">
@@ -85,7 +85,7 @@
                                 </div>
                             </div>
                             <div class="mt-2 w-full">
-                                <Label class="text-lg leading-6 w-full" for="tech-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small><small class="pl-2">(This can be html or plain text)</small></Label>
+                                <Label class="text-lg leading-6 w-full" for="tech-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
                                 <TextArea required rows="6" id="tech-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
                             </div>
                             <div class="w-full mt-2">
@@ -115,7 +115,7 @@
                                 </div>
                             </div>
                             <div class="mt-2 w-full">
-                                <Label class="text-lg leading-6 w-full" for="tech-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small><small class="pl-2">(This can be html or plain text)</small></Label>
+                                <Label class="text-lg leading-6 w-full" for="tech-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
                                 <TextArea required rows="6" id="tech-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
                             </div>
                             <div class="w-full mt-2">
@@ -134,7 +134,7 @@
                                 </select>
                             </div>
                             <div class="mt-2 w-full">
-                                <Label class="text-lg leading-6 w-full" for="recc-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small><small class="pl-2">(This can be html or plain text)</small></Label>
+                                <Label class="text-lg leading-6 w-full" for="recc-desc">Description<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
                                 <TextArea required rows="6" id="recc-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
                             </div>
                         </template>

@@ -15,4 +15,7 @@
 	h4{
 		@apply text-xl;
 	}
+	select {
+		@apply block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow;
+	}
 }

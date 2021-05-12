@@ -35,7 +35,8 @@ export default {
       }
     },
     beforeDestroy(){
-      this.$store.unregisterModule("admin")
+      // this.$store.unregisterModule("admin")
+      this.$store.dispatch("admin/resetState")
     },
     mounted() {
     },

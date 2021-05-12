@@ -1,10 +1,10 @@
 <template>
     <fragment>
         <!-- <div :class="['sheet-overlay']"></div> -->
-        <div :style="[left, transitionDelay]" class="sheet">
+        <div :style="[left, transitionDelay]" class="sheet relative">
             <div class="flex justify-between">
-                <Button @click.native.prevent="$emit('previous', index)">&#60;</Button>
-                <Button @click.native.prevent="$emit('next', index)">&#62;</Button>
+                <Button class="absolute left-2 top-3" @click.native.prevent="$emit('previous', index)">&#60;</Button>
+                <Button class="absolute right-2 top-3" @click.native.prevent="$emit('next', index)">&#62;</Button>
             </div>
             <slot></slot>
         </div>

@@ -2,11 +2,13 @@
 	<div class="text-center mt-32 container mx-auto">
 		<Loader v-if="loading"></Loader>
 		<h1>Edit Audit {{audit.title}}</h1>
-		<Form class="flex flex-wrap" @submit.native.prevent>
-			<div class="w-full">
+		<div class="flex flex-wrap">
+			<!-- <div class="w-full">
 				<Label for="project">Project</Label>
-				<Select name="project" id="project" class="mx-auto" :options="projects" valueProp="id" v-model="audit.project_id"></Select>
-			</div>
+				<select v-model="audit.project_id" name="project" id="project" class="mx-auto">
+					<option :value="project.id" v-for="project in projects" :key="project.id">{{project.name}}</option>
+				</select>
+			</div> -->
 			<div class="w-1/4"></div>
 			<div class="w-1/4">
 				<Label for="start_date">Start Date</Label>
@@ -20,7 +22,9 @@
 			<div class="w-full flex justify-center">
 				<div class="px-2">
 					<Label for="status">Status</Label>
-					<Select id="status" class="mx-auto" :options="statusSrc" v-model="audit.status"></Select>
+					<select v-model="audit.status" id="status" class="mx-auto" name="status">
+						<option :value="status.value" v-for="(status, index) in statusSrc" :key="`status-${index}`">{{status.name}}</option>
+					</select>
 				</div>
 				<div class="px-2 w-1/2">
 					<Label for="title">Title</Label>
@@ -28,7 +32,10 @@
 				</div>
 				<div class="px-2">
 					<Label for="audit_num">Audit #</Label>
-					<Select id="audit_num" class="mx-auto" :options="[{name:1, value: 1}, {name:2, value: 2}, {name:3, value: 3}]" v-model="audit.number"></Select>
+					<select v-model="audit.number" id="audit_num" name="audit_num" class="mx-auto">
+						<option :value="option" v-for="option in [1, 2, 3]" :key="'audit_num-'+option">{{option}}</option>
+					</select>
+					<!-- <Select id="audit_num" class="mx-auto" :options="[1, 2, 3]" v-model="audit.number"></Select> -->
 				</div>
 				<div class="px-2">
 					<Label for="ctarget">Conformance Target</Label>
@@ -42,8 +49,17 @@
 			</div>
 
 			<div class="w-1/2 text-left px-2">
-				<Label for="essential_functionality">Essential Functionality</Label>
-				<Textarea class="w-full" id="essential_functionality" name="essential_functionality" v-model="audit.essential_functionality" rows="4"></Textarea>
+				<Label for="essential_functionality">
+					Essential Functionality
+					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
+						<div class="flex mb-3" v-for="(input, i) in audit.essential_functionality" :key="`AT-select-${i}`">
+							<TextInput class="mr-1 w-11/12" id="essential_functionality" name="essential_functionality" v-model="audit.essential_functionality[i]"></TextInput>
+							<Button class="ml-1" :hover="true" @click.native.prevent="removeEssentialFunctionality(i)"><i class="fas fa-trash-alt"></i></Button>
+						</div>
+						
+						<Button :hover="true" @click.native.prevent="addNewEssentialFunctionality">Add New</Button>
+					</Card>
+				</Label>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
@@ -54,10 +70,12 @@
 			<div class="w-1/2 text-left px-2">
 				<Label for="software">
 					Software Used
-					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
+					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
 						<div class="flex mb-3" v-for="(input, i) in audit.software_used" :key="`SU-select-${i}`">
-							<Select :options="software_used_src"  class="mr-1 w-11/12" id="software" name="software" v-model="audit.software_used[i].name"></Select>
-							<Button class="ml-1" :hover="true" @click.native.prevent="removeSoftwareUsed(i)"><i class="fas fa-trash-alt"></i></Button>
+							<select v-model="audit.software_used[i]" class="mr-1 w-11/12" id="software" name="software">
+								<option :value="option" v-for="(option, index) in software_used_src" :key="`SU-${index}`">{{option}}</option>
+							</select>
+							<Button aria-label="remove this 'software used' from the audit" class="ml-1" :hover="true" @click.native.prevent="removeSoftwareUsed(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 						
 						<Button :hover="true" @click.native.prevent="addNewSoftwareUsed">Add New</Button>
@@ -68,10 +86,12 @@
 			<div class="w-1/2 text-left px-2">
 				<Label for="software">
 					Assistive Tech
-					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
+					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
 						<div class="flex mb-3" v-for="(input, i) in audit.assistive_tech" :key="`AT-select-${i}`">
-							<Select :options="assistive_tech_src" class="mr-1 w-11/12" id="assistive" name="assistive" v-model="audit.assistive_tech[i].name"></Select>
-							<Button class="ml-1" :hover="true" @click.native.prevent="removeAssistiveTech(i)"><i class="fas fa-trash-alt"></i></Button>
+							<select class="mr-1 w-11/12" id="assistive" name="assistive" v-model="audit.assistive_tech[i]">
+								<option :value="option" :key="`AT-${index}`" v-for="(option, index) in assistive_tech_src">{{option}}</option>
+							</select>
+							<Button aria-label="remove this assistive technology from the audit" class="ml-1" :hover="true" @click.native.prevent="removeAssistiveTech(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 						
 						<Button :hover="true" @click.native.prevent="addNewAssistiveTech">Add New</Button>
@@ -82,10 +102,12 @@
 			<div class="w-1/2 text-left px-2">
 				<Label for="software">
 					Tech Requirements
-					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
+					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
 						<div class="flex mb-3" v-for="(input, i) in audit.tech_requirements" :key="`TR-select-${i}`">
-							<Select :options="tech_requirements_src"  class="mr-1 w-11/12" id="treqs" name="treqs" v-model="audit.tech_requirements[i].name"></Select>
-							<Button class="ml-1" :hover="true" @click.native.prevent="removeTechReq(i)"><i class="fas fa-trash-alt"></i></Button>
+							<select class="mr-1 w-11/12" id="treqs" name="treqs" v-model="audit.tech_requirements[i]">
+								<option :key="`TR-${index}`" v-for="(option, index) in tech_requirements_src">{{option}}</option>
+							</select>
+							<Button aria-label="remove this technology requirement from the audit" class="ml-1" :hover="true" @click.native.prevent="removeTechReq(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 						
 						<Button :hover="true" @click.native.prevent="addNewTechReq">Add New</Button>
@@ -100,7 +122,7 @@
 					<h3>Auditors</h3>
 					<ul v-if="unassigned.length">
 						<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
-						<span>{{displayUser(id)}}</span><Button hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
+						<span>{{displayUser(id)}}</span><Button aria-label="Assign user to audit" hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
 						</li>
 					</ul>
 					</Card>
@@ -108,16 +130,62 @@
 					<h3>Assignees</h3>
 					<ul v-if="assigned.length">
 						<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
-						<Button hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
+						<Button aria-label="Unassign user from the audit" hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
 						</li>
 					</ul>
 					</Card>
 				</div>
+
+				<div class="flex flex-wrap w-full justify-center">
+					<h2 class="my-2">Working Sample</h2>
+					<span class="text-base my-2">The working sample takes the structured list created with the domain and calculates 10% of the number of items in it. It will then grab that number of pages at random from the sitemap (if it was provided with the domain) and combine them to form the working sample.</span>
+					<Button v-if="!loading && structuredSample" class="mt-1 mb-3" hover="true" @click.native.prevent="generateWorkingSample">Generate Sample</Button>
+
+					<template v-if="audit.pages.length">
+						<Card class="w-full p-4 mb-34 mx-2 flex-wrap items-center flex-col">
+							<div class="flex flex-wrap w-full justify-center items-end">
+								<h3 class="w-full">Add new sample item</h3>
+								<Label class="flex-1 pr-3">
+									<span>Content</span>
+									<TextInput v-model="newSampleItem.content"></TextInput>
+								</Label>
+								<Label class="flex-1">
+									<span>Screen</span>
+									<TextInput v-model="newSampleItem.screen"></TextInput>
+								</Label>
+								<Button style="margin-bottom:13px" class="ml-3" color="orange" @click.native.prevent="addNewSampleItem">Add Item</Button>
+							</div>
+							
+							<h4 class="my-3">Items</h4>
+							<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
+								<table class="w-full border border-black table-fixed">
+									<thead>
+										<tr>
+											<th class="text-center border border-black" width="40%" scope="col"><span id="sample-content">Content</span></th>
+											<th class="text-center border border-black" width="40%" scope="col"><span id="sample-screen">Screen</span></th>
+											<th class="text-center border border-black" width="10%" scope="col">Delete</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="(sample, index) in audit.pages" :key="'sample-'+index">
+											<td class="p-1.5 overflow-y-auto border border-black"><TextInput class="w-full" v-model="sample.content" aria-labelledby="sample-content"></TextInput></td>
+											<td class="p-1.5 overflow-y-auto border border-black"><TextInput class="w-full" v-model="sample.screen" aria-labelledby="sample-screen"></TextInput></td>
+											<td class="p-1.5 overflow-y-auto border border-black"><Button @click.native.prevent="deleteItem(index)" color="delete">X</Button></td>
+										</tr>
+									</tbody>
+								</table>
+							</Card>
+							<Button @click.native.prevent="emptySample" style="color:white" class="bg-red-600 hover:bg-red-700 mr-3">Remove all</Button>
+							<Button @click.native.prevent="resetSample" color="orange" hover="true">Reset</Button>
+						</Card>
+						
+					</template>
+				</div>
 				
 			</template>
 
-			<Button @click.native.prevent="saveAudit">Save</Button>
-		</Form>
+			<Button class="mx-auto block my-3" @click.native.prevent="saveAudit">Save</Button>
+		</div>
 	</div>
 </template>
 
@@ -126,13 +194,12 @@ import Loader from '../../components/Loader'
 import Card from '../../components/Card'
 import TextInput from '../../components/TextInput'
 import Label from '../../components/Label'
-import Select from '../../components/Select'
-import Form from '../../components/Form'
 import Button from '../../components/Button'
 import Date from '../../components/Date'
 import Textarea from '../../components/TextArea'
 export default {
 	data: () => ({
+		newSampleItem: {content: "", screen: ""},
 		statusSrc: [
 			{name: 'In Progress', value:'in_progress'},
 			{name:'Complete', value:'complete'},
@@ -152,12 +219,12 @@ export default {
 		],
 		audit: {
 			title: "",
-			essential_functionality: "",
+			essential_functionality: [],
 			additional_requirements: "",
-			software_used: [{name:""}],
-			assistive_tech: [{name:""}],
+			software_used: [],
+			assistive_tech: [],
 			scope: "",
-			tech_requirements: [{name:""}],
+			tech_requirements: [],
 			locked: false,
 			number: 1,
 			start_date: "",
@@ -166,14 +233,14 @@ export default {
 			issue_overview_id: "",
 			project_id: "",
 			sitemap: [],
-			audit_sample: [],
+			pages: [],
 			conformance_target: "WCAG 2.1 Level AA"
 		}
 	}),
 	computed: {
 		loading(){
 			if( this.$store.state.audits ){
-				return this.$store.state.audits.loading
+				return this.$store.state.audits.loading || this.$store.state.audits.auditorsLoading
 			}
 			return false
 		},
@@ -183,10 +250,98 @@ export default {
 		auditors(){
 			return this.$store.state.audits.auditors || []
 		},
+		structuredSample(){
+			return this.$store.state.audits.structured_sample || []
+		},
+		sitemap(){
+			return this.$store.state.audits.sitemap || []
+		},
 	},
 	props: [],
-	watch: {},
+	watch: {
+		"$store.state.audits.audit":function(newVal){
+			if( newVal ){
+				this.$set(this, "audit", JSON.parse(JSON.stringify(newVal)))
+				this.assigned = JSON.parse(JSON.stringify(newVal.assignees.map(  o=>o.id )))
+				this.$store.dispatch("audits/getAuditors")
+				this.$store.dispatch("audits/getSitemap")
+				this.$store.dispatch("audits/getStructuredSample")
+			}
+		},
+		"$store.state.audits.auditors":function(newVal){
+			if( newVal ){
+				let self = this
+				this.unassigned = JSON.parse(JSON.stringify(newVal.filter( o=>!self.assigned.includes(o.id)).map( o=>o.id )))
+			}
+		}
+	},
 	methods: {
+		removeEssentialFunctionality(index){
+			this.audit.essential_functionality.splice(index, 1)
+		},
+		addNewEssentialFunctionality(){
+			this.audit.essential_functionality.push("")
+		},
+		addNewSampleItem(){
+			this.audit.pages.push(this.newSampleItem)
+			this.newSampleItem = {content: "", screen: ""}
+		},
+		resetSample(){
+			this.$set(this.audit, "pages", JSON.parse(JSON.stringify(this.$store.state.audits.audit.pages)))
+		},
+		generateWorkingSample(){
+			//Calculate what 10% of the structured list is
+			let tenPercent = parseInt( this.structuredSample.length * .1 )
+			if( tenPercent < 10 ){
+				tenPercent = 10
+			}
+
+			if( !this.sitemap.length ){
+				this.audit.working_sample = this.structuredSample
+				return
+			}
+
+			if( this.sitemap.length <= tenPercent ){
+				this.audit.working_sample = [...this.structuredSample, ...this.sitemap]
+				return
+			}
+			this.$store.state.audits.loading = true
+			
+			let sitemap_sample = []
+			let structured_map = []
+
+			for( let i in this.structuredSample ){
+				let found = structured_map.some( el => el.content == this.structuredSample[i].content)
+				if( !found ){
+					structured_map.push({
+						content: this.structuredSample[i].content,
+						screen: this.structuredSample[i].screen
+					})
+				}
+				
+			}
+
+			while ( sitemap_sample.length <= tenPercent ){
+				let index = Math.floor( Math.random() * (this.sitemap.length - 1)) + 1
+
+				let found = sitemap_sample.some( el => el.content == this.sitemap[index].url)
+				if( !found ){
+					sitemap_sample.push( {
+						content: this.sitemap[index].url,
+						screen: ""
+					})
+				}
+			}
+
+			this.audit.pages = [...structured_map, ...sitemap_sample]
+			this.$store.state.audits.loading = false
+		},
+		deleteItem(index){
+			this.audit.pages.splice(index, 1)
+		},
+		emptySample(){
+			this.audit.pages = []
+		},
 		displayUser(id){
 			let user = this.auditors.find( u => u.user_id == id )
 			return user != undefined ? `${user.first_name} ${user.last_name}` : false
@@ -210,45 +365,40 @@ export default {
 			this.audit.end_date = val;
 		},
 		addNewSoftwareUsed(){
-			this.audit.software_used.push({name:""})
+			this.audit.software_used.push({name:"Android Browser"})
 		},
 		removeSoftwareUsed(index){
 			this.audit.software_used.splice(index, 1)
 		},
 		addNewTechReq(){
-			this.audit.tech_requirements.push({name:""})
+			this.audit.tech_requirements.push({name:"HTML5"})
 		},
 		removeTechReq(index){
 			this.audit.tech_requirements.splice(index, 1)
 		},
 		addNewAssistiveTech(){
-			this.audit.assistive_tech.push({name:""})
+			this.audit.assistive_tech.push({name:"Axe"})
 		},
 		removeAssistiveTech(index){
 			this.audit.assistive_tech.splice(index, 1)
 		},
 		saveAudit(){
-			this.audit.tech_requirements = this.audit.tech_requirements.map(o=>o.name)
-			this.audit.assistive_tech = this.audit.assistive_tech.map(o=>o.name)
-			this.audit.software_used = this.audit.software_used.map(o=>o.name)
 			this.audit.assigned = this.assigned
 
 			this.$store.dispatch("audits/updateAudit", {audit: this.audit, router: this.$router, id: this.$route.params.id})
 		}
 	},
 	created() {
-		this.$store.dispatch("audits/getProjects", {router: this.$router, account_id: this.$store.state.auth.account, vm: this})
+		this.$store.dispatch("audits/getAudit", {id: this.$route.params.id})
 	},
 	mounted() {
-		this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, account_id: this.$store.state.auth.account, vm: this})
+		
 	},
 	components: {
 		Loader,
 		TextInput,
 		Textarea,
 		Label,
-		Form,
-		Select,
 		Button,
 		Card,
 		Date

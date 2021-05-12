@@ -1,5 +1,21 @@
 import Vue from 'vue'
 
+const getDefaultState = () => {
+	return {
+		all: [],
+		audit: false,
+		auditors: [],
+		project: false,
+		projects: [],
+		API: "https://apitoolbox.ngrok.io/api/user",
+		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
+		loading: false,
+		auditorsLoading: false,
+		structured_sample: false,
+		sitemap: false
+	}
+}
+
 export default {
 		namespaced:true,
 		state: {
@@ -10,14 +26,26 @@ export default {
 			projects: [],
 			API: "https://apitoolbox.ngrok.io/api/user",
 			adminAPI: "https://apitoolbox.ngrok.io/api/admin",
-			loading: false
+			loading: false,
+			auditorsLoading: false,
+			structured_sample: false,
+			sitemap: false,
+			articles: [],
+			techniques: [],
+			recommendations: []
 		},
 		mutations: {
 			setState(state,payload) {
 				Vue.set(state,payload.key,payload.value)
 			},
+			resetState (state) {
+				Object.assign(state, getDefaultState())
+			},
 		},
 		actions: {
+			resetState({commit}) {
+				commit('resetState')
+			},
 			getProject({state, rootState}, args){
 				state.loading = true
 				Request.get(`${state.API}/${rootState.auth.account}/projects/${args.project_id}`, {
@@ -26,7 +54,7 @@ export default {
 						text:'Project retrieved',
 						callback: function(response){
 							state.loading = false
-							state.project = response.data.project[0]
+							state.project = response.data.details
 						}
 					},
 					onError: {
@@ -75,12 +103,12 @@ export default {
 					}
 				})
 			},
-			getAudit({state, dispatch, rootState, rootGetters}, args = {withIssues: false}){
+			getAudit({state, rootState}, args = {withIssues: false}){
 				state.loading = true
 				
 				Request.getPromise(`${state.API}/${rootState.auth.account}/audits/${args.id}`, {params: {withIssues: args.withIssues}})
 				.then( re=>{
-					state.audit = re.data.audit[0]
+					state.audit = re.data.details
 					if( args.vm ){
 						args.vm.audit = state.audit
 						args.vm.audit.tech_requirements = state.audit.tech_requirements.map( o=>{ return {name: o} } )
@@ -88,26 +116,23 @@ export default {
 						args.vm.audit.assistive_tech = state.audit.assistive_tech.map( o=>{ return {name: o} } )
 						args.vm.assigned = state.audit.assignees.map( o=>o.id)
 					}
-					if( rootGetters["auth/isManager"] ){
-						dispatch("getAuditors", {vm: args.vm})
-					}else{
-						state.loading = false
-					}
 				})
 				.catch( re=>{
 					console.log(re);
-					state.loading = false
 				})
+				.then( ()=> state.loading = false)
 			},
 			createAudit({state, rootState}, args){
 				state.loading = true;
 				Request.postPromise(`${state.API}/${rootState.auth.account}/audits`, { params: { audit: args.audit } })
 				.then( re=>{
-					Vue.notify({
-						title:"Success",
-						text: "Audit was create successfully. Redirecting to the audit...",
-						type: "success"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title:"Success",
+							text: "Audit was create successfully. Redirecting to the audit...",
+							type: "success"
+						})
+					}
 					setTimeout(()=>{
 						// if( rootGetters["auth/isManager"] ){
 						// 	args.router.push({path: "/manage/audits"})
@@ -118,11 +143,13 @@ export default {
 				})
 				.catch(re=>{
 					console.log(re)
-					Vue.notify({
-						title: "Error",
-						text: "There was an error when trying to create the audit. Please see the dev console for more information",
-						type:"error"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: "There was an error when trying to create the audit. Please see the dev console for more information",
+							type:"error"
+						})
+					}
 				})
 				.then( ()=>{
 					state.loading = false
@@ -133,43 +160,45 @@ export default {
 				Request.getPromise(`${state.API}/${rootState.auth.account}/audits`)
 				.then( re => {
 					state.all = re.data.details
-					Vue.notify({
-						title: "Success",
-						text: "Audits retrieved",
-						type: "success"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Success",
+							text: "Audits retrieved",
+							type: "success"
+						})
+					}
 				})
 				.catch( re => {
 					console.log(re);
-					Vue.notify({
-						title: "Error",
-						text: re.error,
-						type: "error"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: re.error,
+							type: "error"
+						})
+					}
 				})
 				.then( ()=>{
 					state.loading = false
 				})
 			},
-			getAuditors({state, rootState}, args){
-				state.loading = true
+			getAuditors({state, rootState}){
+				state.auditorsLoading = true
 				
 				Request.getPromise(`${state.adminAPI}/${rootState.auth.account}/audits/auditors`)
 				.then( re=>{
-					if( args.vm ){
-						state.auditors = re.data.details
-						args.vm.unassigned = re.data.details.filter( o=>!args.vm.assigned.includes(o.id)).map( o=>o.id )
-					}
+					state.auditors = re.data.details
 				})
 				.catch( re=>{
 					console.log(re)
 				})
 				.then( ()=>{
-					state.loading = false
+					state.auditorsLoading = false
 				})
 			},
 			updateAudit({state, rootState, rootGetters}, args){
 				state.loading = true
+
 				let requestArgs = {
 					params: {
 						audit_id: args.id,
@@ -202,6 +231,44 @@ export default {
 				};
 				Request.post(`${state.API}/${rootState.auth.account}/audits/${args.id}`, requestArgs)
 			},
+			getStructuredSample({state, rootState}){
+				state.loading = true
+
+				Request.getPromise(`${state.API}/${rootState.auth.account}/audits/${state.audit.domain_id}/structuredSample`)
+				.then( re=>state.structured_sample = re.data.details)
+				.catch( re=>console.log(re))
+				.then( ()=>state.loading = false)
+			},
+			getSitemap({state, rootState}){
+				state.loading = true
+
+				Request.getPromise(`${state.API}/${rootState.auth.account}/audits/${state.audit.domain_id}/sitemap`)
+				.then( re=>state.sitemap = re.data.details)
+				.catch( re=>console.log(re))
+				.then( ()=>state.loading = false)
+			},
+			getArticlesTechniquesRecommendations({state, rootState}){
+				Request.getPromise(`${state.API}/${rootState.auth.account}/audits/extras`)
+				.then( re=>{
+					state.techniques = re.data.details.techniques
+					state.recommendations = re.data.details.recommendations
+					state.articles = re.data.details.articles
+				})
+				.catch()
+			},
+			createIssue({state, rootState}, args){
+				state.loading = true
+				Request.postPromise(`${state.API}/${rootState.auth.account}/audits/${args.issue.audit_id}/issues/store`, {params: args.issue})
+				.then( re=>{
+					state.audit = re.data.details
+				})
+				.catch( re=>{
+					console.log(re)
+				})
+				.then( ()=>{
+					state.loading = false
+				})
+			}
 		},
 		getters: { 
 			

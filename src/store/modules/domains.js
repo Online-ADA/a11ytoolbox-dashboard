@@ -1,5 +1,17 @@
 import Vue from 'vue'
 
+const getDefaultState = () => {
+	return {
+		all: [],
+		audits: [],
+		projects: [],
+		domain: false,
+		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
+		API: "https://apitoolbox.ngrok.io/api/user",
+		loading: false
+	}
+}
+
 export default {
 		namespaced:true,
 		state: {
@@ -15,8 +27,14 @@ export default {
 			setState(state,payload) {
 				Vue.set(state,payload.key,payload.value)
 			},
+			resetState (state) {
+				Object.assign(state, getDefaultState())
+			},
 		},
 		actions: {
+			resetState({commit}) {
+				commit('resetState')
+			},
 			getProject({state}, args){
 				state.loading = true
 				
@@ -128,19 +146,23 @@ export default {
 				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})
 				.then( re=>{
 					console.log(re);
-					Vue.notify({
-						title: "Success",
-						text: "Sample item updated",
-						type: "success"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Success",
+							text: "Sample item updated",
+							type: "success"
+						})
+					}
 				})
 				.catch( re=>{
 					console.log(re)
-					Vue.notify({
-						title: "Error",
-						text: "Problem updating the sample item. Please see the console for more information",
-						type: "error"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: "Problem updating the sample item. Please see the console for more information",
+							type: "error"
+						})
+					}
 				})
 				.then( ()=>{
 					state.loading = false
@@ -181,19 +203,23 @@ export default {
 				}
 				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.page.domain_id}/page`, requestArgs)
 				.then( (response) => {
-					Vue.notify({
-						title: "Success",
-						text: "page saved successfully",
-						type: "success"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Success",
+							text: "page saved successfully",
+							type: "success"
+						})
+					}
 					state.domain = response.data.details
 				})
 				.catch( response => {
-					Vue.notify({
-						title: "Error",
-						text: response.error,
-						type: "error"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: response.error,
+							type: "error"
+						})
+					}
 				})
 				.then( ()=>{
 					state.loading = false
@@ -205,19 +231,23 @@ export default {
 				state.loading = true
 				Request.destroyPromise(`${state.API}/${rootState.auth.account}/domains/${args.domain_id}/item/${args.item_id}`)
 				.then( (response) => {
-					Vue.notify({
-						title: "Success",
-						text: "Item deleted",
-						type: "success"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Success",
+							text: "Item deleted",
+							type: "success"
+						})
+					}
 					state.domain = response.data.details
 				})
 				.catch( response => {
-					Vue.notify({
-						title: "Error",
-						text: response.error,
-						type: "error"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: response.error,
+							type: "error"
+						})
+					}
 				})
 				.then( ()=>{
 					state.loading = false
@@ -227,19 +257,23 @@ export default {
 				state.loading = true
 				Request.destroyPromise(`${state.API}/${rootState.auth.account}/domains/${args.domain_id}/page/${args.page_id}`)
 				.then( (response) => {
-					Vue.notify({
-						title: "Success",
-						text: "Page deleted",
-						type: "success"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Success",
+							text: "Page deleted",
+							type: "success"
+						})
+					}
 					state.domain = response.data.details
 				})
 				.catch( response => {
-					Vue.notify({
-						title: "Error",
-						text: response.error,
-						type: "error"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: response.error,
+							type: "error"
+						})
+					}
 				})
 				.then( ()=>{
 					state.loading = false
@@ -312,19 +346,23 @@ export default {
 				state.loading = true
 				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.id}/sitemapEmpty`)
 				.then( response => {
-					Vue.notify({
-						title: "Success",
-						text: "Sitemap deleted",
-						type: "success"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Success",
+							text: "Sitemap deleted",
+							type: "success"
+						})
+					}
 					state.domain = response.data.details
 				})
 				.catch( response => {
-					Vue.notify({
-						title: "Error",
-						text: response.error,
-						type: "error"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: response.error,
+							type: "error"
+						})
+					}
 				})
 				.then( () => {
 					state.loading = false
@@ -334,19 +372,23 @@ export default {
 				state.loading = true
 				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
 				.then( response => {
-					Vue.notify({
-						title: "Success",
-						text: "Structured sample deleted",
-						type: "success"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Success",
+							text: "Structured sample deleted",
+							type: "success"
+						})
+					}
 					state.domain = response.data.details
 				})
 				.catch( response => {
-					Vue.notify({
-						title: "Error",
-						text: response.error,
-						type: "error"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: response.error,
+							type: "error"
+						})
+					}
 				})
 				.then( () => {
 					state.loading = false
@@ -357,19 +399,23 @@ export default {
 				Request.postPromise(`${state.API}/${rootState.auth.account}/domains/${args.id}`, {params: {domain: args.domain}})
 				.then( re=>{
 					state.domain = re.data.details
-					Vue.notify({
-						title: "Success",
-						text: "Domain updated",
-						type: "success"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Success",
+							text: "Domain updated",
+							type: "success"
+						})
+					}
 				})
 				.catch( re=>{
 					console.log(re)
-					Vue.notify({
-						title: "Error",
-						text: re,
-						type: "error"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: re,
+							type: "error"
+						})
+					}
 				})
 				.then( ()=>{
 					state.loading = false
@@ -379,19 +425,23 @@ export default {
 				state.loading = true
 				Request.getPromise(`${state.API}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
 				.then( response => {
-					Vue.notify({
-						title: "Success",
-						text: "Structured sample deleted",
-						type: "success"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Success",
+							text: "Structured sample deleted",
+							type: "success"
+						})
+					}
 					state.domain = response.data.details
 				})
 				.catch( response => {
-					Vue.notify({
-						title: "Error",
-						text: response.error,
-						type: "error"
-					})
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: response.error,
+							type: "error"
+						})
+					}
 				})
 				.then( () => {
 					state.loading = false

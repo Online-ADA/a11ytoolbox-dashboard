@@ -17,10 +17,13 @@ export default {
     methods: {
     },
     created() {
-      this.$store.registerModule('projects', projects)
+      if(this.$store.state.projects === undefined){
+        this.$store.registerModule('projects', projects)
+      }
     },
     beforeDestroy(){
-      this.$store.unregisterModule("projects")
+      // this.$store.unregisterModule("projects")
+      this.$store.dispatch("projects/resetState")
     },
     mounted() {
     },

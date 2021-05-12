@@ -1,6 +1,6 @@
 <template>
   <div class="text-center mt-3">
-    <Loader v-if="loading"></Loader>
+    <Loader v-if="loading || usersLoading"></Loader>
     <h1>{{project.name}}</h1>
       <Form @submit.native.prevent>
         <Label for="name">Name</Label>
@@ -62,10 +62,10 @@ export default {
     }),
     computed: {
         loading(){
-          if( this.$store.state.projects ){
-            return this.$store.state.projects.loading
-          }
-          return false
+          return (this.$store.state.projects && this.$store.state.projects.loading) || false
+        },
+        usersLoading(){
+          return (this.$store.state.projects && this.$store.state.projects.usersLoading) || false
         },
         assignees(){
           if( this.$store.state.project.assignees ){
@@ -75,7 +75,11 @@ export default {
         }
     },
     props: [],
-    watch: {},
+    watch: {
+      "$store.state.projects.project":function(){
+        this.$store.dispatch("projects/getUsers", {vm: this})
+      }
+    },
     methods: {
       displayUser(id){
         let user = this.users.find( u => u.user_id == id )
@@ -102,7 +106,7 @@ export default {
     },
     mounted() {
       this.project.created_by = this.$store.state.auth.user.id
-      this.$store.dispatch("projects/getProject", {id: this.$route.params.id, account_id: this.$store.state.auth.account, vm: this})
+      this.$store.dispatch("projects/getProject", {id: this.$route.params.id, vm: this})
     },
     components: {
       Loader,

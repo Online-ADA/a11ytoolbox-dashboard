@@ -24,7 +24,7 @@
             </template>
         </template>
         
-        <Sheets @message="displayMessage" @sheetComplete="handleSheetComplete" ref="sheets" :sheets="sheets" :sheetData="sheetData"></Sheets>
+        <Sheets @initialized="setInitialData" @message="displayMessage" @sheetComplete="handleSheetComplete" ref="sheets" :sheets="sheets" :sheetData="sheetData"></Sheets>
     </div>
 </template>
 
@@ -34,6 +34,7 @@
     import admin from '../../store/modules/admin'
     import projects from '../../store/modules/project'
     import audits from '../../store/modules/audits'
+    import domains from '../../store/modules/domains'
     
     export default {
         name: "AuditCreate",
@@ -89,24 +90,21 @@
         },
         watch: {
             "$store.state.admin.projects": function(newVal){
-                if( !this.sheetData["sheet0"].project && newVal.length ){
-                    this.sheetData["sheet0"].project = newVal[0].id
+                if( newVal ){
+                    if( !this.sheetData["sheet0"].project && newVal.length ){
+                        this.sheetData["sheet0"].project = newVal[0].id
+                    }
                 }
             },
             "$store.state.projects.all": function(newVal){
-                if( !this.sheetData["sheet0"].project  && newVal.length){
-                    this.sheetData["sheet0"].project = newVal[0].id
+                if( newVal ){
+                    if( !this.sheetData["sheet0"].project  && newVal.length){
+                        this.sheetData["sheet0"].project = newVal[0].id
+                    }
                 }
             },
-            isManager(newVal){
-                if( newVal ){
-                    this.$store.dispatch("admin/getProjects")
-                }else{
-                    this.$store.dispatch("projects/getProjects")
-                }
-                if( this.$route.params.id ){
-                    this.sheetData["sheet0"].project = this.$route.params.id
-                }
+            isManager(){
+                this.getProjects()
             }
         },
         computed:{
@@ -130,7 +128,7 @@
             },
         },
         mounted(){
-            
+            this.getProjects()
         },
         created(){
             if( this.$store.state.admin === undefined ){
@@ -142,14 +140,31 @@
             if(this.$store.state.audits === undefined){
                 this.$store.registerModule('audits', audits)
             }
+            if(this.$store.state.domains === undefined){
+                this.$store.registerModule('domains', domains)
+            }
         },
         methods: {
+            setInitialData(data){
+                this.$store.dispatch("projects/getUsers", {vm: data.instance})
+            },
+            getProjects(){
+                if( this.$store.getters["auth/isManager"] && this.$store.state.admin ){
+                    this.$store.dispatch("admin/getProjects")
+                }else{
+                    this.$store.dispatch("projects/getProjects")
+                }
+                if( this.$route.params.id ){
+                    this.sheetData["sheet0"].project = this.$route.params.id
+                    this.showSheet(1)
+                }
+            },
             displayMessage(message){
                 this.sheetMessage = message
             },
             showSheet(sheet){
                 this.sheets[sheet].back = false
-                this.$refs.sheets.goForward(this.sheets[sheet], 1)
+                this.$refs.sheets.goForward(this.sheets[sheet], sheet)
             },
             handleSheetComplete(sheet){
                 if( sheet == "sheet0" ){

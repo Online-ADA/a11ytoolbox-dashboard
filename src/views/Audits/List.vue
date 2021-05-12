@@ -31,8 +31,8 @@ export default {
     }),
     computed: {
         loading(){
-            if( this.$store.state.admin ){
-                return this.$store.state.admin.loading.audits
+            if( this.$store.state.audits ){
+                return this.$store.state.audits.loading
             }
             return false
         },

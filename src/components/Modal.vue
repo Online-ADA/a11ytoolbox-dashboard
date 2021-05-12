@@ -1,6 +1,6 @@
 <template>
 	<!-- This example requires Tailwind CSS v2.0+ -->
-	<div :class="{'fixed':open, 'hidden': !open}" class="z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+	<div :class="{'fixed':open, 'hidden': !open}" class="inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
 		
 		<div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center p-0">
 			<!--

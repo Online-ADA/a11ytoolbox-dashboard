@@ -33,6 +33,7 @@ class Request {
         }
     */
 
+    mute = false;
     
     constructor(){
         this.defaultError = {
@@ -201,7 +202,7 @@ class Request {
             delete args.callback
         }
         let notifyArgs = args
-        if( notifyArgs && !notifyArgs.silent ){
+        if( notifyArgs && !notifyArgs.silent && !this.mute ){
             Vue.notify(notifyArgs)
         }
         
@@ -212,21 +213,33 @@ class Request {
 
     checkForRedirect(response){
         if( response.response != undefined && response.response.data.message == "Unauthenticated." ){
-            if( Vue.$router.currentRoute.path != "/" ){
-                Vue.$store.state.auth.authMessage = "You've been logged on. Please log in again"
-                Vue.$router.push({path: "/"})
+            window.App.$store.dispatch("auth/logout", window.App.$router)
+            if( window.App.$router.currentRoute.path != "/" ){
+                this.mute = true
+                window.App.$store.state.auth.authMessage = "You've been logged out. Please log in again"
+                window.App.$router.push({path: "/"})
             }
             
             return
         }
         if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
-            if( Vue.$router.currentRoute.path != "/" ){
-                Vue.$store.state.auth.authMessage = Vue.$store.state.auth.authMessages[response.data.details]
-                Vue.$router.push({path: "/"})
+            window.App.$store.dispatch("auth/logout", window.App.$router)
+            if( window.App.$router.currentRoute.path != "/" ){
+                this.mute = true
+                window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
+                window.App.$router.push({path: "/"})
             }
             
             return
         }
+    }
+
+    unmute(){
+        this.mute = false
+    }
+
+    muted(){
+        return this.mute
     }
 }
 

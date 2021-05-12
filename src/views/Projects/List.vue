@@ -9,6 +9,7 @@
                     <span class="px-3">-</span>
                     <A class="pr-2" type="router-link" :to="{path: `${project.id}`}">view</A>
                     <A v-if="can" type="router-link" :to="{path: `/projects/${project.id}/edit`}">edit</A>
+                    <A class="pl-2" title="Create an audit" aria-label="Create an audit" type="router-link" :to="{path: `/audits/create/${project.id}`}"><i class="fas fa-clipboard-list"></i></A>
                 </li>
             </ul>
         </template>

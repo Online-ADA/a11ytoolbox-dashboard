@@ -1,5 +1,30 @@
 import Vue from 'vue'
 
+const getDefaultState = () => {
+	return {
+		users: [],
+		user : false,
+		projects: [],
+		domains: [],
+		audits: [],
+		articles: [],
+		techniques: [],
+		recommendations: [],
+		clients: [],
+		API: "https://apitoolbox.ngrok.io/api/user",
+		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
+		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
+		loading:{
+			articles: false,
+			users: false,
+			projects: false,
+			audits: false,
+			clients: false,
+			domains: false
+		}
+	}
+}
+
 export default {
 	namespaced:true,
 	state: {
@@ -28,8 +53,14 @@ export default {
 		setState(state,payload) {
 			Vue.set(state,payload.key,payload.value)
 		},
+		resetState (state) {
+			Object.assign(state, getDefaultState())
+		},
 	},
 	actions: {
+		resetState({commit}) {
+			commit('resetState')
+		},
 		getArticles({state, dispatch, rootState}){
 			state.loading.articles = true
 			Request.getPromise(`${state.API}/${rootState.auth.account}/articles`)
@@ -40,11 +71,14 @@ export default {
 			})
 			.catch(res => {
 				console.log(res.error)
-				Vue.notify({
-					title: 'Error',
-					text: res.error,
-					type: 'error'
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: 'Error',
+						text: res.error,
+						type: 'error'
+					})
+				}
+				
 				state.loading.articles = false
 			})
 		},
@@ -55,11 +89,13 @@ export default {
 			})
 			.catch(res => {
 				console.log(res.error)
-				Vue.notify({
-					title: 'Error',
-					text: res.error,
-					type: 'error'
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: 'Error',
+						text: res.error,
+						type: 'error'
+					})
+				}
 				state.loading.articles = false
 			})
 		},
@@ -68,19 +104,23 @@ export default {
 			.then( res => {
 				state.recommendations = res.data.details
 				state.loading.articles = false
-				Vue.notify({
-					title: 'Success',
-					text: 'articles retrieved',
-					type: 'success'
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: 'Success',
+						text: 'articles retrieved',
+						type: 'success'
+					})
+				}
 			})
 			.catch(res => {
 				console.log(res.error)
-				Vue.notify({
-					title: 'Error',
-					text: res.error,
-					type: 'error'
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: 'Error',
+						text: res.error,
+						type: 'error'
+					})
+				}
 				state.loading.articles = false
 			})
 		},
@@ -91,19 +131,23 @@ export default {
 			})
 			.then( re=> {
 				state[`${args.object.identifier}s`] = re.data.details
-				Vue.notify({
-					title: "Success",
-					text: `${args.object.identifier} saved`,
-					type: "success"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Success",
+						text: `${args.object.identifier} saved`,
+						type: "success"
+					})
+				}
 			})
 			.catch( re=> {
 				console.log( re );
-				Vue.notify({
-					title: "Error",
-					text: re,
-					type: "error"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Error",
+						text: re,
+						type: "error"
+					})
+				}
 			})
 			.then( () => {
 				state.loading.articles = false
@@ -116,19 +160,23 @@ export default {
 			})
 			.then( re=> {
 				state[`${args.object.identifier}s`] = re.data.details
-				Vue.notify({
-					title: "Success",
-					text: `${args.object.identifier} updated`,
-					type: "success"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Success",
+						text: `${args.object.identifier} updated`,
+						type: "success"
+					})
+				}
 			})
 			.catch( re=> {
 				console.log( re );
-				Vue.notify({
-					title: "Error",
-					text: re,
-					type: "error"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Error",
+						text: re,
+						type: "error"
+					})
+				}
 			})
 			.then( () => {
 				state.loading.articles = false
@@ -140,20 +188,24 @@ export default {
 			.then( re => {
 				state.loading.articles = false
 				state.articles = re.data.details
-				Vue.notify({
-					title: "Success",
-					text: "Article deleted",
-					type: "success"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Success",
+						text: "Article deleted",
+						type: "success"
+					})
+				}
 			})
 			.catch( re => {
 				console.log( re );
 				state.loading.articles = false
-				Vue.notify({
-					title: "Error",
-					text: re.error,
-					type: "error"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Error",
+						text: re.error,
+						type: "error"
+					})
+				}
 			} )
 		},
 		deleteTechnique({state, rootState}, args){
@@ -162,20 +214,24 @@ export default {
 			.then( re => {
 				state.loading.articles = false
 				state.techniques = re.data.details
-				Vue.notify({
-					title: "Success",
-					text: "Technique deleted",
-					type: "success"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Success",
+						text: "Technique deleted",
+						type: "success"
+					})
+				}
 			})
 			.catch( re => {
 				console.log( re );
 				state.loading.articles = false
-				Vue.notify({
-					title: "Error",
-					text: re.error,
-					type: "error"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Error",
+						text: re.error,
+						type: "error"
+					})
+				}
 			} )
 		},
 		deleteRecommendation({state, rootState}, args){
@@ -184,20 +240,24 @@ export default {
 			.then( re => {
 				state.loading.articles = false
 				state.recommendations = re.data.details
-				Vue.notify({
-					title: "Success",
-					text: "Recommendation deleted",
-					type: "success"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Success",
+						text: "Recommendation deleted",
+						type: "success"
+					})
+				}
 			})
 			.catch( re => {
 				console.log( re );
 				state.loading.articles = false
-				Vue.notify({
-					title: "Error",
-					text: re.error,
-					type: "error"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Error",
+						text: re.error,
+						type: "error"
+					})
+				}
 			} )
 		},
 		deleteProject({state, rootState}, args){
@@ -206,20 +266,24 @@ export default {
 			.then( re => {
 				state.loading.projects = false
 				state.projects = re.data.details
-				Vue.notify({
-					title: "Success",
-					text: "Project deleted",
-					type: "success"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Success",
+						text: "Project deleted",
+						type: "success"
+					})
+				}
 			})
 			.catch( re => {
 				console.log( re );
 				state.loading.projects = false
-				Vue.notify({
-					title: "Error",
-					text: re.error,
-					type: "error"
-				})
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Error",
+						text: re.error,
+						type: "error"
+					})
+				}
 			} )
 		},
 		modifyRole({state, rootState}, args){

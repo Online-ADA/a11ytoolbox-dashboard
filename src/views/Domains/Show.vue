@@ -8,36 +8,39 @@
 		<h3 class="mb-3">{{domain.url}}</h3>
 		
 		<div class="flex">
-			<Card style="max-height:400px;" class="p-4 flex-1 overflow-y-auto">
+			<div class="flex-1 flex flex-col">
 				<h3 class="mb-3 w-full">Pages</h3>
-				<template v-if="domain && domain.pages.length">
-					<ul class="mb-4 w-full">
-						<li v-for="page in domain.pages" :key="page.id">
-							{{page.url}}
-							<!-- <A type='router-link' :to="{path: `/pages/${page.id}`}">{{page.url || page.description}}</A> -->
-						</li>
-					</ul>
-				</template>
-				<template v-else>
-					There are no pages for this domain.
-				</template>
-			</Card>
-			<Card style="max-height:400px;" class="p-4 flex-1 overflow-y-auto">
+				<Card style="max-height:400px;" class="p-4 flex-1 overflow-y-auto">
+					<template v-if="domain && domain.pages.length">
+						<ul class="mb-4 w-full">
+							<li v-for="page in domain.pages" :key="page.id">
+								{{page.url}}
+								<!-- <A type='router-link' :to="{path: `/pages/${page.id}`}">{{page.url || page.description}}</A> -->
+							</li>
+						</ul>
+					</template>
+					<template v-else>
+						There are no pages for this domain.
+					</template>
+				</Card>
+			</div>
+			<div class="flex-1 flex flex-col">
 				<h3 class="mb-3 w-full">Structured Sample</h3>
-				<template v-if="domain && domain.sample.length">
-					<ul class="mb-4 w-full">
-						<li v-for="item in domain.sample" :key="item.id">
-							{{item.content}}<span v-if="item.screen"> - <A :href="item.screen" :newTab="true" >{{item.screen}}</A></span>
-							<!-- <A type='router-link' :to="{path: `/pages/${page.id}`}">{{page.url || page.description}}</A> -->
-						</li>
-					</ul>
-				</template>
-				<template v-else>
-					There is no structured sample for this domain
-				</template>
-			</Card>
+				<Card style="max-height:400px;" class="p-4 flex-1 overflow-y-auto">
+					<template v-if="domain && domain.sample.length">
+						<ul class="mb-4 w-full">
+							<li v-for="item in domain.sample" :key="item.id">
+								{{item.content}}<span v-if="item.screen"> - <A :href="item.screen" :newTab="true" >{{item.screen}}</A></span>
+								<!-- <A type='router-link' :to="{path: `/pages/${page.id}`}">{{page.url || page.description}}</A> -->
+							</li>
+						</ul>
+					</template>
+					<template v-else>
+						There is no structured sample for this domain
+					</template>
+				</Card>
+			</div>
 		</div>
-		
 	</div>
 </template>
 

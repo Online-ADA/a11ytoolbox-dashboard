@@ -1,5 +1,5 @@
 <template>
-  <ProjectCreate></ProjectCreate>
+  <ProjectCreate :independent="true"></ProjectCreate>
 </template>
 
 <script>

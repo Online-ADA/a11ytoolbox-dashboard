@@ -1,5 +1,5 @@
 <template>
-	<div class="text-center mt-32">
+	<div class="text-center mt-20">
 		<Loader v-if="loading"></Loader>
 		
 		<h1>Create new Audit</h1>
@@ -39,8 +39,17 @@
 			</div>
 
 			<div class="w-1/2 text-left px-2">
-				<Label for="essential_functionality">Essential Functionality</Label>
-				<Textarea class="w-full" id="essential_functionality" name="essential_functionality" v-model="audit.essential_functionality" rows="4"></Textarea>
+				<Label for="essential_functionality">
+					Essential Functionality
+					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
+						<div class="flex mb-3" v-for="(input, i) in audit.essential_functionality" :key="`AT-select-${i}`">
+							<TextInput class="mr-1 w-11/12" id="essential_functionality" name="essential_functionality" v-model="audit.essential_functionality[i].content"></TextInput>
+							<Button class="ml-1" :hover="true" @click.native.prevent="removeEssentialFunctionality(i)"><i class="fas fa-trash-alt"></i></Button>
+						</div>
+						
+						<Button :hover="true" @click.native.prevent="addNewEssentialFunctionality">Add New</Button>
+					</Card>
+				</Label>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
@@ -97,7 +106,7 @@
 					<h3>Auditors</h3>
 					<ul v-if="unassigned.length">
 						<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
-						<span>{{displayUser(id)}}</span><Button hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
+							<span>{{displayUser(id)}}</span><Button hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
 						</li>
 					</ul>
 					</Card>
@@ -105,7 +114,7 @@
 					<h3>Assignees</h3>
 					<ul v-if="assigned.length">
 						<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
-						<Button hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
+							<Button hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
 						</li>
 					</ul>
 					</Card>
@@ -113,14 +122,25 @@
 				
 			</template>
 
-			<div class="flex flex-wrap w-full justify-center">
+			<div class="flex flex-wrap w-full justify-center mb-24">
 				<h2 class="my-2">Working Sample</h2>
 				<span class="text-base my-2">The working sample takes the structured list created with the domain and calculates 10% of the number of items in it. It will then grab that number of pages at random from the sitemap (if it was provided with the domain) and combine them to form the working sample.</span>
 				<Button class="mt-1 mb-3" hover="true" @click.native.prevent="generateWorkingSample">Generate Sample</Button>
 
 				<template v-if="audit.working_sample.length">
 					<Card class="w-full p-4 mb-34 mx-2 flex-wrap items-center flex-col">
-						<!-- <Button class="" color="orange" @click.native.prevent="structuredListModalOpen =true">Add</Button> -->
+						<div class="flex flex-wrap w-full justify-center items-end">
+							<h3 class="w-full">Add new sample item</h3>
+							<Label class="flex-1 pr-3">
+								<span>Content</span>
+								<TextInput v-model="newSampleItem.content"></TextInput>
+							</Label>
+							<Label class="flex-1">
+								<span>Screen</span>
+								<TextInput v-model="newSampleItem.screen"></TextInput>
+							</Label>
+							<Button style="margin-bottom:13px" class="ml-3" color="orange" @click.native.prevent="addNewSampleItem">Add Item</Button>
+						</div>
 						
 						<h4 class="my-3">Items</h4>
 						<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
@@ -144,7 +164,7 @@
 						<Button @click.native.prevent="emptySample" color="delete">Remove all</Button>
 					</Card>
 
-					<h2 class="my-3">Save and go to audit</h2>
+					<h2 class="my-3 w-full">Save and go to audit</h2>
 					<Button hover="true" @click.native.prevent="createAudit">Create</Button>
 				</template>
 			</div>
@@ -183,7 +203,7 @@ export default {
 		],
 		audit: {
 			title: "",
-			essential_functionality: "",
+			essential_functionality: [{content:""}],
 			additional_requirements: "",
 			software_used: [{name:""}],
 			assistive_tech: [{name:""}],
@@ -199,7 +219,8 @@ export default {
 			working_sample: [],
 			conformance_target: "WCAG 2.1 Level AA"
 		},
-        complete: false
+        complete: false,
+		newSampleItem: {content: "", screen: ""}
 	}),
     watch:{
         complete(newVal){
@@ -211,6 +232,9 @@ export default {
 			if( newVal ){
 				this.$store.dispatch("audits/getAuditors", {vm: this})
 			}
+		},
+		auditors(newVal){
+			this.unassigned = newVal.map( o=>o.id)
 		}
     },
 	computed: {
@@ -224,7 +248,7 @@ export default {
             return this.$store.state.auth.user.id
         },
         auditors(){
-            return this.$store.state.audits.auditors || []
+            return this.$store.state.audits.auditors
         },
         isManager(){
             return this.$store.getters["auth/isManager"]
@@ -241,6 +265,28 @@ export default {
 	},
 	props: [],
 	methods: {
+		removeTechReq(index){
+			this.audit.tech_requirements.splice(index, 1)
+		},
+		removeAssistiveTech(index){
+			this.audit.assistive_tech.splice(index, 1)
+		},
+		removeSoftwareUsed(index){
+			this.audit.software_used.splice(index, 1)
+		},
+		removeEssentialFunctionality(index){
+			this.audit.essential_functionality.splice(index, 1)
+		},
+		addNewEssentialFunctionality(){
+			this.audit.essential_functionality.push({content:""})
+		},
+		addNewSampleItem(){
+			this.audit.working_sample.push(this.newSampleItem)
+			this.newSampleItem = {content: "", screen: ""}
+		},
+		emptySample(){
+			this.audit.working_sample = []
+		},
 		displayUser(id){
 			let user = this.auditors.find( u => u.user_id == id )
 			return user != undefined ? `${user.first_name} ${user.last_name}` : false
@@ -323,11 +369,13 @@ export default {
 			this.audit.working_sample.splice(index, 1)
 		},
 		createAudit(){
+			this.audit.essential_functionality = this.audit.essential_functionality.map(o=>o.content)
 			this.audit.tech_requirements = this.audit.tech_requirements.map(o=>o.name)
 			this.audit.assistive_tech = this.audit.assistive_tech.map(o=>o.name)
 			this.audit.software_used = this.audit.software_used.map(o=>o.name)
 			this.audit.assigned = this.assigned
 			this.audit.project_id = this.sheetData.sheet0.project
+			this.audit.domain_id = this.sheetData.sheet1.domain
 
 			this.$store.dispatch("audits/createAudit", {audit: this.audit, router: this.$router})
 		},
@@ -335,7 +383,11 @@ export default {
 	created() {
 		
 	},
-	mounted() {},
+	mounted() {
+		if( this.isManager && !this.auditors.length ){
+			this.$store.dispatch("audits/getAuditors")
+		}
+	},
 	components: {
 		Loader,
 		TextInput,

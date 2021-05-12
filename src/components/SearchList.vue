@@ -16,7 +16,7 @@
             :target="target"
             style="transition:transform .15s ease-in-out, z-index .15s ease-in-out" 
             :class="[ display != 'description' ? 'justify-center' : '', hoverEffect == 'grow' ? growClasses : '' ]" 
-            class="cursor-pointer bg-white my-2 p-2.5 rounded relative z-0 flex flex-col items-center list-item border border-gray-300 shadow mx-1"
+            class="cursor-pointer bg-white my-2 p-2.5 rounded relative z-0 flex flex-col items-center border list-item-custom border-gray-300 shadow mx-1"
             v-for="(item, index) in filteredList" 
             :key="index">
                 <div class="text-large text-pallette-grey-dark">{{item[display]}}</div>
@@ -28,7 +28,7 @@
 </template>
 
 <style>
-    .list-item{
+    .list-item-custom{
         max-height:150px;
         overflow-y:auto;
         width:30%;

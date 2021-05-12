@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="p-3.5">
     <notifications/>
-    <div id="nav" class="flex place-content-center p-2 items-center container mx-auto">
+    <div id="nav" class="flex place-content-center p-2 items-center container mx-auto relative z-30">
       <router-link class="hover:text-gray-500" to="/">Home</router-link>
       <span class="px-2">|</span>
       <template v-if="$store.getters['auth/isManager']">
@@ -61,7 +61,7 @@ export default {
         },
         {
           type: 'router-link',
-          label: 'Articles',
+          label: 'Success Criteria',
           to: '/manage/articles'
         },
       ],

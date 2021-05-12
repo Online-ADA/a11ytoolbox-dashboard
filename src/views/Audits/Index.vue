@@ -22,7 +22,8 @@ export default {
       }
     },
     beforeDestroy(){
-      this.$store.unregisterModule("audits")
+      // this.$store.unregisterModule("audits")
+      this.$store.dispatch("audits/resetState")
     },
     mounted() {
     },

@@ -21,7 +21,8 @@ export default {
       }
     },
     beforeDestroy(){
-      this.$store.unregisterModule("domains")
+      // this.$store.unregisterModule("domains")
+      this.$store.dispatch("domains/resetState")
     },
     mounted() {
     },
