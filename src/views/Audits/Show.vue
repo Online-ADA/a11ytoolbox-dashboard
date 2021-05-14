@@ -1,6 +1,7 @@
 <template>
 	<div class="text-center mt-32 mx-auto">
 		<Loader v-if="loading"></Loader>
+		
 		<template v-if="audit">
 			<A class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
 			<A type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
@@ -15,48 +16,64 @@
 			<Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'orange' : 'white'" :hover="true">Dark Mode</Button>
 		</div>
 		<Modal class="z-40" size="full" :open="issueModalOpen">
+			<div role="alert" :class="{ 'hidden': !showValidationAlert}" class="sr-only">
+				The following validation errors are present on the add issue form: 
+				<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
+			</div>
 			<div style="padding-bottom:60px;" class="bg-white px-4 pt-5 p-6">
-				<Button @click.native.prevent="issueModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<Button aria-label="Close add issue modal" @click.native.prevent="issueModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<h2 class="text-center">Add Issue</h2>
 				<div class="flex items-start mt-3 text-left w-full flex-wrap">
 					
-					<div class="flex w-full justify-evenly mt-2">
-						<div class="mx-2">
-							<Label class="text-lg leading-6 w-full" :stacked="false" for="pages">Pages</Label>
-							<select style="min-width:200px;max-width:250px;" id="pages" class="flex-1" v-model="issue.pages" multiple>
-								<option :value="page.content" v-for="(page, index) in audit.pages" :key="'page-'+index">{{page.content}}</option>
+					<div class="flex w-full mt-2">
+						<div class="mx-2 flex-1">
+							<Label class="text-lg leading-6 w-full" for="success_criteria">Success Criteria</Label>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('articles') }" id="success-criteria-validation">{{validationMessages["articles"]}}</small>
+							<select required :aria-describedby="failedValidation.includes('articles') ? 'success-criteria-validation' : false" style="min-width:200px;" id="success_criteria" class="w-full" v-model="issue.articles" multiple>
+								<option class="overflow-ellipsis overflow-hidden whitespace-nowrap" :value="article.id" v-for="(article, index) in articles" :key="'success_criteria-'+index">{{article.number}} - {{article.title}}</option>
 							</select>
 						</div>
-						<div class="mx-2">
-							<Label class="text-lg leading-6 w-full" for="audit_status">States</Label>
-							<select style="min-width:200px;max-width:250px;" id="audit_status" class="flex-1" v-model="issue.audit_states" multiple>
-								<option :value="status" v-for="(status, index) in audit_states" :key="'audit_status-'+index">{{status}}</option>
-							</select>
-						</div>
-						<div class="mx-2">
-							<Label class="text-lg leading-6 w-full" for="essential_functionalities">Essential Functionalities</Label>
-							<select style="min-width:200px;max-width:250px;" multiple id="essential_functionalities" name="essential_functionalities" v-model="issue.essential_functionality">
-								<option v-for="(option, index) in audit.essential_functionality" :key="'essentials-'+index">{{option}}</option>
-							</select>
-						</div>
-						<div class="mx-2">
-							<Label class="text-lg leading-6 w-full" for="success_criteria">Success Critera</Label>
-							<select style="min-width:200px;max-width:250px;" id="success_criteria" class="flex-1" v-model="issue.articles" multiple>
-								<option :value="article.id" v-for="(article, index) in articles" :key="'success_criteria-'+index">{{article.number}}</option>
-							</select>
-						</div>
-						<div class="mx-2">
+						<div class="mx-2 flex-1">
 							<Label class="text-lg leading-6 w-full" for="techniques">Techniques</Label>
-							<select style="min-width:200px;max-width:250px;" id="techniques" class="flex-1" v-model="issue.techniques" multiple>
+							<select style="min-width:200px;min-height:118px;" id="techniques" class="w-full" v-model="issue.techniques" multiple>
 								<option :value="technique.id" v-for="(technique, index) in filteredTechniques" :key="'technique-'+index">{{technique.number}}</option>
 							</select>
 						</div>
-						<div class="flex-1 mx-2">
-							<Label class="text-lg leading-6 w-full" for="recommendations">Recommendations</Label>
-							<select style="min-width:200px;" id="recommendations" class="w-full" v-model="issue.recommendations" multiple>
-								<option :value="recommendation.id" v-for="(recommendation, index) in filteredRecommendations" :key="'recommendation-'+index">{{recommendation.description}}</option>
+						<div class="mx-2 flex-1">
+							<Label class="text-lg leading-6 w-full" :stacked="false" for="pages">Pages</Label>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('pages') }" id="pages-validation">The pages field is required</small>
+							<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
+								<option :value="page.content" v-for="(page, index) in audit.pages" :key="'page-'+index">{{page.content}}</option>
 							</select>
 						</div>
+						<div class="mx-2 flex-1">
+							<Label class="text-lg leading-6 w-full" for="audit_status">States</Label>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('audit_states') }" id="states-validation">{{validationMessages["audit_states"]}}</small>
+							<select :aria-describedby="failedValidation.includes('audit_states') ? 'states-validation' : false" required style="min-width:200px;" id="audit_status" class="w-full" v-model="issue.audit_states" multiple>
+								<option :value="status" v-for="(status, index) in audit_states" :key="'audit_status-'+index">{{status}}</option>
+							</select>
+						</div>
+						<div :class="{'hidden': !issue.audit_states.includes('other')}" class="mx-2 flex-1">
+							<Label class="text-lg leading-6">
+								Other States
+								<Card :gutters="false" :center="false" style="max-height:118px;" class="overflow-y-scroll w-full text-left my-2">
+									<div class="flex mb-3" v-for="(input, i) in other_states" :key="`other-states-${i}`">
+										<TextInput class="flex-1" name="other-states" id="other-states" v-model="other_states[i]"></TextInput>
+										<Button class="ml-1" :aria-label="'Remove other issue state ' + other_states[i]" :hover="true" @click.native.prevent="removeOtherState(i)"><i class="fas fa-trash-alt"></i></Button>
+									</div>
+									
+									<Button :hover="true" @click.native.prevent="addNewOtherState">Add New</Button>
+								</Card>
+							</Label>
+							
+						</div>
+						<div class="mx-2 flex-1">
+							<Label class="text-lg leading-6 w-full" for="essential_functionalities">Essential Functionalities</Label>
+							<select class="w-full" style="min-width:200px;;" multiple id="essential_functionalities" name="essential_functionalities" v-model="issue.essential_functionality">
+								<option v-for="(option, index) in audit.essential_functionality" :key="'essentials-'+index">{{option}}</option>
+							</select>
+						</div>
+						
 					</div>
 
 					<div class="flex w-full justify-evenly mt-2">
@@ -91,11 +108,13 @@
 						</div>
 						<div class="w-1/3 flex flex-col">
 							<Label for="effort">Effort</Label>
-							<select v-model="issue.effort" name="effort">
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('effort') }" id="effort-validation">{{validationMessages["effort"]}}</small>
+							<select :aria-describedby="failedValidation.includes('effort') ? 'effort-validation' : false" id="effort" v-model="issue.effort" name="effort">
 								<option :value="option" v-for="(option, index) in ['Low', 'Medium', 'High']" :key="'effort-' + index">{{option}}</option>
 							</select>
 							<Label for="priority">Priority</Label>
-							<select v-model="issue.priority" name="priority">
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('priority') }" id="priority-validation">{{validationMessages["priority"]}}</small>
+							<select :aria-describedby="failedValidation.includes('priority') ? 'priority-validation' : false" id="priority" v-model="issue.priority" name="priority">
 								<option :value="option" v-for="(option, index) in ['Low', 'Medium', 'High']" :key="'priority-' + index">{{option}}</option>
 							</select>
 						</div>
@@ -108,7 +127,7 @@
 								<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.screenshots" :key="`screen-${i}`">
 										<TextInput class="flex-1" name="screenshots" id="screenshots" v-model="issue.screenshots[i]"></TextInput>
-										<Button class="ml-1" :hover="true" @click.native.prevent="removeScreenshot(i)"><i class="fas fa-trash-alt"></i></Button>
+										<Button class="ml-1" :aria-label="'Remove screenshot ' + issue.screenshots[i]" :hover="true" @click.native.prevent="removeScreenshot(i)"><i class="fas fa-trash-alt"></i></Button>
 									</div>
 									
 									<Button :hover="true" @click.native.prevent="addNewScreenshot">Add New</Button>
@@ -121,7 +140,7 @@
 								<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.resources" :key="`resource-${i}`">
 										<TextInput class="flex-1" name="resources" id="resources" v-model="issue.resources[i]"></TextInput>
-										<Button class="ml-1" :hover="true" @click.native.prevent="removeResource(i)"><i class="fas fa-trash-alt"></i></Button>
+										<Button :aria-label="'Remove resource ' + issue.resources[i]" class="ml-1" :hover="true" @click.native.prevent="removeResource(i)"><i class="fas fa-trash-alt"></i></Button>
 									</div>
 									
 									<Button :hover="true" @click.native.prevent="addNewResource">Add New</Button>
@@ -130,9 +149,11 @@
 						</div>
 						<div class="flex-1 mx-2">
 							<Label for="target" class="text-lg leading-6 w-full">Target</Label>
-							<TextInput class="flex-1 w-full" name="target" id="target" v-model="issue.target"></TextInput>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('target') }" id="target-validation">{{validationMessages["target"]}}</small>
+							<TextInput required :aria-describedby="failedValidation.includes('target') ? 'target-validation' : false" class="flex-1 w-full" name="target" id="target" v-model="issue.target"></TextInput>
 							<Label for="status" class="text-lg leading-6 w-full">Status</Label>
-							<select name="status" v-model="issue.status">
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('status') }" id="status-validation">{{validationMessages["status"]}}</small>
+							<select :aria-describedby="failedValidation.includes('status') ? 'status-validation' : false" id="status" name="status" v-model="issue.status">
 								<option :value="option.display" v-for="(option, index) in statuses" :key="'status-'+index">{{option.display}}</option>
 							</select>
 						</div>
@@ -140,53 +161,58 @@
 
 					<div class="flex w-full justify-evenly mt-2">
 						<div class="w-1/2 flex flex-col px-2">
-							<Label class="text-lg leading-6 w-full" for="issue_descriptions">Descriptions</Label>
+							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Descriptions <small>(Note: this editor is not fully accessible)</small></Label>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
 							<Button class="self-start" @click.native.prevent="selectDescriptionsModalOpen = true" color="orange" hover="true">Add Descriptions</Button>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-pallette-orange placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1" ></div>
 						</div>
-						<div class="w-1/2">
-							<Label class="text-lg leading-6 w-full" for="auditor_notes">Auditor Notes</Label>
-							<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
+						<div class="w-1/2 flex flex-col px-2">
+							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations <small>(Note: this editor is not fully accessible)</small></Label>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
+							<Button class="self-start" @click.native.prevent="selectRecommendationsModalOpen = true" color="orange" hover="true">Add Recommendations</Button>
+							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-pallette-orange placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
 						</div>
-						<!-- <div class="w-1/2 flex flex-col px-2">
-							<Button @click.native.prevent="selectRecommendationsModalOpen = true" color="orange" hover="true">Add Recommendations</Button>
-							<div style="max-height:300px;min-height:300px;overflow-y:auto;" id="editor2" ></div>
-						</div> -->
+					</div>
+					<div class="flex w-full flex-col mt-2 px-2">
+						<Label class="text-lg leading-6 w-full" for="auditor_notes">Auditor Notes</Label>
+						<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
 					</div>
 					
 				</div>
 			</div>
-			<div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
-					<button v-if="false" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto text-sm">
+			<div class="bg-gray-50 px-4 py-3 flex">
+				<button v-if="false" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto text-sm">
 					Delete
-					</button>
-					<button @click="issueModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				</button>
+				<button @click="issueModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
 					Cancel
-					</button>
-					<button @click="createIssue" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				</button>
+				<button @click="createIssue" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
 					Save
-					</button>
+				</button>
 			</div>
 		</Modal>
 		<Modal class="z-50" :open="selectDescriptionsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
+				<Button aria-label="Close select descriptions modal" @click.native.prevent="selectDescriptionsModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<h2 class="text-center">Which Success Criteria descriptions would you like to add?</h2>
-				<select class="m-2 w-full" multiple v-model="selectedDescriptions">
-					<option :value="articles[option]" v-for="(option, index) in  issue.articles" :key="'descriptions-'+index">{{articles[option].number}}</option>
+				<select aria-label="Select descriptions" class="m-2 w-full" multiple v-model="selectedDescriptions">
+					<option :value="articles[option]" v-for="(option, index) in issue.articles" :key="'descriptions-'+index">{{articles[option].number}}</option>
 				</select>
 				<Button @click.native.prevent="addSelectedDescriptions" class="mx-2" color="orange" hover="true">Add</Button>
 			</div>
-			<div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
+			<div class="bg-gray-50 px-4 py-3 flex">
 				<button @click="selectDescriptionsModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
 				Cancel
 				</button>
 			</div>
 		</Modal>
-		<!-- <Modal class="z-50" :open="selectRecommendationsModalOpen">
+		<Modal class="z-50" :open="selectRecommendationsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
+				<Button aria-label="Close select recommendations modal" @click.native.prevent="selectRecommendationsModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<h2 class="text-center">Which recommendations would you like to add?</h2>
-				<select class="m-2 w-full" multiple v-model="selectedRecommendations">
-					<option :value="recommendations[option]" v-for="(option, index) in  issue.articles" :key="'recommendations-'+index">{{articles[option].number}}</option>
+				<select aria-label="Select recommendations" class="m-2 w-full" multiple v-model="selectedRecommendations">
+					<option :value="option" v-for="(option, index) in filteredRecommendations" :key="'recommendations-'+index">{{option.description}}</option>
 				</select>
 				<Button @click.native.prevent="addSelectedRecommendations" class="mx-2" color="orange" hover="true">Add</Button>
 			</div>
@@ -195,7 +221,7 @@
 				Cancel
 				</button>
 			</div>
-		</Modal> -->
+		</Modal>
 	</div>
 </template>
 
@@ -245,7 +271,8 @@ export default {
 			"logged into account",
 			"not logged into account",
 			"high contrast mode",
-			"screen reader in use"
+			"screen reader in use",
+			"other"
 		],
 		selectDescriptionsModalOpen: false,
 		selectRecommendationsModalOpen: false,
@@ -284,7 +311,7 @@ export default {
 			browser_combos: [],
 			articles: [],
 			techniques: [],
-			recommendations: [],
+			recommendations: "",
 			descriptions: "",
 			levels: [],
 			actrs: [],
@@ -297,7 +324,20 @@ export default {
 		selectedTech: "",
 		descriptionsQuill: null,
 		recommendationsQuill: null,
-		audit: { issues: [] }
+		failedValidation: [],
+		validationMessages: {
+			audit_states: "The states field is required",
+			descriptions: "The descriptions field is required",
+			pages: "The pages field is required",
+			recommendations: "The recommendations field is required",
+			articles: "The success criteria field is required",
+			target: "The target field is required",
+			status: "The status field is required",
+			effort: "The effort field is required",
+			priority: "The priority field is required",
+		},
+		showValidationAlert: false,
+		other_states: [""]
 	}),
 	computed: {
 		browserCombo(){
@@ -392,7 +432,10 @@ export default {
 				})
 			}
 			return arr
-		}
+		},
+		audit(){
+			return this.$store.state.audits && this.$store.state.audits.audit ? this.$store.state.audits.audit : false
+		},
 	},
 	props: [],
 	watch: {
@@ -402,8 +445,6 @@ export default {
 			}
 		},
 		"$store.state.audits.audit": function(newVal){
-			console.log("Audit changed", newVal);
-			this.$set(this, "audit", newVal)
 			this.selectedSoftware = newVal.software_used[0]
 		},
 		"issue.articles": function(){
@@ -417,9 +458,13 @@ export default {
 				}
 			}
 		},
-		// audit(newVal){
-		// 	this.selectedSoftware = newVal.software_used[0]
-		// }
+		failedValidation(newVal){
+			if(newVal.includes('descriptions')){
+				this.$refs.descriptionEditor.querySelector(".ql-editor").setAttribute("aria-describedby", "descriptions-validation")
+			}else{
+				this.$refs.descriptionEditor.querySelector(".ql-editor").removeAttribute("aria-describedby")
+			}
+		}
 	},
 	methods: {
 		selectRow(issue){
@@ -445,19 +490,25 @@ export default {
 			
 			this.selectDescriptionsModalOpen = false
 		},
-		// addSelectedRecommendations(){
-		// 	let builder = ""
-		// 	for( let j in this.selectedRecommendations ){
-		// 		builder += "<div>" + this.htmlDecode(this.selectedRecommendations[j].description.replaceAll(/[ ]{2,}/g, '- ')) + '</div><br>'
-		// 	}
-		// 	builder = builder.replace(/\n|\r/g, "</div><div>")
+		addSelectedRecommendations(){
+			let builder = ""
+			for( let j in this.selectedRecommendations ){
+				builder += "<div>" + this.htmlDecode(this.selectedRecommendations[j].description.replaceAll(/[ ]{2,}/g, '- ')) + '</div><br>'
+			}
+			builder = builder.replace(/\n|\r/g, "</div><div>")
 			
-		// 	this.quill.root.innerHTML += builder
+			this.recommendationsQuill.root.innerHTML += builder
 			
-		// 	this.selectDescriptionsModalOpen = false
-		// },
+			this.selectRecommendationsModalOpen = false
+		},
 		addBrowserCombo(){
 			this.issue.browser_combos.push(this.browserCombo)
+		},
+		addNewOtherState(){
+			this.other_states.push("")
+		},
+		removeOtherState(i){
+			this.other_states.splice(i, 1)
 		},
 		addNewResource(){
 			this.issue.resources.push("")
@@ -477,12 +528,56 @@ export default {
 		parseHeader(string){
 			return string.replace(/[-_.]/gm, " ");
 		},
+		validate(){
+			let toValidate = [
+				"target",
+				"articles",
+				"pages",
+				"status",
+				"descriptions",
+				"recommendations",
+				"audit_states",
+				"effort",
+				"priority"
+			]
+			this.failedValidation = []
+			var pass
+
+			for( let prop of toValidate ){
+				if( Array.isArray( this.issue[prop] ) ){
+					pass = this.issue[prop].length
+				}else{
+					pass = this.issue[prop]
+				}
+
+				if( !pass ){
+					if( !this.failedValidation.includes( prop ) ){
+						this.failedValidation.push( prop )
+					}
+				}
+			}
+
+			if( this.failedValidation.length !== 0 ){
+				this.showValidationAlert = true
+				setTimeout(()=>{
+					this.showValidationAlert = false
+				}, 500)
+			}
+
+			return this.failedValidation.length === 0
+		},
 		createIssue(){
-			this.issue.audit_id = this.$route.params.id
-			this.issue.issue_number = this.audit.issues.length + 1
-			this.$store.dispatch("audits/createIssue", {issue: this.issue})
-			this.issueModalOpen = false
-			this.issue = this.issueDefaults
+			if( this.validate() ){
+				this.issue.audit_id = this.$route.params.id
+				this.issue.issue_number = this.audit.issues.length + 1
+				if( this.issue.audit_states.includes("other") ){
+					this.issue.audit_states.splice( this.issue.audit_states.indexOf("other"), 1 )
+					this.issue.audit_states = [...this.issue.audit_states, ...this.other_states.filter( i => i !== "")]
+				}
+				this.$store.dispatch("audits/createIssue", {issue: this.issue})
+				this.issueModalOpen = false
+				this.issue = this.issueDefaults
+			}
 		}
 	},
 	created() {
@@ -512,17 +607,27 @@ export default {
 		descrEditor.setAttribute("aria-multiline", true)
 		descrEditor.setAttribute("id", "issue_descriptions")
 		descrEditor.setAttribute("tabindex", 0)
+		descrEditor.setAttribute("aria-describedby", "descriptions-validation")
+		descrEditor.setAttribute("required", "required")
 
-		// this.recommendationsQuill = new Quill('#editor2', {
-		// 	theme: 'snow',
-		// 	modules: {
-		// 		toolbar: this.quillEditorOptions
-		// 	}
-		// });
+		this.recommendationsQuill = new Quill('#editor2', {
+			theme: 'snow',
+			modules: {
+				toolbar: this.quillEditorOptions
+			}
+		});
 		
-		// this.recommendationsQuill.on('text-change', function(){
-		// 	self.issue.recommendations = self.recommendationsQuill.root.innerHTML
-		// })
+		this.recommendationsQuill.on('text-change', function(){
+			self.issue.recommendations = self.recommendationsQuill.root.innerHTML
+		})
+
+		let reccEditor = this.$refs.recommendationEditor.querySelector(".ql-editor")
+		reccEditor.setAttribute("role", "textbox")
+		reccEditor.setAttribute("aria-multiline", true)
+		reccEditor.setAttribute("id", "issue_recommendations")
+		reccEditor.setAttribute("tabindex", 0)
+		reccEditor.setAttribute("aria-describedby", "recommendations-validation")
+		reccEditor.setAttribute("required", "required")
 	},
 	components: {
 		Loader,

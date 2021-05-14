@@ -14,7 +14,7 @@
 								<i class="far fa-snowflake"></i>
 							</button>
 
-							<button @click="freezeColumn(header, index)" v-else-if="header.sticky && canFreeze(index)" aria-label="Un Freeze this column so it will scroll horizontally" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+							<button @click="freezeColumn(header, index)" v-else-if="header.sticky && canFreeze(index)" aria-label="Unfreeze this column so it will scroll horizontally" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 								<i class="far fa-fire-alt"></i>
 							</button>
 							{{header.header}}
@@ -27,7 +27,7 @@
 				<tbody>
 					<tr :class="{'selected': selected.includes(data.id)}" tabindex="0" @click="handleClick(data)" v-for="(data, index) in columnData" :key="'row-'+index">
 						<td class="whitespace-pre-wrap p-2" :ref="'columnData-'+ subIndex" :class="[headers[subIndex].sticky ? 'sticky z-20' : 'relative z-10']" :style="headers[subIndex].style"  v-show="headers[subIndex].show" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
-							<span class="text-left" v-if="key == 'descriptions'" v-html="value"></span>
+							<span class="text-left" v-if="key == 'descriptions' || key == 'recommendations'" v-html="value"></span>
 							<template v-else>{{displayValue(key, value)}}</template>
 						</td>
 					</tr>
@@ -40,7 +40,8 @@
 				<ul class="flex flex-wrap">
 					<li class="flex w-5/12 mx-2 my-2 justify-center items-center" v-for="(header, index) in headers" :key="index">
 						<Label :for="'showCol'+ (index+1)">Show {{header.header}}</Label>
-						<Checkbox :id="'showCol'+ (index+1)" v-model="header.show"></Checkbox>
+						<Checkbox :value="header.show" :id="'showCol'+ (index+1)" @input="showHideColumn(index)"></Checkbox>
+						<!-- <Checkbox :id="'showCol'+ (index+1)" @input="showHideColumn(index)" v-model="header.show"></Checkbox> -->
 					</li>
 				</ul>
 			</div>
@@ -89,11 +90,25 @@
 			}
 		},
 		methods: {
+			showHideColumn( colIndex ){
+				this.headers[colIndex].show = !this.headers[colIndex].show
+
+				let allStickied = this.headers.filter( el => el.show && el.sticky )
+				for( let i in allStickied ){
+					let thisItem = this.headers.find( x => x.header == allStickied[i].header)
+					let realIndex =  this.headers.indexOf( thisItem )
+					if( parseInt(i) === 0 ){
+						this.$set( this.headers[realIndex].style, "left", "0px" )
+					}else{
+						this.$set(this.headers[realIndex].style, "left", this.getLeftValue(realIndex))
+					}
+				}
+			},
 			handleClick(columnData){
 				this.$emit('rowClick', columnData)
 			},
 			displayValue(key, data){
-				let plainKeys = ["id", "issue_number", "status", "target", "descriptions", "priority", "effort", "how_discovered", "audit_id", "auditor_notes", "created_at", "updated_at", "created_by"]
+				let plainKeys = ["id", "issue_number", "status", "target", "descriptions", "recommendations", "priority", "effort", "how_discovered", "audit_id", "auditor_notes", "created_at", "updated_at", "created_by"]
 				let specialKeys = ["articles", "techniques"]
 				if( plainKeys.includes(key) ){
 					return data
@@ -109,18 +124,29 @@
 				}
 			},
 			canMoveLeft(colIndex){
-				if( colIndex !== 0 ){
-					return !this.headers[colIndex - 1].sticky
+				let nextColLeft = colIndex - 1
+				if( nextColLeft < 0 ){
+					return false
 				}
+				while( nextColLeft >= 0 ){
+					if( !this.headers[nextColLeft].sticky && this.headers[nextColLeft].show ){
+						return true
+					}
+
+					nextColLeft--
+				}
+
 				return false
 			},
 			getLeftValue(colIndex){
-				let allStickied = this.headers.filter( el=>el.sticky)
 				let left = 0
-				for( let index in allStickied ){
-					if( parseInt(index) !== colIndex ){
-						left += this.$refs['header-' + index][0].offsetWidth
+				let nextColLeft = colIndex - 1
+				while( nextColLeft >= 0 ){
+					if( this.headers[nextColLeft].sticky && this.headers[nextColLeft].show ){
+						left = parseInt(this.headers[nextColLeft].style.left.replace("px", "")) + parseInt(this.headers[nextColLeft].width.replace("px", ""))
+						return left + 'px'
 					}
+					nextColLeft--
 				}
 				
 				return left + 'px'
@@ -140,11 +166,23 @@
 			getStickyClasses(){
 				return "sticky z-10"
 			},
-			canFreeze(index){
-				if( index == 0 || this.headers[index - 1].sticky ){
+			canFreeze(colIndex){
+				let nextColLeft = colIndex - 1
+				if( nextColLeft < 0 ){ //Always the first index can freeze
 					return true
 				}
-				return false
+				while( nextColLeft >= 0 ){
+					if( this.headers[nextColLeft].sticky && this.headers[nextColLeft].show ){
+						return true
+					}
+					if( !this.headers[nextColLeft].sticky && this.headers[nextColLeft].show ){
+						return false
+					}
+
+					nextColLeft--
+				}
+
+				return true
 			},
 			moveColumn(oldIndex, newIndex) {
 				if( !this.headers[newIndex].sticky && this.columnData ){
@@ -178,7 +216,7 @@
 						that.$set(that.headers[c].style, "left", 0)
 					}
 
-					if( that.headers[c].sticky && c != "0" ){
+					if( that.headers[c].sticky && c != "0" && that.headers[c].show ){
 						let col = that.$refs['header-' + (c-1)][0]
 						that.$set(that.headers[c].style, "left", col.offsetWidth + 'px')
 					}
