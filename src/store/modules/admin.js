@@ -10,6 +10,7 @@ const getDefaultState = () => {
 		articles: [],
 		techniques: [],
 		recommendations: [],
+		audit_states: [],
 		clients: [],
 		API: "https://apitoolbox.ngrok.io/api/user",
 		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
@@ -36,6 +37,7 @@ export default {
 		articles: [],
 		techniques: [],
 		recommendations: [],
+		audit_states: [],
 		clients: [],
 		API: "https://apitoolbox.ngrok.io/api/user",
 		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
@@ -60,6 +62,25 @@ export default {
 	actions: {
 		resetState({commit}) {
 			commit('resetState')
+		},
+		getAuditStates({state, rootState}){
+			state.loading.articles = true
+			Request.getPromise(`${state.adminAPI}/${rootState.auth.account}/audits/states`)
+			.then( res => {
+				state.audit_states = res.data.details
+			})
+			.catch(res => {
+				console.log(res.error)
+				if( !Request.muted() ){
+					Vue.notify({
+						title: 'Error',
+						text: res.error,
+						type: 'error'
+					})
+				}
+				
+				state.loading.articles = false
+			})
 		},
 		getArticles({state, dispatch, rootState}){
 			state.loading.articles = true
@@ -126,7 +147,11 @@ export default {
 		},
 		createArticleObject({state, rootState}, args){
 			state.loading.articles = true
-			Request.postPromise(`${state.adminAPI}/${rootState.auth.account}/${args.object.identifier}s`, {
+			let path = args.object.identifier
+			if( args.object.identifier == "audit_state" ){
+				path = "audits/state"
+			}
+			Request.postPromise(`${state.adminAPI}/${rootState.auth.account}/${path}s`, {
 				params: args.object
 			})
 			.then( re=> {
@@ -155,7 +180,11 @@ export default {
 		},
 		updateArticleObject({state, rootState}, args){ 
 			state.loading.articles = true
-			Request.postPromise(`${state.adminAPI}/${rootState.auth.account}/${args.object.identifier}s/${args.object.id}`, {
+			let path = args.object.identifier
+			if( args.object.identifier == "audit_state" ){
+				path = "audits/state"
+			}
+			Request.postPromise(`${state.adminAPI}/${rootState.auth.account}/${path}s/${args.object.id}`, {
 				params: args.object
 			})
 			.then( re=> {
@@ -182,6 +211,31 @@ export default {
 				state.loading.articles = false
 			})
 		},
+		deleteAuditState({state, rootState}, args){
+			state.loading.articles = false
+			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/audits/states/${args.id}`)
+			.then( re => {
+				state.audit_states = re.data.details
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Success",
+						text: "State deleted",
+						type: "success"
+					})
+				}
+			})
+			.catch( re => {
+				console.log( re );
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Error",
+						text: re.error,
+						type: "error"
+					})
+				}
+			} )
+			.then( ()=> state.loading.articles = false)
+		},
 		deleteArticle({state, rootState}, args){
 			state.loading.articles = false
 			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/articles/${args.id}`)
@@ -191,7 +245,7 @@ export default {
 				if( !Request.muted() ){
 					Vue.notify({
 						title: "Success",
-						text: "Article deleted",
+						text: "Success Criteria deleted",
 						type: "success"
 					})
 				}

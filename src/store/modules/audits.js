@@ -8,6 +8,7 @@ const getDefaultState = () => {
 		project: false,
 		projects: [],
 		API: "https://apitoolbox.ngrok.io/api/user",
+		WEB: "https://apitoolbox.ngrok.io/user",
 		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
 		loading: false,
 		auditorsLoading: false,
@@ -25,6 +26,7 @@ export default {
 			project: false,
 			projects: [],
 			API: "https://apitoolbox.ngrok.io/api/user",
+			WEB: "https://apitoolbox.ngrok.io/user",
 			adminAPI: "https://apitoolbox.ngrok.io/api/admin",
 			loading: false,
 			auditorsLoading: false,
@@ -260,7 +262,33 @@ export default {
 				state.loading = true
 				Request.postPromise(`${state.API}/${rootState.auth.account}/audits/${args.issue.audit_id}/issues/store`, {params: args.issue})
 				.then( re=>{
-					state.audit = re.data.details
+					state.audit.issues = re.data.details
+				})
+				.catch( re=>{
+					console.log(re)
+				})
+				.then( ()=>{
+					state.loading = false
+				})
+			},
+			deleteIssues({state, rootState}, args){
+				state.loading = true
+				Request.patchPromise(`${state.API}/${rootState.auth.account}/audits/${args.audit_id}/issues`, {params: { issues: args.issues }})
+				.then( re=>{
+					state.audit.issues = re.data.details
+				})
+				.catch( re=>{
+					console.log(re)
+				})
+				.then( ()=>{
+					state.loading = false
+				})
+			},
+			updateIssue({state, rootState}, args){
+				state.loading = true
+				Request.postPromise(`${state.API}/${rootState.auth.account}/audits/${args.audit_id}/issues/${args.issue.id}`, { params: args.issue })
+				.then( re=>{
+					state.audit.issues = re.data.details
 				})
 				.catch( re=>{
 					console.log(re)

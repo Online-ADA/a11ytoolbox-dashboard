@@ -5,6 +5,9 @@
 		<template v-if="audit">
 			<A class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
 			<A type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
+			<button v-if="audit.issues.length" @click="getCSV" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<span class="sr-only">Download</span> CSV
+			</button>
 			<h2 class="mb-3">{{audit.title}}</h2>
 			<Table :selected="selectedRows" @rowClick="selectRow" v-if="audit.issues.length" :rowsData="audit.issues" :headersData="headers"></Table>
 			<template v-else>
@@ -12,7 +15,9 @@
 			</template>
 		</template>
 		<div class="flex fixed bottom-0 left-0 mb-3 ml-3" style="z-index:25;">
-			<Button @click.native.prevent="issueModalOpen = true" class="mx-2" color="orange" hover="true">Add Issue</Button>
+			<Button v-if="selectedRows.length === 1" @click.native.prevent="editIssue" class="mx-2" color="orange" hover="true">Edit Issue</Button>
+			<Button v-if="selectedRows.length > 1" @click.native.prevent="confirmDeleteModalOpen = true" class="mx-2" color="delete" hover="true">Delete Issues</Button>
+			<Button v-if="selectedRows.length < 1" @click.native.prevent="newIssue" class="mx-2" color="orange" hover="true">Add Issue</Button>
 			<Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'orange' : 'white'" :hover="true">Dark Mode</Button>
 		</div>
 		<Modal class="z-40" size="full" :open="issueModalOpen">
@@ -30,13 +35,13 @@
 							<Label class="text-lg leading-6 w-full" for="success_criteria">Success Criteria</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('articles') }" id="success-criteria-validation">{{validationMessages["articles"]}}</small>
 							<select required :aria-describedby="failedValidation.includes('articles') ? 'success-criteria-validation' : false" style="min-width:200px;" id="success_criteria" class="w-full" v-model="issue.articles" multiple>
-								<option class="overflow-ellipsis overflow-hidden whitespace-nowrap" :value="article.id" v-for="(article, index) in articles" :key="'success_criteria-'+index">{{article.number}} - {{article.title}}</option>
+								<option class="overflow-ellipsis overflow-hidden whitespace-nowrap" :value="{display: article.number + ' - ' + article.title, id: article.id}" v-for="(article, index) in articles" :key="'success_criteria-'+index">{{article.number}} - {{article.title}}</option>
 							</select>
 						</div>
 						<div class="mx-2 flex-1">
 							<Label class="text-lg leading-6 w-full" for="techniques">Techniques</Label>
 							<select style="min-width:200px;min-height:118px;" id="techniques" class="w-full" v-model="issue.techniques" multiple>
-								<option :value="technique.id" v-for="(technique, index) in filteredTechniques" :key="'technique-'+index">{{technique.number}}</option>
+								<option :value="{display: technique.number + ' - ' + technique.title, id: technique.id}" v-for="(technique, index) in filteredTechniques" :key="'technique-'+index">{{technique.number}}</option>
 							</select>
 						</div>
 						<div class="mx-2 flex-1">
@@ -53,7 +58,7 @@
 								<option :value="status" v-for="(status, index) in audit_states" :key="'audit_status-'+index">{{status}}</option>
 							</select>
 						</div>
-						<div :class="{'hidden': !issue.audit_states.includes('other')}" class="mx-2 flex-1">
+						<div :class="{'hidden': !issue.audit_states.includes('other') && !issue.audit_states.includes('Other')}" class="mx-2 flex-1">
 							<Label class="text-lg leading-6">
 								Other States
 								<Card :gutters="false" :center="false" style="max-height:118px;" class="overflow-y-scroll w-full text-left my-2">
@@ -154,7 +159,7 @@
 							<Label for="status" class="text-lg leading-6 w-full">Status</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('status') }" id="status-validation">{{validationMessages["status"]}}</small>
 							<select :aria-describedby="failedValidation.includes('status') ? 'status-validation' : false" id="status" name="status" v-model="issue.status">
-								<option :value="option.display" v-for="(option, index) in statuses" :key="'status-'+index">{{option.display}}</option>
+								<option :value="option" v-for="(option, index) in statuses" :key="'status-'+index">{{option}}</option>
 							</select>
 						</div>
 					</div>
@@ -163,13 +168,16 @@
 						<div class="w-1/2 flex flex-col px-2">
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Descriptions <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
-							<Button class="self-start" @click.native.prevent="selectDescriptionsModalOpen = true" color="orange" hover="true">Add Descriptions</Button>
+							<div class="flex items-start mb-1">
+								<Button class="mr-2" @click.native.prevent="selectDescriptionsModalOpen = true" color="orange" hover="true">Add Descriptions</Button>
+								<Button @click.native.prevent="addIssueReferenceLinkModalOpen = true" color="orange" hover="true">Add issue reference</Button>
+							</div>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-pallette-orange placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1" ></div>
 						</div>
 						<div class="w-1/2 flex flex-col px-2">
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
-							<Button class="self-start" @click.native.prevent="selectRecommendationsModalOpen = true" color="orange" hover="true">Add Recommendations</Button>
+							<Button class="self-start mb-1" @click.native.prevent="selectRecommendationsModalOpen = true" color="orange" hover="true">Add Recommendations</Button>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-pallette-orange placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
 						</div>
 					</div>
@@ -181,29 +189,90 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button v-if="false" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto text-sm">
+				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto text-sm">
 					Delete
 				</button>
 				<button @click="issueModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
 					Cancel
 				</button>
-				<button @click="createIssue" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<button @click="saveIssue" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
 					Save
 				</button>
 			</div>
+		</Modal>
+		<Modal size="wide" v-if="project" class="z-50" :open="addIssueReferenceLinkModalOpen">
+			<div class="bg-white px-4 pt-5 pb-4 p-6">
+				<Button aria-label="Close select descriptions modal" @click.native.prevent="addIssueReferenceLinkModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<h2 class="text-center">Select which audit and issue</h2>
+				<Label for="referenceAudits">Audit</Label>
+				<select id="referenceAudits" name="referenceAudits" aria-label="Select audit" class="m-2 w-full" v-model="selectedReference.audit">
+					<option :value="audit.id" v-for="(audit, index) in project.audits" :key="'audits-'+index">{{audit.title}}</option>
+				</select>
+				<div v-if="selectedReference.audit && selectedReference.issues.length" class="px-2">
+					<Label for="referenceIssues">Issue</Label>
+					<select id="referenceIssues" aria-label="Select issue" class="m-2 w-full" v-model="selectedReference.issue">
+						<option :value="issue" v-for="(issue, index) in selectedReference.issues" :key="'referenceIssues-'+index">{{issue.issue_number}}</option>
+					</select>
+
+					<div class="flex flex-col">
+						<Label for="referenceText">Link text</Label>
+						<TextInput v-model="selectedReference.linkText" id="referenceText"></TextInput>
+
+						<h2 class="self-center my-2">Issue preview</h2>
+					</div>
+
+					<div v-if="selectedReference.issue" class="flex w-full">
+						<div class="w-1/2 flex flex-col pr-3">
+							<Label>Description</Label>
+							<p style="max-height:200px;" class="overflow-y-auto" v-html="selectedReference.issue.descriptions"></p>
+						</div>
+						<div class="w-1/2 flex flex-col pl-3">
+							<Label>Recommendation</Label>
+							<p style="max-height:200px;" class="overflow-y-auto" v-html="selectedReference.issue.recommendations"></p>
+						</div>
+					</div>
+					<div class="flex w-full">
+						<div class="w-1/3 pr-3">
+							<Label>Pages</Label>
+							<ul style="max-height:200px;" class="overscroll-y-auto">
+								<li v-for="(page, index) in selectedReference.issue.pages" :key="'refPage-'+index">{{page}}</li>
+							</ul>
+						</div>
+						<div class="w-1/3 px-3">
+							<Label>Success Criteria</Label>
+							<ul style="max-height:200px;" class="overscroll-y-auto">
+								<li v-for="(article, index) in selectedReference.issue.articles" :key="'refPage-'+index">{{articles.find( a=> a.id==article).number}} - {{articles.find( a=> a.id==article).title}}</li>
+							</ul>
+						</div>
+						<div class="w-1/3 pl-3">
+							<Label>Status</Label>
+							<p>{{selectedReference.issue.status}}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="bg-gray-50 px-4 py-3 flex">
+				<button @click="addIssueReferenceLinkModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+					Cancel
+				</button>
+				<button @click.prevent="createReferenceLink" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+					Create Reference
+				</button>
+			</div>
+			
 		</Modal>
 		<Modal class="z-50" :open="selectDescriptionsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<Button aria-label="Close select descriptions modal" @click.native.prevent="selectDescriptionsModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<h2 class="text-center">Which Success Criteria descriptions would you like to add?</h2>
 				<select aria-label="Select descriptions" class="m-2 w-full" multiple v-model="selectedDescriptions">
-					<option :value="articles[option]" v-for="(option, index) in issue.articles" :key="'descriptions-'+index">{{articles[option].number}}</option>
+					<option :value="articles[option.id]" v-for="(option, index) in issue.articles" :key="'descriptions-'+index">{{articles[option.id].number}}</option>
 				</select>
 				<Button @click.native.prevent="addSelectedDescriptions" class="mx-2" color="orange" hover="true">Add</Button>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
 				<button @click="selectDescriptionsModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
-				Cancel
+					Cancel
 				</button>
 			</div>
 		</Modal>
@@ -222,6 +291,21 @@
 				</button>
 			</div>
 		</Modal>
+		<Modal style="z-index:60;" :open="confirmDeleteModalOpen">
+			<div class="bg-white px-4 pt-5 pb-4 p-6">
+				<Button aria-label="Close select descriptions modal" @click.native.prevent="confirmDeleteModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<h2 class="text-center">Are you sure you want to delete {{ selectedRows.length === 1 ? 'this issue' : 'these issues' }}?</h2>
+			</div>
+			<div class="bg-gray-50 px-4 py-3 flex">
+				<button @click="confirmDeleteModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+					Cancel
+				</button>
+				<button @click="deleteSelectedIssues" v-if="selectedRows.length" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto text-sm">
+					Delete
+				</button>
+			</div>
+			
+		</Modal>
 	</div>
 </template>
 
@@ -235,9 +319,12 @@ import Card from '../../components/Card'
 import Label from '../../components/Label'
 import TextInput from '../../components/TextInput'
 import TextArea from '../../components/TextArea'
+import projects from '../../store/modules/project'
+import admin from '../../store/modules/admin'
 
 export default {
 	data: () => ({
+		confirmDeleteModalOpen: false,
 		selectedRows: [],
 		quillEditorOptions: [
 			[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -252,31 +339,22 @@ export default {
 			['clean']
 		],
 		statuses: [
-			{display: "New", color: "#FFFFFF"},
-			{display: "Resolved", color: "#C5F8BE"},
-			{display: "Partly Resolved", color: "#FFF2CC"},
-			{display: "Remains", color: "#F4CCCC"},
-			{display: "Regression", color: "#D9D2E9"},
-			{display: "Best Practice", color: "#CFE2F3"},
-			{display: "Third party problem", color: "#D9D9D9"},
-			{display: "Resolved by removal", color: "#D9D9D9"}
+			"New",
+			"Resolved",
+			"Partly Resolved",
+			"Remains",
+			"Regression",
+			"Best Practice",
+			"Third party problem",
+			"Resolved by removal"
 		],
 		darkMode: false,
 		issueModalOpen: false,
-		audit_states: [
-			"desktop",
-			"mobile",
-			"normal zoom",
-			"200% zoom",
-			"logged into account",
-			"not logged into account",
-			"high contrast mode",
-			"screen reader in use",
-			"other"
-		],
 		selectDescriptionsModalOpen: false,
 		selectRecommendationsModalOpen: false,
+		addIssueReferenceLinkModalOpen: false,
 		selectedDescriptions: [],
+		selectedReference: { audit: null, issue: null, issues: [], linkText: "" },
 		selectedRecommendations: [],
 		issueDefaults: {
 			status: "New",
@@ -340,8 +418,14 @@ export default {
 		other_states: [""]
 	}),
 	computed: {
+		audit_states(){
+			return this.$store.state.admin.audit_states.map( as => as.content)
+		},
+		issue_numbers(){
+			return this.audit.issues.map( i => i.issue_number)
+		},
 		browserCombo(){
-			return  this.selectedTech ? this.selectedSoftware + " + " + this.selectedTech : this.selectedSoftware
+			return this.selectedTech ? this.selectedSoftware + " + " + this.selectedTech : this.selectedSoftware
 		},
 		displayLevels(){
 			return this.issue.levels.join(", ") 
@@ -350,7 +434,7 @@ export default {
 			if( this.issue.articles.length ){
 				let self = this
 				return this.techniques.filter( t => {
-					return self.issue.articles.some( a => t.article_ids.includes(a))
+					return self.issue.articles.map( a=>a.id).some( a => t.article_ids.includes(a))
 				})
 			}
 			return []
@@ -359,7 +443,7 @@ export default {
 			if( this.issue.articles.length ){
 				let self = this
 				return this.recommendations.filter( t => {
-					return self.issue.articles.some( a => t.article_ids.includes(a))
+					return self.issue.articles.map( a => a.id).some( a => t.article_ids.includes(a))
 				})
 			}
 			return []
@@ -436,25 +520,28 @@ export default {
 		audit(){
 			return this.$store.state.audits && this.$store.state.audits.audit ? this.$store.state.audits.audit : false
 		},
+		project(){
+			return this.$store.state.projects.project ? this.$store.state.projects.project : false
+		}
 	},
 	props: [],
 	watch: {
-		"$store.state": function(newVal){
-			if( !this.audit && newVal.audits ){
-				this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
-			}
-		},
 		"$store.state.audits.audit": function(newVal){
 			this.selectedSoftware = newVal.software_used[0]
+			this.$store.dispatch("projects/getProject", {id: newVal.project_id})
 		},
 		"issue.articles": function(){
+			if( this.selectedRows.length ){
+				return
+			}
+
 			this.issue.levels = []
 			this.issue.techniques = []
 			this.issue.recommendations = []
 			
 			for( let i in this.issue.articles ){
-				if( !this.issue.levels.includes( this.articles[ this.issue.articles[i] ].level ) ){
-					this.issue.levels.push( this.articles[ this.issue.articles[i] ].level )
+				if( !this.issue.levels.includes( this.articles[ this.issue.articles[i].id ].level ) ){
+					this.issue.levels.push( this.articles[ this.issue.articles[i].id ].level )
 				}
 			}
 		},
@@ -464,9 +551,69 @@ export default {
 			}else{
 				this.$refs.descriptionEditor.querySelector(".ql-editor").removeAttribute("aria-describedby")
 			}
+		},
+		addIssueReferenceLinkModalOpen(newVal){
+			if( newVal ){
+				this.selectedReference.audit = null
+			}
+		},
+		"selectedReference.audit": function(newVal){
+			if( newVal ){
+				this.$store.state.audits.loading = true
+				Request.getPromise( `${this.$store.state.audits.API}/${this.$store.state.auth.account}/audits/${newVal}/issues` )
+				.then( response=>{
+					this.selectedReference.issues = response.data.details
+					this.selectedReference.issue = response.data.details[0]
+				})
+				.catch( response=>{console.log(response)})
+				.then( () => this.$store.state.audits.loading = false )
+			}
 		}
 	},
 	methods: {
+		getCSV(){
+			window.location.href = `${this.$store.state.audits.WEB}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/csv`
+		},
+		getDefault(){
+			return JSON.parse( JSON.stringify(this.issueDefaults) )
+		},
+		newIssue(){
+			this.$set(this, "issue", this.getDefault())
+			this.descriptionsQuill.root.innerHTML = ""
+			this.recommendationsQuill.root.innerHTML = ""
+			this.issueModalOpen = true
+		},
+		editIssue(){
+			let copy = JSON.parse(JSON.stringify(this.audit.issues.find( i => i.id == this.selectedRows[0] )))
+			this.issue = copy
+			this.descriptionsQuill.root.innerHTML = this.issue.descriptions
+			this.recommendationsQuill.root.innerHTML = this.issue.recommendations
+			
+			this.issueModalOpen = true
+		},
+		saveIssue(){
+			if( this.selectedRows.length < 1 ){
+				this.createIssue()
+			}else{
+				this.updateIssue()
+			}
+		},
+		deleteSelectedIssues(){
+			this.$store.dispatch("audits/deleteIssues", { issues: this.selectedRows, audit_id: this.$route.params.id })
+			this.issue = this.getDefault()
+			this.descriptionsQuill.root.innerHTML = ""
+			this.recommendationsQuill.root.innerHTML = ""
+			this.issueModalOpen = false
+			this.selectedRows = []
+			this.confirmDeleteModalOpen = false
+		},
+		createReferenceLink(){
+			let builder = `<a href="https://toolboxdashboard.ngrok.io/audits/${this.selectedReference.audit}/overview#${this.selectedReference.issue.issue_number}" target="_blank" rel="nofollow">${this.selectedReference.linkText}</a>`
+
+			this.descriptionsQuill.root.innerHTML += builder
+			this.addIssueReferenceLinkModalOpen = false
+			this.selectedReference = { audit: null, issue: null, issues: [], linkText: "" }
+		},
 		selectRow(issue){
 			if( this.selectedRows.includes( issue.id ) ){
 				let index = this.selectedRows.indexOf( issue.id )
@@ -526,6 +673,9 @@ export default {
 			this.issue.screenshots.splice(i, 1)
 		},
 		parseHeader(string){
+			if( string == "articles" ){
+				return "success criteria"
+			}
 			return string.replace(/[-_.]/gm, " ");
 		},
 		validate(){
@@ -569,21 +719,56 @@ export default {
 		createIssue(){
 			if( this.validate() ){
 				this.issue.audit_id = this.$route.params.id
-				this.issue.issue_number = this.audit.issues.length + 1
+				let uniqid = this.generateUniqueID()
+				
+				this.issue.issue_number = uniqid
+				
 				if( this.issue.audit_states.includes("other") ){
 					this.issue.audit_states.splice( this.issue.audit_states.indexOf("other"), 1 )
 					this.issue.audit_states = [...this.issue.audit_states, ...this.other_states.filter( i => i !== "")]
 				}
 				this.$store.dispatch("audits/createIssue", {issue: this.issue})
 				this.issueModalOpen = false
-				this.issue = this.issueDefaults
+				this.issue = this.getDefault()
+				this.descriptionsQuill.root.innerHTML = ""
+				this.recommendationsQuill.root.innerHTML = ""
 			}
+		},
+		updateIssue(){
+			if( this.validate() ){
+				if( this.issue.audit_states.includes("other") ){
+					this.issue.audit_states.splice( this.issue.audit_states.indexOf("other"), 1 )
+					this.issue.audit_states = [...this.issue.audit_states, ...this.other_states.filter( i => i !== "")]
+				}
+				this.$store.dispatch("audits/updateIssue", {issue: this.issue, audit_id: this.$route.params.id})
+				this.issueModalOpen = false
+				this.issue = this.getDefault()
+				this.descriptionsQuill.root.innerHTML = ""
+				this.recommendationsQuill.root.innerHTML = ""
+				this.selectedRows = []
+			}
+		},
+		generateUniqueID(){
+			let id = Math.random().toString(36).substring(5)
+			
+			if( this.issue_numbers.includes(id) ){
+				return this.generateUniqueID()
+			}
+
+			return id
 		}
 	},
 	created() {
+		if(this.$store.state.projects === undefined){
+			this.$store.registerModule('projects', projects)
+		}
+		if(this.$store.state.admin === undefined){
+			this.$store.registerModule('admin', admin)
+		}
 		if( this.$store.state.audits ){
 			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
 			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
+			this.$store.dispatch("admin/getAuditStates")
 		}
 	},
 	mounted() {

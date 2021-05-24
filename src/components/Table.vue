@@ -1,6 +1,30 @@
 <template>
-	<div class="flex flex-col">
-		<Button class="self-end" @click.native.prevent="columnPickerOpen = true" hover="true">+</Button>
+	<div class="flex flex-col relative">
+		<span class="absolute left-0 top-0 bold" v-if="$parent.selectedRows.length">Selected: {{$parent.selectedRows.length}}</span>
+		<div class="flex w-full justify-end mb-2">
+			<div class="flex flex-wrap w-1/2 pr-52 items-end">
+				<h2 class="w-full text-base">
+					<div class="text-2xl">Search</div>
+					<small>First choose which column you want to search from the dropdown, then enter your search criteria, then click submit</small>
+				</h2>
+				<div class="w-full flex justify-start">
+					<Label for="case-sensitive">Case Sensitive</Label>
+					<Checkbox v-model="search.caseSensitive" id="case-sensitive"></Checkbox>
+				</div>
+				<div class="flex flex-col flex-1 mr-1">
+					<Label for="search-column">Search column</Label>
+					<select v-model="search.column" id="search-column" name="search-column" class="flex-1">
+						<option v-for=" (column, index) in headers.filter( h=>h.show ) " :value="column.header" :key="'search-columns-'+index">{{column.header}}</option>
+					</select>
+				</div>
+				<div class="flex flex-col flex-1 mx-1">
+					<Label for="search-term">Search criteria</Label>
+					<TextInput style="max-height:39px;" v-model="search.term" name="search-criteria" id="search-criteria" class="flex-1"></TextInput>
+				</div>
+				<Button style="margin-bottom:5px" class="ml-1" @click.native.prevent="submitTableSearch" :hover="true" color="orange">Submit</Button>
+			</div>
+			<Button aria-label="Show or hide columns" class="self-end" @click.native.prevent="columnPickerOpen = true" hover="true">+</Button>
+		</div>
 		<div class="overflow-x-auto w-full relative border border-black mb-16">
 			<table class="w-full" :class="{'table-fixed': fixed}">
 				<thead>
@@ -25,9 +49,9 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr :class="{'selected': selected.includes(data.id)}" tabindex="0" @click="handleClick(data)" v-for="(data, index) in columnData" :key="'row-'+index">
-						<td class="whitespace-pre-wrap p-2" :ref="'columnData-'+ subIndex" :class="[headers[subIndex].sticky ? 'sticky z-20' : 'relative z-10']" :style="headers[subIndex].style"  v-show="headers[subIndex].show" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
-							<span class="text-left" v-if="key == 'descriptions' || key == 'recommendations'" v-html="value"></span>
+					<tr :class="rowClasses(data)" tabindex="0" @click="handleClick(data)" v-for="(data, index) in rows" :key="'row-'+index">
+						<td class="whitespace-pre-wrap p-2" :ref="'columnData-'+ subIndex" :class="[headers[subIndex].sticky ? 'sticky z-20' : 'relative z-10', listKeys.includes(key) ? 'pl-5' : '']" :style="headers[subIndex].style"  v-show="headers[subIndex].show" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
+							<span class="text-left" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
 							<template v-else>{{displayValue(key, value)}}</template>
 						</td>
 					</tr>
@@ -41,7 +65,6 @@
 					<li class="flex w-5/12 mx-2 my-2 justify-center items-center" v-for="(header, index) in headers" :key="index">
 						<Label :for="'showCol'+ (index+1)">Show {{header.header}}</Label>
 						<Checkbox :value="header.show" :id="'showCol'+ (index+1)" @input="showHideColumn(index)"></Checkbox>
-						<!-- <Checkbox :id="'showCol'+ (index+1)" @input="showHideColumn(index)" v-model="header.show"></Checkbox> -->
 					</li>
 				</ul>
 			</div>
@@ -53,6 +76,8 @@
 	import Modal from "../components/Modal"
 	import Button from "../components/Button"
 	import Checkbox from "../components/Checkbox"
+	import Label from "../components/Label"
+	import TextInput from "../components/TextInput"
 	export default {
 		props:{
 			selected: {
@@ -86,10 +111,51 @@
 			return {
 				columnPickerOpen: false,
 				headers: [],
-				columnData: []
+				columnData: [],
+				listKeys: ['descriptions', 'recommendations', 'articles', 'techniques', 'pages', 'levels', 'audit_states', 'essential_functionality'],
+				filteredRows: [],
+				filtering: false,
+				search: {
+					term: "",
+					column: null,
+					caseSensitive: false
+				}
+			}
+		},
+		computed: {
+			rows(){
+				if( this.filtering ){
+					return this.filteredRows
+				}
+
+				return this.columnData
 			}
 		},
 		methods: {
+			submitTableSearch(){
+				if( this.search.term ){
+					this.filtering = true
+					let self = this
+					this.filteredRows = this.columnData.filter( c => {
+						let column = self.search.column.replaceAll(/[ ]/g, "_")
+						
+						if( Array.isArray(c[column]) ){
+							if( !self.search.caseSensitive ){
+								return c[column].join("").toLowerCase().includes(self.search.term)
+							}
+							return c[column].join("").includes(self.search.term)
+						}else{
+							if( !self.search.caseSensitive ){
+								return c[column].toLowerCase().includes(self.search.term)
+							}
+							return c[column].includes(self.search.term)
+						}
+					})
+				}else{
+					this.filtering = false
+					this.filteredRows = []
+				}
+			},
 			showHideColumn( colIndex ){
 				this.headers[colIndex].show = !this.headers[colIndex].show
 
@@ -108,19 +174,23 @@
 				this.$emit('rowClick', columnData)
 			},
 			displayValue(key, data){
-				let plainKeys = ["id", "issue_number", "status", "target", "descriptions", "recommendations", "priority", "effort", "how_discovered", "audit_id", "auditor_notes", "created_at", "updated_at", "created_by"]
+				let plainKeys = ["id", "issue_number", "descriptions", "recommendations", "status", "target", "priority", "effort", "how_discovered", "audit_id", "auditor_notes", "created_at", "updated_at", "created_by"]
 				let specialKeys = ["articles", "techniques"]
 				if( plainKeys.includes(key) ){
 					return data
 				}
 				if( !plainKeys.includes(key) && !specialKeys.includes(key) ){
-					return data.join("\n")
+					let output = "<ul><li class='list-disc'>"
+					output += data.join("</li><li class='list-disc'>")
+					output += "</li></ul>"
+					return output
 				}
-				if( key == "articles" ){
-					return this.$parent.articles.filter( a => data.includes(a.id)).map( a=> a.number).join("\n")
-				}
-				if( key == "techniques" ){
-					return this.$parent.techniques.filter( t => data.includes(t.id)).map( t=> t.number).join("\n")
+				if(  specialKeys.includes(key) ){
+					let mapped = data.map( d => d.display )
+					let output = "<ul><li class='list-disc'>"
+					output += mapped.join("</li><li class='list-disc'>")
+					output += "</li></ul>"
+					return output
 				}
 			},
 			canMoveLeft(colIndex){
@@ -203,6 +273,12 @@
 						this.$set( this.columnData, row, arrangedProperties )
 					}
 				}
+			},
+			rowClasses(data){
+				let classes = []
+				this.selected.includes(data.id) ? classes.push('selected') : ''
+				classes.push( data.status.toLowerCase().replaceAll(/[ ]/g, "-") )
+				return classes.join(" ")
 			}
 		},
 		mounted(){
@@ -222,18 +298,20 @@
 					}
 				}
 			})
+
+			this.search.column = this.headers.filter( h=>h.show )[0].header
 		},
 		watch:{
 			rowsData(newVal){
 				this.columnData = JSON.parse(JSON.stringify(newVal))
 			}
 		},
-		computed: {
-		},
 		components: {
 			Modal,
 			Button,
-			Checkbox
+			Checkbox,
+			TextInput,
+			Label
 		}
 	}
 </script>
@@ -247,17 +325,28 @@
 		transform:translateY(-2px);
 	}
 	tr.selected td {
-		background-color: rgb(235, 140, 47);
+		background-color: rgb(235, 140, 47) !important;
 	}
-  	td, th{
-    	background-color:white;
-    	border:1px solid black;
+	td, th{
+		border:1px solid black;
 		transition:background-color .2s
-  	}
-  	table{
-   		border-collapse:separate;
-    	border-spacing:0;
-    	min-width:2000px;
-    	z-index:1
-  	}
+	}
+	th{
+		background-color: #FFFFFF;
+	}
+	table{
+		border-collapse:separate;
+		border-spacing:0;
+		min-width:2000px;
+		z-index:1
+	}
+	tr.new td{ background-color: #FFFFFF; }
+	tr.resolved td{ background-color: #C5F8BE; }
+	tr.partly-resolved td{ background-color: #FFF2CC; }
+	tr.remains td{ background-color: #F4CCCC; }
+	tr.regression td{ background-color: #D9D2E9; }
+	tr.best-practice td{ background-color: #CFE2F3; }
+	tr.third-party-problem td{ background-color: #D9D9D9; }
+	tr.resolved-by-removal td{ background-color: #D9D9D9; }
+	
 </style>

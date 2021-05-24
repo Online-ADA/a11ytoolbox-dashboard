@@ -127,6 +127,31 @@ class Request {
         }
     }
 
+    async patchPromise(url, args = {params: {}}){
+        if( args.async === false ){
+            return await new Promise( (resolve, reject)=> {
+                Vue.prototype.$http.patch(url, args.params || {}).then(response =>{
+                    this.checkForRedirect(response)
+                    resolve(response)
+                }).catch( response => {
+                    this.checkForRedirect(response)
+                    reject(response)
+                })
+            })
+        }
+        else{
+            return new Promise( (resolve, reject)=> {
+                Vue.prototype.$http.patch(url, args.params || {}).then(response =>{
+                    this.checkForRedirect(response)
+                    resolve(response)
+                }).catch( response => {
+                    this.checkForRedirect(response)
+                    reject(response)
+                })
+            })
+        }
+    }
+
     get(url, args = {onSuccess: true, onError: true, onInfo: true, onWarn: true}){
         let params = args.params || {};
         

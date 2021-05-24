@@ -4,7 +4,7 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2 class="mb-2">Success Critera</h2>
-                <button @click="displayArticlePopup({item: newArticle, extra: 'article'})" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <button @click="displayArticlePopup(newItem({item: newArticle, extra: 'article'}))" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && articles.length">
                     <SearchList :dataSendBack="'article'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['title', 'number', 'description']" :items="articles"></SearchList>
                 </template>
@@ -14,7 +14,7 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2>Techniques</h2>
-                <button @click="displayArticlePopup({item: newTechnique, extra: 'technique'})" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <button @click="displayArticlePopup(newItem({item: newTechnique, extra: 'technique'}))" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && techniques.length">
                     <SearchList :dataSendBack="'technique'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['title', 'number', 'description']" :items="techniques"></SearchList>
                 </template>
@@ -24,11 +24,21 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2>Recommendations</h2>
-                <button @click="displayArticlePopup({item: newRecommendation, extra: 'recommendation'})" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <button @click="displayArticlePopup(newItem({item: newRecommendation, extra: 'recommendation'}))" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && recommendations.length">
                     <SearchList :dataSendBack="'recommendation'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['description']" :items="recommendations"></SearchList>
                 </template>
                 <div v-else>There are no recommendations</div>
+            </Card>
+        </div>
+        <div class="flex w-full justify-center my-4">
+            <Card class="w-2/3 mx-auto relative">
+                <h2>Audit States</h2>
+                <button @click="displayArticlePopup(newItem({item: newState, extra: 'audit_state'}))" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <template v-if="!loading && states.length">
+                    <SearchList :displayProps="['content']" :dataSendBack="'audit_state'" @click="displayArticlePopup" hover-effect="grow" :items="states"></SearchList>
+                </template>
+                <div v-else>There are no audit states</div>
             </Card>
         </div>
         <Modal :open="articleModalOpen" :sizeButtons="articleEditItem.identifier == 'recommendation'">
@@ -93,6 +103,15 @@
                                 <TextInput class="w-full" id="tech-ext_url" v-model="articleEditItem.ext_url"></TextInput>
                             </div>
                         </template>
+                        <template v-else-if="articleEditItem.identifier == 'audit_state'">
+                            <div class="w-full text-center">
+                                <h2 class="leading-6 mb-6">Create new audit state</h2>
+                            </div>
+                            <div class="w-full mt-2">
+                                <Label class="text-lg leading-6 w-full" for="tech-title">Audit State<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                <TextInput required class="w-full" id="tech-title" v-model="articleEditItem.content"></TextInput>
+                            </div>
+                        </template>
                         <template v-else-if="articleEditItem.identifier == 'failure'">
                             <div class="w-full">
                                 <Label class="text-lg leading-6" for="fail-article">Select success criteria</Label>
@@ -145,7 +164,7 @@
                 <button v-if="articleEditItem.id" @click="confirmDelete" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto text-sm">
                 Delete
                 </button>
-                <button @click="articleModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+                <button @click="( ()=> {articleModalOpen = false; articleEditItem = false})" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
                 Cancel
                 </button>
                 <button @click="createOrUpdateItem" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
@@ -200,6 +219,7 @@ export default {
         newArticle: {title: '', description: '', ext_url: '', url: '', level: '', number: ''},
         newTechnique: {article_ids: [], description: '', number: '', title: '', ext_url: ''},
         newFailure: {article_ids: [], description: '', number: '', title: '', ext_url: ''},
+        newState: {content: ''},
         newRecommendation: {article_ids: [], description: ''},
         articleModalOpen: false,
         articleEditItem: false,
@@ -223,6 +243,18 @@ export default {
             }
             return []
         },
+        failures() {
+            if( this.$store.state.admin ){
+                return this.$store.state.admin.failures
+            }
+            return []
+        },
+        states() {
+            if( this.$store.state.admin ){
+                return this.$store.state.admin.audit_states
+            }
+            return []
+        },
         techniques() {
             if( this.$store.state.admin ){
                 return this.$store.state.admin.techniques
@@ -241,12 +273,13 @@ export default {
         "$store.state.auth.user": function(newVal){
             if( newVal ){
                 this.$store.dispatch("admin/getArticles")
+                this.$store.dispatch("admin/getAuditStates")
             }
         }
     },
     methods: {
-        test(e){
-            console.log(e);
+        newItem(item){
+            return JSON.parse( JSON.stringify(item) )
         },
         changeTechArticleDisplay(display){
             this.displayTechArticlesBy = display
@@ -282,6 +315,8 @@ export default {
                 case "recommendation":
                     action = "admin/deleteRecommendation"
                     break;
+                case "audit_state":
+                    action = "admin/deleteAuditState"
             }
             this.$store.dispatch(action, {id: this.articleEditItem.id})
             this.articleEditItem = false
@@ -299,6 +334,7 @@ export default {
     created() {
         if( this.$store.state.auth.user ){
             this.$store.dispatch("admin/getArticles")
+            this.$store.dispatch("admin/getAuditStates")
         }
     },
     mounted() {
