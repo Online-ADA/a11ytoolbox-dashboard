@@ -29,22 +29,49 @@
 			<table class="w-full" :class="{'table-fixed': fixed}">
 				<thead>
 					<tr>
-						<th class="capitalize" v-show="header.show" :ref="'header-' + index" :style="header.style" :width="header.width || false" :class="[header.sticky ? 'sticky z-20' : 'relative z-10']" scope="col" v-for="(header, index) in headers" :key="`header-${index}`">
-							<button @click="moveColumn(index, index-1)" v-if="index !== 0 && !header.sticky && canMoveLeft(index)" aria-label="Move this column 1 space to the left" class="absolute left-0 top-1 px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
-								<i class="fas fa-arrow-left"></i>
-							</button>
+						<th class="capitalize pt-5" v-show="header.show" :ref="'header-' + index" :style="header.style" :width="header.width || false" :class="[header.sticky ? 'sticky z-20' : 'relative z-10']" scope="col" v-for="(header, index) in headers" :key="`header-${index}`">
+							<div class="flex absolute top-1 justify-between w-full">
+								<button @click="moveColumn(index, index-1)" :class="[index !== 0 && !header.sticky && canMoveLeft(index) ? 'visible' : 'invisible']" aria-label="Move this column 1 space to the left" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+									<i class="fas fa-arrow-left"></i>
+								</button>
 
-							<button @click="freezeColumn(header, index)" v-if="!header.sticky && canFreeze(index)" aria-label="Freeze this column so it does not scroll horizontally" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
-								<i class="far fa-snowflake"></i>
-							</button>
+								<div class="flex">
+									<button @click="freezeColumn(header, index)" v-if="!header.sticky && canFreeze(index)" aria-label="Freeze this column so it does not scroll horizontally" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+										<i class="far fa-snowflake"></i>
+									</button>
 
-							<button @click="freezeColumn(header, index)" v-else-if="header.sticky && canFreeze(index)" aria-label="Unfreeze this column so it will scroll horizontally" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
-								<i class="far fa-fire-alt"></i>
-							</button>
+									<button @click="freezeColumn(header, index)" v-else-if="header.sticky && canFreeze(index)" aria-label="Unfreeze this column so it will scroll horizontally" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+										<i class="far fa-fire-alt"></i>
+									</button>
+
+									<button 
+										@click="sort(header.header)" 
+										v-if="!sortData.columns.includes(header.header)" 
+										:aria-label="`Currently unsorted. Click to sort column ${header.header} by ascending`" 
+										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+										<i class="fas fa-sort"></i>
+									</button>
+									<button 
+										@click="sort(header.header)" 
+										v-if="sortData.columns.includes(header.header) && sortData.orders[ sortData.columns.indexOf(header.header) ] == 'asc'"
+										:aria-label="`Currently sorted by ascending. Click to sort column ${header.header} descending`" 
+										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+										<i class="fas fa-sort-up"></i>
+									</button>
+									<button 
+										@click="sort(header.header)"
+										v-if="sortData.columns.includes(header.header) && sortData.orders[ sortData.columns.indexOf(header.header) ] == 'desc'"
+										:aria-label="`Currently sorted by descending. Click to remove sorting for ${header.header} column`" 
+										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+										<i class="fas fa-sort-down"></i>
+									</button>
+								</div>
+								
+								<button @click="moveColumn(index, index+1)" :class="[index !== headers.length - 1 && !header.sticky ? 'visible' : 'invisible']" aria-label="Move this column 1 space to the right" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+									<i class="fas fa-arrow-right"></i>
+								</button>
+							</div>
 							{{header.header}}
-							<button @click="moveColumn(index, index+1)" v-if="index !== headers.length - 1 && !header.sticky" aria-label="Move this column 1 space to the right" class="absolute right-0 top-1 px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
-								<i class="fas fa-arrow-right"></i>
-							</button>
 						</th>
 					</tr>
 				</thead>
@@ -109,6 +136,10 @@
 		},
 		data(){
 			return {
+				sortData: {
+					columns: [], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
+					orders: []
+				},
 				columnPickerOpen: false,
 				headers: [],
 				columnData: [],
@@ -129,9 +160,25 @@
 				}
 
 				return this.columnData
-			}
+			},
 		},
 		methods: {
+			sort( column ){
+				let index = this.sortData.columns.indexOf(column)
+				
+				if( index < 0 ){ //If sort.columns does not currently have this column
+					this.sortData.columns.push(column)
+					this.sortData.orders.push("asc")
+				} else if( index >= 0 && this.sortData.orders[index] == 'asc' ){ //If sort.columns currently has this column
+					this.sortData.orders[index] = 'desc'
+				} else {
+					this.sortData.columns.splice(index, 1)
+					this.sortData.orders.splice(index, 1)
+				}
+
+				this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
+				this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
+			},
 			submitTableSearch(){
 				if( this.search.term ){
 					this.filtering = true

@@ -6,10 +6,12 @@ import Axios from 'axios'
 import Cookies from 'js-cookie'
 import Notifications from 'vue-notification'
 import request from './services/request'
-import PortalVue from 'portal-vue'
+import VueLodash from 'vue-lodash'
+import lodash from 'lodash'
+
+Vue.use(VueLodash, { lodash: lodash })
 
 Vue.use(Notifications)
-Vue.use(PortalVue)
 window.Request = request
 
 Vue.config.productionTip = false

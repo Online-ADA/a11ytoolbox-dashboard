@@ -5,11 +5,11 @@
 		<template v-if="audit">
 			<A class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
 			<A type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
-			<button v-if="audit.issues.length" @click="getCSV" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+			<button v-if="issues.length" @click="whichCSVModalOpen = true" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
 				<span class="sr-only">Download</span> CSV
 			</button>
 			<h2 class="mb-3">{{audit.title}}</h2>
-			<Table :selected="selectedRows" @rowClick="selectRow" v-if="audit.issues.length" :rowsData="audit.issues" :headersData="headers"></Table>
+			<Table :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues.
 			</template>
@@ -306,6 +306,24 @@
 			</div>
 			
 		</Modal>
+		<Modal style="z-index:60;" :open="whichCSVModalOpen">
+			<div class="bg-white px-4 pt-5 pb-4 p-6">
+				<Button aria-label="Close select descriptions modal" @click.native.prevent="whichCSVModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<h2 class="text-center">Which CSV do you want to export?</h2>
+				<div class="flex my-4 justify-center">
+					<Button @click.native.prevent="getIssuesCSV" class="mx-2" color="orange" hover="true">Issues</Button>
+					<Button @click.native.prevent="getSampleCSV" class="mx-2" color="orange" hover="true">Working Sample</Button>
+				</div>
+			</div>
+			<div class="bg-gray-50 px-4 py-3 flex">
+				<button @click="confirmDeleteModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+					Cancel
+				</button>
+			</div>
+			
+		</Modal>
+
+		<!-- getCSV -->
 	</div>
 </template>
 
@@ -325,6 +343,7 @@ import admin from '../../store/modules/admin'
 export default {
 	data: () => ({
 		confirmDeleteModalOpen: false,
+		whichCSVModalOpen: false,
 		selectedRows: [],
 		quillEditorOptions: [
 			[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -418,6 +437,9 @@ export default {
 		other_states: [""]
 	}),
 	computed: {
+		issues(){
+			return this.audit ? this.audit.issues : []
+		},
 		audit_states(){
 			return this.$store.state.admin.audit_states.map( as => as.content)
 		},
@@ -465,7 +487,7 @@ export default {
 		},
 		headers(){
 			let arr = []
-			if( !this.audit.issues.length ){
+			if( !this.issues.length ){
 				return arr
 			}
 			let widthMap = {
@@ -571,8 +593,11 @@ export default {
 		}
 	},
 	methods: {
-		getCSV(){
-			window.location.href = `${this.$store.state.audits.WEB}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/csv`
+		getIssuesCSV(){
+			window.location.href = `${this.$store.state.audits.WEB}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/csv/issues`
+		},
+		getSampleCSV(){
+			window.location.href = `${this.$store.state.audits.WEB}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/csv/sample`
 		},
 		getDefault(){
 			return JSON.parse( JSON.stringify(this.issueDefaults) )
