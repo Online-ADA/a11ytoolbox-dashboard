@@ -101,6 +101,11 @@ const routes = [
         name: "AuditShow",
         component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/Show.vue')
       },
+      {
+        path: ":id/import",
+        name: "AuditImport",
+        component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/Import.vue')
+      },
     ]
   },
   // {

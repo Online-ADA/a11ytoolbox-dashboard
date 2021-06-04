@@ -8,7 +8,8 @@
           <span class="text-lg">{{audit.title}} <span class="capitalize text-xs">({{statusMap[audit.status]}})</span></span>
           <span class="px-3">-</span>
           <A class="pr-2" type="router-link" :to="{path: `/audits/${audit.id}`}">view</A>
-          <A type="router-link" :to="{path: `/audits/${audit.id}/edit`}">edit</A>
+          <A v-if="!audit.locked || isManager" type="router-link" :to="{path: `/audits/${audit.id}/edit`}">edit</A>
+          <span v-else><i class="fas fa-lock"></i><span class="sr-only">This audit is locked and cannot be edited except by a manager</span></span>
         </li>
       </ul>
     </div>
@@ -44,6 +45,9 @@ export default {
         },
         fullName(){
             return this.$store.state.auth.user.first_name + " " + this.$store.state.auth.user.last_name
+        },
+        isManager(){
+          return this.$store.getters["auth/isManager"]
         }
     },
     props: [],

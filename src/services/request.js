@@ -238,7 +238,7 @@ class Request {
 
     checkForRedirect(response){
         if( response.response != undefined && response.response.data.message == "Unauthenticated." ){
-            window.App.$store.dispatch("auth/logout", window.App.$router)
+            // window.App.$store.dispatch("auth/logout", window.App.$router)
             if( window.App.$router.currentRoute.path != "/" ){
                 this.mute = true
                 window.App.$store.state.auth.authMessage = "You've been logged out. Please log in again"
@@ -248,7 +248,7 @@ class Request {
             return
         }
         if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
-            window.App.$store.dispatch("auth/logout", window.App.$router)
+            // window.App.$store.dispatch("auth/logout", window.App.$router)
             if( window.App.$router.currentRoute.path != "/" ){
                 this.mute = true
                 window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]

@@ -1,8 +1,8 @@
 <template>
 	<div class="flex flex-col relative">
-		<span class="absolute left-0 top-0 bold" v-if="$parent.selectedRows.length">Selected: {{$parent.selectedRows.length}}</span>
+		<span class="absolute left-0 top-0 bold" v-if="selected.length && !compact">Selected: {{selected.length}}</span>
 		<div class="flex w-full justify-end mb-2">
-			<div class="flex flex-wrap w-1/2 pr-52 items-end">
+			<div :class="[ compact ? 'pr-5 w-full' : 'pr-52 w-1/2' ]" class="flex flex-wrap items-end pb-3">
 				<h2 class="w-full text-base">
 					<div class="text-2xl">Search</div>
 					<small>First choose which column you want to search from the dropdown, then enter your search criteria, then click submit</small>
@@ -22,14 +22,19 @@
 					<TextInput style="max-height:39px;" v-model="search.term" name="search-criteria" id="search-criteria" class="flex-1"></TextInput>
 				</div>
 				<Button style="margin-bottom:5px" class="ml-1" @click.native.prevent="submitTableSearch" :hover="true" color="orange">Submit</Button>
+				<div class="text-right pl-2">
+					<div style="margin-bottom:2px;"><Button style="padding-bottom:1px;padding-top:0px;" class="mx-1" aria-label="Show or hide columns" @click.native.prevent="columnPickerOpen = true" hover="true">+</Button></div>
+					<div v-if="!locked" style="margin-bottom:2px;margin-top:1px;"><Button class="text-xs mx-1" @click.native.prevent="selectAll" hover="true">Select all</Button></div>
+					<div v-if="!locked" style="margin-top:1px;"><Button class="text-xs mx-1" @click.native.prevent="deselectAll" hover="true">Deselect all</Button></div>
+				</div>
 			</div>
-			<Button aria-label="Show or hide columns" class="self-end" @click.native.prevent="columnPickerOpen = true" hover="true">+</Button>
+			
 		</div>
-		<div class="overflow-x-auto w-full relative border border-black mb-16">
-			<table class="w-full" :class="{'table-fixed': fixed}">
+		<div @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-16">
+			<table v-if="rows.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': compact}">
 				<thead>
 					<tr>
-						<th class="capitalize pt-5" v-show="header.show" :ref="'header-' + index" :style="header.style" :width="header.width || false" :class="[header.sticky ? 'sticky z-20' : 'relative z-10']" scope="col" v-for="(header, index) in headers" :key="`header-${index}`">
+						<th class="capitalize pt-5" v-show="header.show && !header.hidePermanent" :ref="'header-' + index" :style="header.style" :width="header.width || false" :class="[header.sticky ? 'sticky z-20' : 'relative z-10']" scope="col" v-for="(header, index) in headers" :key="`header-${index}`">
 							<div class="flex absolute top-1 justify-between w-full">
 								<button @click="moveColumn(index, index-1)" :class="[index !== 0 && !header.sticky && canMoveLeft(index) ? 'visible' : 'invisible']" aria-label="Move this column 1 space to the left" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 									<i class="fas fa-arrow-left"></i>
@@ -46,21 +51,21 @@
 
 									<button 
 										@click="sort(header.header)" 
-										v-if="!sortData.columns.includes(header.header)" 
+										v-if="!sortData.columns.includes(header.header.replaceAll(/[ ]/g, '_'))" 
 										:aria-label="`Currently unsorted. Click to sort column ${header.header} by ascending`" 
 										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 										<i class="fas fa-sort"></i>
 									</button>
 									<button 
 										@click="sort(header.header)" 
-										v-if="sortData.columns.includes(header.header) && sortData.orders[ sortData.columns.indexOf(header.header) ] == 'asc'"
+										v-if="sortData.columns.includes(header.header.replaceAll(/[ ]/g, '_')) && sortData.orders[ sortData.columns.indexOf(header.header.replaceAll(/[ ]/g, '_')) ] == 'asc'"
 										:aria-label="`Currently sorted by ascending. Click to sort column ${header.header} descending`" 
 										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 										<i class="fas fa-sort-up"></i>
 									</button>
 									<button 
 										@click="sort(header.header)"
-										v-if="sortData.columns.includes(header.header) && sortData.orders[ sortData.columns.indexOf(header.header) ] == 'desc'"
+										v-if="sortData.columns.includes(header.header.replaceAll(/[ ]/g, '_')) && sortData.orders[ sortData.columns.indexOf(header.header.replaceAll(/[ ]/g, '_')) ] == 'desc'"
 										:aria-label="`Currently sorted by descending. Click to remove sorting for ${header.header} column`" 
 										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 										<i class="fas fa-sort-down"></i>
@@ -76,23 +81,29 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr :class="rowClasses(data)" tabindex="0" @click="handleClick(data)" v-for="(data, index) in rows" :key="'row-'+index">
-						<td class="whitespace-pre-wrap p-2" :ref="'columnData-'+ subIndex" :class="[headers[subIndex].sticky ? 'sticky z-20' : 'relative z-10', listKeys.includes(key) ? 'pl-5' : '']" :style="headers[subIndex].style"  v-show="headers[subIndex].show" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
-							<span class="text-left" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
-							<template v-else>{{displayValue(key, value)}}</template>
+					<tr :class="rowClasses(data)" tabindex="0" @mousedown="down" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
+						<td class="whitespace-pre-wrap p-2" :ref="'columnData-'+ subIndex" :class="[headers[subIndex].sticky ? 'sticky z-20' : 'relative z-10', listKeys.includes(key) ? 'pl-5' : '']" :style="headers[subIndex].style" v-show="headers[subIndex].show && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
+							<span>
+								<span class="text-left" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
+								<template v-else>{{displayValue(key, value)}}</template>
+							</span>
 						</td>
 					</tr>
 				</tbody>
 			</table>
+			<span v-else>No issues</span>
 		</div>
+		
 		<Modal class="z-30" :open="columnPickerOpen">
 			<div class="w-full p-3">
 				<Button @click.native.prevent="columnPickerOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<ul class="flex flex-wrap">
-					<li class="flex w-5/12 mx-2 my-2 justify-center items-center" v-for="(header, index) in headers" :key="index">
-						<Label :for="'showCol'+ (index+1)">Show {{header.header}}</Label>
-						<Checkbox :value="header.show" :id="'showCol'+ (index+1)" @input="showHideColumn(index)"></Checkbox>
-					</li>
+					<template v-for="(header, index) in headers">
+						<li v-if="!header.hidePermanent" class="flex w-5/12 mx-2 my-2 justify-center items-center" :key="index">
+							<Label :for="'showCol'+ (index+1)">Show {{header.header}}</Label>
+							<Checkbox :value="header.show" :id="'showCol'+ (index+1)" @input="showHideColumn(index)"></Checkbox>
+						</li>
+					</template>
 				</ul>
 			</div>
 		</Modal>
@@ -105,8 +116,16 @@
 	import Checkbox from "../components/Checkbox"
 	import Label from "../components/Label"
 	import TextInput from "../components/TextInput"
+	import { dragscroll } from 'vue-dragscroll'
 	export default {
+		directives: {
+			dragscroll
+		},
 		props:{
+			compact: {
+				type: Boolean,
+				default: false
+			},
 			selected: {
 				type: Array,
 				default: function(){
@@ -126,19 +145,19 @@
 			headersData: {
 				type: Array,
 				default: function(){
-					return [
-						{width: "100px", show: true, header: 'Column 1', data: 'This is column 1', sticky: true, style: {}},
-						{width: "10%", show: true, header: 'Column 2', data: 'This is column 2', sticky: true, style: {}},
-						{width: "200px", show: true, header: 'Column 3', data: 'This is column 3', sticky: false, style: {}},
-					]
+					return []
 				}
+			},
+			locked: {
+				type: Boolean,
+				default: false
 			}
 		},
 		data(){
 			return {
 				sortData: {
-					columns: [], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
-					orders: []
+					columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
+					orders: [ "asc" ]
 				},
 				columnPickerOpen: false,
 				headers: [],
@@ -150,6 +169,10 @@
 					term: "",
 					column: null,
 					caseSensitive: false
+				},
+				dragData: {
+					dragging: false,
+					x: 0,
 				}
 			}
 		},
@@ -163,8 +186,35 @@
 			},
 		},
 		methods: {
+			selectAll(){
+				this.$emit("selectAll", this.columnData.map( c=>c.id))
+			},
+			deselectAll(){
+				this.$emit("deselectAll", this.columnData.map( c=>c.id))
+			},
+			moving(event){
+				if( this.dragData.dragging ){
+					this.dragData.x = event.clientX
+				}
+			},
+			down(){
+				this.dragData.dragging = true
+				this.dragData.x = 0
+			},
+			up(data){
+				this.dragData.dragging = false
+				if( this.dragData.x === 0 && !this.locked ){
+					this.$emit('rowClick', data)
+				}
+			},
 			sort( column ){
+				column = column.replaceAll(/[ ]/g, "_")
 				let index = this.sortData.columns.indexOf(column)
+				let indexOfID = this.sortData.columns.indexOf('id')
+				if( indexOfID >=0 ){
+					this.sortData.columns.splice(indexOfID, 1)
+					this.sortData.orders.splice(indexOfID, 1)
+				}
 				
 				if( index < 0 ){ //If sort.columns does not currently have this column
 					this.sortData.columns.push(column)
@@ -174,6 +224,11 @@
 				} else {
 					this.sortData.columns.splice(index, 1)
 					this.sortData.orders.splice(index, 1)
+				}
+
+				if( !this.sortData.columns.length ){
+					this.sortData.columns.push('id')
+					this.sortData.orders.push('asc')
 				}
 
 				this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
@@ -217,26 +272,31 @@
 					}
 				}
 			},
-			handleClick(columnData){
-				this.$emit('rowClick', columnData)
-			},
 			displayValue(key, data){
-				let plainKeys = ["id", "issue_number", "descriptions", "recommendations", "status", "target", "priority", "effort", "how_discovered", "audit_id", "auditor_notes", "created_at", "updated_at", "created_by"]
+				let plainKeys = ["id", "issue_number", "descriptions", "recommendations", "status", "target", "priority", "effort", "how_discovered", "audit_id", "first_audit_notes", "second_audit_notes", "third_audit_notes", "created_at", "updated_at", "created_by"]
 				let specialKeys = ["articles", "techniques"]
 				if( plainKeys.includes(key) ){
 					return data
 				}
 				if( !plainKeys.includes(key) && !specialKeys.includes(key) ){
-					let output = "<ul><li class='list-disc'>"
-					output += data.join("</li><li class='list-disc'>")
-					output += "</li></ul>"
+					let output = ""
+					if( data.length ){
+						output = "<ul><li class='list-disc'>"
+						output += data.join("</li><li class='list-disc'>")
+						output += "</li></ul>"
+					}
+					
 					return output
 				}
-				if(  specialKeys.includes(key) ){
+				if( specialKeys.includes(key) ){
 					let mapped = data.map( d => d.display )
-					let output = "<ul><li class='list-disc'>"
-					output += mapped.join("</li><li class='list-disc'>")
-					output += "</li></ul>"
+					let output = ""
+					if( mapped.length ){
+						output = "<ul><li class='list-disc'>"
+						output += mapped.join("</li><li class='list-disc'>")
+						output += "</li></ul>"
+					}
+					
 					return output
 				}
 			},
@@ -326,13 +386,17 @@
 				this.selected.includes(data.id) ? classes.push('selected') : ''
 				classes.push( data.status.toLowerCase().replaceAll(/[ ]/g, "-") )
 				return classes.join(" ")
-			}
+			},
 		},
 		mounted(){
-			this.headers = JSON.parse(JSON.stringify(this.headersData))
 			this.columnData = JSON.parse(JSON.stringify(this.rowsData))
+			this.headers = JSON.parse(JSON.stringify(this.headersData))
+
+			this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
+			this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
+			this.search.column = this.headers.filter( h=>h.show )[0].header
+
 			let that = this
-			
 			this.$nextTick(()=>{
 				for( let c in that.headers ){
 					if( that.headers[c].sticky && c == "0" ){
@@ -345,13 +409,11 @@
 					}
 				}
 			})
-
-			this.search.column = this.headers.filter( h=>h.show )[0].header
 		},
 		watch:{
 			rowsData(newVal){
 				this.columnData = JSON.parse(JSON.stringify(newVal))
-			}
+			},
 		},
 		components: {
 			Modal,
@@ -395,5 +457,12 @@
 	tr.best-practice td{ background-color: #CFE2F3; }
 	tr.third-party-problem td{ background-color: #D9D9D9; }
 	tr.resolved-by-removal td{ background-color: #D9D9D9; }
+	table.condensed td > *{
+		max-height: 82px;
+		height: 82px;
+		overflow-y: auto;
+		display: flex;
+		align-items:center;
+	}
 	
 </style>

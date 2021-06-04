@@ -7,9 +7,11 @@ import Cookies from 'js-cookie'
 import Notifications from 'vue-notification'
 import request from './services/request'
 import VueLodash from 'vue-lodash'
-import lodash from 'lodash'
+import orderBy from 'lodash/orderBy'
+import VueDragscroll from 'vue-dragscroll'
 
-Vue.use(VueLodash, { lodash: lodash })
+Vue.use(VueDragscroll)
+Vue.use(VueLodash, { lodash: { orderBy } })
 
 Vue.use(Notifications)
 window.Request = request
@@ -17,12 +19,17 @@ window.Request = request
 Vue.config.productionTip = false
 Vue.prototype.$http = Axios;
 const token = Cookies.get('oada_UID')
+var apiHost = "https://apitoolbox.ngrok.io"
+var accountHost = "https://oadaaccounts.ngrok.io"
 Vue.prototype.$http.defaults.headers.common['Accept'] = "application/json"
 
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }
-
+if( window.location.hostname == "auditortools.onlineada.com" ){
+  apiHost = "https://auditortoolsapi.onlineada.com/"
+  accountHost = "https://accounts.onlineada.com"
+}
 window.App = new Vue({
   router,
   store,
@@ -30,7 +37,12 @@ window.App = new Vue({
 }).$mount('#app')
 
 function run(){
-  Request.getPromise(`${store.state.auth.toolboxapi}/api/state/init`, {async: false})
+  store.state.auth.accapi = accountHost
+  store.state.auth.toolboxapi = apiHost
+  store.state.auth.userAPI = `${apiHost}/api/user`
+  store.state.auth.adminAPI = `${apiHost}/api/admin`
+  
+  Request.getPromise(`${apiHost}/api/state/init`, {async: false})
   .then( response => {
       store.commit("auth/setState", {key: "user", value: response.data.details.user})
       store.commit("auth/setState", {key: "accountsRoles", value: response.data.details.roles.accounts})

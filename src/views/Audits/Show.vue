@@ -3,22 +3,29 @@
 		<Loader v-if="loading"></Loader>
 		
 		<template v-if="audit">
-			<A class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
-			<A type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
+			<A v-if="!audit.locked || isManager" class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
+			<A class="pr-3" type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
+			<A v-if="!audit.locked" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Import</A>
 			<button v-if="issues.length" @click="whichCSVModalOpen = true" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
 				<span class="sr-only">Download</span> CSV
 			</button>
 			<h2 class="mb-3">{{audit.title}}</h2>
-			<Table :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
+			<span v-if="audit.locked" class="text-2xl"><i class="fas fa-lock" aria-hidden="true"></i></span>
+			<h3 class="text-base" v-if="audit.locked">This audit is locked and cannot be modified</h3>
+			<Table :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
-				There are no issues.
+				There are no issues currently. <A class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
 		</template>
 		<div class="flex fixed bottom-0 left-0 mb-3 ml-3" style="z-index:25;">
-			<Button v-if="selectedRows.length === 1" @click.native.prevent="editIssue" class="mx-2" color="orange" hover="true">Edit Issue</Button>
-			<Button v-if="selectedRows.length > 1" @click.native.prevent="confirmDeleteModalOpen = true" class="mx-2" color="delete" hover="true">Delete Issues</Button>
-			<Button v-if="selectedRows.length < 1" @click.native.prevent="newIssue" class="mx-2" color="orange" hover="true">Add Issue</Button>
+			<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="editIssue" class="mx-2" color="orange" hover="true">Edit Issue</Button>
+			<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="createFromCopy" class="mx-2" color="orange" hover="true">Copy Issue</Button>
+			<Button v-if="selectedRows.length > 1 && !audit.locked" @click.native.prevent="confirmDeleteModalOpen = true" class="mx-2" color="delete" hover="true">Delete Issues</Button>
+			<Button v-if="selectedRows.length < 1 && !audit.locked" @click.native.prevent="newIssue" class="mx-2" color="orange" hover="true">Add Issue</Button>
 			<Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'orange' : 'white'" :hover="true">Dark Mode</Button>
+		</div>
+		<div class="flex fixed bottom-0 right-0 mb-3 ml-3" style="z-index:25;">
+			<Button v-if="!audit.locked" @click.native.prevent="markComplete" class="mx-2" color="orange" hover="true">Complete<span v-if="audit.number > 0 < 3"> and create next audit</span></Button>
 		</div>
 		<Modal class="z-40" size="full" :open="issueModalOpen">
 			<div role="alert" :class="{ 'hidden': !showValidationAlert}" class="sr-only">
@@ -182,20 +189,30 @@
 						</div>
 					</div>
 					<div class="flex w-full flex-col mt-2 px-2">
-						<Label class="text-lg leading-6 w-full" for="auditor_notes">Auditor Notes</Label>
-						<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
+						<template v-if="audit.number == 1">
+							<Label class="text-lg leading-6 w-full" for="first_audit_notes">Auditor Notes</Label>
+							<TextArea rows="14" class="w-full" id="first_audit_notes" v-model="issue.first_audit_notes"></TextArea>
+						</template>
+						<template v-else-if="audit.number == 2">
+							<Label class="text-lg leading-6 w-full" for="second_audit_notes">Auditor Notes</Label>
+							<TextArea rows="14" class="w-full" id="second_audit_notes" v-model="issue.second_audit_notes"></TextArea>
+						</template>
+						<template v-else-if="audit.number == 3">
+							<Label class="text-lg leading-6 w-full" for="third_audit_notes">Auditor Notes</Label>
+							<TextArea rows="14" class="w-full" id="third_audit_notes" v-model="issue.third_audit_notes"></TextArea>
+						</template>
 					</div>
 					
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto text-sm">
+				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto">
 					Delete
 				</button>
-				<button @click="issueModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<button @click="issueModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
 					Cancel
 				</button>
-				<button @click="saveIssue" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<button @click="saveIssue" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
 					Save
 				</button>
 			</div>
@@ -241,7 +258,7 @@
 						<div class="w-1/3 px-3">
 							<Label>Success Criteria</Label>
 							<ul style="max-height:200px;" class="overscroll-y-auto">
-								<li v-for="(article, index) in selectedReference.issue.articles" :key="'refPage-'+index">{{articles.find( a=> a.id==article).number}} - {{articles.find( a=> a.id==article).title}}</li>
+								<li v-for="(article, index) in selectedReference.issue.articles" :key="'refPage-'+index">{{articles.find( a=> a.id==article.id).number}} - {{articles.find( a=> a.id==article.id).title}}</li>
 							</ul>
 						</div>
 						<div class="w-1/3 pl-3">
@@ -316,14 +333,12 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="confirmDeleteModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<button @click="whichCSVModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
 					Cancel
 				</button>
 			</div>
 			
 		</Modal>
-
-		<!-- getCSV -->
 	</div>
 </template>
 
@@ -387,12 +402,14 @@ export default {
 			browser_combos: [],
 			articles: [],
 			techniques: [],
-			recommendations: [],
+			recommendations: "",
 			descriptions: "",
 			levels: [],
 			actrs: [],
 			audit_id: "",
-			auditor_notes: "",
+			first_audit_notes: "",
+			second_audit_notes: "",
+			third_audit_notes: "",
 			priority: "Low",
 			effort: "Low",
 		},
@@ -413,7 +430,9 @@ export default {
 			levels: [],
 			actrs: [],
 			audit_id: "",
-			auditor_notes: "",
+			first_audit_notes: "",
+			second_audit_notes: "",
+			third_audit_notes: "",
 			priority: "Low",
 			effort: "Low",
 		},
@@ -437,6 +456,9 @@ export default {
 		other_states: [""]
 	}),
 	computed: {
+		isManager(){
+			return this.$store.getters["auth/isManager"]
+		},
 		issues(){
 			return this.audit ? this.audit.issues : []
 		},
@@ -510,7 +532,9 @@ export default {
 				created_by: "250px",
 				issue_number: "150px",
 				priority: "150px",
-				auditor_notes: "150px",
+				first_audit_notes: "150px",
+				second_audit_notes: "150px",
+				third_audit_notes: "150px",
 				effort: "300px",
 			}
 			let hideByDefault = [
@@ -519,7 +543,9 @@ export default {
 				"resources",
 				"effort",
 				"priority",
-				"auditor_notes",
+				"first_audit_notes",
+				"second_audit_notes",
+				"third_audit_notes",
 				"browser_combos",
 				"audit_id",
 				"created_at",
@@ -535,8 +561,10 @@ export default {
 					sticky: key == "issue_number" || key == "id" ? true : false,
 					style: {},
 					width: widthMap[key],
+					hidePermanent: this.isHeaderHidePermanent(key)
 				})
 			}
+			
 			return arr
 		},
 		audit(){
@@ -559,7 +587,7 @@ export default {
 
 			this.issue.levels = []
 			this.issue.techniques = []
-			this.issue.recommendations = []
+			this.issue.recommendations = ""
 			
 			for( let i in this.issue.articles ){
 				if( !this.issue.levels.includes( this.articles[ this.issue.articles[i].id ].level ) ){
@@ -593,8 +621,34 @@ export default {
 		}
 	},
 	methods: {
+		isHeaderHidePermanent(key){
+			if( this.audit.number == 1 && ( key == "second_audit_notes" || key == "third_audit_notes" ) ){
+				return true
+			}
+			if( this.audit.number == 2 && key == "third_audit_notes" ){
+				return true
+			}
+
+			return false
+		},
+		selectAll(ids){
+			this.selectedRows = ids
+		},
+		deselectAll(){
+			this.selectedRows = []
+		},
+		markComplete(){
+			this.$store.dispatch("audits/completeAudit", {audit_id: this.$route.params.id})
+		},
 		getIssuesCSV(){
-			window.location.href = `${this.$store.state.audits.WEB}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/csv/issues`
+			this.$store.state.audits.loading = true
+			Request.postPromise(`${this.$store.state.audits.API}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/meta`, {params: {key: "sort", value: this.$refs.issuesTable.columnData.map( o=> o.id)}})
+			.then( ()=> {
+				this.$store.state.audits.loading = false
+				window.location.href = `${this.$store.state.audits.WEB}/${this.$store.state.auth.account}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues`
+			})
+			.catch()
+			.then( ()=> this.$store.state.audits.loading = false )
 		},
 		getSampleCSV(){
 			window.location.href = `${this.$store.state.audits.WEB}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/csv/sample`
@@ -608,6 +662,15 @@ export default {
 			this.recommendationsQuill.root.innerHTML = ""
 			this.issueModalOpen = true
 		},
+		createFromCopy(){
+			let copy = JSON.parse(JSON.stringify(this.audit.issues.find( i => i.id == this.selectedRows[0] )))
+			this.issue = copy
+			delete this.issue.id
+			this.descriptionsQuill.root.innerHTML = this.issue.descriptions
+			this.recommendationsQuill.root.innerHTML = this.issue.recommendations
+			
+			this.issueModalOpen = true
+		},
 		editIssue(){
 			let copy = JSON.parse(JSON.stringify(this.audit.issues.find( i => i.id == this.selectedRows[0] )))
 			this.issue = copy
@@ -617,7 +680,7 @@ export default {
 			this.issueModalOpen = true
 		},
 		saveIssue(){
-			if( this.selectedRows.length < 1 ){
+			if( !this.issue.id   ){
 				this.createIssue()
 			}else{
 				this.updateIssue()

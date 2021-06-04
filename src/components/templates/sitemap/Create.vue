@@ -81,8 +81,8 @@
 								<tr v-for="sample in domain.sample" :key="sample.id">
 									<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.content" aria-labelledby="sample-content"></TextInput></td>
 									<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.screen" aria-labelledby="sample-screen"></TextInput></td>
-									<td class="p-1.5 overflow-y-auto border border-black"><Button @click.native.prevent="deleteItem(sample.id)" color="delete">X</Button></td>
-									<td class="p-1.5 overflow-y-auto border border-black"><Button @click.native.prevent="updateItem(sample)" color="orange"><i class="fas fa-save"></i></Button></td>
+									<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="delete this sample item" @click.native.prevent="deleteItem(sample.id)" color="delete">X</Button></td>
+									<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="save edits to this sample item" @click.native.prevent="updateItem(sample)" color="orange"><i class="fas fa-save"></i></Button></td>
 								</tr>
 							</tbody>
 						</table>
@@ -101,7 +101,7 @@
 					<div class="w-full px-2">
 						<Label :stacked="false" class="flex items-center justify-center w-full" for="url"><span class="pr-3">Url</span><small>(Without domain)</small></Label>
 						<div class="flex items-center">
-							<span>{{domain.url}}/</span><TextInput placeholder="contact" class="w-full" id="url" v-model="page.url" />
+							<span>{{domain.url}}/</span><TextInput aria-label="Enter a url path" placeholder="contact" class="w-full" id="url" v-model="page.url" />
 							<Button class="ml-2" color="orange" @click.native.prevent="addPage">Add</Button>
 						</div>
 					</div>
@@ -112,11 +112,11 @@
 						<ul class="mb-4">
 							<li v-for="page in domain.pages" :key="page.id">
 								{{page.url}}
-								<Button @click.native.prevent="deletePage(page.id)" color="delete" class="ml-4">X</Button>
+								<Button aria-label="delete this page" @click.native.prevent="deletePage(page.id)" color="delete" class="ml-4">X</Button>
 							</li>
 						</ul>
 					</Card>
-					<Button @click.native.prevent="emptySitemap" color="delete">Remove all</Button>
+					<Button @click.native.prevent="emptySitemap" color="delete">Remove all<span class="sr-only"> sample items</span></Button>
 				</template>
 
 				<FileInput @input="handleSitemapFile" class="block w-auto mx-auto pb-3" accept=".csv, .xml"></FileInput>

@@ -7,8 +7,8 @@ export default {
   state: {
     redirect: "/",
     site: "toolboxdashboard.ngrok.io",
-    accapi: 'https://oadaaccounts.ngrok.io',
-    toolboxapi: "https://apitoolbox.ngrok.io",
+    accapi: "",
+    toolboxapi: "",
     user: false,
     accountsRoles: [],
     accountsPermissions: [],

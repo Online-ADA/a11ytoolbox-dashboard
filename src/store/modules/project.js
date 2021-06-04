@@ -4,9 +4,8 @@ import router from 'vue-router'
 const getDefaultState = () => {
 	return {
 		all: [],
+		audits: [],
 		project: false,
-		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
-		API: "https://apitoolbox.ngrok.io/api/user",
 		loading: false,
 		usersLoading: false,
 		domainsLoading: false
@@ -17,9 +16,8 @@ export default {
 		namespaced:true,
 		state: {
 			all: [],
+			audits: [],
 			project: false,
-			adminAPI: "https://apitoolbox.ngrok.io/api/admin",
-			API: "https://apitoolbox.ngrok.io/api/user",
 			loading: false,
 			usersLoading: false,
 			domainsLoading: false
@@ -38,7 +36,7 @@ export default {
 			},
 			getUsers({state, rootState}, args){
 				state.usersLoading = true
-				Request.getPromise(`${state.adminAPI}/${rootState.auth.account}/users`)
+				Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/users`)
 				.then( re=>{
 					args.vm.users = Object.values(re.data.details)
 					args.vm.unassigned = args.vm.users.filter( u => !args.vm.assigned.includes(u.user_id) ).map(u => u.user_id)
@@ -48,7 +46,7 @@ export default {
 			},
 			getProject({state, rootState}, args){
 				state.loading = true
-				Request.getPromise(`${state.API}/${rootState.auth.account}/projects/${args.id}`)
+				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.id}`)
 				.then( re => {
 					state.project = re.data.details
 					if( args.vm ){
@@ -65,7 +63,7 @@ export default {
 			},
 			createProject({state, rootState, rootGetters}, args){
 				state.loading = true;
-				Request.postPromise(`${state.API}/${rootState.auth.account}/projects`, {
+				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {
 					params: {
 						project: args.project
 					}
@@ -120,7 +118,7 @@ export default {
 						}
 					}
 				};
-				Request.get(`${state.API}/${rootState.auth.account}/projects`, args)
+				Request.get(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, args)
 			},
 			updateProject({state, rootState, rootGetters}, args){
 				state.loading = true
@@ -154,15 +152,23 @@ export default {
 						}
 					}
 				};
-				Request.post(`${state.API}/${rootState.auth.account}/projects/${args.id}`, requestArgs)
+				Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.id}`, requestArgs)
 			},
 			getProjectDomains({state, rootState}, args){
 				state.domainsLoading = true
-				Request.getPromise(`${state.API}/${rootState.auth.account}/projects/${args.id}/domains`)
+				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.id}/domains`)
 				.then( re=>args.vm.domains = re.data.details)
 				.catch( re=> console.log(re))
 				.then( ()=>state.domainsLoading = false)
-			}
+			},
+			getAuditsForProject({state, rootState}, args){
+				state.loading = true
+
+				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.project_id}/audits`)
+				.then( re=>state.audits = re.data.details)
+				.catch( re=>console.log(re))
+				.then( ()=>state.loading = false)
+			},
 		},
 		getters: { 
 			

@@ -1,13 +1,17 @@
 <template>
 	<div class="text-center mt-20">
 		<Loader v-if="loading"></Loader>
-		
+		<div role="alert" :class="{ 'hidden': !showValidationAlert}" class="sr-only">
+			The following validation errors are present on the create audit form: 
+			<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
+		</div>
 		<h1>Create new Audit</h1>
 		<div class="flex flex-wrap w-2/3 mx-auto">
 			<div class="w-1/4"></div>
 			<div class="w-1/4">
 				<Label for="start_date">Start Date</Label>
-				<Date name="start_date" id="start_date" class="mx-auto" @input="changeStartDate"></Date>
+				<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('start_date') }" id="start-date-validation">{{validationMessages["start_date"]}}</small>
+				<Date required :aria-describedby="failedValidation.includes('start_date') ? 'start-date-validation' : false" name="start_date" id="start_date" class="mx-auto" @input="changeStartDate"></Date>
 			</div>
 			<div class="w-1/4">
 				<Label for="end_date">End Date</Label>
@@ -17,81 +21,91 @@
 			<div class="w-full flex justify-center">
 				<div class="px-2">
 					<Label for="status">Status</Label>
-					<Select id="status" class="mx-auto" :options="statusSrc" v-model="audit.status"></Select>
+					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('status') }" id="status-validation">{{validationMessages["status"]}}</small>
+					<Select required :aria-describedby="failedValidation.includes('status') ? 'status-validation' : false" id="status" class="mx-auto" :options="statusSrc" v-model="audit.status"></Select>
 				</div>
 				<div class="px-2 w-1/2">
-					<Label for="title">Title</Label>
-					<TextInput class="w-full" id="title" name="title" v-model="audit.title" />
+					<Label for="audit-title">Title</Label>
+					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('title') }" id="title-validation">{{validationMessages["title"]}}</small>
+					<TextInput required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
 				</div>
 				<div class="px-2">
 					<Label for="audit_num">Audit #</Label>
-					<Select id="audit_num" class="mx-auto" :options="[{name:1, value: 1}, {name:2, value: 2}, {name:3, value: 3}]" v-model="audit.number"></Select>
+					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('number') }" id="number-validation">{{validationMessages["number"]}}</small>
+					<Select required :aria-describedby="failedValidation.includes('number') ? 'number-validation' : false" id="audit_num" class="mx-auto" :options="[{name:1, value: 1}, {name:2, value: 2}, {name:3, value: 3}]" v-model="audit.number"></Select>
 				</div>
 				<div class="px-2">
 					<Label for="ctarget">Conformance Target</Label>
-					<TextInput class="w-full" id="ctarget" name="ctarget" v-model="audit.conformance_target" />
+					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('conformance_target') }" id="conformance-target-validation">{{validationMessages["conformance_target"]}}</small>
+					<TextInput required :aria-describedby="failedValidation.includes('conformance_target') ? 'conformance-target-validation' : false" class="w-full" id="ctarget" name="ctarget" v-model="audit.conformance_target" />
 				</div>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
 				<Label for="scope">Scope of the Audit</Label>
-				<Textarea class="w-full" id="scope" name="scope" v-model="audit.scope" rows="4"></Textarea>
+				<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('scope') }" id="scope-validation">{{validationMessages["scope"]}}</small>
+				<Textarea required :aria-describedby="failedValidation.includes('scope') ? 'scope-validation' : false" class="w-full" id="scope" name="scope" v-model="audit.scope" rows="4"></Textarea>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
 				<Label for="essential_functionality">
-					Essential Functionality
+					<div>Essential Functionality</div>
+					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('essential_functionality') }" id="essential-functionality-validation">{{validationMessages["essential_functionality"]}}</small>
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.essential_functionality" :key="`AT-select-${i}`">
-							<TextInput class="mr-1 w-11/12" id="essential_functionality" name="essential_functionality" v-model="audit.essential_functionality[i].content"></TextInput>
-							<Button class="ml-1" :hover="true" @click.native.prevent="removeEssentialFunctionality(i)"><i class="fas fa-trash-alt"></i></Button>
+							<TextInput required :aria-describedby="failedValidation.includes('essential_functionality') ? 'essential-functionality-validation' : false" class="mr-1 w-11/12" id="essential_functionality" name="essential_functionality" v-model="audit.essential_functionality[i]"></TextInput>
+							<Button aria-label="delete this essential functionality entry from the list" class="ml-1" :hover="true" @click.native.prevent="removeEssentialFunctionality(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 						
-						<Button :hover="true" @click.native.prevent="addNewEssentialFunctionality">Add New</Button>
+						<Button :hover="true" @click.native.prevent="addNewEssentialFunctionality">Add New<span class="sr-only"> essential functionality entry to this list</span></Button>
 					</Card>
 				</Label>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
 				<Label for="additional_requirements">Additional Requirements</Label>
-				<Textarea class="w-full" id="additional_requirements" name="additional_requirements" v-model="audit.additional_requirements" rows="4"></Textarea>
+				<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('additional_requirements') }" id="additional-requirements-validation">{{validationMessages["additional_requirements"]}}</small>
+				<Textarea required :aria-describedby="failedValidation.includes('additional_requirements') ? 'additional-requirements-validation' : false" class="w-full" id="additional_requirements" name="additional_requirements" v-model="audit.additional_requirements" rows="4"></Textarea>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
-				<Label for="software">
-					Software Used
+				<Label for="audit-software">
+					<div>Software Used</div>
+					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('software_used') }" id="software-used-validation">{{validationMessages["software_used"]}}</small>
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.software_used" :key="`SU-select-${i}`">
-							<Select :options="software_used_src"  class="mr-1 w-11/12" id="software" name="software" v-model="audit.software_used[i].name"></Select>
-							<Button class="ml-1" :hover="true" @click.native.prevent="removeSoftwareUsed(i)"><i class="fas fa-trash-alt"></i></Button>
+							<Select required :aria-describedby="failedValidation.includes('software_used') ? 'software-used-validation' : false" :options="software_used_src"  class="mr-1 w-11/12" id="audit-software" name="software" v-model="audit.software_used[i]"></Select>
+							<Button aria-label="delete this software used entry from the list" class="ml-1" :hover="true" @click.native.prevent="removeSoftwareUsed(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 
-						<Button :hover="true" @click.native.prevent="addNewSoftwareUsed">Add New</Button>
+						<Button :hover="true" @click.native.prevent="addNewSoftwareUsed">Add New<span class="sr-only"> software used entry to this list</span></Button>
 					</Card>
 				</Label>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
-				<Label for="software">
-					Assistive Tech
+				<Label for="audit-assistive">
+					<div>Assistive Tech</div>
+					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('assistive_tech') }" id="assistive-tech-validation">{{validationMessages["assistive_tech"]}}</small>
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.assistive_tech" :key="`AT-select-${i}`">
-							<Select :options="assistive_tech_src" class="mr-1 w-11/12" id="assistive" name="assistive" v-model="audit.assistive_tech[i].name"></Select>
-							<Button class="ml-1" :hover="true" @click.native.prevent="removeAssistiveTech(i)"><i class="fas fa-trash-alt"></i></Button>
+							<Select required :aria-describedby="failedValidation.includes('assistive_tech') ? 'assistive-tech-validation' : false" :options="assistive_tech_src" class="mr-1 w-11/12" id="audit-assistive" name="assistive" v-model="audit.assistive_tech[i]"></Select>
+							<Button aria-label="delete this assistive technology entry from the list" class="ml-1" :hover="true" @click.native.prevent="removeAssistiveTech(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 						
-						<Button :hover="true" @click.native.prevent="addNewAssistiveTech">Add New</Button>
+						<Button :hover="true" @click.native.prevent="addNewAssistiveTech">Add New<span class="sr-only"> assistive technology entry to this list</span></Button>
 					</Card>
 				</Label>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
-				<Label for="software">
-					Tech Requirements
+				<Label for="audit-treqs">
+					<div>Tech Requirements</div>
+					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('tech_requirements') }" id="tech-requirements-validation">{{validationMessages["tech_requirements"]}}</small>
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.tech_requirements" :key="`TR-select-${i}`">
-							<Select :options="tech_requirements_src"  class="mr-1 w-11/12" id="treqs" name="treqs" v-model="audit.tech_requirements[i].name"></Select>
-							<Button class="ml-1" :hover="true" @click.native.prevent="removeTechReq(i)"><i class="fas fa-trash-alt"></i></Button>
+							<Select required :aria-describedby="failedValidation.includes('tech_requirements') ? 'tech-requirements-validation' : false" :options="tech_requirements_src"  class="mr-1 w-11/12" id="audit-treqs" name="treqs" v-model="audit.tech_requirements[i]"></Select>
+							<Button aria-label="delete this technology requirement entry from the list" class="ml-1" :hover="true" @click.native.prevent="removeTechReq(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 						
 						<Button :hover="true" @click.native.prevent="addNewTechReq">Add New</Button>
@@ -106,7 +120,7 @@
 					<h3>Auditors</h3>
 					<ul v-if="unassigned.length">
 						<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
-							<span>{{displayUser(id)}}</span><Button hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
+							<span>{{displayUser(id)}}</span><Button aria-label="assign this user to the audit" hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
 						</li>
 					</ul>
 					</Card>
@@ -114,7 +128,7 @@
 					<h3>Assignees</h3>
 					<ul v-if="assigned.length">
 						<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
-							<Button hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
+							<Button aria-label="unassign this user to the audit" hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
 						</li>
 					</ul>
 					</Card>
@@ -125,7 +139,8 @@
 			<div class="flex flex-wrap w-full justify-center mb-24">
 				<h2 class="my-2">Working Sample</h2>
 				<span class="text-base my-2">The working sample takes the structured list created with the domain and calculates 10% of the number of items in it. It will then grab that number of pages at random from the sitemap (if it was provided with the domain) and combine them to form the working sample.</span>
-				<Button class="mt-1 mb-3" hover="true" @click.native.prevent="generateWorkingSample">Generate Sample</Button>
+				<Button :aria-describedby="failedValidation.includes('working_sample') ? 'working-sample-validation' : false" class="mt-1 mb-3" hover="true" @click.native.prevent="generateWorkingSample">Generate working sample</Button>
+				<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('working_sample') }" id="working-sample-validation">{{validationMessages["working_sample"]}}</small>
 
 				<template v-if="audit.working_sample.length">
 					<Card class="w-full p-4 mb-34 mx-2 flex-wrap items-center flex-col">
@@ -156,12 +171,12 @@
 									<tr v-for="(sample, index) in audit.working_sample" :key="'sample-'+index">
 										<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.content" aria-labelledby="sample-content"></TextInput></td>
 										<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.screen" aria-labelledby="sample-screen"></TextInput></td>
-										<td class="p-1.5 overflow-y-auto border border-black"><Button @click.native.prevent="deleteItem(index)" color="delete">X</Button></td>
+										<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="Delete this sample item" @click.native.prevent="deleteItem(index)" color="delete">X</Button></td>
 									</tr>
 								</tbody>
 							</table>
 						</Card>
-						<Button @click.native.prevent="emptySample" color="delete">Remove all</Button>
+						<Button @click.native.prevent="emptySample" color="delete">Remove all<span class="sr-only"> sample items</span></Button>
 					</Card>
 
 					<h2 class="my-3 w-full">Save and go to audit</h2>
@@ -184,6 +199,22 @@ import Date from '../../../components/Date'
 
 export default {
 	data: () => ({
+		failedValidation: [],
+		showValidationAlert: false,
+		validationMessages: {
+			"start_date": "The start date field is required",
+			"title": "The title field is required",
+			"status": "The status field is required",
+			"essential_functionality": "The essential functionality field is required",
+			"additional_requirements": "The additional requirements field is required",
+			"scope": "The scope field is required",
+			"conformance_target": "The conformance target field is required",
+			"software_used": "The software used field is required",
+			"assistive_tech": "The assistive tech field is required",
+			"tech_requirements": "The tech requirements field is required",
+			"number": "The number field is required",
+			"working_sample": 'A working sample is required. Please click the "generate working sample" button',
+		},
 		statusSrc: [
 			{name: 'In Progress', value:'in_progress'},
 			{name:'Complete', value:'complete'},
@@ -203,12 +234,12 @@ export default {
 		],
 		audit: {
 			title: "",
-			essential_functionality: [{content:""}],
+			essential_functionality: [""],
 			additional_requirements: "",
-			software_used: [{name:""}],
-			assistive_tech: [{name:""}],
+			software_used: [""],
+			assistive_tech: [""],
 			scope: "",
-			tech_requirements: [{name:""}],
+			tech_requirements: [""],
 			locked: false,
 			number: 1,
 			start_date: "",
@@ -265,6 +296,47 @@ export default {
 	},
 	props: [],
 	methods: {
+		validate(){
+			let toValidate = [
+				"title",
+				"status",
+				"essential_functionality",
+				"additional_requirements",
+				"scope",
+				"conformance_target",
+				"software_used",
+				"assistive_tech",
+				"tech_requirements",
+				"number",
+				"start_date",
+				"working_sample",
+			]
+			this.failedValidation = []
+			var pass
+
+			for( let prop of toValidate ){
+				if( Array.isArray( this.audit[prop] ) ){
+					pass = this.audit[prop].length
+				}else{
+					pass = this.audit[prop]
+				}
+
+				if( !pass ){
+					if( !this.failedValidation.includes( prop ) ){
+						this.failedValidation.push( prop )
+					}
+				}
+			}
+
+			if( this.failedValidation.length !== 0 ){
+				this.showValidationAlert = true
+				setTimeout(()=>{
+					this.showValidationAlert = false
+				}, 500)
+			}
+
+			return this.failedValidation.length === 0
+		},
 		removeTechReq(index){
 			this.audit.tech_requirements.splice(index, 1)
 		},
@@ -278,7 +350,7 @@ export default {
 			this.audit.essential_functionality.splice(index, 1)
 		},
 		addNewEssentialFunctionality(){
-			this.audit.essential_functionality.push({content:""})
+			this.audit.essential_functionality.push("")
 		},
 		addNewSampleItem(){
 			this.audit.working_sample.push(this.newSampleItem)
@@ -310,74 +382,80 @@ export default {
 			this.audit.end_date = val;
 		},
 		addNewSoftwareUsed(){
-			this.audit.software_used.push({name:""})
+			this.audit.software_used.push("")
 		},
 		addNewTechReq(){
-			this.audit.tech_requirements.push({name:""})
+			this.audit.tech_requirements.push("")
 		},
 		addNewAssistiveTech(){
-			this.audit.assistive_tech.push({name:""})
+			this.audit.assistive_tech.push("")
 		},
-		generateWorkingSample(){
+		processSources(structured, sitemap){
+			this.$store.state.audits.loading = true
+
 			//Calculate what 10% of the structured list is
-			let tenPercent = parseInt( this.structuredSample.length * .1 )
+			let tenPercent = parseInt( structured.length * .1 )
 			if( tenPercent < 10 ){
 				tenPercent = 10
 			}
-
-			if( !this.sitemap.length ){
-				this.audit.working_sample = this.structuredSample
-				return
-			}
-
-			if( this.sitemap.length <= tenPercent ){
-				this.audit.working_sample = [...this.structuredSample, ...this.sitemap]
-				return
-			}
-			this.$store.state.audits.loading = true
 			
 			let sitemap_sample = []
 			let structured_map = []
 
-			for( let i in this.structuredSample ){
-				let found = structured_map.some( el => el.content == this.structuredSample[i].content)
+			//Remove duplicates from structured sample
+			for( let i in structured ){
+				let found = structured_map.some( el => el.content == structured[i].content)
 				if( !found ){
 					structured_map.push({
-						content: this.structuredSample[i].content,
-						screen: this.structuredSample[i].screen
+						content: structured[i].content,
+						screen: structured[i].screen
 					})
 				}
-				
 			}
 
-			while ( sitemap_sample.length <= tenPercent ){
-				let index = Math.floor( Math.random() * (this.sitemap.length - 1)) + 1
+			if( sitemap.length ){
+				//Remove duplicates from sitemap and structured sample
+				while( sitemap_sample.length < tenPercent ){
+					if( sitemap.length < 1 ){
+						break
+					}
+					let index = Math.floor( Math.random() * (sitemap.length - 1)) + 1
+					let found = sitemap_sample.some( el => el.content == sitemap[index].url)
+					if( found ){
+						sitemap.splice(index, 1)
+						break //break early for efficiency
+					}
+					found = structured_map.some( el => el.content == sitemap[index].url)
+					if( found ){
+						sitemap.splice(index, 1)
+						break
+					}
 
-				let found = sitemap_sample.some( el => el.content == this.sitemap[index].url)
-				if( !found ){
 					sitemap_sample.push( {
-						content: this.sitemap[index].url,
+						content: sitemap[index].url,
 						screen: ""
 					})
+					sitemap.splice(index, 1)
 				}
 			}
 
 			this.audit.working_sample = [...structured_map, ...sitemap_sample]
 			this.$store.state.audits.loading = false
 		},
+		generateWorkingSample(){
+			this.processSources(this.structuredSample, this.sitemap.length ? JSON.parse(JSON.stringify(this.sitemap)) : [])
+		},
 		deleteItem(index){
 			this.audit.working_sample.splice(index, 1)
 		},
 		createAudit(){
-			this.audit.essential_functionality = this.audit.essential_functionality.map(o=>o.content)
-			this.audit.tech_requirements = this.audit.tech_requirements.map(o=>o.name)
-			this.audit.assistive_tech = this.audit.assistive_tech.map(o=>o.name)
-			this.audit.software_used = this.audit.software_used.map(o=>o.name)
-			this.audit.assigned = this.assigned
-			this.audit.project_id = this.sheetData.sheet0.project
-			this.audit.domain_id = this.sheetData.sheet1.domain
+			if( this.validate() ){
+				this.audit.assigned = this.assigned
+				this.audit.project_id = this.sheetData.sheet0.project
+				this.audit.domain_id = this.sheetData.sheet1.domain
 
-			this.$store.dispatch("audits/createAudit", {audit: this.audit, router: this.$router})
+				this.$store.dispatch("audits/createAudit", {audit: this.audit, router: this.$router})
+			}
 		},
 	},
 	created() {

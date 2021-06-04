@@ -12,8 +12,6 @@ const getDefaultState = () => {
 		recommendations: [],
 		audit_states: [],
 		clients: [],
-		API: "https://apitoolbox.ngrok.io/api/user",
-		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
 		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
 		loading:{
 			articles: false,
@@ -39,8 +37,6 @@ export default {
 		recommendations: [],
 		audit_states: [],
 		clients: [],
-		API: "https://apitoolbox.ngrok.io/api/user",
-		adminAPI: "https://apitoolbox.ngrok.io/api/admin",
 		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
 		loading:{
 			articles: false,
@@ -65,7 +61,7 @@ export default {
 		},
 		getAuditStates({state, rootState}){
 			state.loading.articles = true
-			Request.getPromise(`${state.adminAPI}/${rootState.auth.account}/audits/states`)
+			Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/states`)
 			.then( res => {
 				state.audit_states = res.data.details
 			})
@@ -84,7 +80,7 @@ export default {
 		},
 		getArticles({state, dispatch, rootState}){
 			state.loading.articles = true
-			Request.getPromise(`${state.API}/${rootState.auth.account}/articles`)
+			Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/articles`)
 			.then( res => {
 				state.articles = res.data.details
 				dispatch("getTechniques")
@@ -104,7 +100,7 @@ export default {
 			})
 		},
 		getTechniques({state, rootState}){
-			Request.getPromise(`${state.API}/${rootState.auth.account}/techniques`)
+			Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/techniques`)
 			.then( res => {
 				state.techniques = res.data.details
 			})
@@ -121,7 +117,7 @@ export default {
 			})
 		},
 		getRecommendations({state, rootState}){
-			Request.getPromise(`${state.API}/${rootState.auth.account}/recommendations`)
+			Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/recommendations`)
 			.then( res => {
 				state.recommendations = res.data.details
 				state.loading.articles = false
@@ -151,7 +147,7 @@ export default {
 			if( args.object.identifier == "audit_state" ){
 				path = "audits/state"
 			}
-			Request.postPromise(`${state.adminAPI}/${rootState.auth.account}/${path}s`, {
+			Request.postPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/${path}s`, {
 				params: args.object
 			})
 			.then( re=> {
@@ -184,7 +180,7 @@ export default {
 			if( args.object.identifier == "audit_state" ){
 				path = "audits/state"
 			}
-			Request.postPromise(`${state.adminAPI}/${rootState.auth.account}/${path}s/${args.object.id}`, {
+			Request.postPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/${path}s/${args.object.id}`, {
 				params: args.object
 			})
 			.then( re=> {
@@ -213,7 +209,7 @@ export default {
 		},
 		deleteAuditState({state, rootState}, args){
 			state.loading.articles = false
-			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/audits/states/${args.id}`)
+			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/states/${args.id}`)
 			.then( re => {
 				state.audit_states = re.data.details
 				if( !Request.muted() ){
@@ -238,7 +234,7 @@ export default {
 		},
 		deleteArticle({state, rootState}, args){
 			state.loading.articles = false
-			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/articles/${args.id}`)
+			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/articles/${args.id}`)
 			.then( re => {
 				state.loading.articles = false
 				state.articles = re.data.details
@@ -264,7 +260,7 @@ export default {
 		},
 		deleteTechnique({state, rootState}, args){
 			state.loading.articles = false
-			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/techniques/${args.id}`)
+			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/techniques/${args.id}`)
 			.then( re => {
 				state.loading.articles = false
 				state.techniques = re.data.details
@@ -290,7 +286,7 @@ export default {
 		},
 		deleteRecommendation({state, rootState}, args){
 			state.loading.articles = false
-			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/recommendations/${args.id}`)
+			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/recommendations/${args.id}`)
 			.then( re => {
 				state.loading.articles = false
 				state.recommendations = re.data.details
@@ -316,7 +312,7 @@ export default {
 		},
 		deleteProject({state, rootState}, args){
 			state.loading.projects = true
-			Request.destroyPromise(`${state.adminAPI}/${rootState.auth.account}/projects/${args.project_id}`)
+			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/projects/${args.project_id}`)
 			.then( re => {
 				state.loading.projects = false
 				state.projects = re.data.details
@@ -342,7 +338,7 @@ export default {
 		},
 		modifyRole({state, rootState}, args){
 			state.loading.users = true
-			Request.post(`${state.adminAPI}/${rootState.auth.account}/users/setRole`, {
+			Request.post(`${rootState.auth.adminAPI}/${rootState.auth.account}/users/setRole`, {
 				params: {
 					"user_id": args.user_id,
 					"role" : args.role
@@ -364,7 +360,7 @@ export default {
 			})
 		},
 		saveUserPermissions({state, rootState}, args){
-			Request.post(`${state.adminAPI}/${rootState.auth.account}/users/setPermissions`, {
+			Request.post(`${rootState.auth.adminAPI}/${rootState.auth.account}/users/setPermissions`, {
 				params: {
 					'permissions': args.permissions,
 					'user_id': args.user_id
@@ -386,7 +382,7 @@ export default {
 		},
 		getUsers({state, rootState}){
 			state.loading.users = true
-			Request.get(`${state.adminAPI}/${rootState.auth.account}/users`, {
+			Request.get(`${rootState.auth.adminAPI}/${rootState.auth.account}/users`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -407,7 +403,7 @@ export default {
 		},
 		getUser({state, rootState}, args){
 			state.loading.users = true
-			Request.get(`${state.adminAPI}/${rootState.auth.account}/users/${args.user_id}`, {
+			Request.get(`${rootState.auth.adminAPI}/${rootState.auth.account}/users/${args.user_id}`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -430,7 +426,7 @@ export default {
 		},
 		getProjects({state, rootState}){
 			state.loading.projects = true
-			Request.get( `${state.adminAPI}/${rootState.auth.account}/projects`, {
+			Request.get( `${rootState.auth.adminAPI}/${rootState.auth.account}/projects`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -451,7 +447,7 @@ export default {
 		},
 		getAudits({state, rootState}){
 			state.loading.projects = true
-			Request.get( `${state.adminAPI}/${rootState.auth.account}/audits`, {
+			Request.get( `${rootState.auth.adminAPI}/${rootState.auth.account}/audits`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -472,7 +468,7 @@ export default {
 		},
 		getClients({state, rootState}){
 			state.loading.clients = true
-			Request.get(`${state.adminAPI}/${rootState.auth.account}/clients`, {
+			Request.get(`${rootState.auth.adminAPI}/${rootState.auth.account}/clients`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -493,7 +489,7 @@ export default {
 		},
 		getAllDomains({state, rootState}){
 			state.loading.domains = true
-			Request.get(`${state.adminAPI}/${rootState.auth.account}/domains`, {
+			Request.get(`${rootState.auth.adminAPI}/${rootState.auth.account}/domains`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
