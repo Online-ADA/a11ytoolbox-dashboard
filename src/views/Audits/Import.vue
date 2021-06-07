@@ -11,7 +11,7 @@
         <div class="w-1/4"></div>
     </div>
 
-    <div class="w-full flex flex-wrap justify-center items-center">
+    <div class="w-full flex flex-wrap justify-center items-center mb-10">
         <div v-for="(audit, index) in filteredAudits" :key="'audit-'+index" class="bg-white" :class="[fullscreen === audit.id ? 'fixed inset-0 h-screen z-50 w-full' : 'w-1/2 my-3']" >
             <div :class="[fullscreen === audit.id ? 'fixed left-0 right-0 shadow-lg top-1.5' : '']" class="border border-pallette-grey h-auto p-4 rounded text-center mx-1.5">
                 <div class="flex pr-2 items-center justify-center">
@@ -92,174 +92,195 @@ export default {
                     show: false,
                     sticky: true,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
                 {
                     header: "issue number",
                     show: true,
                     sticky: true,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
                 {
                     header: "pages",
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "250px"
+                    width: "250px",
+                    hidePermanent: false
                 },
                 {
                     header: "status",
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
                 {
                     header: "target",
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "300px"
+                    width: "300px",
+                    hidePermanent: false
                 },
                 {
                     header: "levels",
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
                 {
                     header: "success criteria",
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
                 {
                     header: "techniques",
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
                 {
                     header: "descriptions",
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "400px"
+                    width: "400px",
+                    hidePermanent: false
                 },
                 {
                     header: "recommendations",
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "400px"
+                    width: "400px",
+                    hidePermanent: false
                 },
                 {
                     header: "audit states",
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
                 {
                     header: "priority",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
                 {
                     header: "effort",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "300px"
+                    width: "300px",
+                    hidePermanent: false
                 },
                 {
                     header: "how discovered",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
                 {
                     header: "screenshots",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "250px"
+                    width: "250px",
+                    hidePermanent: false
                 },
                 {
                     header: "resources",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "250px"
+                    width: "250px",
+                    hidePermanent: false
                 },
                 {
                     header: "browser combos",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "300px"
+                    width: "300px",
+                    hidePermanent: false
                 },
                 {
                     header: "essential functionality",
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "300px"
+                    width: "300px",
+                    hidePermanent: false
                 },
                 {
                     header: "actrs",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "250px"
+                    width: "250px",
+                    hidePermanent: false
                 },
                 {
                     header: "created by",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "250px"
+                    width: "250px",
+                    hidePermanent: false
                 },
                 {
                     header: "audit id",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
                 {
                     header: "first audit notes",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "150px"
+                    width: "150px",
+                    hidePermanent: false
                 },
-            ]
-            if( this.audit.number == 2 ){
-                parsed.push({
+                {
                     header: "second audit notes",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "150px"
-                })
-            }
-            if( this.audit.number == 3 ){
-                parsed.push({
+                    width: "150px",
+                    hidePermanent: this.primaryAudit.number == 2 || this.primaryAudit.number == 3
+                },
+                {
                     header: "third audit notes",
                     show: false,
                     sticky: false,
                     style: {},
-                    width: "150px"
-                })
-            }
+                    width: "150px",
+                    hidePermanent: this.primaryAudit.number == 3
+                },
+            ]
+            
             return parsed
         },
         allIssues(){

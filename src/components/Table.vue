@@ -31,7 +31,7 @@
 			
 		</div>
 		<div @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-16">
-			<table v-if="rows.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': compact}">
+			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': compact}">
 				<thead>
 					<tr>
 						<th class="capitalize pt-5" v-show="header.show && !header.hidePermanent" :ref="'header-' + index" :style="header.style" :width="header.width || false" :class="[header.sticky ? 'sticky z-20' : 'relative z-10']" scope="col" v-for="(header, index) in headers" :key="`header-${index}`">
@@ -91,7 +91,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<span v-else>No issues</span>
+			<span v-show="!rows.length">No issues</span>
 		</div>
 		
 		<Modal class="z-30" :open="columnPickerOpen">
@@ -183,7 +183,7 @@
 				}
 
 				return this.columnData
-			},
+			}
 		},
 		methods: {
 			selectAll(){
@@ -389,30 +389,30 @@
 			},
 		},
 		mounted(){
+			
+		},
+		created(){
 			this.columnData = JSON.parse(JSON.stringify(this.rowsData))
-			this.headers = JSON.parse(JSON.stringify(this.headersData))
-
 			this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
 			this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
-			this.search.column = this.headers.filter( h=>h.show )[0].header
-
-			let that = this
-			this.$nextTick(()=>{
-				for( let c in that.headers ){
-					if( that.headers[c].sticky && c == "0" ){
-						that.$set(that.headers[c].style, "left", 0)
-					}
-
-					if( that.headers[c].sticky && c != "0" && that.headers[c].show ){
-						let col = that.$refs['header-' + (c-1)][0]
-						that.$set(that.headers[c].style, "left", col.offsetWidth + 'px')
-					}
-				}
-			})
+			this.headers = JSON.parse(JSON.stringify(this.headersData))
 		},
 		watch:{
 			rowsData(newVal){
 				this.columnData = JSON.parse(JSON.stringify(newVal))
+			},
+			headers(newVal){
+				this.search.column = newVal.filter( h=>h.show )[0].header
+				
+				for( let c in this.headers ){
+					if( this.headers[c].sticky && c == "0" ){
+						this.$set(this.headers[c].style, "left", 0)
+					}
+					if( this.headers[c].sticky && c != "0" && this.headers[c].show ){
+						let col = this.$refs['header-' + (c-1)][0]
+						this.$set(this.headers[c].style, "left", col.offsetWidth + 'px')
+					}
+				}
 			},
 		},
 		components: {
