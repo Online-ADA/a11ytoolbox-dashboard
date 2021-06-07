@@ -65,10 +65,8 @@ export default {
 	},
 	props: [],
 	watch: {
-		"user": function(nv, ov){
-			if( ov === false ){
-				this.userData.permissions = this.$store.state.admin.user.permissions
-			}
+		"user": function(){
+			this.userData.permissions = this.$store.state.admin.user.permissions
 		}
 	},
 	methods: {
