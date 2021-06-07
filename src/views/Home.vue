@@ -34,7 +34,9 @@ export default {
     setAccount(id){
       this.$store.commit("auth/setState", {key: "account", value: id})
       if( this.$store.getters["auth/isManager"] ){
-        this.$store.registerModule('admin', admin)
+        if( this.$store.state.admin === undefined ){
+          this.$store.registerModule('admin', admin)
+        }
         this.$store.dispatch("admin/getProjects", this.$router)
       }else{
         this.$store.unregisterModule("admin")
