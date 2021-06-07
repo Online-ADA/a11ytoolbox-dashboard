@@ -14,12 +14,9 @@
 				</ul>
 			</div>
 		
-			<div class="w-full flex flex-wrap p-3 justify-center">
+			<div v-if="userData.permissions" class="w-full flex flex-wrap p-3 justify-center">
 				<h3 class="mt-4 w-full">Permissions</h3>
 				
-				<div class="w-full flex justify-center">
-					<Button hover="true" color="orange" @click.native.prevent="savePermissions" >Save permissions</Button>
-				</div>
 				<div class="rounded border border-pallette-grey shadow w-1/5 m-2" v-for="(actions, entity) in userData.permissions" :key="entity">
 					<div class="capitalize font-bold text-xl">{{entity}}</div>
 					<ul class="p-4">

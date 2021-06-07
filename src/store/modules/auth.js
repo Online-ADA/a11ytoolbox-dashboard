@@ -6,7 +6,7 @@ export default {
   namespaced:true,
   state: {
     redirect: "/",
-    site: "toolboxdashboard.ngrok.io",
+    site: "",
     accapi: "",
     toolboxapi: "",
     user: false,

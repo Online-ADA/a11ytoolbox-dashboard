@@ -21,14 +21,16 @@ Vue.prototype.$http = Axios;
 const token = Cookies.get('oada_UID')
 var apiHost = "https://apitoolbox.ngrok.io"
 var accountHost = "https://oadaaccounts.ngrok.io"
+var site = "toolboxdashboard.ngrok.io"
 Vue.prototype.$http.defaults.headers.common['Accept'] = "application/json"
 
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }
 if( window.location.hostname == "auditortools.onlineada.com" ){
-  apiHost = "https://auditortoolsapi.onlineada.com/"
+  apiHost = "https://auditortoolsapi.onlineada.com"
   accountHost = "https://accounts.onlineada.com"
+  site = "auditortools.onlineada.com"
 }
 window.App = new Vue({
   router,
@@ -37,6 +39,7 @@ window.App = new Vue({
 }).$mount('#app')
 
 function run(){
+  store.state.auth.site = site
   store.state.auth.accapi = accountHost
   store.state.auth.toolboxapi = apiHost
   store.state.auth.userAPI = `${apiHost}/api/user`
