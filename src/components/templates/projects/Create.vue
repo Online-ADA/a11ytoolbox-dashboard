@@ -95,7 +95,7 @@ export default {
     methods: {
       getUsers(){
         if( !this.users.length ){
-          this.$store.dispatch("projects/getUsers", {vm: this})
+          this.$store.dispatch("projects/getAssignable", {vm: this})
         }
       },
       displayUser(id){
@@ -116,7 +116,7 @@ export default {
       },
       createProject(){
         this.project.assigned = this.assigned;
-        this.$store.dispatch("projects/createProject", {project: this.project, router: this.$router, vm: this})
+        this.$store.dispatch("projects/createProject", {project: this.project, router: this.$router, vm: this, redirect: true})
       }
     },
     created() {

@@ -25,7 +25,8 @@
 			<Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'orange' : 'white'" :hover="true">Dark Mode</Button>
 		</div>
 		<div class="flex fixed bottom-0 right-0 mb-3 ml-3" style="z-index:25;">
-			<Button v-if="!audit.locked" @click.native.prevent="markComplete" class="mx-2" color="orange" hover="true">Complete<span v-if="audit.number > 0 < 3"> and create next audit</span></Button>
+			<Button v-if="!audit.locked" @click.native.prevent="markComplete" class="mx-2" color="orange" hover="true">Complete Audit</Button>
+			<Button v-if="audit.locked && audit.number > 0 < 3" @click.native.prevent="createNextAudit" class="mx-2" color="orange" hover="true">Create next audit</Button>
 		</div>
 		<Modal class="z-40" size="full" :open="issueModalOpen">
 			<div role="alert" :class="{ 'hidden': !showValidationAlert}" class="sr-only">
@@ -639,6 +640,9 @@ export default {
 		},
 		markComplete(){
 			this.$store.dispatch("audits/completeAudit", {audit_id: this.$route.params.id})
+		},
+		createNextAudit(){
+			this.$store.dispatch("audits/createNextAudit", {audit_id: this.$route.params.id})
 		},
 		getIssuesCSV(){
 			this.$store.state.audits.loading = true

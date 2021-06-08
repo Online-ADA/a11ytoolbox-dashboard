@@ -347,12 +347,10 @@ export default {
 					text: "Role updated",
 					title: "Success",
 					callback: function(response){
-						console.log(response);
 						state.loading.users = false
 						state.user = response.data.details.user
 						state.user.role = response.data.details.role
 						state.user.permissions = response.data.details.permissions
-						// args.vm.userData.permissions = response.data.details.permissions
 					}
 				},
 				onError: {

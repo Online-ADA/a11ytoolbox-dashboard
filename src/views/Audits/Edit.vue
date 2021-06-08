@@ -3,12 +3,15 @@
 		<Loader v-if="loading"></Loader>
 		<h1>Edit Audit {{audit.title}}</h1>
 		<div class="flex flex-wrap">
-			<!-- <div class="w-full">
-				<Label for="project">Project</Label>
-				<select v-model="audit.project_id" name="project" id="project" class="mx-auto">
-					<option :value="project.id" v-for="project in projects" :key="project.id">{{project.name}}</option>
+			<div class="w-1/4"></div>
+			<div class="w-1/2">
+				<Label for="locked">Audit Locked</Label>
+				<select v-model="audit.locked" id="locked" class="mx-auto" name="status">
+					<option :value="false">False</option>
+					<option :value="true">True</option>
 				</select>
-			</div> -->
+			</div>
+			<div class="w-1/4"></div>
 			<div class="w-1/4"></div>
 			<div class="w-1/4">
 				<Label for="start_date">Start Date</Label>

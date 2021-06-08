@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import router from 'vue-router'
 
 const getDefaultState = () => {
 	return {
@@ -34,9 +33,19 @@ export default {
 			resetState({commit}) {
 				commit('resetState')
 			},
-			getUsers({state, rootState}, args){
+			// getUsers({state, rootState}, args){
+			// 	state.usersLoading = true
+			// 	Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/users`)
+			// 	.then( re=>{
+			// 		args.vm.users = Object.values(re.data.details)
+			// 		args.vm.unassigned = args.vm.users.filter( u => !args.vm.assigned.includes(u.user_id) ).map(u => u.user_id)
+			// 	})
+			// 	.catch( re=> console.log(re))
+			// 	.then( ()=> state.usersLoading = false)
+			// },
+			getAssignable({state, rootState}, args){
 				state.usersLoading = true
-				Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/users`)
+				Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/users/assignable`)
 				.then( re=>{
 					args.vm.users = Object.values(re.data.details)
 					args.vm.unassigned = args.vm.users.filter( u => !args.vm.assigned.includes(u.user_id) ).map(u => u.user_id)
@@ -69,16 +78,21 @@ export default {
 					}
 				})
 				.then( re=>{
+					Vue.notify({
+						title:"Success",
+						text:"Project created. Redirecting back to list...",
+						type: "success"
+					})
 					args.vm.project = re.data.details
 					args.vm.complete = true
 
 					if( args.redirect ){
 						setTimeout(()=>{
 							if( rootGetters["auth/isManager"] ){
-								router.push({path: "/manage/projects"})
+								args.router.push({path: "/manage/projects"})
 								return
 							}
-							router.push({path: "/projects/list"})
+							args.router.push({path: "/projects/list"})
 						}, 2000)
 					}
 				})

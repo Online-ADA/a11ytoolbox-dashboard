@@ -77,7 +77,7 @@ export default {
     props: [],
     watch: {
       "$store.state.projects.project":function(){
-        this.$store.dispatch("projects/getUsers", {vm: this})
+        this.$store.dispatch("projects/getAssignable", {vm: this})
       }
     },
     methods: {

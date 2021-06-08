@@ -146,7 +146,7 @@
         },
         methods: {
             setInitialData(data){
-                this.$store.dispatch("projects/getUsers", {vm: data.instance})
+                this.$store.dispatch("projects/getAssignable", {vm: data.instance})
             },
             getProjects(){
                 if( this.$store.getters["auth/isManager"] && this.$store.state.admin ){

@@ -45,9 +45,28 @@ export default {
 			resetState({commit}) {
 				commit('resetState')
 			},
-			completeAudit({rootState}, args){
+			completeAudit({state, rootState}, args){
 				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.audit_id}/complete`)
 				.then( re=>{
+					Vue.notify({
+						title: "Success",
+						text: "Audit has been marked complete and is now locked",
+						type: "success"
+					})
+
+					state.audit = re.data.details
+				})
+				.catch()
+				.then()
+			},
+			createNextAudit({rootState}, args){
+				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.audit_id}/next`)
+				.then( re=>{
+					Vue.notify({
+						title: "Audit created",
+						text: "Redirecting to new audit...",
+						type: "success"
+					})
 					window.location.href = `https://toolboxdashboard.ngrok.io/audits/${re.data.details}/import`
 				})
 				.catch()

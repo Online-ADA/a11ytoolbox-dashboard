@@ -64,8 +64,7 @@
 
 			<div class="w-1/2 text-left px-2">
 				<Label for="additional_requirements">Additional Requirements</Label>
-				<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('additional_requirements') }" id="additional-requirements-validation">{{validationMessages["additional_requirements"]}}</small>
-				<Textarea required :aria-describedby="failedValidation.includes('additional_requirements') ? 'additional-requirements-validation' : false" class="w-full" id="additional_requirements" name="additional_requirements" v-model="audit.additional_requirements" rows="4"></Textarea>
+				<Textarea class="w-full" id="additional_requirements" name="additional_requirements" v-model="audit.additional_requirements" rows="4"></Textarea>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
@@ -206,7 +205,6 @@ export default {
 			"title": "The title field is required",
 			"status": "The status field is required",
 			"essential_functionality": "The essential functionality field is required",
-			"additional_requirements": "The additional requirements field is required",
 			"scope": "The scope field is required",
 			"conformance_target": "The conformance target field is required",
 			"software_used": "The software used field is required",
@@ -301,7 +299,6 @@ export default {
 				"title",
 				"status",
 				"essential_functionality",
-				"additional_requirements",
 				"scope",
 				"conformance_target",
 				"software_used",

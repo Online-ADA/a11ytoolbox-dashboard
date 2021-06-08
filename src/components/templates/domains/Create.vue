@@ -181,7 +181,7 @@ export default {
 				})[0]
 			},
 			fullUrl(){
-				let url = this.url.replace(/^https?(:?\/\/?)?/i, "")
+				let url = this.url.replace(/(?:^https?(:?\/\/?)?)+|(?:\/+|\s$)+/ig, "")
 				return this.protocol + url
 			},
 			sheetData(){
