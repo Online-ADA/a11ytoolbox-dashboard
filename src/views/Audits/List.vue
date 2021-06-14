@@ -52,11 +52,6 @@ export default {
     },
     props: [],
     watch: {
-        audits: function(newVal){
-            if( !this.audits.length && newVal ){
-                this.$store.dispatch("audits/getAudits", this.$router)
-            }
-        }
     },
     methods: {
         

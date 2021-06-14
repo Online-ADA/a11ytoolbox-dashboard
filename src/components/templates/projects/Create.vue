@@ -99,7 +99,7 @@ export default {
         }
       },
       displayUser(id){
-        let user = this.users.find( u => u.user_id == id )
+        let user = this.users.find( u => u.id == id )
         return user != undefined ? `${user.first_name} ${user.last_name}` : false
       },
       assign(id){

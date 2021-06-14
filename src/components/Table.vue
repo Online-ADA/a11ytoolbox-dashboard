@@ -34,7 +34,7 @@
 			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': compact}">
 				<thead>
 					<tr>
-						<th class="capitalize pt-5" v-show="header.show && !header.hidePermanent" :ref="'header-' + index" :style="header.style" :width="header.width || false" :class="[header.sticky ? 'sticky z-20' : 'relative z-10']" scope="col" v-for="(header, index) in headers" :key="`header-${index}`">
+						<th class="capitalize pt-5" v-show="columnsToShow.includes(header.header) && !header.hidePermanent" :ref="'header-' + index" :style="header.style" :width="header.width || false" :class="[header.sticky ? 'sticky z-20' : 'relative z-10']" scope="col" v-for="(header, index) in headers" :key="`header-${index}`">
 							<div class="flex absolute top-1 justify-between w-full">
 								<button @click="moveColumn(index, index-1)" :class="[index !== 0 && !header.sticky && canMoveLeft(index) ? 'visible' : 'invisible']" aria-label="Move this column 1 space to the left" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 									<i class="fas fa-arrow-left"></i>
@@ -82,7 +82,7 @@
 				</thead>
 				<tbody>
 					<tr :class="rowClasses(data)" tabindex="0" @mousedown="down" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
-						<td class="whitespace-pre-wrap p-2" :ref="'columnData-'+ subIndex" :class="[headers[subIndex].sticky ? 'sticky z-20' : 'relative z-10', listKeys.includes(key) ? 'pl-5' : '']" :style="headers[subIndex].style" v-show="headers[subIndex].show && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
+						<td class="whitespace-pre-wrap p-2" :ref="'columnData-'+ subIndex" :class="[headers[subIndex].sticky ? 'sticky z-20' : 'relative z-10', listKeys.includes(key) ? 'pl-5' : '']" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
 							<span>
 								<span class="text-left" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
 								<template v-else>{{displayValue(key, value)}}</template>
@@ -105,6 +105,7 @@
 						</li>
 					</template>
 				</ul>
+				<Button @click.native.prevent="submitShowColumns">Submit</Button>
 			</div>
 		</Modal>
 	</div>
@@ -173,7 +174,8 @@
 				dragData: {
 					dragging: false,
 					x: 0,
-				}
+				},
+				columnsToShow: [] //exists for accessibility purposes
 			}
 		},
 		computed: {
@@ -186,6 +188,10 @@
 			}
 		},
 		methods: {
+			submitShowColumns(){
+				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
+				this.columnPickerOpen = false
+			},
 			selectAll(){
 				this.$emit("selectAll", this.columnData.map( c=>c.id))
 			},
@@ -403,7 +409,7 @@
 			},
 			headers(newVal){
 				this.search.column = newVal.filter( h=>h.show )[0].header
-				
+				this.submitShowColumns()
 				for( let c in this.headers ){
 					if( this.headers[c].sticky && c == "0" ){
 						this.$set(this.headers[c].style, "left", 0)

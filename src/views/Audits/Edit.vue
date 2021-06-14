@@ -346,7 +346,7 @@ export default {
 			this.audit.pages = []
 		},
 		displayUser(id){
-			let user = this.auditors.find( u => u.user_id == id )
+			let user = this.auditors.find( u => u.id == id )
 			return user != undefined ? `${user.first_name} ${user.last_name}` : false
 		},
 		assign(id){

@@ -1,6 +1,7 @@
 <template>
 	<div class="text-center mt-20">
 		<Loader v-if="loading"></Loader>
+		<Loader></Loader>
 		<div role="alert" :class="{ 'hidden': !showValidationAlert}" class="sr-only">
 			The following validation errors are present on the create audit form: 
 			<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
@@ -357,7 +358,7 @@ export default {
 			this.audit.working_sample = []
 		},
 		displayUser(id){
-			let user = this.auditors.find( u => u.user_id == id )
+			let user = this.auditors.find( u => u.id == id )
 			return user != undefined ? `${user.first_name} ${user.last_name}` : false
 		},
 		assign(id){

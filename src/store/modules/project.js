@@ -45,10 +45,10 @@ export default {
 			// },
 			getAssignable({state, rootState}, args){
 				state.usersLoading = true
-				Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/users/assignable`)
+				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/assignable`)
 				.then( re=>{
 					args.vm.users = Object.values(re.data.details)
-					args.vm.unassigned = args.vm.users.filter( u => !args.vm.assigned.includes(u.user_id) ).map(u => u.user_id)
+					args.vm.unassigned = args.vm.users.filter( u => !args.vm.assigned.includes(u.id) ).map(u => u.id)
 				})
 				.catch( re=> console.log(re))
 				.then( ()=> state.usersLoading = false)

@@ -16,10 +16,10 @@
 							<TextInput class="w-full" id="title" v-model="domain.title" />
 						</div>
 						<div class="w-5/12 px-2">
-							<Label for="url">Url</Label>
+							<Label for="create-url">Url</Label>
 							<div class="flex">
 								<Select class="mx-auto w-3/12" :options="['https://', 'http://']" v-model="protocol"></Select>
-								<TextInput placeholder="example.com" class="w-9/12 ml-1" id="url" v-model="url" />
+								<TextInput placeholder="example.com" class="w-9/12 ml-1" id="create-url" v-model="url" />
 							</div>
 							{{fullUrl}}
 						</div>
@@ -50,12 +50,12 @@
 							<TextInput class="w-full" id="title" v-model="domain.title" />
 						</div>
 						<div class="w-5/12 px-2">
-							<Label for="url">Url</Label>
+							<Label for="existing-url">Url</Label>
 							<div class="flex">
 								<select class="mx-auto w-3/12 block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="protocol" name="protocol">
 									<option :value="protocol" v-for="(protocol, index) in ['https://', 'http://']" :key="'protocol-' + index">{{protocol}}</option>
 								</select>
-								<TextInput placeholder="example.com" class="w-9/12 ml-1" id="url" v-model="url" />
+								<TextInput placeholder="example.com" class="w-9/12 ml-1" id="existing-url" v-model="url" />
 							</div>
 							{{fullUrl}}
 						</div>
@@ -76,10 +76,10 @@
 							<TextInput class="w-full" id="title" v-model="domain.title" />
 						</div>
 						<div class="w-5/12 px-2">
-							<Label for="url">Url</Label>
+							<Label for="alternate-url">Url</Label>
 							<div class="flex">
 								<Select class="mx-auto w-3/12" :options="['https://', 'http://']" v-model="protocol"></Select>
-								<TextInput placeholder="example.com" class="w-9/12 ml-1" id="url" v-model="url" />
+								<TextInput placeholder="example.com" class="w-9/12 ml-1" id="alternate-url" v-model="url" />
 							</div>
 							{{fullUrl}}
 						</div>

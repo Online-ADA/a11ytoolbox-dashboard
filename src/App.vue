@@ -1,22 +1,26 @@
 <template>
-  <div id="app" class="p-3.5">
+  <div id="app">
     <notifications/>
-    <div id="nav" class="flex place-content-center p-2 items-center container mx-auto relative z-30">
-      <router-link class="hover:text-gray-500" to="/">Home</router-link>
-      <span class="px-2">|</span>
-      <template v-if="$store.getters['auth/isManager']">
-        <Dropdown :children="manageDropdown"><template v-slot:label>Manage</template></Dropdown>
-        <span class="px-2">|</span>
-      </template>
-      <template v-if="$store.getters['auth/isAuthenticated'] && !!$store.state.auth.account">
-        <Dropdown :children="siteDropdown"><template v-slot:label>Site</template></Dropdown>
-        <span class="px-2">|</span>
-      </template>
-      
-      <A v-if="$store.getters['auth/isAuthenticated']" href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
-      <A v-else href="#" @click.native.prevent="$store.dispatch('auth/login')">Log in</A>
-      
-      <span v-if="account"><span class="px-2">|</span>Account: {{account}}</span>
+    <div id="nav" class="flex items-center relative z-30 w-full">
+      <div class="w-1/3"></div>
+      <div class="flex place-content-center w-1/3 box-border py-1">
+        <router-link class="hover:text-gray-500 pl-4" to="/">Home</router-link>
+        <span class="px-2" aria-hidden="true">|</span>
+        <template v-if="$store.getters['auth/isManager']">
+          <Dropdown  :children="manageDropdown"><template v-slot:label>Manage</template></Dropdown>
+          <span class="px-2" aria-hidden="true">|</span>
+        </template>
+        <template v-if="$store.getters['auth/isAuthenticated'] && !!$store.state.auth.account">
+          <Dropdown :children="siteDropdown"><template v-slot:label>Site</template></Dropdown>
+          <span class="px-2" aria-hidden="true">|</span>
+        </template>
+        
+        <A v-if="$store.getters['auth/isAuthenticated']" href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
+        <A v-else href="#" @click.native.prevent="$store.dispatch('auth/login')">Log in</A>
+        
+        <span v-if="account"><span aria-hidden="true" class="px-2">|</span>Account: {{account}}</span>
+      </div>
+      <div class="w-1/3"></div>
     </div>
     <router-view/>
   </div>

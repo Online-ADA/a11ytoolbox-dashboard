@@ -6,7 +6,7 @@
             <h1 class="mt-32 mb-3">Let's start by either creating a new project</h1>
             <Button @click.native.prevent="showSheet(0)" color="orange" hover="true">Create a Project</Button>
             <h2 class="my-3">or selecting from an existing one</h2>
-            <select v-model="sheetData['sheet0'].project" class="mb-3" name="project">
+            <select aria-label="Select an existing project" v-model="sheetData['sheet0'].project" class="mb-3" name="project">
                 <option :value="project.id" v-for="(project) in projects" :key="'project-' + project.id">{{project.name}}</option>
             </select>
             <Button @click.native.prevent="showSheet(1)" color="orange" hover="true">Continue</Button>
