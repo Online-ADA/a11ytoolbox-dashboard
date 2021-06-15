@@ -150,43 +150,43 @@ export default {
 		}
 	},
 	computed: {
-			domains(){
-				return this.$store.state.domains.all
-			},
-			loading(){
-				return this.$store.state.domains.loading
-			},
-			projects(){
-				if( !this.independent ){
-					if( this.$store.getters["auth/isManager"] && this.$store.state.admin ){
-						return this.$store.state.admin.projects
-					}
+		domains(){
+			return this.$store.state.domains.all
+		},
+		loading(){
+			return this.$store.state.domains.loading
+		},
+		projects(){
+			if( !this.independent ){
+				if( this.$store.getters["auth/isManager"] && this.$store.state.admin ){
+					return this.$store.state.admin.projects
+				}
 
-					return this.$store.state.projects.all
-				}
-                else{
-					return this.$store.state.domains.projects
-				}
-			},
-			project(){
-				if(!this.independent){
-					let self = this
-					return this.projects.filter( p=>{
-						return parseInt(p.id) === parseInt(self.sheetData.sheet0.project)
-					})[0]
-				}
-				
-				return this.$store.state.domains.projects.filter( p=>{
-					return p.i == this.project_id
-				})[0]
-			},
-			fullUrl(){
-				let url = this.url.replace(/(?:^https?(:?\/\/?)?)+|(?:\/+|\s$)+/ig, "")
-				return this.protocol + url
-			},
-			sheetData(){
-				return this.$parent.$parent.sheetData
+				return this.$store.state.projects.all
 			}
+			else{
+				return this.$store.state.domains.projects
+			}
+		},
+		project(){
+			if(!this.independent){
+				let self = this
+				return this.projects.filter( p=>{
+					return parseInt(p.id) === parseInt(self.sheetData.sheet0.project)
+				})[0]
+			}
+			
+			return this.$store.state.domains.projects.filter( p=>{
+				return p.i == this.project_id
+			})[0]
+		},
+		fullUrl(){
+			let url = this.url.replace(/(?:^https?(:?\/\/?)?)+|(?:\/+|\s$)+/ig, "")
+			return this.protocol + url
+		},
+		sheetData(){
+			return this.$parent.$parent.sheetData
+		}
 	},
 	methods: {
 		reset(){

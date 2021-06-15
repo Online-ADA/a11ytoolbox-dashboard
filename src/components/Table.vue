@@ -82,7 +82,7 @@
 				</thead>
 				<tbody>
 					<tr :class="rowClasses(data)" tabindex="0" @mousedown="down" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
-						<td class="whitespace-pre-wrap p-2" :ref="'columnData-'+ subIndex" :class="[headers[subIndex].sticky ? 'sticky z-20' : 'relative z-10', listKeys.includes(key) ? 'pl-5' : '']" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
+						<td class="p-2" :ref="'columnData-'+ subIndex" :class="[headers[subIndex].sticky ? 'sticky z-20' : 'relative z-10', listKeys.includes(key) ? 'pl-5' : '']" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
 							<span>
 								<span class="text-left" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
 								<template v-else>{{displayValue(key, value)}}</template>
@@ -101,11 +101,11 @@
 					<template v-for="(header, index) in headers">
 						<li v-if="!header.hidePermanent" class="flex w-5/12 mx-2 my-2 justify-center items-center" :key="index">
 							<Label :for="'showCol'+ (index+1)">Show {{header.header}}</Label>
-							<Checkbox :value="header.show" :id="'showCol'+ (index+1)" @input="showHideColumn(index)"></Checkbox>
+							<Checkbox v-model="header.show" :id="'showCol'+ (index+1)"></Checkbox>
 						</li>
 					</template>
 				</ul>
-				<Button @click.native.prevent="submitShowColumns">Submit</Button>
+				<Button @click.native.prevent="showHideColumns">Submit</Button>
 			</div>
 		</Modal>
 	</div>
@@ -188,10 +188,6 @@
 			}
 		},
 		methods: {
-			submitShowColumns(){
-				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
-				this.columnPickerOpen = false
-			},
 			selectAll(){
 				this.$emit("selectAll", this.columnData.map( c=>c.id))
 			},
@@ -264,9 +260,8 @@
 					this.filteredRows = []
 				}
 			},
-			showHideColumn( colIndex ){
-				this.headers[colIndex].show = !this.headers[colIndex].show
-
+			showHideColumns(){
+				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
 				let allStickied = this.headers.filter( el => el.show && el.sticky )
 				for( let i in allStickied ){
 					let thisItem = this.headers.find( x => x.header == allStickied[i].header)
@@ -277,6 +272,8 @@
 						this.$set(this.headers[realIndex].style, "left", this.getLeftValue(realIndex))
 					}
 				}
+
+				this.columnPickerOpen = false
 			},
 			displayValue(key, data){
 				let plainKeys = ["id", "issue_number", "descriptions", "recommendations", "status", "target", "priority", "effort", "how_discovered", "audit_id", "first_audit_notes", "second_audit_notes", "third_audit_notes", "created_at", "updated_at", "created_by"]
@@ -409,7 +406,7 @@
 			},
 			headers(newVal){
 				this.search.column = newVal.filter( h=>h.show )[0].header
-				this.submitShowColumns()
+				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
 				for( let c in this.headers ){
 					if( this.headers[c].sticky && c == "0" ){
 						this.$set(this.headers[c].style, "left", 0)
@@ -468,6 +465,8 @@
 		height: 82px;
 		overflow-y: auto;
 		display: flex;
+	}
+	table.condensed td:not([data-key=descriptions]):not([data-key=recommendations]):not([data-key=first_audit_notes]):not([data-key=second_audit_notes]):not([data-key=third_audit_notes]):not([data-key=articles]):not([data-key=techniques]):not([data-key=target]):not([data-key=pages]) > *{
 		align-items:center;
 	}
 	

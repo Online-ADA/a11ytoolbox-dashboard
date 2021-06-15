@@ -17,6 +17,16 @@ const getDefaultState = () => {
 	}
 }
 
+const generateUniqueID = (existing) => {
+	let id = Math.random().toString(36).substring(5)
+	
+	if( existing.includes(id) ){
+		return generateUniqueID(existing)
+	}
+
+	return id
+}
+
 export default {
 		namespaced:true,
 		state: {
@@ -44,6 +54,28 @@ export default {
 		actions: {
 			resetState({commit}) {
 				commit('resetState')
+			},
+			uploadIssuesCSV({dispatch, rootState}, args){
+				let form_data = new FormData()
+				form_data.append('upload', args.file)
+				let myHeaders = {...Vue.prototype.$http.defaults.headers.common, 'Content-Type': 'multipart/form-data'}
+				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/uploadCSV`, {params: form_data, headers: myHeaders})
+				.then( re=>{
+					Vue.notify({
+						title: "Success",
+						text: "A temporary audit has been created",
+						type: "success"
+					})
+					
+					let newTemp = {
+						id: generateUniqueID(args.vm.audits.map(a=>a.id)),
+						title: "Temp CSV upload #" + (args.vm.tempAudits.length+1),
+						issues: re.data.details
+					}
+					args.vm.tempAudits.push(newTemp)
+				})
+				.catch()
+				.then()
 			},
 			completeAudit({state, rootState}, args){
 				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.audit_id}/complete`)

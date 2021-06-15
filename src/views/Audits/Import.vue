@@ -25,19 +25,37 @@
             </div>
         </div>
     </div>
-    <div class="w-full justify-between flex fixed bottom-0 left-0 right-0 px-3 py-3 bg-white border-t" style="z-index:25;">
-        <div>
+    <div class="w-full flex fixed bottom-0 left-0 right-0 px-3 py-3 bg-white border-t" style="z-index:25;">
+        <div class="w-1/3">
             <Btn v-if="selectedRows.length > 1" @click.native.prevent="compareIssuesModalOpen = true" class="mx-2" color="orange" hover="true">Compare issues</Btn>
             <Btn v-if="selectedRows.length > 0" @click.native.prevent="addToAudit(selectedRows)" class="mx-2" color="orange" hover="true">Import selected</Btn>
         </div>
-        <div>
+        <div class="w-1/3">
+            <Btn @click.native.prevent="uploadCSVModalOpen = true" class="mx-2" color="orange" hover="true">Upload CSV</Btn>
+        </div>
+        <div class="w-1/3">
             <Btn @click.native.prevent="finishImport" class="mx-2" color="orange" hover="true">Finish and go to audit</Btn>
         </div>
     </div>
+    <Modal class="z-50" :open="uploadCSVModalOpen">
+        <div class="bg-white px-4 pt-5 pb-4 p-6">
+            <Btn aria-label="Close upload CSV modal" @click.native.prevent="uploadCSVModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Btn>
+            <h2 class="text-center pb-3">Choose a CSV of issues to load</h2>
+            <FileInput @input="handleUploadFile" class="block w-auto mx-auto pb-3" accept=".csv"></FileInput>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 flex">
+            <button @click.prevent="uploadCSV" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
+                Upload
+            </button>
+            <button @click.prevent="compareIssuesModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
+                Cancel
+            </button>
+        </div>
+    </Modal>
     <Modal size="full" class="z-50" :open="compareIssuesModalOpen">
         <div class="bg-white px-4 pt-5 pb-4 p-6">
             <Btn aria-label="Close compare issues modal" @click.native.prevent="compareIssuesModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Btn>
-            <h2 class="text-center">What should this header say?</h2>
+            <h2 class="text-center">Compare Issues for Importing</h2>
             <Table :compact="true" ref="compareTable" :selected="selectedCompareRows" @rowClick="selectCompareRow" :rowsData="issuesCompare" :headersData="headers"></Table>
         </div>
         <div class="bg-gray-50 px-4 py-3 flex">
@@ -54,11 +72,10 @@
 
 <script>
 import Loader from '../../components/Loader'
-// import A from '../../components/Link'
 import Table from '../../components/Table'
-// import Card from '../../components/Card'
 import Btn from '../../components/Button'
 import Modal from '../../components/Modal'
+import FileInput from '../../components/FileInput'
 import projects from '../../store/modules/project'
 export default {
     data: ()=>({
@@ -69,7 +86,10 @@ export default {
         updatedFirstIndex: false,
         fullscreen: false,
         compareIssuesModalOpen: false,
-        issuesToImport: []
+        issuesToImport: [],
+        CSVFile: false,
+        uploadCSVModalOpen: false,
+        tempAudits: []
     }),
     computed: {
         loading(){
@@ -79,7 +99,11 @@ export default {
             return this.$store.state.audits ? this.$store.state.audits.audit : false
         },
         audits(){
-            return this.$store.state.projects ? this.$store.state.projects.audits : []
+            if( this.$store.state.projects ){
+                return [ ...this.$store.state.projects.audits, ...this.tempAudits ]
+            }
+
+            return this.tempAudits
         },
         filteredAudits(){
             let self = this
@@ -140,7 +164,7 @@ export default {
                     show: true,
                     sticky: false,
                     style: {},
-                    width: "150px",
+                    width: "200px",
                     hidePermanent: false
                 },
                 {
@@ -303,18 +327,29 @@ export default {
         },
         audits(newVal){
             if( newVal.length ){
+                let self = this
                 // this.showing = newVal.map( a => a.id)
                 if( !this.updatedFirstIndex ){
-                    let ids = newVal.map( a=>a.id)
-                    let firstIndex = ids.indexOf( parseInt(this.$route.params.id) )
-                    let firstItem = newVal.splice(firstIndex, 1)[0]
-                    newVal.splice( 0, 0, firstItem)
+                    let ids = self.$store.state.projects.audits.map( a=>a.id)
+                    let firstIndex = ids.indexOf( parseInt(self.$route.params.id) )
+                    let firstItem = self.$store.state.projects.audits.splice(firstIndex, 1)[0]
+                    self.$store.state.projects.audits.splice( 0, 0, firstItem)
                     this.updatedFirstIndex = true
                 }
             }
         }
     },
     methods: {
+        handleUploadFile(e){
+			this.CSVFile = e
+		},
+        uploadCSV(){
+            if( this.CSVFile ){
+				this.$store.dispatch("audits/uploadIssuesCSV", {file: this.CSVFile, vm: this})
+                this.CSVFile = false
+                this.uploadCSVModalOpen = false
+			}
+        },
         selectAll(ids){
             let self = this
             this.selectedRows = [ ...this.selectedRows, ...ids.filter( id=>!self.selectedRows.includes(id) ) ]
@@ -383,7 +418,8 @@ export default {
       Loader,
       Table,
       Btn,
-      Modal
+      Modal,
+      FileInput
     },
 }
 </script>
