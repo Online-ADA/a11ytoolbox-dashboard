@@ -55,7 +55,7 @@ export default {
 			resetState({commit}) {
 				commit('resetState')
 			},
-			uploadIssuesCSV({dispatch, rootState}, args){
+			uploadIssuesCSV({rootState}, args){
 				let form_data = new FormData()
 				form_data.append('upload', args.file)
 				let myHeaders = {...Vue.prototype.$http.defaults.headers.common, 'Content-Type': 'multipart/form-data'}

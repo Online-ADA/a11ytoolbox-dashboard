@@ -1,8 +1,7 @@
 <template>
-	<div class="flex flex-col relative">
-		<span class="absolute left-0 top-0 bold" v-if="selected.length && !compact">Selected: {{selected.length}}</span>
-		<div class="flex w-full justify-end mb-2">
-			<div :class="[ compact ? 'pr-5 w-full' : 'pr-52 w-1/2' ]" class="flex flex-wrap items-end pb-3">
+	<div class="flex flex-col relative px-5">
+		<div class="flex w-full px-10 mb-2">
+			<div class="flex flex-wrap items-end pb-3 w-full mx-auto">
 				<h2 class="w-full text-base">
 					<div class="text-2xl">Search</div>
 					<small>First choose which column you want to search from the dropdown, then enter your search criteria, then click submit</small>
@@ -31,7 +30,7 @@
 			
 		</div>
 		<div @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-16">
-			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': compact}">
+			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense}">
 				<thead>
 					<tr>
 						<th class="capitalize pt-5" v-show="columnsToShow.includes(header.header) && !header.hidePermanent" :ref="'header-' + index" :style="header.style" :width="header.width || false" :class="[header.sticky ? 'sticky z-20' : 'relative z-10']" scope="col" v-for="(header, index) in headers" :key="`header-${index}`">
@@ -123,7 +122,7 @@
 			dragscroll
 		},
 		props:{
-			compact: {
+			condense: {
 				type: Boolean,
 				default: false
 			},

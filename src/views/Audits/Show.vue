@@ -12,22 +12,34 @@
 			<h2 class="mb-3">{{audit.title}}</h2>
 			<span v-if="audit.locked" class="text-2xl"><i class="fas fa-lock" aria-hidden="true"></i></span>
 			<h3 class="text-base" v-if="audit.locked">This audit is locked and cannot be modified</h3>
-			<Table :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
+			<Table :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
-				There are no issues currently. <A class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
+				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
 		</template>
-		<div class="flex fixed bottom-0 left-0 mb-3 ml-3" style="z-index:25;">
-			<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="editIssue" class="mx-2" color="orange" hover="true">Edit Issue</Button>
-			<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="createFromCopy" class="mx-2" color="orange" hover="true">Copy Issue</Button>
-			<Button v-if="selectedRows.length > 1 && !audit.locked" @click.native.prevent="confirmDeleteModalOpen = true" class="mx-2" color="delete" hover="true">Delete Issues</Button>
-			<Button v-if="selectedRows.length < 1 && !audit.locked" @click.native.prevent="newIssue" class="mx-2" color="orange" hover="true">Add Issue</Button>
-			<Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'orange' : 'white'" :hover="true">Dark Mode</Button>
+		<div class="bg-white w-full border-t border-black p-4 flex justify-between fixed bottom-0 left-0" style="z-index:25;">
+			<div class="flex w-1/3">
+				<Button class="mx-2" :color="shouldCondense ? 'orange' : 'white'" @click.native.prevent="shouldCondense = !shouldCondense">
+					<span v-if="!shouldCondense">Condense </span>
+					<span v-else>Expand </span>
+					Table
+				</Button>
+				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="editIssue" class="mx-2" color="orange" hover="true">Edit Issue</Button>
+				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="createFromCopy" class="mx-2" color="orange" hover="true">Copy Issue</Button>
+				<Button v-if="selectedRows.length > 1 && !audit.locked" @click.native.prevent="confirmDeleteModalOpen = true" class="mx-2" color="delete" hover="true">Delete Issues</Button>
+				<Button v-if="selectedRows.length < 1 && !audit.locked" @click.native.prevent="newIssue" class="mx-2" color="orange" hover="true">Add Issue</Button>
+				<Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'orange' : 'white'" :hover="true">Dark Mode</Button>
+			</div>
+			<div class="w-1/3 flex items-center justify-center">
+				<span aria-live="polite" aria-atomic="true">Rows Selected: {{selectedRows.length}}</span>
+			</div>
+			<div class="flex w-1/3 justify-end">
+				<Button v-if="!audit.locked" @click.native.prevent="markComplete" class="mx-2" color="orange" hover="true">Complete Audit</Button>
+				<Button v-if="audit.locked && audit.number > 0 < 3" @click.native.prevent="createNextAudit" class="mx-2" color="orange" hover="true">Create next audit</Button>
+			</div>
 		</div>
-		<div class="flex fixed bottom-0 right-0 mb-3 ml-3" style="z-index:25;">
-			<Button v-if="!audit.locked" @click.native.prevent="markComplete" class="mx-2" color="orange" hover="true">Complete Audit</Button>
-			<Button v-if="audit.locked && audit.number > 0 < 3" @click.native.prevent="createNextAudit" class="mx-2" color="orange" hover="true">Create next audit</Button>
-		</div>
+		
+		
 		<Modal class="z-40" size="full" :open="issueModalOpen">
 			<div role="alert" :class="{ 'hidden': !showValidationAlert}" class="sr-only">
 				The following validation errors are present on the add issue form: 
@@ -358,6 +370,7 @@ import admin from '../../store/modules/admin'
 
 export default {
 	data: () => ({
+		shouldCondense: false,
 		confirmDeleteModalOpen: false,
 		whichCSVModalOpen: false,
 		selectedRows: [],
@@ -919,3 +932,8 @@ export default {
 	},
 }
 </script>
+<style scoped>
+	#no-issues-import:hover{
+		color:white !important;
+	}
+</style>
