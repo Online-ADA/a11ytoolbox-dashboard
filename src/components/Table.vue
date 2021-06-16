@@ -297,7 +297,7 @@
 				if( !plainKeys.includes(key) && !specialKeys.includes(key) ){
 					let output = ""
 					if( data.length ){
-						output = "<ul><li class='list-disc'>"
+						output = "<ul><li class='list-disc break-words'>"
 						output += data.join("</li><li class='list-disc'>")
 						output += "</li></ul>"
 					}

@@ -68,7 +68,7 @@
 							<Label class="text-lg leading-6 w-full" :stacked="false" for="pages">Pages</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('pages') }" id="pages-validation">The pages field is required</small>
 							<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
-								<option :value="page.content" v-for="(page, index) in audit.pages" :key="'page-'+index">{{page.content}}</option>
+								<option class="break-words whitespace-normal" :value="page.content" v-for="(page, index) in audit.pages" :key="'page-'+index">{{page.content}}</option>
 							</select>
 						</div>
 						<div class="mx-2 flex-1">
