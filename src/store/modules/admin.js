@@ -336,6 +336,32 @@ export default {
 				}
 			} )
 		},
+		deleteDomain({state, rootState}, args){
+			state.loading.domains = true
+			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/domains/${args.domain_id}`)
+			.then( re => {
+				state.loading.domains = false
+				state.domains = re.data.details
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Success",
+						text: "Domain deleted",
+						type: "success"
+					})
+				}
+			})
+			.catch( re => {
+				console.log( re );
+				state.loading.domains = false
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Error",
+						text: re.error,
+						type: "error"
+					})
+				}
+			} )
+		},
 		modifyRole({state, rootState}, args){
 			state.loading.users = true
 			Request.post(`${rootState.auth.adminAPI}/${rootState.auth.account}/users/setRole`, {

@@ -81,9 +81,9 @@
 				</thead>
 				<tbody>
 					<tr :class="rowClasses(data)" tabindex="0" @mousedown="down" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
-						<td class="p-2" :ref="'columnData-'+ subIndex" :class="[headers[subIndex].sticky ? 'sticky z-20' : 'relative z-10', listKeys.includes(key) ? 'pl-5' : '']" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
+						<td class="p-2" :ref="'columnData-'+ subIndex" :class="getTDClasses(subIndex, key)" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
 							<span>
-								<span class="text-left" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
+								<span class="text-left" :class="{'ml-5' : condense}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
 								<template v-else>{{displayValue(key, value)}}</template>
 							</span>
 						</td>
@@ -187,6 +187,20 @@
 			}
 		},
 		methods: {
+			getTDClasses(subIndex, key){
+				let classes = "";
+				if( this.headers[subIndex].sticky ){
+					classes += 'sticky z-20'
+				}else{
+					classes += 'relative z-10'
+				}
+
+				if( this.listKeys.includes(key) && !this.condense ){
+					classes += ' pl-5'
+				}
+
+				return classes
+			},
 			selectAll(){
 				this.$emit("selectAll", this.columnData.map( c=>c.id))
 			},

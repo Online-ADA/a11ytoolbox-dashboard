@@ -123,12 +123,19 @@ export default {
 	}),
 	watch:{
 		complete(newVal){
-			if( newVal ){
+			if( newVal && !this.independent ){
 				if( this.project.domains.map(d=>d.id).includes(this.domain.id) ){
 					this.$emit("complete", {sheet: 'sheet1', key: 'domain', data: this.domain.id, sheetIndex: this.$parent.index})
 					this.reset()
 				}else{
 					this.$store.dispatch("domains/getProjectDomains", {project_id: this.project.id})
+				}
+			}else{
+				if( this.$store.getters["auth/isManager"] ){
+					this.$router.push({path: '/manage/domains'})
+				}
+				else{
+					this.$router.push({path: '/domains/list'})
 				}
 			}
 		},
@@ -137,15 +144,17 @@ export default {
 			this.domain.project_id = newVal
 		},
 		domains: function(newVal){
-			if( this.complete && newVal ){
+			if( this.complete && newVal && !this.independent ){
 				this.project.domains = newVal
 				this.$emit("complete", {sheet: 'sheet1', key: 'domain', data: this.domain.id, sheetIndex: this.$parent.index})
 				this.reset()
 			}
 		},
 		project: function(newVal){
-			if( newVal && newVal.domains.length ){
-				this.selectedDomain = newVal.domains[0].id
+			if( !this.independent ){
+				if( newVal && newVal.domains.length ){
+					this.selectedDomain = newVal.domains[0].id
+				}
 			}
 		}
 	},
@@ -185,7 +194,7 @@ export default {
 			return this.protocol + url
 		},
 		sheetData(){
-			return this.$parent.$parent.sheetData
+			return this.$parent.$parent.sheetData || false
 		}
 	},
 	methods: {
@@ -201,7 +210,7 @@ export default {
 		},
 		createDomain(){
 			this.domain.url = this.fullUrl
-			if( !this.domain.project_id ){
+			if( !this.domain.project_id && this.sheetData ){
 				this.domain.project_id = this.sheetData.sheet0.project
 			}
 			this.$store.dispatch("domains/createDomain", {domain: this.domain, vm: this})
