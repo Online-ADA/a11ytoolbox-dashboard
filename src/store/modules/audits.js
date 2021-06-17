@@ -99,7 +99,7 @@ export default {
 						text: "Redirecting to new audit...",
 						type: "success"
 					})
-					window.location.href = `https://toolboxdashboard.ngrok.io/audits/${re.data.details}/import`
+					window.location.href = `https://${rootState.auth.site}/audits/${re.data.details}/import`
 				})
 				.catch()
 				.then()

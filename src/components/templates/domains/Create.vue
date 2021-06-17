@@ -123,14 +123,18 @@ export default {
 	}),
 	watch:{
 		complete(newVal){
-			if( newVal && !this.independent ){
-				if( this.project.domains.map(d=>d.id).includes(this.domain.id) ){
-					this.$emit("complete", {sheet: 'sheet1', key: 'domain', data: this.domain.id, sheetIndex: this.$parent.index})
-					this.reset()
-				}else{
-					this.$store.dispatch("domains/getProjectDomains", {project_id: this.project.id})
+			if(!this.independent){
+				if( newVal ){
+					if( this.project.domains.map(d=>d.id).includes(this.domain.id) ){
+						this.$emit("complete", {sheet: 'sheet1', key: 'domain', data: this.domain.id, sheetIndex: this.$parent.index})
+						this.reset()
+					}else{
+						this.$store.dispatch("domains/getProjectDomains", {project_id: this.project.id})
+					}
 				}
-			}else{
+			}
+			
+			if(this.independent && newVal){
 				if( this.$store.getters["auth/isManager"] ){
 					this.$router.push({path: '/manage/domains'})
 				}
