@@ -11,7 +11,7 @@
 			<div class="w-1/4">
 				<Label for="start_date">Start Date</Label>
 				<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('start_date') }" id="start-date-validation">{{validationMessages["start_date"]}}</small>
-				<Date required :aria-describedby="failedValidation.includes('start_date') ? 'start-date-validation' : false" name="start_date" id="start_date" class="mx-auto" @input="changeStartDate"></Date>
+				<Date :data-validation-failed="failedValidation.includes('start_date') ? 'invalid-1' : false" required :aria-describedby="failedValidation.includes('start_date') ? 'start-date-validation' : false" name="start_date" id="start_date" class="mx-auto" @input="changeStartDate"></Date>
 			</div>
 			<div class="w-1/4">
 				<Label for="end_date">End Date</Label>
@@ -22,29 +22,29 @@
 				<div class="px-2">
 					<Label for="status">Status</Label>
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('status') }" id="status-validation">{{validationMessages["status"]}}</small>
-					<Select required :aria-describedby="failedValidation.includes('status') ? 'status-validation' : false" id="status" class="mx-auto" :options="statusSrc" v-model="audit.status"></Select>
+					<Select :data-validation-failed="failedValidation.includes('status') ? 'invalid-2' : false" required :aria-describedby="failedValidation.includes('status') ? 'status-validation' : false" id="status" class="mx-auto" :options="statusSrc" v-model="audit.status"></Select>
 				</div>
 				<div class="px-2 w-1/2">
 					<Label for="audit-title">Title</Label>
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('title') }" id="title-validation">{{validationMessages["title"]}}</small>
-					<TextInput required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
+					<TextInput :data-validation-failed="failedValidation.includes('title') ? 'invalid-3' : false" required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
 				</div>
 				<div class="px-2">
 					<Label for="audit_num">Audit #</Label>
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('number') }" id="number-validation">{{validationMessages["number"]}}</small>
-					<Select required :aria-describedby="failedValidation.includes('number') ? 'number-validation' : false" id="audit_num" class="mx-auto" :options="[{name:1, value: 1}, {name:2, value: 2}, {name:3, value: 3}]" v-model="audit.number"></Select>
+					<Select :data-validation-failed="failedValidation.includes('number') ? 'invalid-4' : false" required :aria-describedby="failedValidation.includes('number') ? 'number-validation' : false" id="audit_num" class="mx-auto" :options="[{name:1, value: 1}, {name:2, value: 2}, {name:3, value: 3}]" v-model="audit.number"></Select>
 				</div>
 				<div class="px-2">
 					<Label for="ctarget">Conformance Target</Label>
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('conformance_target') }" id="conformance-target-validation">{{validationMessages["conformance_target"]}}</small>
-					<TextInput required :aria-describedby="failedValidation.includes('conformance_target') ? 'conformance-target-validation' : false" class="w-full" id="ctarget" name="ctarget" v-model="audit.conformance_target" />
+					<TextInput :data-validation-failed="failedValidation.includes('conformance_target') ? 'invalid-5' : false" required :aria-describedby="failedValidation.includes('conformance_target') ? 'conformance-target-validation' : false" class="w-full" id="ctarget" name="ctarget" v-model="audit.conformance_target" />
 				</div>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
 				<Label for="scope">Scope of the Audit</Label>
 				<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('scope') }" id="scope-validation">{{validationMessages["scope"]}}</small>
-				<Textarea required :aria-describedby="failedValidation.includes('scope') ? 'scope-validation' : false" class="w-full" id="scope" name="scope" v-model="audit.scope" rows="4"></Textarea>
+				<Textarea :data-validation-failed="failedValidation.includes('scope') ? 'invalid-6' : false" required :aria-describedby="failedValidation.includes('scope') ? 'scope-validation' : false" class="w-full" id="scope" name="scope" v-model="audit.scope" rows="4"></Textarea>
 			</div>
 
 			<div class="w-1/2 text-left px-2">
@@ -53,7 +53,7 @@
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('essential_functionality') }" id="essential-functionality-validation">{{validationMessages["essential_functionality"]}}</small>
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.essential_functionality" :key="`AT-select-${i}`">
-							<TextInput required :aria-describedby="failedValidation.includes('essential_functionality') ? 'essential-functionality-validation' : false" class="mr-1 w-11/12" id="essential_functionality" name="essential_functionality" v-model="audit.essential_functionality[i]"></TextInput>
+							<TextInput :data-validation-failed="failedValidation.includes('essential_functionality') ? 'invalid-7' : false" required :aria-describedby="failedValidation.includes('essential_functionality') ? 'essential-functionality-validation' : false" class="mr-1 w-11/12" id="essential_functionality" name="essential_functionality" v-model="audit.essential_functionality[i]"></TextInput>
 							<Button aria-label="delete this essential functionality entry from the list" class="ml-1" :hover="true" @click.native.prevent="removeEssentialFunctionality(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 						
@@ -73,7 +73,7 @@
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('software_used') }" id="software-used-validation">{{validationMessages["software_used"]}}</small>
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.software_used" :key="`SU-select-${i}`">
-							<Select required :aria-describedby="failedValidation.includes('software_used') ? 'software-used-validation' : false" :options="software_used_src"  class="mr-1 w-11/12" id="audit-software" name="software" v-model="audit.software_used[i]"></Select>
+							<Select :data-validation-failed="failedValidation.includes('software_used') ? 'invalid-8' : false" required :aria-describedby="failedValidation.includes('software_used') ? 'software-used-validation' : false" :options="software_used_src"  class="mr-1 w-11/12" id="audit-software" name="software" v-model="audit.software_used[i]"></Select>
 							<Button aria-label="delete this software used entry from the list" class="ml-1" :hover="true" @click.native.prevent="removeSoftwareUsed(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 
@@ -88,7 +88,7 @@
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('assistive_tech') }" id="assistive-tech-validation">{{validationMessages["assistive_tech"]}}</small>
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.assistive_tech" :key="`AT-select-${i}`">
-							<Select required :aria-describedby="failedValidation.includes('assistive_tech') ? 'assistive-tech-validation' : false" :options="assistive_tech_src" class="mr-1 w-11/12" id="audit-assistive" name="assistive" v-model="audit.assistive_tech[i]"></Select>
+							<Select :data-validation-failed="failedValidation.includes('assistive_tech') ? 'invalid-9' : false" required :aria-describedby="failedValidation.includes('assistive_tech') ? 'assistive-tech-validation' : false" :options="assistive_tech_src" class="mr-1 w-11/12" id="audit-assistive" name="assistive" v-model="audit.assistive_tech[i]"></Select>
 							<Button aria-label="delete this assistive technology entry from the list" class="ml-1" :hover="true" @click.native.prevent="removeAssistiveTech(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 						
@@ -103,7 +103,7 @@
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('tech_requirements') }" id="tech-requirements-validation">{{validationMessages["tech_requirements"]}}</small>
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.tech_requirements" :key="`TR-select-${i}`">
-							<Select required :aria-describedby="failedValidation.includes('tech_requirements') ? 'tech-requirements-validation' : false" :options="tech_requirements_src"  class="mr-1 w-11/12" id="audit-treqs" name="treqs" v-model="audit.tech_requirements[i]"></Select>
+							<Select :data-validation-failed="failedValidation.includes('tech_requirements') ? 'invalid-10' : false" required :aria-describedby="failedValidation.includes('tech_requirements') ? 'tech-requirements-validation' : false" :options="tech_requirements_src"  class="mr-1 w-11/12" id="audit-treqs" name="treqs" v-model="audit.tech_requirements[i]"></Select>
 							<Button aria-label="delete this technology requirement entry from the list" class="ml-1" :hover="true" @click.native.prevent="removeTechReq(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 						
@@ -138,7 +138,7 @@
 			<div class="flex flex-wrap w-full justify-center mb-24">
 				<h2 class="my-2">Working Sample</h2>
 				<span class="text-base my-2">The working sample takes the structured list created with the domain and calculates 10% of the number of items in it. It will then grab that number of pages at random from the sitemap (if it was provided with the domain) and combine them to form the working sample.</span>
-				<Button :aria-describedby="failedValidation.includes('working_sample') ? 'working-sample-validation' : false" class="mt-1 mb-3" hover="true" @click.native.prevent="generateWorkingSample">Generate working sample</Button>
+				<Button :data-validation-failed="failedValidation.includes('working_sample') ? 'invalid' : false" :aria-describedby="failedValidation.includes('working_sample') ? 'working-sample-validation' : false" class="mt-1 mb-3" hover="true" @click.native.prevent="generateWorkingSample">Generate working sample</Button>
 				<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('working_sample') }" id="working-sample-validation">{{validationMessages["working_sample"]}}</small>
 
 				<template v-if="audit.working_sample.length">
@@ -452,6 +452,24 @@ export default {
 				this.audit.domain_id = this.sheetData.sheet1.domain
 
 				this.$store.dispatch("audits/createAudit", {audit: this.audit, router: this.$router})
+			}else{
+				let self = this
+				this.$nextTick( ()=>{
+					let allValidationErrors = document.querySelectorAll("[data-validation-failed]");
+					
+					allValidationErrors[0].scrollIntoView({
+						block: "center"
+					})
+					allValidationErrors[0].focus()
+
+					self.$notify({
+						title: "Warning",
+						text: `There are ${allValidationErrors.length} validation errors in the create audit form`,
+						type: "warn"
+					})
+				})
+
+
 			}
 		},
 	},

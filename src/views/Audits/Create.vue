@@ -2,10 +2,15 @@
     <div class="container mx-auto flex justify-center items-center flex-col">
         {{sheetMessage}}
         <template v-if="projects.length">
-            <!-- there are projects to choose from -->
-            <h1 class="mt-32 mb-3">Let's start by either creating a new project</h1>
-            <Button @click.native.prevent="showSheet(0)" color="orange" hover="true">Create a Project</Button>
-            <h2 class="my-3">or selecting from an existing one</h2>
+            <template v-if="canCreateProjects">
+                <!-- there are projects to choose from -->
+                <h1 class="mt-32 mb-3">Let's start by either creating a new project</h1>
+                <Button @click.native.prevent="showSheet(0)" color="orange" hover="true">Create a Project</Button>
+                <h2 class="my-3">or selecting from an existing one</h2>
+            </template>
+            <template v-else>
+                <h1 class="mt-32 mb-3">Choose a project to get started</h1>
+            </template>
             <select aria-label="Select an existing project" v-model="sheetData['sheet0'].project" class="mb-3" name="project">
                 <option :value="project.id" v-for="(project) in projects" :key="'project-' + project.id">{{project.name}}</option>
             </select>

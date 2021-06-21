@@ -35,7 +35,7 @@
 			</div>
 		</template>
 		<template v-else>
-			<template v-if="project && project.domains.length">
+			<template v-if="project && domains.length">
 				<div class="w-full flex flex-col items-center">
 					<Label for="choose_select"><h1>Select a domain for {{project.name}}</h1></Label>
 					<select class="w-1/2 block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" name="choose_domain" id="choose_select">
@@ -125,7 +125,7 @@ export default {
 		complete(newVal){
 			if(!this.independent){
 				if( newVal ){
-					if( this.project.domains.map(d=>d.id).includes(this.domain.id) ){
+					if( this.domains.map(d=>d.id).includes(this.domain.id) ){
 						this.$emit("complete", {sheet: 'sheet1', key: 'domain', data: this.domain.id, sheetIndex: this.$parent.index})
 						this.reset()
 					}else{
@@ -148,22 +148,30 @@ export default {
 			this.domain.project_id = newVal
 		},
 		domains: function(newVal){
-			if( this.complete && newVal && !this.independent ){
-				this.project.domains = newVal
-				this.$emit("complete", {sheet: 'sheet1', key: 'domain', data: this.domain.id, sheetIndex: this.$parent.index})
-				this.reset()
-			}
-		},
-		project: function(newVal){
 			if( !this.independent ){
-				if( newVal && newVal.domains.length ){
-					this.selectedDomain = newVal.domains[0].id
+				if( !this.complete && newVal.length ){
+					this.selectedDomain = newVal[0].id
+				}
+				if( this.complete && newVal.length ){
+					this.$emit("complete", {sheet: 'sheet1', key: 'domain', data: this.domain.id, sheetIndex: this.$parent.index})
+					this.reset()
 				}
 			}
-		}
+		},
+		// project: function(newVal){
+		// 	if( !this.independent ){
+		// 		//This works if you are an admin, but when pulling from Projects module, it does not return with the domains so this fails
+		// 		if( newVal && newVal.domains && newVal.domains.length ){
+		// 			this.selectedDomain = newVal.domains[0].id
+		// 		}
+		// 	}
+		// }
 	},
 	computed: {
 		domains(){
+			if( this.project ){
+				return this.project.domains ? this.project.domains : this.$store.state.domains.all
+			}
 			return this.$store.state.domains.all
 		},
 		loading(){
@@ -184,14 +192,15 @@ export default {
 		project(){
 			if(!this.independent){
 				let self = this
+				
 				return this.projects.filter( p=>{
 					return parseInt(p.id) === parseInt(self.sheetData.sheet0.project)
 				})[0]
+			}else{
+				return this.$store.state.domains.projects.filter( p=>{
+					return p.i == this.project_id
+				})[0]
 			}
-			
-			return this.$store.state.domains.projects.filter( p=>{
-				return p.i == this.project_id
-			})[0]
 		},
 		fullUrl(){
 			let url = this.url.replace(/(?:^https?(:?\/\/?)?)+|(?:\/+|\s$)+/ig, "")

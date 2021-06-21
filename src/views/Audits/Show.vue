@@ -296,7 +296,7 @@
 				<Button aria-label="Close select descriptions modal" @click.native.prevent="selectDescriptionsModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<h2 class="text-center">Which Success Criteria descriptions would you like to add?</h2>
 				<select aria-label="Select descriptions" class="m-2 w-full" multiple v-model="selectedDescriptions">
-					<option :value="articles[option.id]" v-for="(option, index) in issue.articles" :key="'descriptions-'+index">{{articles[option.id].number}}</option>
+					<option :value="articles.find( a=>a.id == option.id)" v-for="(option, index) in issue.articles" :key="'descriptions-'+index">{{articles.find( a=>a.id == option.id).number}}</option>
 				</select>
 				<Button @click.native.prevent="addSelectedDescriptions" class="mx-2" color="orange" hover="true">Add</Button>
 			</div>
@@ -659,16 +659,16 @@ export default {
 		},
 		getIssuesCSV(){
 			this.$store.state.audits.loading = true
-			Request.postPromise(`${this.$store.state.audits.API}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/meta`, {params: {key: "sort", value: this.$refs.issuesTable.columnData.map( o=> o.id)}})
+			Request.postPromise(`${this.$store.state.auth.userAPI}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/meta`, {params: {key: "sort", value: this.$refs.issuesTable.columnData.map( o=> o.id)}})
 			.then( ()=> {
 				this.$store.state.audits.loading = false
-				window.location.href = `${this.$store.state.audits.WEB}/${this.$store.state.auth.account}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues`
+				window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.account}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues`
 			})
 			.catch()
 			.then( ()=> this.$store.state.audits.loading = false )
 		},
 		getSampleCSV(){
-			window.location.href = `${this.$store.state.audits.WEB}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/csv/sample`
+			window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.account}/audits/${this.$route.params.id}/csv/sample`
 		},
 		getDefault(){
 			return JSON.parse( JSON.stringify(this.issueDefaults) )

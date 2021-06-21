@@ -105,34 +105,25 @@ export default {
 			},
 			getProjects({state, rootState}){
 				state.loading = true
-				let args = {
-					params: {
-						params: {
-							user_id: rootState.auth.user.id
-						}
-					},
-					onSuccess: {
+
+				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {params: {user_id: rootState.auth.user.id} })
+				.then( re => {
+					Vue.notify({
 						title: "Success",
 						text: "Projects retrieved",
-						callback: function(response){
-							state.loading = false
-							state.all = response.data.details
-						}
-					},
-					onWarn:{
-						callback: function(){
-							state.loading = false
-						}
-					},
-					onError: {
+						type:"success"
+					})
+					state.all = re.data.details
+				})
+				.catch( re => {
+					console.log(re)
+					Vue.notify({
 						title: "Error",
 						text: "Failed getting projects",
-						callback: function(){
-							state.loading = false
-						}
-					}
-				};
-				Request.get(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, args)
+						type:"error"
+					})
+				})
+				.then( ()=> state.loading = false)
 			},
 			updateProject({state, rootState, rootGetters}, args){
 				state.loading = true

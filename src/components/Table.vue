@@ -83,8 +83,8 @@
 					<tr :class="rowClasses(data)" tabindex="0" @mousedown="down" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
 						<td class="p-2" :ref="'columnData-'+ subIndex" :class="getTDClasses(subIndex, key)" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
 							<span>
-								<span class="text-left" :class="{'ml-5' : condense}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
-								<template v-else>{{displayValue(key, value)}}</template>
+								<span class="text-left" :class="{'ml-5' : condense, 'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
+								<span :class="{'text-left': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
 							</span>
 						</td>
 					</tr>
@@ -155,6 +155,25 @@
 		},
 		data(){
 			return {
+				plainKeys : [
+					"id", 
+					"issue_number", 
+					"descriptions", 
+					"recommendations", 
+					"status", 
+					"target", 
+					"priority", 
+					"effort", 
+					"how_discovered", 
+					"audit_id", 
+					"first_audit_notes", 
+					"second_audit_notes", 
+					"third_audit_notes", 
+					"created_at", 
+					"updated_at", 
+					"created_by"
+				],
+				specialKeys : ["articles", "techniques"],
 				sortData: {
 					columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
 					orders: [ "asc" ]
@@ -162,7 +181,7 @@
 				columnPickerOpen: false,
 				headers: [],
 				columnData: [],
-				listKeys: ['descriptions', 'recommendations', 'articles', 'techniques', 'pages', 'levels', 'audit_states', 'essential_functionality'],
+				listKeys: ['articles', 'techniques', 'pages', 'levels', 'audit_states', 'essential_functionality', "screenshots", "resources", "browser_combos"],
 				filteredRows: [],
 				filtering: false,
 				search: {
@@ -289,27 +308,25 @@
 				this.columnPickerOpen = false
 			},
 			displayValue(key, data){
-				let plainKeys = ["id", "issue_number", "descriptions", "recommendations", "status", "target", "priority", "effort", "how_discovered", "audit_id", "first_audit_notes", "second_audit_notes", "third_audit_notes", "created_at", "updated_at", "created_by"]
-				let specialKeys = ["articles", "techniques"]
-				if( plainKeys.includes(key) ){
+				if( this.plainKeys.includes(key) ){
 					return data
 				}
-				if( !plainKeys.includes(key) && !specialKeys.includes(key) ){
+				if( !this.plainKeys.includes(key) && !this.specialKeys.includes(key) ){
 					let output = ""
 					if( data.length ){
 						output = "<ul><li class='list-disc break-words'>"
-						output += data.join("</li><li class='list-disc'>")
+						output += data.join("</li><li class='list-disc break-words'>")
 						output += "</li></ul>"
 					}
 					
 					return output
 				}
-				if( specialKeys.includes(key) ){
-					let mapped = data.map( d => d.display )
+				if( this.specialKeys.includes(key) ){
+					let mapped = data.map( d => d.display)
 					let output = ""
 					if( mapped.length ){
-						output = "<ul><li class='list-disc'>"
-						output += mapped.join("</li><li class='list-disc'>")
+						output = "<ul><li class='list-disc break-words'>"
+						output += mapped.join("</li><li class='list-disc break-words'>")
 						output += "</li></ul>"
 					}
 					

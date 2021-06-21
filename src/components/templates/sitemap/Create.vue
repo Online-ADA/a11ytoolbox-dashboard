@@ -197,6 +197,12 @@ export default {
 				return false
 			}
 		},
+		domains(){
+			if( this.project ){
+				return this.project.domains ? this.project.domains : this.$store.state.domains.all
+			}
+			return this.$store.state.domains.all
+		},
 	},
 	watch: {
 		"$store.state.domains.domain": function(newVal){
@@ -208,7 +214,7 @@ export default {
 		},
 		"sheetData.sheet1.domain": function(newVal){
 			if( newVal ){
-				this.domain = this.project.domains.filter( d=>d.id == newVal )[0]
+				this.domain = this.domains.filter( d=>d.id == newVal )[0]
 				this.data = this.domain
 				this.page.domain_id = this.domain.id
 			}
