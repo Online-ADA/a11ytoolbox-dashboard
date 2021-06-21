@@ -11,6 +11,7 @@ const getDefaultState = () => {
 		techniques: [],
 		recommendations: [],
 		audit_states: [],
+		assistive_techs: [],
 		clients: [],
 		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
 		loading:{
@@ -36,6 +37,7 @@ export default {
 		techniques: [],
 		recommendations: [],
 		audit_states: [],
+		assistive_techs: [],
 		clients: [],
 		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
 		loading:{
@@ -64,6 +66,25 @@ export default {
 			Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/states`)
 			.then( res => {
 				state.audit_states = res.data.details
+			})
+			.catch(res => {
+				console.log(res.error)
+				if( !Request.muted() ){
+					Vue.notify({
+						title: 'Error',
+						text: res.error,
+						type: 'error'
+					})
+				}
+				
+				state.loading.articles = false
+			})
+		},
+		getAsstTechnologies({state, rootState}){
+			state.loading.articles = true
+			Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/technologies`)
+			.then( res => {
+				state.assistive_techs = res.data.details
 			})
 			.catch(res => {
 				console.log(res.error)
@@ -143,19 +164,48 @@ export default {
 		},
 		createArticleObject({state, rootState}, args){
 			state.loading.articles = true
-			let path = args.object.identifier
-			if( args.object.identifier == "audit_state" ){
-				path = "audits/state"
+			let path, obj, text = ""
+			switch( args.object.identifier ){
+				case "article":
+					path = "articles"
+					obj = "articles"
+					text = "Article"
+					break;
+				case "technique":
+					path = "techniques"
+					obj = "techniques"
+					text = "Technique"
+					break;
+				case "recommendation":
+					path = "recommendations"
+					obj = "recommendations"
+					text = "Recommendation"
+					break;
+				case "audit_state":
+					path = "audits/states"
+					obj = "audit_states"
+					text = "Audit State"
+					break;
+				case "failure":
+					path = "failures"
+					obj = "failure"
+					text = "Failure"
+					break;
+				case "assistive_tech":
+					path = "audits/technologies"
+					obj = "assistive_techs"
+					text = "Assistive Technology"
+					break;
 			}
-			Request.postPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/${path}s`, {
+			Request.postPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/${path}`, {
 				params: args.object
 			})
 			.then( re=> {
-				state[`${args.object.identifier}s`] = re.data.details
+				state[`${obj}`] = re.data.details
 				if( !Request.muted() ){
 					Vue.notify({
 						title: "Success",
-						text: `${args.object.identifier} saved`,
+						text: `${text} saved`,
 						type: "success"
 					})
 				}
@@ -176,19 +226,49 @@ export default {
 		},
 		updateArticleObject({state, rootState}, args){ 
 			state.loading.articles = true
-			let path = args.object.identifier
-			if( args.object.identifier == "audit_state" ){
-				path = "audits/state"
+			let path, obj, text = ""
+			switch( args.object.identifier ){
+				case "article":
+					path = "articles"
+					obj = "articles"
+					text = "Article"
+					break;
+				case "technique":
+					path = "techniques"
+					obj = "techniques"
+					text = "Technique"
+					break;
+				case "recommendation":
+					path = "recommendations"
+					obj = "recommendations"
+					text = "Recommendation"
+					break;
+				case "audit_state":
+					path = "audits/states"
+					obj = "audit_states"
+					text = "Audit State"
+					break;
+				case "failure":
+					path = "failures"
+					obj = "failure"
+					text = "Failure"
+					break;
+				case "assistive_tech":
+					path = "audits/technologies"
+					obj = "assistive_techs"
+					text = "Assistive Technology"
+					break;
 			}
-			Request.postPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/${path}s/${args.object.id}`, {
+
+			Request.postPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/${path}/${args.object.id}`, {
 				params: args.object
 			})
 			.then( re=> {
-				state[`${args.object.identifier}s`] = re.data.details
+				state[`${obj}`] = re.data.details
 				if( !Request.muted() ){
 					Vue.notify({
 						title: "Success",
-						text: `${args.object.identifier} updated`,
+						text: `${text} updated`,
 						type: "success"
 					})
 				}
@@ -216,6 +296,31 @@ export default {
 					Vue.notify({
 						title: "Success",
 						text: "State deleted",
+						type: "success"
+					})
+				}
+			})
+			.catch( re => {
+				console.log( re );
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Error",
+						text: re.error,
+						type: "error"
+					})
+				}
+			} )
+			.then( ()=> state.loading.articles = false)
+		},
+		deleteTechnology({state, rootState}, args){
+			state.loading.articles = false
+			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/technologies/${args.id}`)
+			.then( re => {
+				state.assistive_techs = re.data.details
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Success",
+						text: "Assistive technology deleted",
 						type: "success"
 					})
 				}

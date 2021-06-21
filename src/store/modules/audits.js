@@ -11,6 +11,7 @@ const getDefaultState = () => {
 		auditorsLoading: false,
 		structured_sample: false,
 		sitemap: false,
+		assistive_tech: [],
 		articles: [],
 		techniques: [],
 		recommendations: []
@@ -39,6 +40,7 @@ export default {
 			auditorsLoading: false,
 			structured_sample: false,
 			sitemap: false,
+			assistive_tech: [],
 			articles: [],
 			techniques: [],
 			recommendations: []
@@ -364,6 +366,26 @@ export default {
 					state.loading = false
 				})
 			},
+			getAssistiveTech({state, rootState}){
+				state.loading = true
+				Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/technologies`)
+				.then( re => {
+					state.assistive_tech = re.data.details
+				})
+				.catch( re => {
+					console.log(re);
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error retrieving assistive technologies",
+							text: re.error,
+							type: "error"
+						})
+					}
+				})
+				.then( ()=>{
+					state.loading = false
+				})
+			}
 		},
 		getters: { 
 			

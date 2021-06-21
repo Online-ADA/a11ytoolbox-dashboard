@@ -41,6 +41,16 @@
                 <div v-else>There are no audit states</div>
             </Card>
         </div>
+        <div class="flex w-full justify-center my-4">
+            <Card class="w-2/3 mx-auto relative">
+                <h2>Assistive Technologies</h2>
+                <button @click="displayArticlePopup(newItem({item: newAsstTech, extra: 'assistive_tech'}))" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <template v-if="!loading && assistiveTechnologies.length">
+                    <SearchList :displayProps="['content']" :dataSendBack="'assistive_tech'" @click="displayArticlePopup" hover-effect="grow" :items="assistiveTechnologies"></SearchList>
+                </template>
+                <div v-else>There are no assistive technologies</div>
+            </Card>
+        </div>
         <Modal :open="articleModalOpen" :sizeButtons="articleEditItem.identifier == 'recommendation'">
             <div class="bg-white px-4 pt-5 pb-4 p-6">
                 <div class="flex items-start">
@@ -108,8 +118,17 @@
                                 <h2 class="leading-6 mb-6">Create new audit state</h2>
                             </div>
                             <div class="w-full mt-2">
-                                <Label class="text-lg leading-6 w-full" for="tech-title">Audit State<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
-                                <TextInput required class="w-full" id="tech-title" v-model="articleEditItem.content"></TextInput>
+                                <Label class="text-lg leading-6 w-full" for="state-title">Audit State<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                <TextInput required class="w-full" id="state-title" v-model="articleEditItem.content"></TextInput>
+                            </div>
+                        </template>
+                        <template v-else-if="articleEditItem.identifier == 'assistive_tech'">
+                            <div class="w-full text-center">
+                                <h2 class="leading-6 mb-6">Create new assistive technology</h2>
+                            </div>
+                            <div class="w-full mt-2">
+                                <Label class="text-lg leading-6 w-full" for="asst-title">Assistive Technology<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                <TextInput required class="w-full" id="asst-title" v-model="articleEditItem.content"></TextInput>
                             </div>
                         </template>
                         <template v-else-if="articleEditItem.identifier == 'failure'">
@@ -187,7 +206,7 @@
                         </h3>
                         <div class="mt-2">
                             <p class="text-sm text-gray-500">
-                                Are you sure you want to delete this {{articleEditItem.identifier}}?
+                                Are you sure you want to delete this {{getSingular(articleEditItem.identifier)}}?
                             </p>
                         </div>
                     </div>
@@ -220,6 +239,7 @@ export default {
         newTechnique: {article_ids: [], description: '', number: '', title: '', ext_url: ''},
         newFailure: {article_ids: [], description: '', number: '', title: '', ext_url: ''},
         newState: {content: ''},
+        newAsstTech: {content: ''},
         newRecommendation: {article_ids: [], description: ''},
         articleModalOpen: false,
         articleEditItem: false,
@@ -255,6 +275,12 @@ export default {
             }
             return []
         },
+        assistiveTechnologies(){
+            if( this.$store.state.admin ){
+                return this.$store.state.admin.assistive_techs
+            }
+            return []
+        },
         techniques() {
             if( this.$store.state.admin ){
                 return this.$store.state.admin.techniques
@@ -274,10 +300,21 @@ export default {
             if( newVal ){
                 this.$store.dispatch("admin/getArticles")
                 this.$store.dispatch("admin/getAuditStates")
+                this.$store.dispatch("admin/getAsstTechnologies")
             }
         }
     },
     methods: {
+        getSingular( identifier ){
+            if( identifier == "audit_state" ){
+                return "audit state"
+            }
+            if( identifier == "assistive_tech" ){
+                return "assistive technology"
+            }
+
+            return identifier
+        },
         newItem(item){
             return JSON.parse( JSON.stringify(item) )
         },
@@ -317,6 +354,10 @@ export default {
                     break;
                 case "audit_state":
                     action = "admin/deleteAuditState"
+                    break;
+                case "assistive_tech":
+                    action = "admin/deleteTechnology"
+                    break;
             }
             this.$store.dispatch(action, {id: this.articleEditItem.id})
             this.articleEditItem = false
@@ -335,6 +376,7 @@ export default {
         if( this.$store.state.auth.user ){
             this.$store.dispatch("admin/getArticles")
             this.$store.dispatch("admin/getAuditStates")
+            this.$store.dispatch("admin/getAsstTechnologies")
         }
     },
     mounted() {

@@ -214,9 +214,6 @@ export default {
 			"Android Browser", "Chrome - Latest", "Chrome for Android", "Edge - Latest", "Firefox - Latest", "Firefox for Android", "IE Mobile 11", "IE11", 
 			"Safari - Latest", "iOS Safari -Latest", "Opera - Latest", "Opera Mini"
 		],
-		assistive_tech_src: [
-			"Axe", "NVDA", "JAWS", "TPGI Color Contrast Analyser"
-		],
 		tech_requirements_src: [
 			"HTML5", "ECMAScript 3", "OOXML", "XHTML 1.0", "ECMAScript 5", "ODF 1.2", "HTML 4.01", "DOM", "SVG", "CSS", "Flash", "WAI-ARIA", "Silverlight"
 		],
@@ -259,6 +256,9 @@ export default {
 		sitemap(){
 			return this.$store.state.audits.sitemap || []
 		},
+		assistive_tech_src(){
+			return this.$store.state.audits.assistive_tech.map( o=>o.content ) || []
+		}
 	},
 	props: [],
 	watch: {
@@ -266,6 +266,7 @@ export default {
 			if( newVal ){
 				this.$set(this, "audit", JSON.parse(JSON.stringify(newVal)))
 				this.assigned = JSON.parse(JSON.stringify(newVal.assignees.map(  o=>o.id )))
+				this.$store.dispatch("audits/getAssistiveTech")
 				this.$store.dispatch("audits/getAuditors")
 				this.$store.dispatch("audits/getSitemap")
 				this.$store.dispatch("audits/getStructuredSample")
