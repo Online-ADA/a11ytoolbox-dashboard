@@ -47,7 +47,7 @@
 			</div>
 			<div style="padding-bottom:60px;" class="bg-white px-4 pt-5 p-6">
 				<Button aria-label="Close add issue modal" @click.native.prevent="issueModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
-				<h2 class="text-center">Add Issue</h2>
+				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
 				<div class="flex items-start mt-3 text-left w-full flex-wrap">
 					
 					<div class="flex w-full mt-2">
@@ -77,20 +77,6 @@
 							<select :aria-describedby="failedValidation.includes('audit_states') ? 'states-validation' : false" required style="min-width:200px;" id="audit_status" class="w-full" v-model="issue.audit_states" multiple>
 								<option :value="status" v-for="(status, index) in audit_states" :key="'audit_status-'+index">{{status}}</option>
 							</select>
-						</div>
-						<div :class="{'hidden': !issue.audit_states.includes('other') && !issue.audit_states.includes('Other')}" class="mx-2 flex-1">
-							<Label class="text-lg leading-6">
-								Other States
-								<Card :gutters="false" :center="false" style="max-height:118px;" class="overflow-y-scroll w-full text-left my-2">
-									<div class="flex mb-3" v-for="(input, i) in other_states" :key="`other-states-${i}`">
-										<TextInput class="flex-1" name="other-states" id="other-states" v-model="other_states[i]"></TextInput>
-										<Button class="ml-1" :aria-label="'Remove other issue state ' + other_states[i]" :hover="true" @click.native.prevent="removeOtherState(i)"><i class="fas fa-trash-alt"></i></Button>
-									</div>
-									
-									<Button :hover="true" @click.native.prevent="addNewOtherState">Add New</Button>
-								</Card>
-							</Label>
-							
 						</div>
 						<div class="mx-2 flex-1">
 							<Label class="text-lg leading-6 w-full" for="essential_functionalities">Essential Functionalities</Label>
@@ -467,7 +453,8 @@ export default {
 			priority: "The priority field is required",
 		},
 		showValidationAlert: false,
-		other_states: [""]
+		fixCSVIssues : { auditLoaded: false, articlesLoaded: false},
+		issuesFixed: false
 	}),
 	computed: {
 		isManager(){
@@ -691,6 +678,15 @@ export default {
 		editIssue(){
 			let copy = JSON.parse(JSON.stringify(this.audit.issues.find( i => i.id == this.selectedRows[0] )))
 			this.issue = copy
+			let allPages = this.audit.pages.map( p=>p.content)
+			for( let p in this.issue.pages ){
+				if( !allPages.includes(this.issue.pages[p]) ){
+					this.$store.state.audits.audit.pages.push({
+						content: this.issue.pages[p],
+						screen: null
+					})
+				}
+			}
 			this.descriptionsQuill.root.innerHTML = this.issue.descriptions
 			this.recommendationsQuill.root.innerHTML = this.issue.recommendations
 			
@@ -755,12 +751,6 @@ export default {
 		},
 		addBrowserCombo(){
 			this.issue.browser_combos.push(this.browserCombo)
-		},
-		addNewOtherState(){
-			this.other_states.push("")
-		},
-		removeOtherState(i){
-			this.other_states.splice(i, 1)
 		},
 		addNewResource(){
 			this.issue.resources.push("")
@@ -828,10 +818,6 @@ export default {
 				
 				this.issue.issue_number = uniqid
 				
-				if( this.issue.audit_states.includes("other") ){
-					this.issue.audit_states.splice( this.issue.audit_states.indexOf("other"), 1 )
-					this.issue.audit_states = [...this.issue.audit_states, ...this.other_states.filter( i => i !== "")]
-				}
 				this.$store.dispatch("audits/createIssue", {issue: this.issue})
 				this.issueModalOpen = false
 				this.issue = this.getDefault()
@@ -841,10 +827,6 @@ export default {
 		},
 		updateIssue(){
 			if( this.validate() ){
-				if( this.issue.audit_states.includes("other") ){
-					this.issue.audit_states.splice( this.issue.audit_states.indexOf("other"), 1 )
-					this.issue.audit_states = [...this.issue.audit_states, ...this.other_states.filter( i => i !== "")]
-				}
 				this.$store.dispatch("audits/updateIssue", {issue: this.issue, audit_id: this.$route.params.id})
 				this.issueModalOpen = false
 				this.issue = this.getDefault()

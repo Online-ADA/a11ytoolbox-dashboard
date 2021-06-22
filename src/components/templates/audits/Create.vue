@@ -412,7 +412,7 @@ export default {
 
 			if( sitemap.length ){
 				//Remove duplicates from sitemap and structured sample
-				while( sitemap_sample.length < tenPercent ){
+				while( sitemap_sample.length <= tenPercent ){
 					if( sitemap.length < 1 ){
 						break
 					}
@@ -420,12 +420,12 @@ export default {
 					let found = sitemap_sample.some( el => el.content == sitemap[index].url)
 					if( found ){
 						sitemap.splice(index, 1)
-						break //break early for efficiency
+						continue //break early for efficiency
 					}
 					found = structured_map.some( el => el.content == sitemap[index].url)
 					if( found ){
 						sitemap.splice(index, 1)
-						break
+						continue
 					}
 
 					sitemap_sample.push( {
