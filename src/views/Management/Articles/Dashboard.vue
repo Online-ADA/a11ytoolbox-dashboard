@@ -51,6 +51,16 @@
                 <div v-else>There are no assistive technologies</div>
             </Card>
         </div>
+        <div class="flex w-full justify-center my-4">
+            <Card class="w-2/3 mx-auto relative">
+                <h2>Software Used</h2>
+                <button @click="displayArticlePopup(newItem({item: newSoftwareUsed, extra: 'software_used'}))" type="button" class="absolute bg-green-500 mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <template v-if="!loading && softwareUsed.length">
+                    <SearchList :displayProps="['content']" :dataSendBack="'software_used'" @click="displayArticlePopup" hover-effect="grow" :items="softwareUsed"></SearchList>
+                </template>
+                <div v-else>There are no software used</div>
+            </Card>
+        </div>
         <Modal :open="articleModalOpen" :sizeButtons="articleEditItem.identifier == 'recommendation'">
             <div class="bg-white px-4 pt-5 pb-4 p-6">
                 <div class="flex items-start">
@@ -119,6 +129,15 @@
                             </div>
                             <div class="w-full mt-2">
                                 <Label class="text-lg leading-6 w-full" for="state-title">Audit State<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
+                                <TextInput required class="w-full" id="state-title" v-model="articleEditItem.content"></TextInput>
+                            </div>
+                        </template>
+                        <template v-else-if="articleEditItem.identifier == 'software_used'">
+                            <div class="w-full text-center">
+                                <h2 class="leading-6 mb-6">Create new software used</h2>
+                            </div>
+                            <div class="w-full mt-2">
+                                <Label class="text-lg leading-6 w-full" for="state-title">Software Used<small class="pl-1 text-pallette-orange-dark" aria-hidden="true">*</small></Label>
                                 <TextInput required class="w-full" id="state-title" v-model="articleEditItem.content"></TextInput>
                             </div>
                         </template>
@@ -240,6 +259,7 @@ export default {
         newFailure: {article_ids: [], description: '', number: '', title: '', ext_url: ''},
         newState: {content: ''},
         newAsstTech: {content: ''},
+        newSoftwareUsed: {content: ''},
         newRecommendation: {article_ids: [], description: ''},
         articleModalOpen: false,
         articleEditItem: false,
@@ -281,6 +301,12 @@ export default {
             }
             return []
         },
+        softwareUsed(){
+            if( this.$store.state.admin ){
+                return this.$store.state.admin.software_used
+            }
+            return []
+        },
         techniques() {
             if( this.$store.state.admin ){
                 return this.$store.state.admin.techniques
@@ -301,6 +327,7 @@ export default {
                 this.$store.dispatch("admin/getArticles")
                 this.$store.dispatch("admin/getAuditStates")
                 this.$store.dispatch("admin/getAsstTechnologies")
+                this.$store.dispatch("admin/getSoftwareUsed")
             }
         }
     },
@@ -311,6 +338,9 @@ export default {
             }
             if( identifier == "assistive_tech" ){
                 return "assistive technology"
+            }
+            if( identifier == "software_used" ){
+                return "software used"
             }
 
             return identifier
@@ -358,6 +388,9 @@ export default {
                 case "assistive_tech":
                     action = "admin/deleteTechnology"
                     break;
+                case "software_used":
+                    action = "admin/deleteSoftwareUsed"
+                    break;
             }
             this.$store.dispatch(action, {id: this.articleEditItem.id})
             this.articleEditItem = false
@@ -377,6 +410,7 @@ export default {
             this.$store.dispatch("admin/getArticles")
             this.$store.dispatch("admin/getAuditStates")
             this.$store.dispatch("admin/getAsstTechnologies")
+            this.$store.dispatch("admin/getSoftwareUsed")
         }
     },
     mounted() {

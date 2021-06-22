@@ -12,6 +12,7 @@ const getDefaultState = () => {
 		structured_sample: false,
 		sitemap: false,
 		assistive_tech: [],
+		software_used: [],
 		articles: [],
 		techniques: [],
 		recommendations: []
@@ -41,6 +42,7 @@ export default {
 			structured_sample: false,
 			sitemap: false,
 			assistive_tech: [],
+			software_used: [],
 			articles: [],
 			techniques: [],
 			recommendations: []
@@ -377,6 +379,26 @@ export default {
 					if( !Request.muted() ){
 						Vue.notify({
 							title: "Error retrieving assistive technologies",
+							text: re.error,
+							type: "error"
+						})
+					}
+				})
+				.then( ()=>{
+					state.loading = false
+				})
+			},
+			getSoftwareUsed({state, rootState}){
+				state.loading = true
+				Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/software`)
+				.then( re => {
+					state.software_used = re.data.details
+				})
+				.catch( re => {
+					console.log(re);
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error retrieving software used",
 							text: re.error,
 							type: "error"
 						})

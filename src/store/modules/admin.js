@@ -11,6 +11,7 @@ const getDefaultState = () => {
 		techniques: [],
 		recommendations: [],
 		audit_states: [],
+		software_used: [],
 		assistive_techs: [],
 		clients: [],
 		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
@@ -37,6 +38,7 @@ export default {
 		techniques: [],
 		recommendations: [],
 		audit_states: [],
+		software_used: [],
 		assistive_techs: [],
 		clients: [],
 		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
@@ -85,6 +87,25 @@ export default {
 			Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/technologies`)
 			.then( res => {
 				state.assistive_techs = res.data.details
+			})
+			.catch(res => {
+				console.log(res.error)
+				if( !Request.muted() ){
+					Vue.notify({
+						title: 'Error',
+						text: res.error,
+						type: 'error'
+					})
+				}
+				
+				state.loading.articles = false
+			})
+		},
+		getSoftwareUsed({state, rootState}){
+			state.loading.articles = true
+			Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/software`)
+			.then( res => {
+				state.software_used = res.data.details
 			})
 			.catch(res => {
 				console.log(res.error)
@@ -166,6 +187,11 @@ export default {
 			state.loading.articles = true
 			let path, obj, text = ""
 			switch( args.object.identifier ){
+				case "software_used":
+					path = "audits/software"
+					obj = "software_used"
+					text = "Software"
+					break;
 				case "article":
 					path = "articles"
 					obj = "articles"
@@ -228,6 +254,11 @@ export default {
 			state.loading.articles = true
 			let path, obj, text = ""
 			switch( args.object.identifier ){
+				case "software_used":
+					path = "audits/software"
+					obj = "software_used"
+					text = "Software"
+					break;
 				case "article":
 					path = "articles"
 					obj = "articles"
@@ -296,6 +327,31 @@ export default {
 					Vue.notify({
 						title: "Success",
 						text: "State deleted",
+						type: "success"
+					})
+				}
+			})
+			.catch( re => {
+				console.log( re );
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Error",
+						text: re.error,
+						type: "error"
+					})
+				}
+			} )
+			.then( ()=> state.loading.articles = false)
+		},
+		deleteSoftwareUsed({state, rootState}, args){
+			state.loading.articles = false
+			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/software/${args.id}`)
+			.then( re => {
+				state.software_used = re.data.details
+				if( !Request.muted() ){
+					Vue.notify({
+						title: "Success",
+						text: "Software deleted",
 						type: "success"
 					})
 				}

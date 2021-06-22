@@ -220,13 +220,13 @@ export default {
 		],
 		assigned: [],
 		unassigned: [],
-		software_used_src: [
-			"Android Browser", "Chrome - Latest", "Chrome for Android", "Edge - Latest", "Firefox - Latest", "Firefox for Android", "IE Mobile 11", "IE11", 
-			"Safari - Latest", "iOS Safari -Latest", "Opera - Latest", "Opera Mini"
-		],
-		assistive_tech_src: [
-			"Axe", "NVDA", "JAWS", "TPGI Color Contrast Analyser"
-		],
+		// software_used_src: [
+		// 	"Android Browser", "Chrome - Latest", "Chrome for Android", "Edge - Latest", "Firefox - Latest", "Firefox for Android", "IE Mobile 11", "IE11", 
+		// 	"Safari - Latest", "iOS Safari -Latest", "Opera - Latest", "Opera Mini"
+		// ],
+		// assistive_tech_src: [
+		// 	"Axe", "NVDA", "JAWS", "TPGI Color Contrast Analyser"
+		// ],
 		tech_requirements_src: [
 			"HTML5", "ECMAScript 3", "OOXML", "XHTML 1.0", "ECMAScript 5", "ODF 1.2", "HTML 4.01", "DOM", "SVG", "CSS", "Flash", "WAI-ARIA", "Silverlight"
 		],
@@ -273,6 +273,12 @@ export default {
             }
             return false
         },
+		assistive_tech_src(){
+			return this.$store.state.audits.assistive_tech.map( o=>o.content ) || []
+		},
+		software_used_src(){
+			return this.$store.state.audits.software_used.map( o=>o.content ) || []
+		},
         userID(){
             return this.$store.state.auth.user.id
         },
@@ -480,6 +486,9 @@ export default {
 		if( this.isManager && !this.auditors.length ){
 			this.$store.dispatch("audits/getAuditors")
 		}
+		
+		this.$store.dispatch("audits/getAssistiveTech")
+		this.$store.dispatch("audits/getSoftwareUsed")
 	},
 	components: {
 		Loader,
