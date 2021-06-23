@@ -24,6 +24,10 @@
     i, span{
         transition: opacity .2s ease, transform .2s ease
     }
+    input[type="checkbox"]:focus + span.border-pallette-orange{
+      outline: 2px dashed black;
+      outline-offset: 2px;
+    }
 </style>
 <script>
 export default {

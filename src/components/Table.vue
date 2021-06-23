@@ -1,7 +1,21 @@
 <template>
 	<div class="flex flex-col relative px-5">
-		<div class="flex w-full px-10 mb-2">
+		<div class="flex w-full px-10 mb-2 relative">
 			<div class="flex flex-wrap items-end pb-3 w-full mx-auto">
+				<h2 class="w-full text-2xl my-3">Table description (what should this say?)</h2>
+				<div class="w-full flex">
+					<div class="w-1/4"></div>
+					<div class="w-2/4">
+						<p>Here is a list of the various functionality you can expect on the table below:</p>
+						<ul class="list-disc text-left mb-3">
+							<li><strong>Horizontal scrolling:</strong> at any point while focused inside the table, using the left and right arrow keys will scroll the table to the left and right</li>
+							<li><strong>Freezing Columns:</strong> Each column has a button for freezing it in place, such that while scrolling the table left and right, the column will remain in its position while the rest of the unfrozen columns scroll like normal</li>
+							<li><strong>Multi Column Sorting:</strong> The sort buttons have 3 modes: Unsorted, Ascending and Descending. If more than one column has been sorted, the columns will sort in order across all sorted columns, i.e. sorting by column A by ascending and column B by descending will sort both columns respectively first by column A then by column B.</li>
+							<li><strong>Repositioning of Columns:</strong> Each column, while not frozen, can be moved left or right to reposition them within the table.</li>
+						</ul>
+					</div>
+					<div class="w-1/4"></div>
+				</div>
 				<h2 class="w-full text-base">
 					<div class="text-2xl">Search</div>
 					<small>First choose which column you want to search from the dropdown, then enter your search criteria, then click submit</small>
@@ -27,9 +41,10 @@
 					<div v-if="!locked" style="margin-top:1px;"><Button class="text-xs mx-1" @click.native.prevent="deselectAll" hover="true">Deselect all</Button></div>
 				</div>
 			</div>
-			
+			<a class="skip-headers-row absolute bottom-0 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
 		</div>
-		<div @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-16">
+		<div tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-16">
+			
 			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense}">
 				<thead>
 					<tr>
@@ -80,11 +95,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr :class="rowClasses(data)" tabindex="0" @mousedown="down" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
+					<tr :id="index == 0 ? 'a' + data['issue_number'] : false" :class="rowClasses(data)" tabindex="0" @mousedown="down" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
 						<td class="p-2" :ref="'columnData-'+ subIndex" :class="getTDClasses(subIndex, key)" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
 							<span>
-								<span class="text-left" :class="{'ml-5' : condense, 'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
-								<span :class="{'text-left': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
+								<span class="text-left" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
+								<span :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
 							</span>
 						</td>
 					</tr>
@@ -212,10 +227,6 @@
 					classes += 'sticky z-20'
 				}else{
 					classes += 'relative z-10'
-				}
-
-				if( this.listKeys.includes(key) && !this.condense ){
-					classes += ' pl-5'
 				}
 
 				return classes
@@ -422,7 +433,13 @@
 			},
 		},
 		mounted(){
-			
+			document.querySelector("table").addEventListener( "keydown", function(e){
+				setTimeout(()=>{
+					if( e.code == "Tab" ){
+						document.activeElement.scrollIntoView({behavior: "smooth", inline:"center", block:"center"})
+					}
+				}, 1)
+			})
 		},
 		created(){
 			this.columnData = JSON.parse(JSON.stringify(this.rowsData))
@@ -431,6 +448,15 @@
 			this.headers = JSON.parse(JSON.stringify(this.headersData))
 		},
 		watch:{
+			rows(val){
+				if( val.length ){
+					document.querySelector('.skip-headers-row').addEventListener( "click", function(e){
+						let firstRow = document.querySelector('#a'+val[0]['issue_number'])
+						firstRow.focus()
+						firstRow.scrollIntoView({behavior: "smooth", inline:"center", block:"center"})
+					})
+				}
+			},
 			rowsData(newVal){
 				this.columnData = JSON.parse(JSON.stringify(newVal))
 			},
@@ -459,6 +485,12 @@
 </script>
 
 <style scoped>
+	.skip-headers-row{
+		transform:translateX(-400px);
+	}
+	.skip-headers-row:focus{
+		transform:translateX(0px);
+	}
 	tr{
 		transition:transform .2s;
 		transform:translateY(0)
@@ -499,5 +531,8 @@
 	table.condensed td:not([data-key=descriptions]):not([data-key=recommendations]):not([data-key=first_audit_notes]):not([data-key=second_audit_notes]):not([data-key=third_audit_notes]):not([data-key=articles]):not([data-key=techniques]):not([data-key=target]):not([data-key=pages]) > *{
 		align-items:center;
 	}
-	
+	table .ql-editor{
+		cursor:default;
+		padding:initial;
+	}
 </style>

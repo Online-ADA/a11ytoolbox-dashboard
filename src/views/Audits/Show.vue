@@ -6,7 +6,7 @@
 			<A v-if="!audit.locked || isManager" class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
 			<A class="pr-3" type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
 			<A v-if="!audit.locked" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Import</A>
-			<button v-if="issues.length" @click="whichCSVModalOpen = true" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+			<button v-if="issues.length" @click="whichCSVModalOpen = true" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm">
 				<span class="sr-only">Download</span> CSV
 			</button>
 			<h2 class="mb-3">{{audit.title}}</h2>
@@ -14,11 +14,11 @@
 			<h3 class="text-base" v-if="audit.locked">This audit is locked and cannot be modified</h3>
 			<Table :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
-				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
+				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
 		</template>
 		<div class="bg-white w-full border-t border-black p-4 flex justify-between fixed bottom-0 left-0" style="z-index:25;">
-			<div class="flex w-1/3">
+			<div class="flex w-1/3 items-center">
 				<Button class="mx-2" :color="shouldCondense ? 'orange' : 'white'" @click.native.prevent="shouldCondense = !shouldCondense">
 					<span v-if="!shouldCondense">Condense </span>
 					<span v-else>Expand </span>
@@ -30,10 +30,11 @@
 				<Button v-if="selectedRows.length < 1 && !audit.locked" @click.native.prevent="newIssue" class="mx-2" color="orange" hover="true">Add Issue</Button>
 				<Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'orange' : 'white'" :hover="true">Dark Mode</Button>
 			</div>
-			<div class="w-1/3 flex items-center justify-center">
-				<span aria-live="polite" aria-atomic="true">Rows Selected: {{selectedRows.length}}</span>
+			<div class="w-1/3 flex flex-wrap items-center justify-center">
+				<span aria-live="polite" aria-atomic="true">Issues Selected: {{selectedRows.length}}</span>
+				<div class="w-full mt-2">Total Issues: {{issues.length}}</div>
 			</div>
-			<div class="flex w-1/3 justify-end">
+			<div class="flex w-1/3 justify-end items-center">
 				<Button v-if="!audit.locked" @click.native.prevent="markComplete" class="mx-2" color="orange" hover="true">Complete Audit</Button>
 				<Button v-if="audit.locked && audit.number > 0 < 3" @click.native.prevent="createNextAudit" class="mx-2" color="orange" hover="true">Create next audit</Button>
 			</div>
@@ -178,13 +179,13 @@
 								<Button class="mr-2" @click.native.prevent="selectDescriptionsModalOpen = true" color="orange" hover="true">Add Descriptions</Button>
 								<Button @click.native.prevent="addIssueReferenceLinkModalOpen = true" color="orange" hover="true">Add issue reference</Button>
 							</div>
-							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-pallette-orange placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1" ></div>
+							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1" ></div>
 						</div>
 						<div class="w-1/2 flex flex-col px-2">
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
 							<Button class="self-start mb-1" @click.native.prevent="selectRecommendationsModalOpen = true" color="orange" hover="true">Add Recommendations</Button>
-							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-pallette-orange placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
+							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
 						</div>
 					</div>
 					<div class="flex w-full flex-col mt-2 px-2">
@@ -205,13 +206,13 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto">
+				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 w-auto">
 					Delete
 				</button>
-				<button @click="issueModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
+				<button @click="issueModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 w-auto">
 					Cancel
 				</button>
-				<button @click="saveIssue" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
+				<button @click="saveIssue" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 w-auto">
 					Save
 				</button>
 			</div>
@@ -268,10 +269,10 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="addIssueReferenceLinkModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<button @click="addIssueReferenceLinkModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700  w-auto text-sm">
 					Cancel
 				</button>
-				<button @click.prevent="createReferenceLink" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<button @click.prevent="createReferenceLink" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700  w-auto text-sm">
 					Create Reference
 				</button>
 			</div>
@@ -287,7 +288,7 @@
 				<Button @click.native.prevent="addSelectedDescriptions" class="mx-2" color="orange" hover="true">Add</Button>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="selectDescriptionsModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<button @click="selectDescriptionsModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700  w-auto text-sm">
 					Cancel
 				</button>
 			</div>
@@ -302,7 +303,7 @@
 				<Button @click.native.prevent="addSelectedRecommendations" class="mx-2" color="orange" hover="true">Add</Button>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
-				<button @click="selectRecommendationsModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<button @click="selectRecommendationsModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700  w-auto text-sm">
 				Cancel
 				</button>
 			</div>
@@ -313,10 +314,10 @@
 				<h2 class="text-center">Are you sure you want to delete {{ selectedRows.length === 1 ? 'this issue' : 'these issues' }}?</h2>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="confirmDeleteModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<button @click="confirmDeleteModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700  w-auto text-sm">
 					Cancel
 				</button>
-				<button @click="deleteSelectedIssues" v-if="selectedRows.length" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 w-auto text-sm">
+				<button @click="deleteSelectedIssues" v-if="selectedRows.length" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 font-medium text-white hover:bg-red-700  w-auto text-sm">
 					Delete
 				</button>
 			</div>
@@ -332,7 +333,7 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="whichCSVModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto text-sm">
+				<button @click="whichCSVModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700  w-auto text-sm">
 					Cancel
 				</button>
 			</div>
@@ -588,7 +589,6 @@ export default {
 
 			this.issue.levels = []
 			this.issue.techniques = []
-			this.issue.recommendations = ""
 			
 			for( let i in this.issue.articles ){
 				if( !this.issue.levels.includes( this.articles[ this.issue.articles[i].id ].level ) ){
@@ -601,6 +601,12 @@ export default {
 				this.$refs.descriptionEditor.querySelector(".ql-editor").setAttribute("aria-describedby", "descriptions-validation")
 			}else{
 				this.$refs.descriptionEditor.querySelector(".ql-editor").removeAttribute("aria-describedby")
+			}
+
+			if(newVal.includes('recommendations')){
+				this.$refs.recommendationEditor.querySelector(".ql-editor").setAttribute("aria-describedby", "recommendations-validation")
+			}else{
+				this.$refs.recommendationEditor.querySelector(".ql-editor").removeAttribute("aria-describedby")
 			}
 		},
 		addIssueReferenceLinkModalOpen(newVal){
@@ -792,7 +798,11 @@ export default {
 				if( Array.isArray( this.issue[prop] ) ){
 					pass = this.issue[prop].length
 				}else{
-					pass = this.issue[prop]
+					pass = !!this.issue[prop]
+					if( prop == "descriptions" || prop == "recommendations" ){
+						pass = !!this.issue[prop] && this.issue[prop] != "<div><br></div>";
+					}
+					console.log(prop, pass);
 				}
 
 				if( !pass ){

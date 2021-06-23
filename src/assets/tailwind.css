@@ -18,4 +18,16 @@
 	select {
 		@apply block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow;
 	}
+	table :not(.ql-editor) ol{
+		@apply list-decimal pl-4;
+	}
+	table :not(.ql-editor) ul{
+		@apply list-disc pl-4;
+	}
+	table tr:focus{
+		@apply relative z-10;
+	}
+	*, button{
+		@apply focus:outline-black;
+	}
 }

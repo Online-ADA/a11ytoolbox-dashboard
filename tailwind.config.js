@@ -3,6 +3,11 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
+    outline: {
+      none: ['2px solid transparent', '2px'],
+      white: ['2px dashed white', '2px'],
+      black: ['2px dashed black', '2px'],
+    },
     extend: {
       fontFamily: {
         button: ['DM Sans', 'sans-serif'],
