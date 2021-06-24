@@ -27,7 +27,7 @@
 	table tr:focus{
 		@apply relative z-10;
 	}
-	*, button{
+	:not(tr), button{
 		@apply focus:outline-black;
 	}
 }

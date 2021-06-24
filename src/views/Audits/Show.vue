@@ -743,6 +743,7 @@ export default {
 			this.descriptionsQuill.root.innerHTML += builder
 			
 			this.selectDescriptionsModalOpen = false
+			this.selectedDescriptions = []
 		},
 		addSelectedRecommendations(){
 			let builder = ""

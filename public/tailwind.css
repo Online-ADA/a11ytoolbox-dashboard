@@ -609,7 +609,7 @@ table tr:focus{
   z-index: 10;
 }
 
-*:focus, button:focus {
+:not(tr):focus, button:focus {
   outline: 2px dashed black;
   outline-offset: 2px;
 }

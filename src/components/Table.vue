@@ -95,7 +95,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr :id="index == 0 ? 'a' + data['issue_number'] : false" :class="rowClasses(data)" tabindex="0" @mousedown="down" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
+					<tr :id="index == 0 ? 'a' + data['issue_number'] : false" :class="rowClasses(data)" tabindex="0" @mousedown="down" @keydown="checkRowSelect(data, $event)" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
 						<td class="p-2" :ref="'columnData-'+ subIndex" :class="getTDClasses(subIndex, key)" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
 							<span>
 								<span class="text-left" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
@@ -249,6 +249,12 @@
 			up(data){
 				this.dragData.dragging = false
 				if( this.dragData.x === 0 && !this.locked ){
+					this.$emit('rowClick', data)
+				}
+			},
+			checkRowSelect(data, e){
+				if( e.code == "Space" || e.code == "Enter" ){
+					e.preventDefault()
 					this.$emit('rowClick', data)
 				}
 			},
@@ -495,12 +501,44 @@
 		transition:transform .2s;
 		transform:translateY(0)
 	}
+	tr:before,
+	tr:after{
+		content: " ";
+		position: absolute;
+		z-index: 21;
+		left: 0;
+		right: 0;
+		height: 4px;
+	}
+	tr:before {
+		top: 0;
+	}
+	tr:after {
+		bottom: 0;
+	}
 	tr.selected {
 		transform:translateY(-2px);
 	}
 	tr.selected td {
 		background-color: rgb(235, 140, 47) !important;
 	}
+	tr:focus td{
+		background-color:#1Dacd6 !important;
+	}
+	tr.selected:focus td{
+		background-color:#1Dacd6 !important;
+	}
+	
+	tr:not(.selected):focus:before,
+	tr:not(.selected):focus:after{
+		background: #000;
+	}
+	tr.selected:after,
+	tr.selected:before{
+		background: linear-gradient(to right, transparent 25%, #000 0%), linear-gradient(to right, #fff0, #fff0);
+		background-size: 19px 2px, 100% 2px !important;
+	}
+	
 	td, th{
 		border:1px solid black;
 		transition:background-color .2s
