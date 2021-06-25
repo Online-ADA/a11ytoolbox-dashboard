@@ -95,7 +95,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr :id="index == 0 ? 'a' + data['issue_number'] : false" :class="rowClasses(data)" tabindex="0" @mousedown="down" @keydown="checkRowSelect(data, $event)" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
+					<tr :aria-selected="selected.includes(data['id']) ? true : false" :id="index == 0 ? 'a' + data['issue_number'] : false" :class="rowClasses(data)" tabindex="0" @mousedown="down" @keydown="checkRowSelect(data, $event)" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
 						<td class="p-2" :ref="'columnData-'+ subIndex" :class="getTDClasses(subIndex, key)" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
 							<span>
 								<span class="text-left" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
