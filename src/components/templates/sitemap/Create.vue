@@ -54,7 +54,7 @@
 						<TextInput placeholder="https://nimb.ws/AyYVWS" class="flex-1" :id="'screen-' + index" v-model="structured_items[index].screen" />
 					</div>
 
-					<Button class="ml-2 self-end pb-2.5" color="delete" @click.native.prevent="popStructuredItem"><i class="far fa-trash-alt"></i></Button>
+					<Button class="ml-2 self-end pb-2.5" color="delete" @click.native.prevent="popStructuredItem(index)"><i class="far fa-trash-alt"></i></Button>
 				</div>
 				<Button class="" color="orange" @click.native.prevent="saveStructuredList">Save List</Button>
 				<Button class="ml-2" color="orange" @click.native.prevent="addStructuredItem">Add</Button>
