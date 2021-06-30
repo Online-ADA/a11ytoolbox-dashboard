@@ -188,21 +188,20 @@
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
 						</div>
 					</div>
-					<div class="flex w-full flex-col mt-2 px-2">
-						<template v-if="audit.number == 1">
-							<Label class="text-lg leading-6 w-full" for="first_audit_notes">Auditor Notes</Label>
-							<TextArea rows="14" class="w-full" id="first_audit_notes" v-model="issue.first_audit_notes"></TextArea>
-						</template>
-						<template v-else-if="audit.number == 2">
-							<Label class="text-lg leading-6 w-full" for="second_audit_notes">Auditor Notes</Label>
-							<TextArea rows="14" class="w-full" id="second_audit_notes" v-model="issue.second_audit_notes"></TextArea>
+					<div class="flex w-1/2 flex-col mt-2 px-2">
+						<template v-if="audit.number == 2">
+							<Label class="text-lg leading-6 w-full" for="second_audit_comments">Second Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="second_audit_comments" v-model="issue.second_audit_comments"></TextArea>
 						</template>
 						<template v-else-if="audit.number == 3">
-							<Label class="text-lg leading-6 w-full" for="third_audit_notes">Auditor Notes</Label>
-							<TextArea rows="14" class="w-full" id="third_audit_notes" v-model="issue.third_audit_notes"></TextArea>
+							<Label class="text-lg leading-6 w-full" for="third_audit_comments">Third Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="third_audit_comments" v-model="issue.third_audit_comments"></TextArea>
 						</template>
 					</div>
-					
+					<div class="flex w-1/2 flex-col mt-2 px-2">
+						<Label class="text-lg leading-6 w-full" for="auditor_notes">Auditor Notes</Label>
+						<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
+					</div>
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
@@ -408,9 +407,9 @@ export default {
 			levels: [],
 			actrs: [],
 			audit_id: "",
-			first_audit_notes: "",
-			second_audit_notes: "",
-			third_audit_notes: "",
+			auditor_notes: "",
+			second_audit_comments: "",
+			third_audit_comments: "",
 			priority: "Low",
 			effort: "Low",
 		},
@@ -431,9 +430,9 @@ export default {
 			levels: [],
 			actrs: [],
 			audit_id: "",
-			first_audit_notes: "",
-			second_audit_notes: "",
-			third_audit_notes: "",
+			auditor_notes: "",
+			second_audit_comments: "",
+			third_audit_comments: "",
 			priority: "Low",
 			effort: "Low",
 		},
@@ -534,10 +533,10 @@ export default {
 				created_by: "250px",
 				issue_number: "150px",
 				priority: "150px",
-				first_audit_notes: "150px",
-				second_audit_notes: "150px",
-				third_audit_notes: "150px",
-				effort: "300px",
+				auditor_notes: "300px",
+				second_audit_comments: "300px",
+				third_audit_comments: "300px",
+				effort: "150px",
 			}
 			let hideByDefault = [
 				"id",
@@ -545,9 +544,6 @@ export default {
 				"resources",
 				"effort",
 				"priority",
-				"first_audit_notes",
-				"second_audit_notes",
-				"third_audit_notes",
 				"browser_combos",
 				"audit_id",
 				"created_at",
@@ -558,7 +554,7 @@ export default {
 			]
 			for( let key of Object.keys(this.audit.issues[0]) ){
 				arr.push({
-					header: this.parseHeader(key),
+					header: key == "recommendations" ? "Audit 1 Recommendations" : this.parseHeader(key),
 					show: !hideByDefault.includes(key),
 					sticky: key == "issue_number" || key == "id" ? true : false,
 					style: {},
@@ -629,10 +625,10 @@ export default {
 	},
 	methods: {
 		isHeaderHidePermanent(key){
-			if( this.audit.number == 1 && ( key == "second_audit_notes" || key == "third_audit_notes" ) ){
+			if( this.audit.number == 1 && ( key == "second_audit_comments" || key == "third_audit_comments" ) ){
 				return true
 			}
-			if( this.audit.number == 2 && key == "third_audit_notes" ){
+			if( this.audit.number == 2 && key == "third_audit_comments" ){
 				return true
 			}
 
@@ -803,7 +799,6 @@ export default {
 					if( prop == "descriptions" || prop == "recommendations" ){
 						pass = !!this.issue[prop] && this.issue[prop] != "<div><br></div>";
 					}
-					console.log(prop, pass);
 				}
 
 				if( !pass ){

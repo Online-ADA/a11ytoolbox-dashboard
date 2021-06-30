@@ -1,11 +1,11 @@
 <template>
 	<div class="flex flex-col relative px-5">
-		<div class="flex w-full px-10 mb-2 relative">
+		<div class="flex w-full px-10 mb-2 relative overflow-y-scroll">
 			<div class="flex flex-wrap items-end pb-3 w-full mx-auto">
 				<h2 class="w-full text-2xl my-3">Table description (what should this say?)</h2>
 				<div class="w-full flex">
-					<div class="w-1/4"></div>
-					<div class="w-2/4">
+					<div v-show="!condense" class="w-1/4"></div>
+					<div :class="condense ? 'w-full' : 'w-2/4'">
 						<p>Here is a list of the various functionality you can expect on the table below:</p>
 						<ul class="list-disc text-left mb-3">
 							<li><strong>Horizontal scrolling:</strong> at any point while focused inside the table, using the left and right arrow keys will scroll the table to the left and right</li>
@@ -14,7 +14,7 @@
 							<li><strong>Repositioning of Columns:</strong> Each column, while not frozen, can be moved left or right to reposition them within the table.</li>
 						</ul>
 					</div>
-					<div class="w-1/4"></div>
+					<div v-show="!condense" class="w-1/4"></div>
 				</div>
 				<h2 class="w-full text-base">
 					<div class="text-2xl">Search</div>
@@ -31,7 +31,7 @@
 					</select>
 				</div>
 				<div class="flex flex-col flex-1 mx-1">
-					<Label for="search-term">Search criteria</Label>
+					<Label for="search-criteria">Search criteria</Label>
 					<TextInput style="max-height:39px;" v-model="search.term" name="search-criteria" id="search-criteria" class="flex-1"></TextInput>
 				</div>
 				<Button style="margin-bottom:5px" class="ml-1" @click.native.prevent="submitTableSearch" :hover="true" color="orange">Submit</Button>
@@ -41,10 +41,9 @@
 					<div v-if="!locked" style="margin-top:1px;"><Button class="text-xs mx-1" @click.native.prevent="deselectAll" hover="true">Deselect all</Button></div>
 				</div>
 			</div>
-			<a class="skip-headers-row absolute bottom-0 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
 		</div>
 		<div tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-16">
-			
+			<a v-if="rows.length" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
 			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense}">
 				<thead>
 					<tr>
@@ -96,10 +95,10 @@
 				</thead>
 				<tbody>
 					<tr :aria-selected="selected.includes(data['id']) ? true : false" :id="index == 0 ? 'a' + data['issue_number'] : false" :class="rowClasses(data)" tabindex="0" @mousedown="down" @keydown="checkRowSelect(data, $event)" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
-						<td class="p-2" :ref="'columnData-'+ subIndex" :class="getTDClasses(subIndex, key)" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
-							<span>
-								<span class="text-left" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
-								<span :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
+						<td tabindex="-1" class="p-2" :ref="'columnData-'+ subIndex" :class="getTDClasses(subIndex, key)" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
+							<span tabindex="-1">
+								<span tabindex="-1" class="text-left" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
+								<span tabindex="-1" :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
 							</span>
 						</td>
 					</tr>
@@ -181,9 +180,9 @@
 					"effort", 
 					"how_discovered", 
 					"audit_id", 
-					"first_audit_notes", 
-					"second_audit_notes", 
-					"third_audit_notes", 
+					"auditor_notes", 
+					"second_audit_comments", 
+					"third_audit_comments", 
 					"created_at", 
 					"updated_at", 
 					"created_by"
@@ -442,7 +441,11 @@
 			document.querySelector("table").addEventListener( "keydown", function(e){
 				setTimeout(()=>{
 					if( e.code == "Tab" ){
-						document.activeElement.scrollIntoView({behavior: "smooth", inline:"center", block:"center"})
+						let inline = "center"
+						if( document.activeElement.nodeName == "TR"){
+							inline="start"
+						}
+						document.activeElement.scrollIntoView({behavior: "smooth", inline:inline, block:"center"})
 					}
 				}, 1)
 			})
@@ -455,11 +458,11 @@
 		},
 		watch:{
 			rows(val){
-				if( val.length ){
+				if( this.rows.length ){
 					document.querySelector('.skip-headers-row').addEventListener( "click", function(e){
 						let firstRow = document.querySelector('#a'+val[0]['issue_number'])
 						firstRow.focus()
-						firstRow.scrollIntoView({behavior: "smooth", inline:"center", block:"center"})
+						firstRow.scrollIntoView({behavior: "smooth", inline:"start", block:"center"})
 					})
 				}
 			},
@@ -492,7 +495,7 @@
 
 <style scoped>
 	.skip-headers-row{
-		transform:translateX(-400px);
+		transform: translateX(-1000%);
 	}
 	.skip-headers-row:focus{
 		transform:translateX(0px);
@@ -566,7 +569,7 @@
 		overflow-y: auto;
 		display: flex;
 	}
-	table.condensed td:not([data-key=descriptions]):not([data-key=recommendations]):not([data-key=first_audit_notes]):not([data-key=second_audit_notes]):not([data-key=third_audit_notes]):not([data-key=articles]):not([data-key=techniques]):not([data-key=target]):not([data-key=pages]) > *{
+	table.condensed td:not([data-key=descriptions]):not([data-key=recommendations]):not([data-key=auditor_notes]):not([data-key=second_audit_comments]):not([data-key=third_audit_comments]):not([data-key=articles]):not([data-key=techniques]):not([data-key=target]):not([data-key=pages]) > *{
 		align-items:center;
 	}
 	table .ql-editor{

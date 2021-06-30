@@ -11,7 +11,7 @@
         <div class="w-1/4"></div>
     </div>
 
-    <div class="w-full flex flex-wrap justify-center items-center mb-10">
+    <div class="w-full flex flex-wrap justify-center items-center mb-14">
         <div v-for="(audit, index) in filteredAudits" :key="'audit-'+index" class="bg-white" :class="[fullscreen === audit.id ? 'fixed inset-0 h-screen z-50 w-full' : 'w-1/2 my-3']" >
             <div :class="[fullscreen === audit.id ? 'fixed left-0 right-0 shadow-lg top-1.5' : '']" class="border border-pallette-grey h-auto p-4 rounded text-center mx-1.5">
                 <div class="flex pr-2 items-center justify-center">
@@ -184,7 +184,7 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "recommendations",
+                    header: "audit 1 recommendations",
                     show: true,
                     sticky: false,
                     style: {},
@@ -280,15 +280,15 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "first audit notes",
-                    show: false,
+                    header: "auditor notes",
+                    show: true,
                     sticky: false,
                     style: {},
                     width: "150px",
                     hidePermanent: false
                 },
                 {
-                    header: "second audit notes",
+                    header: "second audit comments",
                     show: false,
                     sticky: false,
                     style: {},
@@ -296,7 +296,7 @@ export default {
                     hidePermanent: this.primaryAudit.number == 2 || this.primaryAudit.number == 3
                 },
                 {
-                    header: "third audit notes",
+                    header: "third audit comments",
                     show: false,
                     sticky: false,
                     style: {},
