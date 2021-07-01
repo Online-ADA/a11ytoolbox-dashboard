@@ -258,27 +258,29 @@
 				}
 			},
 			sort( column ){
-				column = column.replaceAll(/[ ]/g, "_")
-				let index = this.sortData.columns.indexOf(column)
-				let indexOfID = this.sortData.columns.indexOf('id')
-				if( indexOfID >=0 ){
-					this.sortData.columns.splice(indexOfID, 1)
-					this.sortData.orders.splice(indexOfID, 1)
-				}
-				
-				if( index < 0 ){ //If sort.columns does not currently have this column
-					this.sortData.columns.push(column)
-					this.sortData.orders.push("asc")
-				} else if( index >= 0 && this.sortData.orders[index] == 'asc' ){ //If sort.columns currently has this column
-					this.sortData.orders[index] = 'desc'
-				} else {
-					this.sortData.columns.splice(index, 1)
-					this.sortData.orders.splice(index, 1)
-				}
+				if( column ){
+					column = column.replaceAll(/[ ]/g, "_")
+					let index = this.sortData.columns.indexOf(column)
+					let indexOfID = this.sortData.columns.indexOf('id')
+					if( indexOfID >=0 ){
+						this.sortData.columns.splice(indexOfID, 1)
+						this.sortData.orders.splice(indexOfID, 1)
+					}
+					
+					if( index < 0 ){ //If sort.columns does not currently have this column
+						this.sortData.columns.push(column)
+						this.sortData.orders.push("asc")
+					} else if( index >= 0 && this.sortData.orders[index] == 'asc' ){ //If sort.columns currently has this column
+						this.sortData.orders[index] = 'desc'
+					} else {
+						this.sortData.columns.splice(index, 1)
+						this.sortData.orders.splice(index, 1)
+					}
 
-				if( !this.sortData.columns.length ){
-					this.sortData.columns.push('id')
-					this.sortData.orders.push('asc')
+					if( !this.sortData.columns.length ){
+						this.sortData.columns.push('id')
+						this.sortData.orders.push('asc')
+					}
 				}
 
 				this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
@@ -468,6 +470,7 @@
 			},
 			rowsData(newVal){
 				this.columnData = JSON.parse(JSON.stringify(newVal))
+				this.sort()
 			},
 			headers(newVal){
 				this.search.column = newVal.filter( h=>h.show )[0].header
