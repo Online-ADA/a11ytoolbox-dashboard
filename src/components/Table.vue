@@ -97,8 +97,8 @@
 					<tr :aria-selected="selected.includes(data['id']) ? true : false" :id="index == 0 ? 'a' + data['issue_number'] : false" :class="rowClasses(data)" tabindex="0" @mousedown="down" @keydown="checkRowSelect(data, $event)" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
 						<td tabindex="-1" class="p-2" :ref="'columnData-'+ subIndex" :class="getTDClasses(subIndex, key)" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
 							<span tabindex="-1">
-								<span tabindex="-1" class="text-left" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
-								<span tabindex="-1" :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
+								<span tabindex="-1" class="text-left block" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
+								<span class="block" tabindex="-1" :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
 							</span>
 						</td>
 					</tr>

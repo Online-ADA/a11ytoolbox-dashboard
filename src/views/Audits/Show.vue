@@ -7,7 +7,7 @@
 			<A class="pr-3" type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
 			<A v-if="!audit.locked" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Import</A>
 			<button v-if="issues.length" @click="whichCSVModalOpen = true" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm">
-				<span class="sr-only">Download</span> CSV
+				Export
 			</button>
 			<h2 class="mb-3">{{audit.title}}</h2>
 			<span v-if="audit.locked" class="text-2xl"><i class="fas fa-lock" aria-hidden="true"></i></span>
@@ -325,10 +325,10 @@
 		<Modal style="z-index:60;" :open="whichCSVModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<Button aria-label="Close select descriptions modal" @click.native.prevent="whichCSVModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
-				<h2 class="text-center">Which CSV do you want to export?</h2>
+				<h2 class="text-center">Which item do you want to export?</h2>
 				<div class="flex my-4 justify-center">
-					<Button @click.native.prevent="getIssuesCSV" class="mx-2" color="orange" hover="true">Issues</Button>
-					<Button @click.native.prevent="getSampleCSV" class="mx-2" color="orange" hover="true">Working Sample</Button>
+					<Button @click.native.prevent="getIssuesCSV" class="mx-2" color="orange" hover="true">Issues (.xlsx spreadsheet)</Button>
+					<Button @click.native.prevent="getSampleCSV" class="mx-2" color="orange" hover="true">Working Sample (CSV)</Button>
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
