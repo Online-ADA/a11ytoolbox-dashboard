@@ -104,8 +104,8 @@
 				</thead>
 				<tbody>
 					<tr 
-					:aria-description="specialRows.includes(data.issue_number) ? 'This row cannot be selected because it cannot be removed.' : false"
-					:aria-selected="selected.includes(data['issue_number']) ? true : false"
+					:aria-description="!data.hasOwnProperty('unique') ? 'This row cannot be selected because it cannot be removed.' : false"
+					:aria-selected="selected.includes(data['unique']) ? true : false"
 					:id="index == 0 ? 'a' + data['issue_number'] : false"
 					:class="rowClasses(data)" 
 					tabindex="0" 
@@ -118,9 +118,9 @@
 						tabindex="-1" 
 						class="p-2" 
 						:ref="'columnData-'+ subIndex" 
-						:class="getTDClasses(subIndex, key)" 
-						:style="headers[subIndex].style" 
-						v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" 
+						:class="headers.hasOwnProperty(subIndex) ? getTDClasses(subIndex, key) : false" 
+						:style="headers.hasOwnProperty(subIndex) ? headers[subIndex].style : false" 
+						v-show="headers.hasOwnProperty(subIndex) && columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent ? true : false" 
 						:data-key="key" v-for="(value, key, subIndex) in data" 
 						:key="'key-'+subIndex">
 							<span tabindex="-1">
@@ -164,10 +164,9 @@
 			dragscroll
 		},
 		props:{
-			specialRows: {
-				default: function(){
-					return []
-				}
+			importing: {
+				type: Boolean,
+				default: false
 			},
 			condense: {
 				type: Boolean,
@@ -251,6 +250,12 @@
 				}
 
 				return this.columnData
+			},
+			originalRows(){
+				return this.rows.filter( r=>!r.hasOwnProperty('unique') )
+			},
+			importingRows(){
+				return this.rows.filter( r=>r.hasOwnProperty('unique') )
 			}
 		},
 		methods: {
@@ -265,11 +270,19 @@
 				return classes
 			},
 			selectAll(){
-				let self = this
-				this.$emit("selectAll", this.columnData.filter( c=>!self.specialRows.includes(c.issue_number) ).map( c=>c.issue_number)  )
+				if( this.importing ){
+					this.$emit("selectAll", this.importingRows.map( c=>c.unique)  )
+				}else{
+					this.$emit("selectAll", this.columnData.map( c=>c.id))
+				}
+				
 			},
 			deselectAll(){
-				this.$emit("deselectAll", this.columnData.map( c=>c.issue_number))
+				if( this.importing ){
+					this.$emit("deselectAll", this.importingRows.map( c=>c.unique))
+				}else{
+					this.$emit("deselectAll", this.columnData.map( c=>c.id))
+				}
 			},
 			moving(event){
 				if( this.dragData.dragging ){
@@ -283,7 +296,7 @@
 			up(data){
 				this.dragData.dragging = false
 				if( this.dragData.x === 0 && !this.locked ){
-					if( !this.specialRows.includes(data.issue_number) ){
+					if( (this.importing && data.hasOwnProperty('unique')) || !this.importing ){
 						this.$emit('rowClick', data)
 					}
 				}
@@ -291,7 +304,7 @@
 			checkRowSelect(data, e){
 				if( e.code == "Space" || e.code == "Enter" ){
 					e.preventDefault()
-					if( !this.specialRows.includes(data.issue_number) ){
+					if( (this.importing && data.hasOwnProperty('unique')) || !this.importing ){
 						this.$emit('rowClick', data)
 					}
 				}
@@ -365,6 +378,9 @@
 				this.columnPickerOpen = false
 			},
 			displayValue(key, data){
+				if( key == "unique" ){
+					return ""
+				}
 				if( this.plainKeys.includes(key) ){
 					return data
 				}
@@ -477,8 +493,14 @@
 			},
 			rowClasses(data){
 				let classes = []
-				this.selected.includes(data.issue_number) && !this.specialRows.includes(data.issue_number) ? classes.push('selected') : ''
-				this.specialRows.includes(data.issue_number) ? classes.push("no-select") : ''
+				if( this.importing ){
+					let imported = data.hasOwnProperty('unique')
+					imported && this.selected.includes(data.unique) ? classes.push('selected') : ''
+					!imported ? classes.push("no-select") : ''
+				}else{
+					this.selected.includes(data.id) ? classes.push('selected') : ''
+				}
+				
 				classes.push( data.status.toLowerCase().replaceAll(/[ ]/g, "-") )
 				return classes.join(" ")
 			},
@@ -506,7 +528,7 @@
 			rows(val){
 				if( this.rows.length ){
 					document.querySelector('.skip-headers-row').addEventListener( "click", function(e){
-						let firstRow = document.querySelector('#a'+val[0]['issue_number'])
+						let firstRow = document.querySelector('#a'+val[0].issue_number)
 						firstRow.focus()
 						firstRow.scrollIntoView({behavior: "smooth", inline:"start", block:"center"})
 					})
