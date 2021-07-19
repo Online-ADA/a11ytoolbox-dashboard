@@ -1,0 +1,99 @@
+.skip-headers-row{
+    transform: translateX(-1000%);
+}
+.skip-headers-row:focus{
+    transform:translateX(0px);
+}
+tr{
+    transition:transform .2s;
+    transform:translateY(0)
+}
+tr:before,
+tr:after{
+    content: " ";
+    position: absolute;
+    z-index: 21;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+tr:before {
+    top: 0;
+}
+tr:after {
+    bottom: 0;
+}
+tr.selected {
+    transform:translateY(-2px);
+}
+tr.selected td {
+    background-color: rgb(235, 140, 47) !important;
+}
+tr:focus td{
+    background-color:#1Dacd6 !important;
+}
+tr.selected:focus td{
+    background-color:#1Dacd6 !important;
+}
+
+tr:not(.selected):not(.no-select):focus:before,
+tr:not(.selected):not(.no-select):focus:after{
+    background: #000;
+}
+tr.selected:after,
+tr.selected:before{
+    background: linear-gradient(to right, transparent 25%, #000 0%), linear-gradient(to right, #fff0, #fff0);
+    background-size: 19px 2px, 100% 2px !important;
+}
+tr.no-select > td:after{
+    background-image: url('/lock.png');
+    background-size: 30px 40px;
+    background-repeat: no-repeat;
+    background-position: center;
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: .13;
+    z-index: -1;
+}
+
+td, th{
+    border:1px solid black;
+    transition:background-color .2s
+}
+th{
+    background-color: #FFFFFF;
+}
+table{
+    border-collapse:separate;
+    border-spacing:0;
+    min-width:2000px;
+    z-index:1
+}
+tr.new td{ background-color: #FFFFFF; }
+tr.resolved td{ background-color: #C5F8BE; }
+tr.partly-resolved td{ background-color: #FFF2CC; }
+tr.remains td{ background-color: #F4CCCC; }
+tr.regression td{ background-color: #D9D2E9; }
+tr.best-practice td{ background-color: #CFE2F3; }
+tr.third-party-problem td{ background-color: #D9D9D9; }
+tr.resolved-by-removal td{ background-color: #D9D9D9; }
+table.condensed td > *{
+    max-height: 82px;
+    height: 82px;
+    overflow-y: auto;
+    display: flex;
+}
+table.condensed td:not([data-key=descriptions]):not([data-key=recommendations]):not([data-key=auditor_notes]):not([data-key=second_audit_comments]):not([data-key=third_audit_comments]):not([data-key=articles]):not([data-key=techniques]):not([data-key=target]):not([data-key=pages]) > *{
+    align-items:center;
+}
+table .ql-editor{
+    cursor:default;
+    padding:initial;
+}
+.max-height-615 .mb-24{
+    margin-bottom: 1.25rem;
+}

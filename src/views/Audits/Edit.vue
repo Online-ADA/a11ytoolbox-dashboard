@@ -140,7 +140,8 @@
 				</div>
 			</template>
 			<div class="flex flex-wrap w-full justify-center">
-				<h2 class="my-2">Working Sample</h2>
+				<h2 class="mt-2 mb-1 w-full">Working Sample</h2>
+				<h3 v-if="audit.domain" class="text-base">{{audit.domain.url}}</h3>
 				<span class="text-base my-2">The working sample takes the structured list created with the domain and calculates 10% of the number of items in it. It will then grab that number of pages at random from the sitemap (if it was provided with the domain) and combine them to form the working sample.</span>
 				<span v-if="!loading && audit.pages.length" class="my-2 text-base"><span class="font-bold">Refresh Sample:</span> Pull in any changes made the the structured sample while retaining the original sitemap sample</span>
 				<span v-if="!loading && audit.pages.length" class="my-2 text-base"><span class="font-bold">Regenerate Sample:</span> Completely rebuild the working sample, including a new random sample from the sitemap, if provided.</span>
@@ -213,14 +214,11 @@ export default {
 		],
 		assigned: [],
 		unassigned: [],
-		// software_used_src: [
-		// 	"Android Browser", "Chrome - Latest", "Chrome for Android", "Edge - Latest", "Firefox - Latest", "Firefox for Android", "IE Mobile 11", "IE11", 
-		// 	"Safari - Latest", "iOS Safari -Latest", "Opera - Latest", "Opera Mini"
-		// ],
 		tech_requirements_src: [
 			"HTML5", "ECMAScript 3", "OOXML", "XHTML 1.0", "ECMAScript 5", "ODF 1.2", "HTML 4.01", "DOM", "SVG", "CSS", "Flash", "WAI-ARIA", "Silverlight"
 		],
 		audit: {
+			domain: {},
 			title: "",
 			essential_functionality: [],
 			additional_requirements: "",
@@ -439,9 +437,6 @@ export default {
 	},
 	created() {
 		this.$store.dispatch("audits/getAudit", {id: this.$route.params.id})
-	},
-	mounted() {
-		
 	},
 	components: {
 		Loader,

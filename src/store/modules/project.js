@@ -4,6 +4,7 @@ const getDefaultState = () => {
 	return {
 		all: [],
 		audits: [],
+		scans: [],
 		project: false,
 		loading: false,
 		usersLoading: false,
@@ -16,6 +17,7 @@ export default {
 		state: {
 			all: [],
 			audits: [],
+			scans: [],
 			project: false,
 			loading: false,
 			usersLoading: false,
@@ -171,6 +173,14 @@ export default {
 
 				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.project_id}/audits`)
 				.then( re=>state.audits = re.data.details)
+				.catch( re=>console.log(re))
+				.then( ()=>state.loading = false)
+			},
+			getScansForProject({state, rootState}, args){
+				state.loading = true
+
+				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.project_id}/scans`)
+				.then( re=>state.scans = re.data.details)
 				.catch( re=>console.log(re))
 				.then( ()=>state.loading = false)
 			},

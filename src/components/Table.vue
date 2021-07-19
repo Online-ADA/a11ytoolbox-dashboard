@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col relative px-5">
-		<div class="flex w-full px-10 mb-2 relative overflow-y-scroll">
+		<div class="flex w-full px-10 mb-2 relative overflow-y-auto h-1/3">
 			<div class="flex flex-wrap items-end pb-3 w-full mx-auto">
 				<h2 class="w-full text-2xl my-3">Table description (what should this say?)</h2>
 				<div class="w-full flex">
@@ -42,12 +42,21 @@
 				</div>
 			</div>
 		</div>
-		<div tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-16">
+		<div tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-24 h-2/3">
 			<a v-if="rows.length" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
 			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense}">
 				<thead>
 					<tr>
-						<th class="capitalize pt-5" v-show="columnsToShow.includes(header.header) && !header.hidePermanent" :ref="'header-' + index" :style="header.style" :width="header.width || false" :class="[header.sticky ? 'sticky z-20' : 'relative z-10']" scope="col" v-for="(header, index) in headers" :key="`header-${index}`">
+						<th 
+						class="capitalize pt-5" 
+						v-show="columnsToShow.includes(header.header) && !header.hidePermanent" 
+						:ref="'header-' + index" 
+						:style="header.style" 
+						:width="header.width || false" 
+						:class="[header.sticky ? 'sticky z-20' : 'relative z-10']" 
+						scope="col" 
+						v-for="(header, index) in headers" 
+						:key="`header-${index}`">
 							<div class="flex absolute top-1 justify-between w-full">
 								<button @click="moveColumn(index, index-1)" :class="[index !== 0 && !header.sticky && canMoveLeft(index) ? 'visible' : 'invisible']" aria-label="Move this column 1 space to the left" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 									<i class="fas fa-arrow-left"></i>
@@ -94,10 +103,29 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr :aria-selected="selected.includes(data['id']) ? true : false" :id="index == 0 ? 'a' + data['issue_number'] : false" :class="rowClasses(data)" tabindex="0" @mousedown="down" @keydown="checkRowSelect(data, $event)" @mouseup="up(data)" v-for="(data, index) in rows" :key="'row-'+index">
-						<td tabindex="-1" class="p-2" :ref="'columnData-'+ subIndex" :class="getTDClasses(subIndex, key)" :style="headers[subIndex].style" v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" :data-key="key" v-for="(value, key, subIndex) in data" :key="'key-'+subIndex">
+					<tr 
+					:aria-description="specialRows.includes(data.issue_number) ? 'This row cannot be selected because it cannot be removed.' : false"
+					:aria-selected="selected.includes(data['issue_number']) ? true : false"
+					:id="index == 0 ? 'a' + data['issue_number'] : false"
+					:class="rowClasses(data)" 
+					tabindex="0" 
+					@mousedown="down" 
+					@keydown="checkRowSelect(data, $event)" 
+					@mouseup="up(data)" 
+					v-for="(data, index) in rows" 
+					:key="'row-'+index">
+						<td 
+						tabindex="-1" 
+						class="p-2" 
+						:ref="'columnData-'+ subIndex" 
+						:class="getTDClasses(subIndex, key)" 
+						:style="headers[subIndex].style" 
+						v-show="columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent" 
+						:data-key="key" v-for="(value, key, subIndex) in data" 
+						:key="'key-'+subIndex">
 							<span tabindex="-1">
 								<span tabindex="-1" class="text-left block" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
+								<span class="block break-words" tabindex="-1" v-else-if="key == 'target'" >{{displayValue(key, value)}}</span>
 								<span class="block" tabindex="-1" :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
 							</span>
 						</td>
@@ -136,6 +164,11 @@
 			dragscroll
 		},
 		props:{
+			specialRows: {
+				default: function(){
+					return []
+				}
+			},
 			condense: {
 				type: Boolean,
 				default: false
@@ -172,6 +205,7 @@
 				plainKeys : [
 					"id", 
 					"issue_number", 
+					"group_id", 
 					"descriptions", 
 					"recommendations", 
 					"status", 
@@ -231,10 +265,11 @@
 				return classes
 			},
 			selectAll(){
-				this.$emit("selectAll", this.columnData.map( c=>c.id))
+				let self = this
+				this.$emit("selectAll", this.columnData.filter( c=>!self.specialRows.includes(c.issue_number) ).map( c=>c.issue_number)  )
 			},
 			deselectAll(){
-				this.$emit("deselectAll", this.columnData.map( c=>c.id))
+				this.$emit("deselectAll", this.columnData.map( c=>c.issue_number))
 			},
 			moving(event){
 				if( this.dragData.dragging ){
@@ -248,13 +283,17 @@
 			up(data){
 				this.dragData.dragging = false
 				if( this.dragData.x === 0 && !this.locked ){
-					this.$emit('rowClick', data)
+					if( !this.specialRows.includes(data.issue_number) ){
+						this.$emit('rowClick', data)
+					}
 				}
 			},
 			checkRowSelect(data, e){
 				if( e.code == "Space" || e.code == "Enter" ){
 					e.preventDefault()
-					this.$emit('rowClick', data)
+					if( !this.specialRows.includes(data.issue_number) ){
+						this.$emit('rowClick', data)
+					}
 				}
 			},
 			sort( column ){
@@ -331,7 +370,7 @@
 				}
 				if( !this.plainKeys.includes(key) && !this.specialKeys.includes(key) ){
 					let output = ""
-					if( data.length ){
+					if( data && data.length ){
 						output = "<ul><li class='list-disc break-words'>"
 						output += data.join("</li><li class='list-disc break-words'>")
 						output += "</li></ul>"
@@ -340,13 +379,17 @@
 					return output
 				}
 				if( this.specialKeys.includes(key) ){
-					let mapped = data.map( d => d.display)
 					let output = ""
-					if( mapped.length ){
-						output = "<ul><li class='list-disc break-words'>"
-						output += mapped.join("</li><li class='list-disc break-words'>")
-						output += "</li></ul>"
+					if( data ){
+						let mapped = data.map( d => d.display)
+						
+						if( mapped.length ){
+							output = "<ul><li class='list-disc break-words'>"
+							output += mapped.join("</li><li class='list-disc break-words'>")
+							output += "</li></ul>"
+						}
 					}
+					
 					
 					return output
 				}
@@ -434,7 +477,8 @@
 			},
 			rowClasses(data){
 				let classes = []
-				this.selected.includes(data.id) ? classes.push('selected') : ''
+				this.selected.includes(data.issue_number) && !this.specialRows.includes(data.issue_number) ? classes.push('selected') : ''
+				this.specialRows.includes(data.issue_number) ? classes.push("no-select") : ''
 				classes.push( data.status.toLowerCase().replaceAll(/[ ]/g, "-") )
 				return classes.join(" ")
 			},
@@ -495,88 +539,3 @@
 		}
 	}
 </script>
-
-<style scoped>
-	.skip-headers-row{
-		transform: translateX(-1000%);
-	}
-	.skip-headers-row:focus{
-		transform:translateX(0px);
-	}
-	tr{
-		transition:transform .2s;
-		transform:translateY(0)
-	}
-	tr:before,
-	tr:after{
-		content: " ";
-		position: absolute;
-		z-index: 21;
-		left: 0;
-		right: 0;
-		height: 4px;
-	}
-	tr:before {
-		top: 0;
-	}
-	tr:after {
-		bottom: 0;
-	}
-	tr.selected {
-		transform:translateY(-2px);
-	}
-	tr.selected td {
-		background-color: rgb(235, 140, 47) !important;
-	}
-	tr:focus td{
-		background-color:#1Dacd6 !important;
-	}
-	tr.selected:focus td{
-		background-color:#1Dacd6 !important;
-	}
-	
-	tr:not(.selected):focus:before,
-	tr:not(.selected):focus:after{
-		background: #000;
-	}
-	tr.selected:after,
-	tr.selected:before{
-		background: linear-gradient(to right, transparent 25%, #000 0%), linear-gradient(to right, #fff0, #fff0);
-		background-size: 19px 2px, 100% 2px !important;
-	}
-	
-	td, th{
-		border:1px solid black;
-		transition:background-color .2s
-	}
-	th{
-		background-color: #FFFFFF;
-	}
-	table{
-		border-collapse:separate;
-		border-spacing:0;
-		min-width:2000px;
-		z-index:1
-	}
-	tr.new td{ background-color: #FFFFFF; }
-	tr.resolved td{ background-color: #C5F8BE; }
-	tr.partly-resolved td{ background-color: #FFF2CC; }
-	tr.remains td{ background-color: #F4CCCC; }
-	tr.regression td{ background-color: #D9D2E9; }
-	tr.best-practice td{ background-color: #CFE2F3; }
-	tr.third-party-problem td{ background-color: #D9D9D9; }
-	tr.resolved-by-removal td{ background-color: #D9D9D9; }
-	table.condensed td > *{
-		max-height: 82px;
-		height: 82px;
-		overflow-y: auto;
-		display: flex;
-	}
-	table.condensed td:not([data-key=descriptions]):not([data-key=recommendations]):not([data-key=auditor_notes]):not([data-key=second_audit_comments]):not([data-key=third_audit_comments]):not([data-key=articles]):not([data-key=techniques]):not([data-key=target]):not([data-key=pages]) > *{
-		align-items:center;
-	}
-	table .ql-editor{
-		cursor:default;
-		padding:initial;
-	}
-</style>

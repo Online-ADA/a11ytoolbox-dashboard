@@ -3,13 +3,17 @@
 		<Loader v-if="loading"></Loader>
 		
 		<template v-if="audit">
-			<A v-if="!audit.locked || isManager" class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
-			<A class="pr-3" type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
-			<A v-if="!audit.locked" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Import</A>
-			<button v-if="issues.length" @click="whichCSVModalOpen = true" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm">
-				Export
-			</button>
-			<h2 class="mb-3">{{audit.title}}</h2>
+			<div class="flex w-full justify-center items-center">
+				<A v-if="!audit.locked || isManager" class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
+				<A class="pr-3" type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
+				<A v-if="!audit.locked" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Import</A>
+				<button v-if="issues.length" @click="whichCSVModalOpen = true" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm">
+					Export
+				</button>
+				<A type='router-link' :to="{name: `NewScan`, params: {type:'audit', id: $route.params.id} }">Initiate Scan</A>
+			</div>
+			<h2 class="mb-1">{{audit.title}}</h2>
+			<h3 class="mb-3 text-base">{{audit.domain.url}}</h3>
 			<span v-if="audit.locked" class="text-2xl"><i class="fas fa-lock" aria-hidden="true"></i></span>
 			<h3 class="text-base" v-if="audit.locked">This audit is locked and cannot be modified</h3>
 			<Table :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>

@@ -6,7 +6,7 @@
 <script>
     export default {
         props:{
-            'stacked': {
+            stacked: {
                 type: Boolean,
                 default: true
             },
@@ -21,7 +21,5 @@
                 return 'block'
             },
         },
-        components:{
-        }
     }
 </script>

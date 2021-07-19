@@ -1,0 +1,79 @@
+<template>
+    <div class="px-2 w-full mb-2">
+        <div 
+        class="flex w-full items-center" 
+        :class="[align=='center' ? 'justify-center' : align == 'left' ? 'justify-start' : align=='right' ? 'justify-flex-end' : '']" >
+            <div class="radio relative mx-2" v-for="(item, index) in items" :key="`${groupName} - ${index}`">
+                <input 
+                :aria-labelledby="groupName + '-' + index + '-label'" 
+                class="absolute top-0 left-0 z-0" 
+                v-model="selected" 
+                :name="groupName" 
+                type="radio" 
+                :id="groupName + '-' + index" 
+                :value="item.value" 
+                />
+                <button @click="select(index)" tabindex="-1" class="hover:bg-pallette-orange hover:text-white bg-white text-pallette-grey border-pallette-grey border-opacity-40 shadow border px-2 py-1 font-button rounded uppercase transition-colors duration-100 relative z-10">
+                    <span :id="groupName + '-' + index + '-label'">{{item.display}}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    props: {
+        items: {
+            default: function(){
+                return [{
+                    display: "no items",
+                    value: "0"
+                }]
+            }
+        },
+        align: {
+            default : 'left'
+        }
+    },
+    data(){
+        return {
+            groupName: "x" + Math.random().toString(36).substring(5),
+            selected: this.$attrs.value ? this.$attrs.value : this.items.length ? this.items[0].value : false
+        }
+    },
+    watch:{
+        selected(newVal){
+            this.$emit("input", newVal)
+        },
+        "$attrs.value": function(newVal){
+            this.selected = newVal
+        }
+    },
+    methods:{
+        select(index){
+            this.selected = this.items[index].value
+        }
+    },
+}
+</script>
+<style scoped>
+    .radio input ~ button {
+        background-color: #fff;
+        color: #000;
+    }
+    .radio input:checked ~ button {
+        background-color: rgb(235, 140, 47);
+        color: #fff;
+    }
+    input[type="radio"]:focus{
+        outline:0;
+        border:0;
+        top:5px;
+        left:5px;
+    }
+    input[type="radio"]:focus ~ button{
+      outline: 2px dashed black;
+      outline-offset: 2px;
+    }
+</style>

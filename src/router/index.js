@@ -11,6 +11,23 @@ const routes = [
     component: Home
   },
   {
+    path:'/scan',
+    name: "Scan",
+    component: () => import(/* webpackChunkName: "scan" */ '../views/Scan/Index.vue'),
+    children: [
+      {
+        path: "history",
+        name: "ScanHistory",
+        component: () => import(/* webpackChunkName: "scan" */ '../views/Scan/List.vue')
+      },
+      {
+        path: "new",
+        name: "NewScan",
+        component: () => import(/* webpackChunkName: "scan" */ '../views/Scan/New.vue')
+      },
+    ]
+  },
+  {
     path: "/domains",
     name: "Domains",
     component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/Index.vue'),

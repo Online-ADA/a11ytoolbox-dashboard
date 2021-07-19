@@ -3,7 +3,8 @@
 		<Loader v-if="loading"></Loader>
 		
 		<A class="pr-3" type='router-link' :to="{path: `/domains/${$route.params.id}/edit`}">Edit Domain</A>
-		<A type='router-link' :to="{path: `/projects/${domain.project_id}`}">View Project</A>
+		<A class="pr-3" type='router-link' :to="{path: `/projects/${domain.project_id}`}">View Project</A>
+		<A type='router-link' :to="{name: `NewScan`, params: {type:'domain', id: $route.params.id} }">Initiate Scan</A>
 		<h2 class="mb-1">{{domain.title}}</h2>
 		<h3 class="mb-3">{{domain.url}}</h3>
 		

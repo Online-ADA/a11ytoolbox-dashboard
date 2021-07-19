@@ -117,7 +117,23 @@ export default {
               to: '/audits/create'
             },
           ]
-        }
+        },
+        // {
+        //   type: 'dropdown',
+        //   label: 'Scan',
+        //   children: [
+        //     {
+        //       type: 'router-link',
+        //       label: 'Start New',
+        //       to: '/scan/new'
+        //     },
+        //     {
+        //       type: 'router-link',
+        //       label: 'My History',
+        //       to: '/scan/list'
+        //     },
+        //   ]
+        // }
       ]
     }
   },
