@@ -45,7 +45,7 @@ export default {
     created() {
     },
     mounted() {
-        this.$store.dispatch("projects/getProjects", {router: this.$router})
+        this.$store.dispatch("projects/getProjects")
     },
     components: {
       Loader,

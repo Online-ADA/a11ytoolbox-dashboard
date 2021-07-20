@@ -27,8 +27,8 @@
                     <Btn v-if="auditFullscreen !== audit.id" aria-label="Expand this audit to full screen" @click.native.prevent="setFullscreen(audit.id, 'audit')" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
                     <Btn v-if="auditFullscreen === audit.id" aria-label="Compress this audit back down" @click.native.prevent="setFullscreen(false, 'audit')" hover="true" color="white"><i class="fas fa-compress"></i></Btn>
                 </div>
-                <Table :importing="true" v-if="audit.id !== primaryAudit.id" :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :selected="selectedAuditRows" @deselectAll="deselectAll" @selectAll="selectAll" @rowClick="selectAuditRow" :rowsData="audit.issues" :headersData="headers"></Table>
-                <Table :importing="true" class="primary-audit-table" v-else :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :rowsData="primaryAuditIssues" @deselectAll="primaryDeselectAll" @selectAll="primarySelectAll" :headersData="headers" @rowClick="selectImportRow" :selected="selectedImportRows"></Table>
+                <Table :issuesTable="true" :importing="true" v-if="audit.id !== primaryAudit.id" :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :selected="selectedAuditRows" @deselectAll="deselectAll" @selectAll="selectAll" @rowClick="selectAuditRow" :rowsData="audit.issues" :headersData="headers"></Table>
+                <Table :issuesTable="true" :importing="true" class="primary-audit-table" v-else :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :rowsData="primaryAuditIssues" @deselectAll="primaryDeselectAll" @selectAll="primarySelectAll" :headersData="headers" @rowClick="selectImportRow" :selected="selectedImportRows"></Table>
                 <Btn v-if="selectedImportRows.length > 0 && audit.id === primaryAudit.id" @click.native.prevent="removeFromImport(selectedImportRows)" class="mx-2" color="orange" hover="true">Remove selected</Btn>
             </div>
         </div>
@@ -40,7 +40,7 @@
                     <Btn v-if="scanFullscreen !== scan.id" aria-label="Expand this scan to full screen" @click.native.prevent="setFullscreen(scan.id, 'scan')" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
                     <Btn v-if="scanFullscreen === scan.id" aria-label="Compress this scan back down" @click.native.prevent="setFullscreen(false, 'scan')" hover="true" color="white"><i class="fas fa-compress"></i></Btn>
                 </div>
-                <Table :importing="true" :class="[ scanFullscreen === scan.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :selected="selectedScanRows" @deselectAll="deselectAll" @selectAll="selectAll" @rowClick="selectScanRow" :rowsData="scan.issues" :headersData="headers"></Table>
+                <Table :issuesTable="true" :importing="true" :class="[ scanFullscreen === scan.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :selected="selectedScanRows" @deselectAll="deselectAll" @selectAll="selectAll" @rowClick="selectScanRow" :rowsData="scan.issues" :headersData="headers"></Table>
             </div>
         </div>
     </div>
@@ -75,7 +75,7 @@
         <div class="bg-white px-4 pt-5 pb-4 p-6">
             <Btn aria-label="Close compare issues modal" @click.native.prevent="compareIssuesModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Btn>
             <h2 class="text-center">Compare Issues for Importing</h2>
-            <Table :importing="true" :condense="true" ref="compareTable" :selected="selectedCompareRows" @rowClick="selectCompareRow" :rowsData="issuesCompare" :headersData="headers"></Table>
+            <Table :issuesTable="true" :importing="true" :condense="true" ref="compareTable" :selected="selectedCompareRows" @rowClick="selectCompareRow" :rowsData="issuesCompare" :headersData="headers"></Table>
         </div>
         <div class="bg-gray-50 px-4 py-3 flex">
             <button @click.prevent="addSelectedComparesToAudit()" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">

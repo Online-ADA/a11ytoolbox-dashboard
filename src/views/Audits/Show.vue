@@ -16,7 +16,7 @@
 			<h3 class="mb-3 text-base">{{audit.domain.url}}</h3>
 			<span v-if="audit.locked" class="text-2xl"><i class="fas fa-lock" aria-hidden="true"></i></span>
 			<h3 class="text-base" v-if="audit.locked">This audit is locked and cannot be modified</h3>
-			<Table :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
+			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
@@ -140,7 +140,7 @@
 						<div class="flex-1 mx-2">
 							<Label class="text-lg leading-6">
 								Screenshots
-								<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
+								<Card :gutters="false" :center="false" class="overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.screenshots" :key="`screen-${i}`">
 										<TextInput class="flex-1" name="screenshots" id="screenshots" v-model="issue.screenshots[i]"></TextInput>
 										<Button class="ml-1" :aria-label="'Remove screenshot ' + issue.screenshots[i]" :hover="true" @click.native.prevent="removeScreenshot(i)"><i class="fas fa-trash-alt"></i></Button>
@@ -153,7 +153,7 @@
 						<div class="flex-1 mx-2">
 							<Label class="text-lg leading-6">
 								Resources
-								<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
+								<Card :gutters="false" :center="false" class="overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.resources" :key="`resource-${i}`">
 										<TextInput class="flex-1" name="resources" id="resources" v-model="issue.resources[i]"></TextInput>
 										<Button :aria-label="'Remove resource ' + issue.resources[i]" class="ml-1" :hover="true" @click.native.prevent="removeResource(i)"><i class="fas fa-trash-alt"></i></Button>
@@ -177,7 +177,7 @@
 
 					<div class="flex w-full justify-evenly mt-2">
 						<div class="w-1/2 flex flex-col px-2">
-							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Descriptions <small>(Note: this editor is not fully accessible)</small></Label>
+							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Success Criteria Descriptions <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
 							<div class="flex items-start mb-1">
 								<Button class="mr-2" @click.native.prevent="selectDescriptionsModalOpen = true" color="orange" hover="true">Add Descriptions</Button>

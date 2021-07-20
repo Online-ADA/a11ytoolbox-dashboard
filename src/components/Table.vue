@@ -44,7 +44,7 @@
 		</div>
 		<div tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-24 h-2/3">
 			<a v-if="rows.length" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
-			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense}">
+			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense, 'issues-table':issuesTable}">
 				<thead>
 					<tr>
 						<th 
@@ -164,6 +164,10 @@
 			dragscroll
 		},
 		props:{
+			issuesTable: {
+				type: Boolean,
+				default: false
+			},
 			importing: {
 				type: Boolean,
 				default: false

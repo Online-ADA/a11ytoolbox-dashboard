@@ -118,6 +118,11 @@ export default {
             },
           ]
         },
+        {
+          type: 'router-link',
+          label: 'Scan History',
+          to: '/scan/history'
+        },
         // {
         //   type: 'dropdown',
         //   label: 'Scan',

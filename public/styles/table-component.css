@@ -67,10 +67,12 @@ td, th{
 th{
     background-color: #FFFFFF;
 }
+table.issues-table{
+    min-width:2000px;
+}
 table{
     border-collapse:separate;
     border-spacing:0;
-    min-width:2000px;
     z-index:1
 }
 tr.new td{ background-color: #FFFFFF; }
