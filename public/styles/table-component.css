@@ -69,6 +69,7 @@ th{
 }
 table.issues-table{
     min-width:2000px;
+    z-index:1
 }
 table{
     border-collapse:separate;
