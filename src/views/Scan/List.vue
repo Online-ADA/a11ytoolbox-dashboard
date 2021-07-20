@@ -29,16 +29,6 @@
                     </tr>
                 </tbody>
             </table>
-            <ul class="text-center">
-                <li v-for="(scan, id) in scans" :key="id">
-                    <span class="text-lg">{{scan.title}}</span>
-                    <span class="px-3">-</span>
-                    <span class="px-3">{{ scan.issues.length }} issues found</span>
-                    <!-- <A class="pr-2" type="router-link" :to="{path: `/audits/${audit.id}`}">view</A>
-                    <A type="router-link" :to="{path: `/audits/${audit.id}/edit`}">edit</A> -->
-                    
-                </li>
-            </ul>
         </div>
         <div class="text-center" v-if="!loading && !scans.length">
             <h2>There are no scans for this project</h2>
