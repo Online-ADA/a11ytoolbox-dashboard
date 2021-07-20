@@ -16,7 +16,7 @@
 		@apply text-xl;
 	}
 	select {
-		@apply block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow;
+		@apply block border cursor-pointer focus:ring-1 outline-none ring-pallette-blue p-2 rounded shadow;
 	}
 	table :not(.ql-editor) ol{
 		@apply list-decimal pl-4;

@@ -24,7 +24,7 @@
                     classes.push("border-opacity-40");
                     classes.push("shadow");
                     if( this.hover ){
-                        classes.push("hover:bg-pallette-orange");
+                        classes.push("hover:bg-pallette-red");
                         classes.push("hover:text-white");
                     }
                 }
@@ -39,6 +39,13 @@
                     classes.push("text-white");
                     if( this.hover ){
                         classes.push("hover:bg-pallette-orange-dark");
+                    }
+                }
+                if( this.color == "red" ){
+                    classes.push("bg-pallette-red-light");
+                    classes.push("text-white");
+                    if( this.hover ){
+                        classes.push("hover:bg-pallette-red");
                     }
                 }
                 if( this.color == "grey" ){

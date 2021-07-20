@@ -25,7 +25,7 @@
 			<div class="w-full flex justify-center">
 				<div class="px-2">
 					<Label for="status">Status</Label>
-					<select v-model="audit.status" id="status" class="mx-auto" name="status">
+					<select v-model="audit.status" id="status" class="mx-auto " name="status">
 						<option :value="status.value" v-for="(status, index) in statusSrc" :key="`status-${index}`">{{status.name}}</option>
 					</select>
 				</div>
@@ -162,7 +162,7 @@
 								<span>Screen</span>
 								<TextInput v-model="newSampleItem.screen"></TextInput>
 							</Label>
-							<Button style="margin-bottom:13px" class="ml-3" color="orange" @click.native.prevent="addNewSampleItem">Add Item</Button>
+							<Button style="margin-bottom:13px" class="ml-3" color="red" hover="true" @click.native.prevent="addNewSampleItem">Add Item</Button>
 						</div>
 						
 						<h4 class="my-3">Items</h4>
@@ -184,10 +184,10 @@
 								</tbody>
 							</table>
 						</Card>
-						<Button @click.native.prevent="emptySample" style="color:white" class="bg-red-600 hover:bg-red-700 mr-3">Remove all</Button>
-						<Button @click.native.prevent="resetSample" color="orange" hover="true">Reset</Button>
+						<Button @click.native.prevent="emptySample" color="red" hover="true" class="mr-3">Remove all</Button>
+						<Button @click.native.prevent="resetSample" color="red" hover="true">Reset</Button>
 					</Card>
-					<Button class="mx-auto block my-3" @click.native.prevent="saveAudit">Save</Button>
+					<Button class="mx-auto block my-3 hover:bg-pallette-red hover:text-white" @click.native.prevent="saveAudit">Save</Button>
 				</template>
 			</div>
 

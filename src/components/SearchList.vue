@@ -78,7 +78,7 @@ export default {
         return {
             search: '',
             display: '',
-            activeClass:'bg-pallette-orange',
+            activeClass:'bg-pallette-red',
             activeStyle: {
                 color: 'white !important'
             },

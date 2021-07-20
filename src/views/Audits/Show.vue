@@ -18,29 +18,29 @@
 			<h3 class="text-base" v-if="audit.locked">This audit is locked and cannot be modified</h3>
 			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
-				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
+				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
 		</template>
 		<div class="bg-white w-full border-t border-black p-4 flex justify-between fixed bottom-0 left-0" style="z-index:25;">
 			<div class="flex w-1/3 items-center">
-				<Button class="mx-2" :color="shouldCondense ? 'orange' : 'white'" @click.native.prevent="shouldCondense = !shouldCondense">
+				<Button class="mx-2" :color="shouldCondense ? 'red' : 'white'" @click.native.prevent="shouldCondense = !shouldCondense">
 					<span v-if="!shouldCondense">Condense </span>
 					<span v-else>Expand </span>
 					Table
 				</Button>
-				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="editIssue" class="mx-2" color="orange" hover="true">Edit Issue</Button>
-				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="createFromCopy" class="mx-2" color="orange" hover="true">Copy Issue</Button>
+				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="editIssue" class="mx-2" color="red" hover="true">Edit Issue</Button>
+				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="createFromCopy" class="mx-2" color="red" hover="true">Copy Issue</Button>
 				<Button v-if="selectedRows.length > 1 && !audit.locked" @click.native.prevent="confirmDeleteModalOpen = true" class="mx-2" color="delete" hover="true">Delete Issues</Button>
-				<Button v-if="selectedRows.length < 1 && !audit.locked" @click.native.prevent="newIssue" class="mx-2" color="orange" hover="true">Add Issue</Button>
-				<Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'orange' : 'white'" :hover="true">Dark Mode</Button>
+				<Button v-if="selectedRows.length < 1 && !audit.locked" @click.native.prevent="newIssue" class="mx-2" color="red" hover="true">Add Issue</Button>
+				<Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'red' : 'white'" :hover="true">Dark Mode</Button>
 			</div>
 			<div class="w-1/3 flex flex-wrap items-center justify-center">
 				<span aria-live="polite" aria-atomic="true">Issues Selected: {{selectedRows.length}}</span>
 				<div class="w-full mt-2">Total Issues: {{issues.length}}</div>
 			</div>
 			<div class="flex w-1/3 justify-end items-center">
-				<Button v-if="!audit.locked" @click.native.prevent="markComplete" class="mx-2" color="orange" hover="true">Complete Audit</Button>
-				<Button v-if="audit.locked && audit.number > 0 < 3" @click.native.prevent="createNextAudit" class="mx-2" color="orange" hover="true">Create next audit</Button>
+				<Button v-if="!audit.locked" @click.native.prevent="markComplete" class="mx-2" color="red" hover="true">Complete Audit</Button>
+				<Button v-if="audit.locked && audit.number > 0 < 3" @click.native.prevent="createNextAudit" class="mx-2" color="red" hover="true">Create next audit</Button>
 			</div>
 		</div>
 		
@@ -109,7 +109,7 @@
 									</select>
 								</div>
 							</div>
-							<Button style="margin-top:40px" class="py-2 px-2" color="orange" hover="true" @click.native.prevent="addBrowserCombo">Add Combo</Button>
+							<Button style="margin-top:40px" class="py-2 px-2" color="red" hover="true" @click.native.prevent="addBrowserCombo">Add Combo</Button>
 							<div class="flex-1 mx-2">
 								<Label style="margin-bottom:0;" for="browser_combos" class="text-lg leading-6">
 									Browser Combinations
@@ -180,15 +180,15 @@
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Success Criteria Descriptions <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
 							<div class="flex items-start mb-1">
-								<Button class="mr-2" @click.native.prevent="selectDescriptionsModalOpen = true" color="orange" hover="true">Add Descriptions</Button>
-								<Button @click.native.prevent="addIssueReferenceLinkModalOpen = true" color="orange" hover="true">Add issue reference</Button>
+								<Button class="mr-2" @click.native.prevent="selectDescriptionsModalOpen = true" color="red" hover="true">Add Descriptions</Button>
+								<Button @click.native.prevent="addIssueReferenceLinkModalOpen = true" color="red" hover="true">Add issue reference</Button>
 							</div>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1" ></div>
 						</div>
 						<div class="w-1/2 flex flex-col px-2">
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
-							<Button class="self-start mb-1" @click.native.prevent="selectRecommendationsModalOpen = true" color="orange" hover="true">Add Recommendations</Button>
+							<Button class="self-start mb-1" @click.native.prevent="selectRecommendationsModalOpen = true" color="red" hover="true">Add Recommendations</Button>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
 						</div>
 					</div>
@@ -288,7 +288,7 @@
 				<select aria-label="Select descriptions" class="m-2 w-full" multiple v-model="selectedDescriptions">
 					<option :value="articles.find( a=>a.id == option.id)" v-for="(option, index) in issue.articles" :key="'descriptions-'+index">{{articles.find( a=>a.id == option.id).number}}</option>
 				</select>
-				<Button @click.native.prevent="addSelectedDescriptions" class="mx-2" color="orange" hover="true">Add</Button>
+				<Button @click.native.prevent="addSelectedDescriptions" class="mx-2" color="red" hover="true">Add</Button>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
 				<button @click="selectDescriptionsModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700  w-auto text-sm">
@@ -303,7 +303,7 @@
 				<select aria-label="Select recommendations" class="m-2 w-full" multiple v-model="selectedRecommendations">
 					<option :value="option" v-for="(option, index) in filteredRecommendations" :key="'recommendations-'+index">{{option.description}}</option>
 				</select>
-				<Button @click.native.prevent="addSelectedRecommendations" class="mx-2" color="orange" hover="true">Add</Button>
+				<Button @click.native.prevent="addSelectedRecommendations" class="mx-2" color="red" hover="true">Add</Button>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
 				<button @click="selectRecommendationsModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700  w-auto text-sm">
@@ -331,8 +331,8 @@
 				<Button aria-label="Close select descriptions modal" @click.native.prevent="whichCSVModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<h2 class="text-center">Which item do you want to export?</h2>
 				<div class="flex my-4 justify-center">
-					<Button @click.native.prevent="getIssuesCSV" class="mx-2" color="orange" hover="true">Issues (.xlsx spreadsheet)</Button>
-					<Button @click.native.prevent="getSampleCSV" class="mx-2" color="orange" hover="true">Working Sample (CSV)</Button>
+					<Button @click.native.prevent="getIssuesCSV" class="mx-2" color="red" hover="true">Issues (.xlsx spreadsheet)</Button>
+					<Button @click.native.prevent="getSampleCSV" class="mx-2" color="red" hover="true">Working Sample (CSV)</Button>
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">

@@ -41,7 +41,7 @@
 					<select class="w-1/2 block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" name="choose_domain" id="choose_select">
 						<option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">{{domain.url}}</option>
 					</select>
-					<Button class="mt-3" @click.native.prevent="setComplete" color="orange" hover="true">Continue</Button>
+					<Button class="mt-3" @click.native.prevent="setComplete" color="red" hover="true">Continue</Button>
 					<h2 class="my-3">Or create a new one</h2>
 					<Form class="flex flex-wrap" @submit.native.prevent>
 						<div class="w-1/12"></div>

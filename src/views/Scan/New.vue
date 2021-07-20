@@ -24,7 +24,7 @@
                 </template>
 
                 <template v-if="!isManager">
-                    <Button class="mx-auto" :color="[custom ? 'orange' : 'white']" :hover="true" @click.native.prevent="custom = !custom">Advanced</Button>
+                    <Button class="mx-auto" :color="[custom ? 'red' : 'white']" :hover="true" @click.native.prevent="custom = !custom">Advanced</Button>
                 </template>
                 <template v-if="custom && simple">
                     <!--

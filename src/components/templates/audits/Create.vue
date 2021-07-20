@@ -153,7 +153,7 @@
 								<span>Screen</span>
 								<TextInput v-model="newSampleItem.screen"></TextInput>
 							</Label>
-							<Button style="margin-bottom:13px" class="ml-3" color="orange" @click.native.prevent="addNewSampleItem">Add Item</Button>
+							<Button style="margin-bottom:13px" class="ml-3" color="red" @click.native.prevent="addNewSampleItem">Add Item</Button>
 						</div>
 						
 						<h4 class="my-3">Items</h4>

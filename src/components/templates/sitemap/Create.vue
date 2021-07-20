@@ -56,15 +56,15 @@
 
 					<Button class="ml-2 self-end pb-2.5" color="delete" @click.native.prevent="popStructuredItem(index)"><i class="far fa-trash-alt"></i></Button>
 				</div>
-				<Button class="" color="orange" @click.native.prevent="saveStructuredList">Save List</Button>
-				<Button class="ml-2" color="orange" @click.native.prevent="addStructuredItem">Add</Button>
+				<Button class="" color="red" @click.native.prevent="saveStructuredList">Save List</Button>
+				<Button class="ml-2" color="red" @click.native.prevent="addStructuredItem">Add</Button>
 			</div>
 		</Modal>
 
 		<div class="w-full flex">
 			<Card class="flex-1 p-4 mx-2">
 				<h3 class="mt-3 mb-1">Structured Sample</h3>
-				<Button class="" color="orange" @click.native.prevent="structuredListModalOpen =true">Add</Button>
+				<Button class="" color="red" @click.native.prevent="structuredListModalOpen =true">Add</Button>
 				<template v-if="domain && domain.sample.length">
 					<h4 class="my-3">Items</h4>
 					<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
@@ -91,7 +91,7 @@
 				</template>
 
 				<FileInput @input="handleSampleFile" class="block w-auto mx-auto pb-3" accept=".csv"></FileInput>
-				<Button color="orange" @click.native.prevent="uploadSample">Upload Sample</Button>
+				<Button color="red" @click.native.prevent="uploadSample">Upload Sample</Button>
 			</Card>
 
 			<Card class="flex-1 p-4 mx-2">
@@ -102,7 +102,7 @@
 						<Label :stacked="false" class="flex items-center justify-center w-full" for="url"><span class="pr-3">Url</span><small>(Without domain)</small></Label>
 						<div class="flex items-center">
 							<span>{{domain.url}}/</span><TextInput aria-label="Enter a url path" placeholder="contact" class="w-full" id="url" v-model="page.url" />
-							<Button class="ml-2" color="orange" @click.native.prevent="addPage">Add</Button>
+							<Button class="ml-2" color="red" @click.native.prevent="addPage">Add</Button>
 						</div>
 					</div>
 				</div>
@@ -121,7 +121,7 @@
 
 				<FileInput @input="handleSitemapFile" class="block w-auto mx-auto pb-3" accept=".csv, .xml"></FileInput>
 				<small class="text-xs">Note: If the domain on an entry in the uploaded file does not match this domain, it will not be added to the sitemap.</small>
-				<Button color="orange" @click.native.prevent="uploadSitemap">Upload sitemap</Button>
+				<Button color="red" @click.native.prevent="uploadSitemap">Upload sitemap</Button>
 			</Card>
 			
 		</div>
@@ -129,7 +129,7 @@
 		<template v-if="!independent">
 			<div class="flex justify-center flex-wrap" v-if="domain && domain.sample.length">
 				<h2 class="my-3 w-full">Now that we have a structured sample, we can create our audit</h2>
-				<Button @click.native.prevent="setComplete" color="orange" :hover="true">Continue</Button>
+				<Button @click.native.prevent="setComplete" color="red" :hover="true">Continue</Button>
 			</div>
 		</template>
 	</div>

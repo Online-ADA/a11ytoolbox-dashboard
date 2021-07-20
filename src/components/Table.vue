@@ -34,7 +34,7 @@
 					<Label for="search-criteria">Search criteria</Label>
 					<TextInput style="max-height:39px;" v-model="search.term" name="search-criteria" id="search-criteria" class="flex-1"></TextInput>
 				</div>
-				<Button style="margin-bottom:5px" class="ml-1" @click.native.prevent="submitTableSearch" :hover="true" color="orange">Submit</Button>
+				<Button style="margin-bottom:5px" class="ml-1" @click.native.prevent="submitTableSearch" :hover="true" color="red">Submit</Button>
 				<div class="text-right pl-2">
 					<div style="margin-bottom:2px;"><Button style="padding-bottom:1px;padding-top:0px;" class="mx-1" aria-label="Show or hide columns" @click.native.prevent="columnPickerOpen = true" hover="true">+</Button></div>
 					<div v-if="!locked" style="margin-bottom:2px;margin-top:1px;"><Button class="text-xs mx-1" @click.native.prevent="selectAll" hover="true">Select all</Button></div>

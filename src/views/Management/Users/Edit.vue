@@ -27,7 +27,7 @@
 					</ul>
 				</div>
 				<div class="w-full flex justify-center">
-					<Button hover="true" color="orange" @click.native.prevent="savePermissions" >Save permissions</Button>
+					<Button hover="true" color="red" @click.native.prevent="savePermissions" >Save permissions</Button>
 				</div>
 			</div>
 		</template>

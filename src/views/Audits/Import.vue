@@ -14,7 +14,7 @@
         <div class="w-1/4"></div>
         <div class="w-1/2 flex flex-wrap justify-center">
             <h3 class="text-base font-bold w-full">Choose which scans to compare</h3>
-            <Btn v-for="(scan, index) in scans" :key="'showAudit-'+index" @click.native.prevent="showingScans.includes(scan.id) ? showingScans.splice(showingScans.indexOf(scan.id), 1) : showingScans.push(scan.id)" class="mx-2" :color="showingScans.includes(scan.id) ? 'orange' : 'white'" :hover="true">{{scan.title}}</Btn>
+            <Btn v-for="(scan, index) in scans" :key="'showAudit-'+index" @click.native.prevent="showingScans.includes(scan.id) ? showingScans.splice(showingScans.indexOf(scan.id), 1) : showingScans.push(scan.id)" class="mx-2" :color="showingScans.includes(scan.id) ? 'red' : 'white'" :hover="true">{{scan.title}}</Btn>
         </div>
         <div class="w-1/4"></div>
     </div>
@@ -27,9 +27,9 @@
                     <Btn v-if="auditFullscreen !== audit.id" aria-label="Expand this audit to full screen" @click.native.prevent="setFullscreen(audit.id, 'audit')" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
                     <Btn v-if="auditFullscreen === audit.id" aria-label="Compress this audit back down" @click.native.prevent="setFullscreen(false, 'audit')" hover="true" color="white"><i class="fas fa-compress"></i></Btn>
                 </div>
-                <Table :issuesTable="true" :importing="true" v-if="audit.id !== primaryAudit.id" :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :selected="selectedAuditRows" @deselectAll="deselectAll" @selectAll="selectAll" @rowClick="selectAuditRow" :rowsData="audit.issues" :headersData="headers"></Table>
-                <Table :issuesTable="true" :importing="true" class="primary-audit-table" v-else :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :rowsData="primaryAuditIssues" @deselectAll="primaryDeselectAll" @selectAll="primarySelectAll" :headersData="headers" @rowClick="selectImportRow" :selected="selectedImportRows"></Table>
-                <Btn v-if="selectedImportRows.length > 0 && audit.id === primaryAudit.id" @click.native.prevent="removeFromImport(selectedImportRows)" class="mx-2" color="orange" hover="true">Remove selected</Btn>
+                <Table :issuesTable="true" v-if="audit.id !== primaryAudit.id" :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :selected="selectedAuditRows" @deselectAll="deselectAll" @selectAll="selectAll" @rowClick="selectAuditRow" :rowsData="audit.issues" :headersData="headers"></Table>
+                <Table :issuesTable="true" :specialRows="primaryAuditIssues.filter( i=> !issuesToImport.includes(i.issue_number)).map( i=>i.issue_number)" class="primary-audit-table" v-else :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :rowsData="primaryAuditIssues" @deselectAll="primaryDeselectAll" @selectAll="primarySelectAll" :headersData="headers" @rowClick="selectImportRow" :selected="selectedImportRows"></Table>
+                <Btn v-if="selectedImportRows.length > 0 && audit.id === primaryAudit.id" @click.native.prevent="removeFromImport(selectedImportRows)" class="mx-2" color="red" hover="true">Remove selected</Btn>
             </div>
         </div>
         <!-- ############################################### -->
@@ -46,14 +46,14 @@
     </div>
     <div class="w-full flex fixed bottom-0 left-0 right-0 px-3 py-3 bg-white border-t" style="z-index:25;">
         <div class="w-1/3">
-            <Btn v-if="selectedAuditRows.length > 1 || selectedScanRows.length > 1 || (selectedAuditRows.length >= 1 && selectedScanRows.length >= 1)" @click.native.prevent="compareIssuesModalOpen = true" class="mx-2" color="orange" hover="true">Compare issues</Btn>
-            <Btn v-if="selectedAuditRows.length > 0 || selectedScanRows.length > 0" @click.native.prevent="addSelectedToAudit()" class="mx-2" color="orange" hover="true">Import selected</Btn>
+            <Btn v-if="selectedAuditRows.length > 1 || selectedScanRows.length > 1 || (selectedAuditRows.length >= 1 && selectedScanRows.length >= 1)" @click.native.prevent="compareIssuesModalOpen = true" class="mx-2" color="red" hover="true">Compare issues</Btn>
+            <Btn v-if="selectedAuditRows.length > 0 || selectedScanRows.length > 0" @click.native.prevent="addSelectedToAudit()" class="mx-2" color="red" hover="true">Import selected</Btn>
         </div>
         <div class="w-1/3">
-            <Btn @click.native.prevent="uploadCSVModalOpen = true" class="mx-2" color="orange" hover="true">Upload CSV</Btn>
+            <Btn @click.native.prevent="uploadCSVModalOpen = true" class="mx-2" color="red" hover="true">Upload CSV</Btn>
         </div>
         <div class="w-1/3">
-            <Btn @click.native.prevent="finishImport" class="mx-2" color="orange" hover="true">Finish and go to audit</Btn>
+            <Btn @click.native.prevent="finishImport" class="mx-2" color="red" hover="true">Finish and go to audit</Btn>
         </div>
     </div>
     <Modal class="z-50" :open="uploadCSVModalOpen">

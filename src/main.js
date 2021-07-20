@@ -32,6 +32,12 @@ if( window.location.hostname == "auditortools.onlineada.com" ){
   accountHost = "https://accounts.onlineada.com"
   site = "auditortools.onlineada.com"
 }
+if( window.location.hostname == "dashboardtoolbox.ngrok.io" ){
+  apiHost = "https://toolboxapi.ngrok.io"
+  accountHost = "https://accountstoolbox.ngrok.io"
+  site = "dashboardtoolbox.ngrok.io"
+}
+
 window.App = new Vue({
   router,
   store,
