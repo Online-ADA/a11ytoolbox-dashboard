@@ -186,7 +186,7 @@ export default {
 			},
 			createAudit({state, rootState}, args){
 				state.loading = true;
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits`, { params: { audit: args.audit } })
+				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits`, { params: { audit: args.audit, createScan: args.createScan } })
 				.then( re=>{
 					if( !Request.muted() ){
 						Vue.notify({

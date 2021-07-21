@@ -7,25 +7,25 @@
         <select class="mx-auto" v-model="project_id" id="projects" name="projects">
             <option :value="project.id" v-for="project in projects" :key="project.id">{{project.name}}</option>
         </select>
-        <div v-if="scans && scans.length">
+        <div class="text-center" v-if="scans && scans.length">
             <h2 class="text-center">Scans run for this project:</h2>
-            <table>
+            <table class="mx-auto mt-3">
                 <thead>
                     <tr>
-                        <th>Title</th>
-                        <th>Number of issues</th>
-                        <th>Domain</th>
-                        <th>Number of pages</th>
-                        <th>Delete Scan</th>
+                        <th class="p-2">Title</th>
+                        <th class="p-2">Number of issues</th>
+                        <th class="p-2">Domain</th>
+                        <th class="p-2">Number of pages</th>
+                        <th class="p-2">Delete Scan</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(scan, id) in scans" :key="id">
-                        <td>{{ scan.title }}</td>
-                        <td>{{ scan.issues.length }}</td>
-                        <td>{{ scan.domain.url }}</td>
-                        <td>{{ scan.pages.length }}</td>
-                        <td><Button class="ml-2" color="delete" @click.native.prevent="openModal(scan.id)" >delete</Button></td>
+                        <td class="p-2">{{ scan.title }}</td>
+                        <td class="p-2">{{ scan.issues.length }}</td>
+                        <td class="p-2">{{ scan.domain.url }}</td>
+                        <td class="p-2">{{ scan.pages.length }}</td>
+                        <td class="p-2"><Button class="ml-2" color="delete" @click.native.prevent="openModal(scan.id)" >delete</Button></td>
                     </tr>
                 </tbody>
             </table>
