@@ -36,7 +36,7 @@ export default {
 						type: "success"
 					})
 				})
-				.catch()
+				.catch( re=>console.log(re))
 				.then()
         },
 		getProjectScans({state, rootState}, args){
@@ -46,10 +46,14 @@ export default {
 			.catch( re => {
 				console.log(re)
 			})
-			.then( re=> state.loading = false)
+			.then( ()=> state.loading = false)
 		},
-		deleteScan({rootState}, args){
-
+		deleteScan({state, rootState}, args){
+			state.loading = true
+			Request.destroyPromise( `${rootState.auth.userAPI}/${rootState.auth.account}/scan/${args.scan_id}`)
+			.then( re=>state.all = re.data.details)
+			.catch( re=>console.log(re))
+			.then( () => state.loading = false )
 		}
 	},
 	getters: { 
