@@ -107,6 +107,9 @@ export default {
                 this.project_id = this.$store.state.projects.all[0].id
                 this.$store.dispatch("scan/getProjectScans", {project_id: this.project_id})
             }
+        },
+        project_id(){
+            this.$store.dispatch("scan/getProjectScans", {project_id: this.project_id})
         }
     },
     methods: {
@@ -116,7 +119,7 @@ export default {
         },
         deleteScan(){
             this.modalOpen = false
-            this.$store.dispatch("scan/deleteScan", {id: this.deleteID})
+            this.$store.dispatch("scan/deleteScan", {scan_id: this.deleteID})
         },
         closeModal(){
             this.modalOpen = false
