@@ -177,7 +177,10 @@
 						</Card>
 						<Button @click.native.prevent="emptySample" color="delete">Remove all<span class="sr-only"> sample items</span></Button>
 					</Card>
-
+					<Label :stacked="false" class="flex text-lg mt-2">
+						<Checkbox v-model="createScan"></Checkbox>
+						Create an automatic scan for this audit?
+					</Label>
 					<h2 class="my-3 w-full">Save and go to audit</h2>
 					<Button hover="true" @click.native.prevent="createAudit">Create</Button>
 				</template>
@@ -187,14 +190,15 @@
 </template>
 
 <script>
-import Loader from '../../../components/Loader'
-import TextInput from '../../../components/TextInput'
-import Label from '../../../components/Label'
-import Select from '../../../components/Select'
-import Button from '../../../components/Button'
-import Textarea from '../../../components/TextArea'
-import Card from '../../../components/Card'
-import Date from '../../../components/Date'
+import Loader from '../../Loader'
+import TextInput from '../../TextInput'
+import Label from '../../Label'
+import Select from '../../Select'
+import Button from '../../Button'
+import Textarea from '../../TextArea'
+import Card from '../../Card'
+import Date from '../../Date'
+import Checkbox from '../../Checkbox.vue'
 
 export default {
 	data: () => ({
@@ -220,13 +224,6 @@ export default {
 		],
 		assigned: [],
 		unassigned: [],
-		// software_used_src: [
-		// 	"Android Browser", "Chrome - Latest", "Chrome for Android", "Edge - Latest", "Firefox - Latest", "Firefox for Android", "IE Mobile 11", "IE11", 
-		// 	"Safari - Latest", "iOS Safari -Latest", "Opera - Latest", "Opera Mini"
-		// ],
-		// assistive_tech_src: [
-		// 	"Axe", "NVDA", "JAWS", "TPGI Color Contrast Analyser"
-		// ],
 		tech_requirements_src: [
 			"HTML5", "ECMAScript 3", "OOXML", "XHTML 1.0", "ECMAScript 5", "ODF 1.2", "HTML 4.01", "DOM", "SVG", "CSS", "Flash", "WAI-ARIA", "Silverlight"
 		],
@@ -249,7 +246,8 @@ export default {
 			conformance_target: "WCAG 2.1 Level AA"
 		},
         complete: false,
-		newSampleItem: {content: "", screen: ""}
+		newSampleItem: {content: "", screen: ""},
+		createScan: false
 	}),
     watch:{
         complete(newVal){
@@ -422,7 +420,10 @@ export default {
 					if( sitemap.length < 1 ){
 						break
 					}
-					let index = Math.floor( Math.random() * (sitemap.length - 1)) + 1
+					let index = Math.floor( Math.random() * (sitemap.length - 1))
+					if( !sitemap[index] ){
+						continue
+					}
 					let found = sitemap_sample.some( el => el.content == sitemap[index].url)
 					if( found ){
 						sitemap.splice(index, 1)
@@ -457,7 +458,7 @@ export default {
 				this.audit.project_id = this.sheetData.sheet0.project
 				this.audit.domain_id = this.sheetData.sheet1.domain
 
-				this.$store.dispatch("audits/createAudit", {audit: this.audit, router: this.$router})
+				this.$store.dispatch("audits/createAudit", {audit: this.audit, router: this.$router, createScan: this.createScan})
 			}else{
 				let self = this
 				this.$nextTick( ()=>{
@@ -499,6 +500,7 @@ export default {
 		Button,
 		Card,
 		Date,
+		Checkbox,
 	},
 }
 </script>
