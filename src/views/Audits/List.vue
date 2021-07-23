@@ -3,15 +3,32 @@
     <Loader v-if="loading"></Loader>
     <h1>All Audits assigned to {{fullName}}</h1>
     <div class="w-full flex flex-col justify-center items-center" v-if="audits.length">
-      <ul>
-        <li v-for="(audit, id) in audits" :key="id">
-          <span class="text-lg">{{audit.title}} <span class="capitalize text-xs">({{statusMap[audit.status]}})</span></span>
-          <span class="px-3">-</span>
-          <A class="pr-2" type="router-link" :to="{path: `/audits/${audit.id}`}">view</A>
-          <A v-if="!audit.locked || isManager" type="router-link" :to="{path: `/audits/${audit.id}/edit`}">edit</A>
-          <span v-else><i class="fas fa-lock"></i><span class="sr-only">This audit is locked and cannot be edited except by a manager</span></span>
-        </li>
-      </ul>
+
+      <!-- Customizing the entire row by leaving the cells-main empty and using the cells-extra slot-->
+      <DT :headers="headers" :items="audits">
+        <template v-slot:cells-main>
+          <div class="hidden"></div>
+        </template>
+        <template v-slot:cells-extra="row">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">{{row.data.title}}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="capitalize text-sm text-gray-900">{{statusMap[row.data.status]}}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              <A class="pr-2" type="router-link" :to="{path: `/audits/${row.data.id}`}">view</A>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              <A v-if="!row.data.locked || isManager" type="router-link" :to="{path: `/audits/${row.data.id}/edit`}">edit</A>
+              <span v-else><i class="fas fa-lock"></i><span class="sr-only">This audit is locked and cannot be edited except by a manager</span></span>
+            </div>
+          </td>
+        </template>
+      </DT>
     </div>
     <div v-if="!loading && !audits.length">
       <h2>There are no audits assigned to {{fullName}}</h2>
@@ -22,6 +39,9 @@
 <script>
 import Loader from '../../components/Loader'
 import A from '../../components/Link'
+import DT from '../../components/DynamicTable'
+import Pagination from '../../components/Pagination'
+
 export default {
     data: ()=>({
         statusMap : {
@@ -29,6 +49,9 @@ export default {
             complete: "Completed",
             archived: "Archived"
         },
+        headers: [
+          "Title", "Status", "View", "Edit"
+        ],
     }),
     computed: {
         loading(){
@@ -65,7 +88,9 @@ export default {
     },
     components: {
       Loader,
-      A
+      A,
+      DT,
+      Pagination
     },
 }
 </script>
