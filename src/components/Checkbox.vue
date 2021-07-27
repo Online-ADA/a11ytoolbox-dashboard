@@ -3,7 +3,7 @@
     <input v-bind="$attrs" :checked="isChecked || $attrs.checked" :value="value" type="checkbox" class="vs-checkbox--input absolute w-full h-full opacity-0 z-50 cursor-pointer" v-on="listeners">
 
     <!-- The container around the checkmark. Gets a background color -->
-    <span class="w-6 h-6 ease-in -rotate-90 border-2 mr-2 cursor-pointer relative flex box-border rounded-sm overflow-hidden transform items-center justify-center" :class="container_classes">
+    <span class="ease-in -rotate-90 border-2 mr-2 cursor-pointer relative flex box-border rounded-sm overflow-hidden transform items-center justify-center" :class="container_classes">
 
         <!-- The actual check mark -->
         <span class="flex place-content-center w-full h-full absolute left-0 z-10 ease-in origin-right " :class="classes_check">
@@ -113,6 +113,14 @@ export default {
                 classes.push("bg-white")
             }
         }
+
+        if( this.size == "default" ){
+          classes.push("w-6 h-6")
+        }
+        if( this.size == "small" ){
+          classes.push("w-4 h-4")
+        }
+
         return classes
     },
     listeners() {

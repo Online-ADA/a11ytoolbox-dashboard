@@ -3,9 +3,9 @@
     <Loader v-if="loading"></Loader>
     <h1>All Audits assigned to {{fullName}}</h1>
     <div class="w-full flex flex-col justify-center items-center" v-if="audits.length">
-
+      
       <!-- Customizing the entire row by leaving the cells-main empty and using the cells-extra slot-->
-      <DT :headers="headers" :items="audits">
+      <DT :searchableProps="['title', 'status' ]" :headers="headers" :items="audits">
         <template v-slot:cells-main>
           <div class="hidden"></div>
         </template>

@@ -1,86 +1,80 @@
 <template>
   <div class="min-w-max">
-    <section class="flex justify-between bg-white rounded-lg border border-gray-200 px-10 py-3 text-gray-700 font-montserrat">
+    <nav aria-label="pagination" class="flex justify-between bg-white border border-gray-200 px-10 py-3 text-gray-700 font-montserrat">
+      <div class="flex-1 flex items-center justify-between">
+        
+        <p aria-atomic="true" aria-live="polite" class="text-sm text-gray-700">
+          Showing
+          {{ ' ' }}
+          <span class="font-medium">{{getLowRange()}}</span>
+          {{ ' ' }}
+          to
+          {{ ' ' }}
+          <span class="font-medium">{{getHighRange()}}</span>
+          {{ ' ' }}
+          of
+          {{ ' ' }}
+          <span class="font-medium">{{total}}</span>
+          {{ ' ' }}
+          results
+        </p>
+        
+      </div>
       <ul class="flex items-center">
-        <li class="pr-6" v-if="hasPrev()">
-          <a href="#" @click.prevent="changePage(prevPage)">
-            <div class="flex items-center justify-center hover:bg-gray-200 rounded-md transform rotate-45 h-6 w-6">
-              <div class="transform -rotate-45">
-                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                     stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-              </div>
+        <li class="" v-if="hasPrev()">
+          <button aria-label="Go to previous page" class="relative inline-flex items-center border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" 
+          @click.prevent="changePage(prevPage, 'previous')">
+            <div class="flex items-center justify-center hover:bg-gray-200 h-6 w-6">
+              &lt;
             </div>
-          </a>
+          </button>
         </li>
-        <li class="pr-6" v-if="hasFirst()">
-          <a href="#" @click.prevent="changePage(1)">
-            <div class="flex hover:bg-gray-200 rounded-md transform rotate-45 h-6 w-6 items-center justify-center">
-                <span class="transform -rotate-45">
-                    1
-                </span>
+        <li class="" v-if="hasFirst()">
+          <button :ref="`page-button-${1}`" aria-label="Go to first page" class="relative inline-flex items-center border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" 
+          @click.prevent="changePage(1, 'page')">
+            <div class="flex hover:bg-gray-200 h-6 w-6 items-center justify-center">
+              <span class="">
+                1
+              </span>
             </div>
-          </a>
+          </button>
         </li>
-        <li class="pr-6" v-if="hasFirst()">...</li>
-        <li class="pr-6" v-for="(index, page) in pages" :key="`page-${index}`">
-          <a href="#" @click.prevent="changePage(page)">
-            <div :class="{'bg-gradient-to-r from-blue-400 to-indigo-400': current == page}"
-                 class="flex hover:bg-gray-200 rounded-md transform rotate-45 h-6 w-6 items-center justify-center">
-              <span class="transform -rotate-45">{{ page }}</span>
+        <li class="px-2" v-if="hasFirst()">...</li>
+        <li class="" v-for="(page, index) in pages" :key="`page-${index}`">
+          <button :ref="`page-button-${page}`" :aria-label="`Go to page ${page}`" class="relative inline-flex items-center border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" 
+          @click.prevent="changePage(page, 'page')">
+            <div :class="{'bg-pallette-grey text-white': current == page}"
+                class="flex hover:bg-gray-200 h-6 w-6 items-center justify-center">
+              <span class="">{{ page }}</span>
             </div>
-          </a>
+          </button>
         </li>
-        <li class="pr-6" v-if="hasLast()">...</li>
-        <li class="pr-6" v-if="hasLast()">
-          <a href="#" @click.prevent="changePage(totalPages)">
-            <div class="flex hover:bg-gray-200 rounded-md transform rotate-45 h-6 w-6 items-center justify-center">
-          <span class="transform -rotate-45">
-            {{ totalPages }}
-          </span>
+        <li class="px-2" v-if="hasLast()">...</li>
+        <li class="" v-if="hasLast()">
+          <button :ref="`page-button-${totalPages}`" aria-label="Go to last page" class="relative inline-flex items-center border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+          @click.prevent="changePage(totalPages, 'page')">
+            <div class="flex hover:bg-gray-200 h-6 w-6 items-center justify-center">
+              <span class="">
+                {{ totalPages }}
+              </span>
             </div>
-          </a>
+          </button>
         </li>
-        <li class="pr-6" v-if="hasNext()">
-          <a href="#" @click.prevent="changePage(nextPage)">
-            <div class="flex items-center justify-center hover:bg-gray-200 rounded-md transform rotate-45 h-6 w-6">
-              <div class="transform -rotate-45">
-                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                     stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </div>
+        <li class="" v-if="hasNext()">
+          <button aria-label="Go to next page" class="relative inline-flex items-center border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" 
+          @click.prevent="changePage(nextPage, 'next')">
+            <div class="flex items-center justify-center hover:bg-gray-200 h-6 w-6">
+              &gt;
             </div>
-          </a>
+          </button>
         </li>
       </ul>
-
-      <div class="flex items-center">
-        <div class="pr-2 text-gray-400 font-medium">
-          <span id="text-before-input">
-            {{ textBeforeInput }}
-          </span>
-        </div>
-        <div class="w-14 rounded-md border border-indigo-400 px-1 py-1">
-          <input v-model.number="input" class="w-12 focus:outline-none px-2" type="text">
-        </div>
-        <div @click.prevent="changePage(input)" class="flex items-center pl-4 font-medium cursor-pointer">
-          <span id="text-after-input">
-            {{ textAfterInput }}
-          </span>
-          <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </div>
-      </div>
-    </section>
+    </nav>
   </div>
 </template>
 
 <script>
-
-export default {
+export default{
   props: {
     current: {
       type: Number,
@@ -92,7 +86,7 @@ export default {
     },
     perPage: {
       type: Number,
-      default: 9
+      default: 10
     },
     pageRange: {
       type: Number,
@@ -109,7 +103,7 @@ export default {
   },
   data() {
     return {
-      input: '',
+      
     }
   },
   methods: {
@@ -125,10 +119,36 @@ export default {
     hasNext: function () {
       return this.current < this.totalPages
     },
-    changePage: function (page) {
+    changePage: function (page, pressed) {
       if (page > 0 && page <= this.totalPages) {
         this.$emit('page-changed', page)
+        console.log(page, pressed);
+        if( pressed == 'page' ){
+          setTimeout(() => {
+            this.$refs['page-button-'+page][0].focus()
+          }, 50);
+        }
+        if( pressed == 'next' && page == this.totalPages ){
+          setTimeout(() => {
+            this.$refs['page-button-'+this.totalPages][0].focus()
+          }, 50);
+        }
+        if( pressed == 'previous' && page == 1 ){
+          setTimeout(() => {
+            this.$refs['page-button-1'][0].focus()
+          }, 50);
+        }
       }
+    },
+    getLowRange(){
+      return this.perPage * (this.current - 1) + 1
+    },
+    getHighRange(){
+      let high = this.perPage * (this.current - 1) + this.perPage
+      if( high > this.total ){
+        high = this.total
+      }
+      return high
     }
   },
   computed: {

@@ -24,7 +24,7 @@
                     classes.push("border-opacity-40");
                     classes.push("shadow");
                     if( this.hover ){
-                        classes.push("hover:bg-pallette-red");
+                        classes.push("hover:bg-pallette-blue");
                         classes.push("hover:text-white");
                     }
                 }
