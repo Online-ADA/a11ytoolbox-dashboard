@@ -3,16 +3,18 @@
     <Loader v-if="loading"></Loader>
     <h1>This is the Projects management page</h1>
     <div v-if="projects.length">
-      <h2>Projects on this account:</h2>
-      <ul class="list-group">
-        <li v-for="(project, id) in projects" :key="id">
-          <span class="text-lg">{{project.name}} <span class="capitalize text-xs">({{project.status}})</span></span>
-          <span class="px-3">-</span>
-          <A class="pr-2" type="router-link" :to="{path: `/projects/${project.id}`}">view</A>
-          <A type="router-link" :to="{path: `/projects/${project.id}/edit`}">edit</A>
-          <Button class="ml-2" color="delete" @click.native.prevent="openModal(project.id)" >delete</Button>
-        </li>
-      </ul>
+      <Card class="mt-8 mr-auto ml-auto max-w-lg">
+        <h2>Projects on this account:</h2>
+        <ul class="list-group">
+          <li v-for="(project, id) in projects" :key="id">
+            <span class="text-lg">{{project.name}} <span class="capitalize text-xs">({{project.status}})</span></span>
+            <span class="px-3">-</span>
+            <A class="pr-2" type="router-link" :to="{path: `/projects/${project.id}`}">view</A>
+            <A type="router-link" :to="{path: `/projects/${project.id}/edit`}">edit</A>
+            <Button class="ml-2" color="delete" @click.native.prevent="openModal(project.id)" >delete</Button>
+          </li>
+        </ul>
+      </Card>
     </div>
     <div v-if="!loading && !projects.length">
       <h2>There are no projects on this account</h2>
@@ -55,6 +57,7 @@ import Loader from '../../../components/Loader'
 import A from '../../../components/Link'
 import Button from '../../../components/Button'
 import Modal from '../../../components/Modal'
+import Card from '../../../components/Card'
 
 export default {
     data: () => ({
@@ -100,7 +103,8 @@ export default {
       Loader,
       A,
       Button,
-      Modal
+      Modal,
+      Card
     },
 }
 </script>

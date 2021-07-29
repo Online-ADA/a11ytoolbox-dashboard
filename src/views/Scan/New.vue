@@ -1,5 +1,6 @@
 <template>
     <div class="container mx-auto flex justify-center items-center flex-col">
+        
         <h1 class="mt-32 mb-3">Initiate a new automated scan</h1>
 
         <template v-if="!$route.params.type">
@@ -125,9 +126,11 @@ import Radio from "../../components/Radio.vue";
 import Checkbox from "../../components/Checkbox.vue";
 import Button from "../../components/Button.vue";
 import Label from '../../components/Label.vue';
+import Card from '../../components/Card.vue';
 import Utility from '../../services/utility.js'
 import audits from '../../store/modules/audits'
 import domains from '../../store/modules/domains'
+
 
 export default {
     data: () => ({
@@ -390,7 +393,8 @@ export default {
         Radio,
         Button,
         Checkbox,
-        Label
+        Label,
+        Card
     }, 
 }
 </script>

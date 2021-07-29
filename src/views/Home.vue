@@ -1,23 +1,29 @@
 <template>
   <div class="flex flex-col items-center justify-center mt-32 container mx-auto">
     <div v-if="message" class="text-red">{{message}}</div>
-    <h1>Welcome to the OnlineADA Toolbox</h1>
-    <div class="flex flex-col items-center" v-if="$store.state.auth.user">
-      <h2 class="py-3">Choose an Account:</h2>
-        <div v-for="account in accountsWithRole" :key="'acct-'+account.id">
-          <Button :hover="true" class="my-1" color="white" @click.native.prevent="setAccount(account.id)">
-            <div>{{account.name}}</div>
-            <small class="pr-1">Roles:</small>
-            <span v-for="(role, id) in $store.state.auth.accountsRoles[account.id]" :key="'role'+id">{{role}}<template v-if="id !== $store.state.auth.accountsRoles[account.id].length - 1">,</template></span>
-          </Button>
+
+    <Card class="w-1/2">
+
+      <h1>Welcome to the OnlineADA Toolbox</h1>
+      <div class="flex flex-col items-center" v-if="$store.state.auth.user">
+        <h2 class="py-3">Choose an Account:</h2>
+          <div v-for="account in accountsWithRole" :key="'acct-'+account.id">
+            <Button :hover="true" class="my-1" color="white" @click.native.prevent="setAccount(account.id)">
+              <div>{{account.name}}</div>
+              <small class="pr-1">Roles:</small>
+              <span v-for="(role, id) in $store.state.auth.accountsRoles[account.id]" :key="'role'+id">{{role}}<template v-if="id !== $store.state.auth.accountsRoles[account.id].length - 1">,</template></span>
+            </Button>
+        </div>
       </div>
-    </div>
+    </Card>
   </div>
 </template>
 
 <script>
 import admin from '../store/modules/admin'
 import Button from '../components/Button'
+import Card from '../components/Card'
+
 // import A from '../components/Link'
 export default {
   name: 'Home',
@@ -28,6 +34,7 @@ export default {
   },
   components: {
     Button,
+    Card,
     // A
   },
   methods:{

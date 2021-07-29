@@ -1,6 +1,6 @@
 <template>
     <div class="dropdown relative">
-        <a @click.prevent class="block whitespace-no-wrap no-underline" href="#">
+        <a @click.prevent :class="['block whitespace-no-wrap no-underline ' +labelColor]" href="#">
             <slot name="label"></slot>
             <i v-if="!sub" class="fas fa-caret-down pl-1"></i>
         </a>
@@ -20,6 +20,13 @@
                             <template v-slot:label><span v-html="child.label"></span>
                             <i class="fas fa-caret-right pl-1"></i></template>
                         </Dropdown>
+                    </template>
+                    <template v-if="child.type == 'logout'">
+                        <A v-if="$store.getters['auth/isAuthenticated']" href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
+                        <A v-else href="#" @click.native.prevent="$store.dispatch('auth/login')">Log in</A>
+                    </template>
+                    <template v-if="child.type == 'account'">
+                        <A href="#" @click.native.prevent="setAccount(child.to)">{{child.label}}</A>
                     </template>
                 </li>
             </template>
@@ -49,15 +56,30 @@
     ]
 */
 import A from '../components/Link'
+import admin from '../store/modules/admin'
     export default {
         props:[
             'children',
             'icon',
-            'sub'
+            'sub',
+            'labelColor'
         ],
         name: 'Dropdown',
         components: {
             A,
+        },
+        methods:{
+            setAccount(id){
+                this.$store.commit("auth/setState", {key: "account", value: id})
+                if( this.$store.getters["auth/isManager"] ){
+                    if( this.$store.state.admin === undefined ){
+                    this.$store.registerModule('admin', admin)
+                    }
+                    this.$store.dispatch("admin/getProjects", this.$router)
+                }else{
+                    this.$store.unregisterModule("admin")
+                }
+            }
         }
     }
 </script>
@@ -68,5 +90,12 @@ import A from '../components/Link'
     .dropdown ul ul{
         left:95%;
         top: 0;
+    }
+    ul {
+        z-index:99;
+    }
+
+    ul li {
+        padding: 8px;
     }
 </style>
