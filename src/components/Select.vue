@@ -1,5 +1,5 @@
 <template>
-    <select :value="value" @input="$emit('input', $event.target.value)" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-blue p-2 rounded shadow">
+    <select :value="value" @input="$emit('input', $event.target.value)" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-blue-light p-2 rounded shadow">
         <option :value="option[valueProp] || option" v-for="(option, index) in options" :key="index">{{option[displayProp] || option}}</option>
     </select>
 </template>

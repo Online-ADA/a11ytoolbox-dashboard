@@ -3,6 +3,18 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
+    boxShadow: {
+      custom: '0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)',
+        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+       '3xl': '0 35px 60px -15px rgba(0, 0, 0, 0.3)',
+        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+        none: 'none',
+    },
     outline: {
       none: ['2px solid transparent', '2px'],
       white: ['2px dashed white', '2px'],
@@ -17,8 +29,9 @@ module.exports = {
         pallette: {
           grey: {
             light: "#F0F0F0",
-            DEFAULT: "#797982",
-            dark: "#5c5c63"
+            DEFAULT: "#616161",
+            dark: "#424242",
+            bg: "#0000001A"
           },
           orange: {
             light: '#FBE9D7',
@@ -26,20 +39,26 @@ module.exports = {
             dark: "#e87300"
           },
           purple: {
-            DEFAULT: '#211224',
+            DEFAULT: '#3f3244',
           },
           red: {
             light: "#EC3723",
             DEFAULT: "#C80A00",
+            dark: "#9c0800"
           },
           green: {
             DEFAULT: "#0c793d",
           },
           blue: {
-            DEFAULT: "#1f74ff"
+            light: "#1f74ff",
+            DEFAULT: "#005E86",
+            dark: "#004f70"
+          },
+          gold: {
+            DEFAULT: "#F9A51A"
           }
         },
-    },
+      },
     },
   },
 }
