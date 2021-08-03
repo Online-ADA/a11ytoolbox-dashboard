@@ -24,7 +24,7 @@
     i, span{
         transition: opacity .2s ease, transform .2s ease
     }
-    input[type="checkbox"]:focus + span.border-pallette-orange{
+    input[type="checkbox"]:focus + span.border-pallette-blue{
       outline: 2px dashed black;
       outline-offset: 2px;
     }
@@ -35,7 +35,7 @@ export default {
   inheritAttrs: false,
   props:{
     color:{
-      default:'orange',
+      default:'gold',
       type:String,
     },
     value:{},
@@ -61,7 +61,12 @@ export default {
             classes.push("justify-center")
             classes.push("flex")
         }
-
+        if( this.color == "purple" ){
+            classes.push("text-white")
+        }
+        if( this.color == "blue" ){
+            classes.push("text-white")
+        }
         if( this.color == "orange" ){
             classes.push("text-white")
         }
@@ -69,6 +74,9 @@ export default {
             classes.push("text-pallette-grey")
         }
         if( this.color == "grey" ){
+            classes.push("text-white")
+        }
+        if( this.color == "gold" ){
             classes.push("text-white")
         }
 
@@ -79,11 +87,23 @@ export default {
         if( this.color == "orange" && this.isChecked ){
             classes.push("bg-pallette-orange")
         }
+        if( this.color == "red" && this.isChecked ){
+            classes.push("bg-pallette-red")
+        }
+        if( this.color == "purple" && this.isChecked ){
+            classes.push("bg-pallette-purple")
+        }
+        if( this.color == "blue" && this.isChecked  ){
+            classes.push("bg-pallette-blue")
+        }
         if( this.color == "white" && this.isChecked ){
             classes.push("bg-white")
         }
         if( this.color == "grey" && this.isChecked ){
             classes.push("bg-pallette-grey")
+        }
+        if( this.color == "gold" && this.isChecked ){
+            classes.push("bg-pallette-gold")
         }
 
         return classes
@@ -101,6 +121,22 @@ export default {
                 classes.push("bg-white")
             }
         }
+        if( this.color == "purple" ){
+            classes.push("border-pallette-purple")
+            if( this.isChecked ){
+                classes.push("bg-pallette-purple")
+            }else{
+                classes.push("bg-white")
+            }
+        }
+        if( this.color == "blue" ){
+            classes.push("border-pallette-blue")
+            if( this.isChecked ){
+                classes.push("bg-pallette-blue")
+            }else{
+                classes.push("bg-white")
+            }
+        }
         if( this.color == "white" ){
             classes.push("border-pallette-grey")
             classes.push("bg-white")
@@ -113,14 +149,14 @@ export default {
                 classes.push("bg-white")
             }
         }
-
-        if( this.size == "default" ){
-          classes.push("w-6 h-6")
+        if( this.color == "gold" ){
+            classes.push("border-pallette-gold")
+            if( this.isChecked ){
+                classes.push("bg-pallette-gold")
+            }else{
+                classes.push("bg-white")
+            }
         }
-        if( this.size == "small" ){
-          classes.push("w-4 h-4")
-        }
-
         return classes
     },
     listeners() {

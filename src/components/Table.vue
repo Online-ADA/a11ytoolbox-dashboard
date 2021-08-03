@@ -502,7 +502,7 @@
 					imported && this.selected.includes(data.unique) ? classes.push('selected') : ''
 					!imported ? classes.push("no-select") : ''
 				}else{
-					this.selected.includes(data.unique) ? classes.push('selected') : ''
+					this.selected.includes(data.id) ? classes.push('selected') : ''
 				}
 				
 				classes.push( data.status.toLowerCase().replaceAll(/[ ]/g, "-") )
