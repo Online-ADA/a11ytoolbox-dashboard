@@ -295,4 +295,7 @@ export default {
 	.rotate--90{
 		transform:rotate(-90deg);
 	}
+	td, th{
+		border:0px !important;
+	}
 </style>
