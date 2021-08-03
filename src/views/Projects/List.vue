@@ -1,18 +1,37 @@
 <template>
-    <div class="text-center mt-32">
+    <div class="text-center mt-32 container mx-auto">
         <Loader v-if="loading"></Loader>
-        <template v-if="projects.length">
+        <div class="w-full flex flex-col justify-center items-center" v-if="projects.length">
             <h2>Your Projects:</h2>
-            <ul>
-                <li v-for="(project, id) in projects" :key="id">
-                    <span class="text-lg">{{project.name}}</span>
-                    <span class="px-3">-</span>
-                    <A class="pr-2" type="router-link" :to="{path: `${project.id}`}">view</A>
-                    <A v-if="can" type="router-link" :to="{path: `/projects/${project.id}/edit`}">edit</A>
-                    <A class="pl-2" title="Create an audit" aria-label="Create an audit" type="router-link" :to="{path: `/audits/create/${project.id}`}"><i class="fas fa-clipboard-list"></i></A>
-                </li>
-            </ul>
-        </template>
+            <DT :searchableProps="['name', 'status' ]" :headers="headers" :items="projects">
+                <template v-slot:cells-main>
+                    <div class="hidden"></div>
+                </template>
+                <template v-slot:cells-extra="row">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">{{row.data.name}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="capitalize text-sm text-gray-900">{{row.data.status}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            <A class="pr-2" type="router-link" :to="{path: `/projects/${row.data.id}`}">view</A>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            <A type="router-link" :to="{path: `/projects/${row.data.id}/edit`}">edit</A>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            <A title="Create an audit" aria-label="Create an audit" type="router-link" :to="{path: `/audits/create/${row.data.id}`}"><i class="fas fa-clipboard-list"></i></A>
+                        </div>
+                    </td>
+                </template>
+            </DT>
+        </div>
         <template v-if="!loading && !projects.length">
             <h2>You have no projects</h2>
         </template>
@@ -22,9 +41,11 @@
 <script>
 import Loader from '../../components/Loader'
 import A from '../../components/Link'
+import DT from '../../components/DynamicTable'
 export default {
     name: 'ProjectsList',
     data: () => ({
+        headers: ["Name", "Status", "View", "Edit", "Create New Audit"],
     }),
     computed: {
         loading(){
@@ -49,7 +70,8 @@ export default {
     },
     components: {
       Loader,
-      A
+      A,
+      DT
     },
 }
 </script>

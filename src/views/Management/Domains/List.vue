@@ -5,14 +5,32 @@
         <template v-if="!domains.length">
             There are no domains for this account. <A type="router-link" :to="{path: `/domains/create`}">Create one</A>
         </template>
-        <template v-else>
+        <div class="w-full flex flex-col justify-center items-center" v-else>
             <h2>All Domains:</h2>
-            <ul class="pb-4">
-                <li v-for="(domain, index) in domains" :key="index">
-                    <A type="router-link" :to="{path: `/domains/${domain.id}`}">{{domain.title}} - {{domain.url}}</A>
-                    <Button class="ml-2" color="delete" @click.native.prevent="openModal(domain.id)" >delete</Button>
-                </li>
-            </ul>
+
+            <DT :headers="headers" :items="domains">
+                <template v-slot:cells-main>
+                    <td class="hidden"></td>
+                </template>
+                <template v-slot:cells-extra="row">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            <A type="router-link" :to="{path: `/domains/${row.data.id}`}">{{row.data.title}}</A>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            {{row.data.url}}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            <Button class="ml-2" color="delete" @click.native.prevent="openModal(row.data.id)" >delete</Button>
+                        </div>
+                    </td>
+                </template>
+            </DT>
+
             <A hoverText="text-white" class="bg-pallette-blue block border border-gray-300 duration-100 hover:bg-pallette-blue-dark p-2 rounded text-white transition-colors w-2/12" type="router-link" :to="{path: `/domains/create`}">New Domain</A>
 
             <Modal :open="modalOpen">
@@ -45,7 +63,7 @@
                     </button>
                 </div>
             </Modal>
-        </template>
+        </div>
     </div>
 </template>
 
@@ -54,11 +72,26 @@ import Loader from '../../../components/Loader'
 import A from '../../../components/Link'
 import Modal from '../../../components/Modal'
 import Button from '../../../components/Button'
+import DT from '../../../components/DynamicTable'
 
 export default {
     data: () => ({
         modalOpen: false,
-        deleteID: false
+        deleteID: false,
+        headers: [
+            {
+                display: "Title",
+                link: "title",
+                sort:true
+            },
+            {
+                display: "Url",
+                link: "url",
+                sort:true
+            },
+            "Delete"
+        ],
+        searchableProps: ["title", "url"]
     }),
     computed: {
         loading(){
@@ -96,7 +129,8 @@ export default {
       Loader,
       A,
       Modal,
-      Button
+      Button,
+      DT
     },
 }
 </script>

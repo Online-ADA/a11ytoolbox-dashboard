@@ -1,34 +1,36 @@
 <template>
     <div class="container mx-auto">
         <Loader v-if="loading"></Loader>
-        
-        <h1 class="text-center mt-5">Scan History</h1>
         <Label class="text-center" for="projects">Select a project</Label>
-        <select class="mx-auto" v-model="project_id" id="projects" name="projects">
+        <select class="mx-auto block" v-model="project_id" id="projects" name="projects">
             <option :value="project.id" v-for="project in projects" :key="project.id">{{project.name}}</option>
         </select>
-        <div class="text-center" v-if="scans && scans.length">
-            <h2 class="text-center">Scans run for this project:</h2>
-            <table class="mx-auto mt-3">
-                <thead>
-                    <tr>
-                        <th class="p-2">Title</th>
-                        <th class="p-2">Number of issues</th>
-                        <th class="p-2">Domain</th>
-                        <th class="p-2">Number of pages</th>
-                        <th class="p-2">Delete Scan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(scan, id) in scans" :key="id">
-                        <td class="p-2">{{ scan.title }}</td>
-                        <td class="p-2">{{ scan.issues.length }}</td>
-                        <td class="p-2">{{ scan.domain.url }}</td>
-                        <td class="p-2">{{ scan.pages.length }}</td>
-                        <td class="p-2"><Button class="ml-2" color="delete" @click.native.prevent="openModal(scan.id)" >delete</Button></td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="w-full flex flex-col justify-center items-center mt-10" v-if="scans && scans.length">
+            <h2>Scans run for this project:</h2>
+            <DT :searchableProps="['title', 'url']" :items="scans" :headers="headers">
+                <template v-slot:cells-main>
+                    <div class="hidden"></div>
+                </template>
+                <template v-slot:cells-extra="row">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">{{row.data.title}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">{{row.data.issues.length}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="capitalize text-sm text-gray-900">{{row.data.domain.url}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="capitalize text-sm text-gray-900">{{row.data.pages.length}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            <Button class="ml-2" color="delete" @click.native.prevent="openModal(row.data.id)" >delete</Button>
+                        </div>
+                    </td>
+                </template>
+            </DT>
         </div>
         <div class="text-center" v-if="!loading && !scans.length">
             <h2>There are no scans for this project</h2>
@@ -73,12 +75,14 @@ import Label from '../../components/Label.vue'
 import Loader from '../../components/Loader.vue'
 import Button from '../../components/Button.vue'
 import Modal from '../../components/Modal.vue'
+import DT from '../../components/DynamicTable.vue'
 
 export default {
     data: () => ({
         modalOpen: false,
         deleteID: false,
-        project_id: false
+        project_id: false,
+        headers: ["Title", "Number of issues", "Domain", "Number of pages", "Delete Scan"]
     }),
     computed: {
         loading(){
@@ -138,7 +142,8 @@ export default {
         Label,
         Loader,
         Button,
-        Modal
+        Modal,
+        DT
     },
 }
 </script>
