@@ -8,6 +8,11 @@
       <Label for="status">Status</Label>
       
       <Select class="mx-auto" :options="statusSrc" v-model="project.status"></Select>
+      {{proje}}
+
+      <Label for="status">Client</Label>
+      <Select class="mx-auto" :options="clientList" v-model="project.clientID"></Select>
+      {{selectedClient}}
 
       <template v-if="isManager">
         <div class="flex my-3">
@@ -44,6 +49,7 @@ import Select from '../../../components/Select'
 import Button from '../../../components/Button'
 import Card from '../../../components/Card'
 import projects from '../../../store/modules/project'
+import clients from '../../../store/modules/clients'
 
 export default {
     name: 'ProjectCreate',
@@ -65,8 +71,10 @@ export default {
         name: "",
         status: "active",
         created_by: "",
-        account_id: ""
+        account_id: "",
+        clientID: "",
       },
+      selectedClient: "",
       complete: false
     }),
     computed: {
@@ -78,6 +86,15 @@ export default {
         },
         isManager(){
           return this.$store.getters["auth/isManager"]
+        },
+        clientList() {
+          var clients = this.$store.state.clients.all;
+          var clientList = [];
+          for ( var i = 0; i < clients.length; i++ )
+          {
+            clientList.push({name: clients[i].name, value: clients[i].id});
+          }
+          return clientList;
         }
     },
     watch: {
@@ -123,6 +140,9 @@ export default {
       if(this.$store.state.projects === undefined){
         this.$store.registerModule('projects', projects)
       }
+      if(this.$store.state.clients === undefined){
+        this.$store.registerModule('clients', clients)
+      }
     },
     mounted() {
       this.project.created_by = this.$store.state.auth.user.id
@@ -135,6 +155,8 @@ export default {
       if( !this.independent ){
         this.$emit("initialized", {key: "ProjectCreate", instance: this})
       }
+
+      this.$store.dispatch("clients/getClients", {router: this.$router})
     },
     components: {
       Loader,

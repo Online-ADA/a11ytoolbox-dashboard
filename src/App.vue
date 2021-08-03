@@ -24,7 +24,7 @@
             <div id="main-content" class="pt-12 " v-bind:class="{ sidebarOpen: sidebarExpanded }">
 
               <div class="flex-1">
-                <div id="nav" class="flex items-center relative z-30 w-full">
+                <!-- <div id="nav" class="flex items-center relative z-30 w-full">
                   <div class="w-1/3"></div>
                     <div class="flex place-content-center w-1/3 box-border py-1">
                       <router-link class="hover:text-gray-500 pl-4" to="/">Home</router-link>
@@ -44,7 +44,7 @@
                       <span v-if="account"><span aria-hidden="true" class="px-2">|</span>Account: {{account}}</span>
                     </div>
                     <div class="w-1/3"></div>
-                  </div>
+                  </div> -->
                   <router-view/>
                 </div>
               </div>

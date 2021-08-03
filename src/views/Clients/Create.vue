@@ -8,9 +8,6 @@
 				
 				<Label for="email">Email</Label>
 				<TextInput id="email" name="email" v-model="client.email" />
-				
-				<Label for="status">Project assiged to</Label>
-				<Select class="mx-auto" :options="projects" value-prop="id" v-model="client.project_id"></Select>
 
 				<Label for="status">Status</Label>
 				<Select class="mx-auto" :options="statusSrc" v-model="client.status"></Select>
@@ -39,7 +36,6 @@ export default {
 			status: "",
 			created_by: "",
 			account_id: "",
-			project_id: "",
 		}
 	}),
 	computed: {
@@ -69,6 +65,7 @@ export default {
 			console.log(e, e.target.value);
 		},
 		createClient(){
+			console.log(this.client.account_id);
 			this.client.created_by = this.userID
 			this.$store.dispatch("clients/createClient", {client: this.client, router: this.$router, vm: this})
 		}

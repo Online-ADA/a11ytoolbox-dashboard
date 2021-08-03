@@ -9,6 +9,11 @@
         
         <Select class="mx-auto" :options="statusSrc" v-model="project.status"></Select>
 
+        <Label for="status">Client</Label>
+        
+        <Select class="mx-auto" :options="clientList" v-model="project.clientID"></Select>
+        
+
         <template v-if="$store.getters['auth/isManager']">
           <div class="flex my-3">
             <Card class="w-1/2">
@@ -44,6 +49,8 @@ import Label from '../../components/Label'
 import Select from '../../components/Select'
 import Form from '../../components/Form'
 import Button from '../../components/Button'
+import clients from '../../store/modules/clients'
+
 export default {
     data: () => ({
       statusSrc: [
@@ -57,7 +64,8 @@ export default {
         name: "",
         status: "",
         created_by: "",
-        account_id: ""
+        account_id: "",
+        clientID: ""
       }
     }),
     computed: {
@@ -72,6 +80,15 @@ export default {
             return this.$store.state.project.assignees
           }
           return []
+        },
+        clientList() {
+          var clients = this.$store.state.clients.all;
+          var clientList = [];
+          for ( var i = 0; i < clients.length; i++ )
+          {
+            clientList.push({name: clients[i].name, value: clients[i].id});
+          }
+          return clientList;
         }
     },
     props: [],
@@ -103,10 +120,14 @@ export default {
       }
     },
     created() {
+      if(this.$store.state.clients === undefined){
+        this.$store.registerModule('clients', clients)
+      }
     },
     mounted() {
       this.project.created_by = this.$store.state.auth.user.id
       this.$store.dispatch("projects/getProject", {id: this.$route.params.id, vm: this})
+      this.$store.dispatch("clients/getClients", {router: this.$router})
     },
     components: {
       Loader,

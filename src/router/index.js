@@ -125,39 +125,39 @@ const routes = [
       },
     ]
   },
-  // {
-  //   path: "/clients",
-  //   name: "Clients",
-  //   component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Index.vue'),
-  //   children:[
-  //     {
-  //       path: "list",
-  //       name: "ClientList",
-  //       component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/List.vue')
-  //     },
-  //     {
-  //       path: "create",
-  //       name: "ClientCreate",
-  //       meta: {
-  //         permissions: {
-  //           entity: "clients",
-  //           action: "write"
-  //         }
-  //       },
-  //       component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Create.vue')
-  //     },
-  //     {
-  //       path: ":id/edit",
-  //       name: "ClientEdit",
-  //       component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Edit.vue')
-  //     },
-  //     {
-  //       path: ":id",
-  //       name: "ClientShow",
-  //       component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue')
-  //     },
-  //   ]
-  // },
+  {
+    path: "/clients",
+    name: "Clients",
+    component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Index.vue'),
+    children:[
+      {
+        path: "list",
+        name: "ClientList",
+        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/List.vue')
+      },
+      {
+        path: "create",
+        name: "ClientCreate",
+        meta: {
+          permissions: {
+            entity: "clients",
+            action: "write"
+          }
+        },
+        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Create.vue')
+      },
+      {
+        path: ":id/edit",
+        name: "ClientEdit",
+        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Edit.vue')
+      },
+      {
+        path: ":id",
+        name: "ClientShow",
+        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue')
+      },
+    ]
+  },
   {
     path: '/manage',
     name: 'Manage',

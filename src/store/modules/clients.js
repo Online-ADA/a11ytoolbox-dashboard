@@ -6,7 +6,7 @@ export default {
 		all: [],
 		projects: [],
 		client: false,
-		API: "https://apitoolbox.ngrok.io/api/user",
+		API: "https://toolboxapi.ngrok.io/api/user",
 		loading: false
 	},
 	mutations: {
@@ -54,10 +54,11 @@ export default {
 					text:'Client retrieved',
 					callback: function(response){
 						state.loading = false
-						state.client = response.data.client
+						state.client = response.data.client[0]
 						if( args.vm ){
 							args.vm.client = state.client
 						}
+						return state.client;
 					}
 				},
 				onError: {
@@ -106,7 +107,7 @@ export default {
 				onWarn: {
 					title: "Warning",
 					text: "There was a problem creating the client",
-					callback: function(){
+					callback: function(response){
 						state.loading = false
 					}
 				}
