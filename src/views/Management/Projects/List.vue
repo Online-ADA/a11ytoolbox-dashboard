@@ -2,17 +2,41 @@
   <div class="container mx-auto">
     <Loader v-if="loading"></Loader>
     <h1>This is the Projects management page</h1>
-    <div v-if="projects.length">
+    <div class="w-full flex flex-col justify-center items-center" v-if="projects.length">
       <h2>Projects on this account:</h2>
-      <ul class="list-group">
-        <li v-for="(project, id) in projects" :key="id">
-          <span class="text-lg">{{project.name}} <span class="capitalize text-xs">({{project.status}})</span></span>
-          <span class="px-3">-</span>
-          <A class="pr-2" type="router-link" :to="{path: `/projects/${project.id}`}">view</A>
-          <A type="router-link" :to="{path: `/projects/${project.id}/edit`}">edit</A>
-          <Button class="ml-2" color="delete" @click.native.prevent="openModal(project.id)" >delete</Button>
-        </li>
-      </ul>
+
+      <DT :headers="headers" :items="projects">
+        <template v-slot:cells-main>
+          <td class="hidden"></td>
+        </template>
+        <template v-slot:cells-extra="row">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              {{row.data.name}}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              {{row.data.status}}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              <A class="pr-2" type="router-link" :to="{path: `/projects/${row.data.id}`}">view</A>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              <A type="router-link" :to="{path: `/projects/${row.data.id}/edit`}">edit</A>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              <Button class="ml-2" color="delete" @click.native.prevent="openModal(row.data.id)" >delete</Button>
+            </div>
+          </td>
+        </template>
+      </DT>
     </div>
     <div v-if="!loading && !projects.length">
       <h2>There are no projects on this account</h2>
@@ -55,11 +79,28 @@ import Loader from '../../../components/Loader'
 import A from '../../../components/Link'
 import Button from '../../../components/Button'
 import Modal from '../../../components/Modal'
+import DT from '../../../components/DynamicTable.vue'
 
 export default {
     data: () => ({
       modalOpen: false,
-      deleteID: false
+      deleteID: false,
+      headers:[
+        {
+          display: "Name",
+          link: "name",
+          sort: true
+        },
+        {
+          display: "Status",
+          link: "status",
+          sort: true
+        },
+        "View",
+        "Edit",
+        "Delete"
+      ],
+      searchableProps: [ "name", "status" ],
     }),
     computed: {
         loading(){
@@ -100,7 +141,8 @@ export default {
       Loader,
       A,
       Button,
-      Modal
+      Modal,
+      DT
     },
 }
 </script>

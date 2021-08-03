@@ -2,17 +2,51 @@
   <div class="container mx-auto">
     <Loader v-if="loading"></Loader>
     <h1>This is the Audits management page</h1>
-    <div v-if="audits.length">
+    <div class="w-full flex flex-col justify-center items-center" v-if="audits.length">
       <h2>Audits on this account:</h2>
-      <ul class="list-group">
-        <li v-for="(audit, id) in audits" :key="id">
-          <span class="text-lg">{{audit.title}} <span class="capitalize text-xs">({{statusMap[audit.status]}})</span></span>
-          <span class="px-3">-</span>
-          <A class="pr-2" type="router-link" :to="{path: `/audits/${audit.id}`}">view</A>
-          <A type="router-link" :to="{path: `/audits/${audit.id}/edit`}">edit</A>
-          <Button class="ml-2" color="delete" @click.native.prevent="openModal(audit.id)" >delete</Button>
-        </li>
-      </ul>
+
+      <DT :headers="headers" :items="audits" :searchableProps="searchableProps" :searchOverride="searchOverride">
+        <template v-slot:cells-main>
+          <td class="hidden"></td>
+        </template>
+        <template v-slot:cells-extra="row">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              {{row.data.title}}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              {{statusMap[row.data.status]}}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              {{row.data.locked ? 'True' : 'False'}}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              {{row.data.domain_url}}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              <A class="pr-2" type="router-link" :to="{path: `/audits/${row.data.id}`}">view</A>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              <A type="router-link" :to="{path: `/audits/${row.data.id}/edit`}">edit</A>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              <Button class="ml-2" color="delete" @click.native.prevent="openModal(row.data.id)" >delete</Button>
+            </div>
+          </td>
+        </template>
+      </DT>
     </div>
     <div v-if="!loading && !audits.length">
       <h2>There are no audits on this account</h2>
@@ -55,6 +89,7 @@ import Loader from '../../../components/Loader'
 import A from '../../../components/Link'
 import Modal from '../../../components/Modal'
 import Button from '../../../components/Button'
+import DT from '../../../components/DynamicTable'
 
 export default {
     data: ()=>({
@@ -64,7 +99,40 @@ export default {
             archived: "Archived"
         },
         modalOpen: false,
-        deleteID: false
+        deleteID: false,
+        headers: [
+          {
+            display: "Title",
+            link: "title",
+            sort:true
+          },
+          {
+            display: "Status",
+            link: "status",
+            sort:true
+          },
+          {
+            display: "Locked",
+            link: "locked",
+          },
+          {
+            display: "Domain URL",
+            link: "domain_url",
+            sort:true
+          },
+          "View",
+          "Edit",
+          "Delete"
+        ],
+        searchableProps: [ "title", "status", "domain_url" ],
+        searchOverride: {
+          status: function(context, term, prop, caseSensitive){
+            if( !caseSensitive ){
+              return context.$parent.statusMap[prop].toLowerCase().includes( term.toLowerCase() )
+            }
+            return context.$parent.statusMap[prop].includes( term )
+          }
+      }
     }),
     computed: {
         loading(){
@@ -105,7 +173,8 @@ export default {
       Loader,
       A,
       Button,
-      Modal
+      Modal,
+      DT
     },
 }
 </script>

@@ -12,8 +12,9 @@
 				</button>
 				<A type='router-link' :to="{name: `NewScan`, params: {type:'audit', id: $route.params.id} }">Initiate Scan</A>
 			</div>
-			<h2 class="mb-1">{{audit.title}}</h2>
-			<h3 class="mb-3 text-base">{{audit.domain.url}}</h3>
+			<h2 class="mb-1 text-xl">{{audit.title}}</h2>
+			<h3 v-if="audit.domain" class="mb-3 text-base">{{audit.domain.url}}</h3>
+			<h3 v-else class="mb-3 text-base font-bold">This audit has no domain</h3>
 			<span v-if="audit.locked" class="text-2xl"><i class="fas fa-lock" aria-hidden="true"></i></span>
 			<h3 class="text-base" v-if="audit.locked">This audit is locked and cannot be modified</h3>
 			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>

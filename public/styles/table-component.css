@@ -60,10 +60,10 @@ tr.no-select > td:after{
     z-index: -1;
 }
 
-td, th{
+/* td, th{
     border:1px solid black;
     transition:background-color .2s
-}
+} */
 th{
     background-color: #FFFFFF;
 }

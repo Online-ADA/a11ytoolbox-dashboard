@@ -40,7 +40,6 @@
 import Loader from '../../components/Loader'
 import A from '../../components/Link'
 import DT from '../../components/DynamicTable'
-import Pagination from '../../components/Pagination'
 
 export default {
     data: ()=>({
@@ -90,7 +89,6 @@ export default {
       Loader,
       A,
       DT,
-      Pagination
     },
 }
 </script>
