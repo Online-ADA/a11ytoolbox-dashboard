@@ -13,18 +13,46 @@ export default {
     accountsRoles: [],
     accountsPermissions: [],
     token: Cookies.get('oada_UID') || false,
+    token_expire: Cookies.get('oada_UID_expire') || false,
+    token_expire_threshold: 10,
+    token_timer: false,
     account: Cookies.get('toolboxAccount') || false,
     accounts: [],
     authMessage: "",
     authMessages: {
       incorrect_role: "You do not have the required role",
       incorrect_permissions: "You do not have the required permissions"
+    },
+    showLoginPrompt: false,
+    start_token_timer: function(state){
+      state.stop_token_timer(state)
+      state.token_timer = setTimeout(() => {
+        state.checkForExpire(state)
+      }, 120000); //2 minutes
+    },
+    stop_token_timer: function(state){
+      clearTimeout(state.token_timer)
+    },
+    checkForExpire: function(state){
+      if( !!state.token ){
+        if( state.minutesUntilExpires(state) <= state.token_expire_threshold ){
+          state.showLoginPrompt = true
+        }else{
+          state.start_token_timer(state)
+        }
+      }
+    },
+    minutesUntilExpires: function(state){
+      var current_date = Date.now()
+      var total_ms_remaining = state.token_expire - current_date
+      
+      return total_ms_remaining / 60000
     }
   },
   mutations: {
     setState(state,payload) {
       if(payload.key == 'account'){
-        Cookies.set('toolboxAccount', payload.value, 365)
+        Cookies.set('toolboxAccount', payload.value, 1)
       }
       Vue.set(state,payload.key,payload.value)
     },
@@ -33,29 +61,49 @@ export default {
     },
   },
   actions: {
-      check({state}) {
-        Request.get(state.toolboxapi+'/api/state/init', {
-          onSuccess: {
-            silent: true,
-            callback: function(response){
-              state.user = response.data.details.user
-              state.accountsRoles = response.data.details.roles.accounts
-              state.accountsPermissions = response.data.details.permissions.accounts
-              state.accounts = response.data.details.accounts
-            }
+    check({state}) {
+      Request.get(state.toolboxapi+'/api/state/init', {
+        onSuccess: {
+          silent: true,
+          callback: function(response){
+            state.user = response.data.details.user
+            state.accountsRoles = response.data.details.roles.accounts
+            state.accountsPermissions = response.data.details.permissions.accounts
+            state.accounts = response.data.details.accounts
           }
-        })
+        }
+      })
     },
     login({state}, redirect){
       if( redirect ){
         state.redirect = redirect
       }
       
-      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth"
+      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth&oada_token_name=Toolbox"
+    },
+    resetToken({state}){
+      Request.postPromise(state.accapi + "/api/authenticate/reset")
+      .then( re=>{
+        if( !!re.data.details.token && !!re.data.details.token_expire ){
+          state.token = re.data.details.token
+          Cookies.set('oada_UID', state.token, { expires: 1 }) //1 day
+          state.token_expire = re.data.details.token_expire * 1000
+          Cookies.set('oada_UID_expire', state.token_expire * 1000, { expires: 1 })
+          state.showLoginPrompt = false
+          state.checkForExpire(state)
+        }
+      })
+      .catch(re=>{
+        console.log(re.data)
+      })
     },
     setToken({state, dispatch}, payload){
-      Cookies.set('oada_UID', payload.token, { expires: 365 })
+      Cookies.set('oada_UID', payload.token, { expires: 1 })
+      Cookies.set('oada_UID_expire', payload.token_expire * 1000, { expires: 1 })
       state.token = payload.token
+      state.token_expire = payload.token_expire * 1000
+      state.showLoginPrompt = false
+      state.checkForExpire(state)
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
       
       if(payload.user){
@@ -74,17 +122,21 @@ export default {
     },
     logout({state}, router){
       state.token = false
+      state.token_expire = false
+      state.stop_token_timer(state)
+      state.showLoginPrompt = false
       state.account = false
       state.accounts = []
       state.accountsRoles = []
       state.accountsPermissions = []
       state.user = false
       Cookies.remove('oada_UID')
+      Cookies.remove('oada_UID_expire')
       Cookies.remove('toolboxAccount')
       if( router.app._route.path != "/" ){
         router.push({path: "/"})
       }
-  },
+    },
   },
   getters: {
     isAuthenticated: state => {

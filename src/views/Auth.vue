@@ -15,6 +15,7 @@ export default {
         if(params.get('oada_auth') && params.get('oada_auth') != ''){
             this.$store.dispatch('auth/setToken',{
                 token: params.get('oada_auth'),
+                token_expire: params.get('oada_token_expire'),
                 redirect: the_redirect,
                 router: that.$router,
             })

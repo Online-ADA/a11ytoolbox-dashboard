@@ -23,7 +23,8 @@ export default {
   name: 'Home',
   data(){
     return {
-      message: ""
+      message: "",
+      date: false
     }
   },
   components: {
@@ -44,7 +45,9 @@ export default {
     }
   },
   mounted(){
-    
+    // this.date = new Date(this.$store.state.auth.token_expire * 1000)
+    // console.log(this.date);
+    // console.log(this.date.getHours());
   },
   computed: {
     accountsWithRole(){
