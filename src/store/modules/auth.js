@@ -14,6 +14,12 @@ export default {
     accountsPermissions: [],
     token: Cookies.get('oada_UID') || false,
     token_expire: Cookies.get('oada_UID_expire') || false,
+    token_check_interval: 600000, //2 minutes = 120000
+    token_time_left: {
+      minutes: 0,
+      seconds: 0
+    },
+    showLoginPromptOverride: false,
     token_expire_threshold: 10,
     token_timer: false,
     account: Cookies.get('toolboxAccount') || false,
@@ -28,25 +34,32 @@ export default {
       state.stop_token_timer(state)
       state.token_timer = setTimeout(() => {
         state.checkForExpire(state)
-      }, 120000); //2 minutes
+      }, state.token_check_interval); 
     },
     stop_token_timer: function(state){
       clearTimeout(state.token_timer)
     },
     checkForExpire: function(state){
       if( !!state.token ){
-        if( state.minutesUntilExpires(state) <= state.token_expire_threshold ){
-          state.showLoginPrompt = true
+        state.getTimeLeft(state)
+        if( state.token_time_left.minutes > 0 && state.token_time_left.minutes <= state.token_expire_threshold ){
+          state.showLoginPrompt = !state.showLoginPromptOverride ? true : false
+          state.token_check_interval = 1000
+          state.start_token_timer(state)
+        }else if(state.token_time_left.minutes <= 0 && state.token_time_left.seconds <= 0 ){
+          state.stop_token_timer(state)
+          window.App.$store.dispatch('auth/logout', window.App.$router)
         }else{
           state.start_token_timer(state)
         }
       }
     },
-    minutesUntilExpires: function(state){
+    getTimeLeft: function(state){
       var current_date = Date.now()
-      var total_ms_remaining = state.token_expire - current_date
+      var remaining = Number( (state.token_expire - current_date) / 1000 )
       
-      return total_ms_remaining / 60000
+      state.token_time_left.minutes = Math.floor(remaining % 3600 / 60)
+      state.token_time_left.seconds = Math.floor(remaining % 3600 % 60)
     }
   },
   mutations: {
@@ -90,6 +103,9 @@ export default {
           state.token_expire = re.data.details.token_expire * 1000
           Cookies.set('oada_UID_expire', state.token_expire * 1000, { expires: 1 })
           state.showLoginPrompt = false
+          state.token_check_interval = 600000
+          state.token_time_left.minutes = 0
+          state.token_time_left.seconds = 0
           state.checkForExpire(state)
         }
       })
@@ -120,21 +136,29 @@ export default {
 
       dispatch("check")
     },
-    logout({state}, router){
+    logout({state}, router, refresh = false){
       state.token = false
       state.token_expire = false
-      state.stop_token_timer(state)
       state.showLoginPrompt = false
       state.account = false
       state.accounts = []
       state.accountsRoles = []
       state.accountsPermissions = []
       state.user = false
+      state.token_check_interval = 600000
+      state.token_time_left.minutes = 0
+      state.token_time_left.seconds = 0
+      
       Cookies.remove('oada_UID')
       Cookies.remove('oada_UID_expire')
       Cookies.remove('toolboxAccount')
+      
       if( router.app._route.path != "/" ){
         router.push({path: "/"})
+      }
+      
+      if(refresh){
+        router.go()
       }
     },
   },

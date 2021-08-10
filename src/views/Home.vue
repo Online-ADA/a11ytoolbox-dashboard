@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center mt-32 container mx-auto">
     <div v-if="message" class="text-red">{{message}}</div>
     <h1>Welcome to the OnlineADA Toolbox</h1>
-    <div class="flex flex-col items-center" v-if="$store.state.auth.user">
+    <div class="flex flex-col items-center" v-show="$store.state.auth.user">
       <h2 class="py-3">Choose an Account:</h2>
         <div v-for="account in accountsWithRole" :key="'acct-'+account.id">
           <Button :hover="true" class="my-1" color="white" @click.native.prevent="setAccount(account.id)">
@@ -45,9 +45,6 @@ export default {
     }
   },
   mounted(){
-    // this.date = new Date(this.$store.state.auth.token_expire * 1000)
-    // console.log(this.date);
-    // console.log(this.date.getHours());
   },
   computed: {
     accountsWithRole(){
