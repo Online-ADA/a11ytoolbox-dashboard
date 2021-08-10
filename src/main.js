@@ -53,6 +53,7 @@ function run(){
   
   Request.getPromise(`${apiHost}/api/state/init`, {async: false})
   .then( response => {
+      store.state.auth.checkForExpire(store.state.auth)
       store.commit("auth/setState", {key: "user", value: response.data.details.user})
       store.commit("auth/setState", {key: "accountsRoles", value: response.data.details.roles.accounts})
       store.commit("auth/setState", {key: "accountsPermissions", value: response.data.details.permissions.accounts})
