@@ -15,6 +15,7 @@ export default {
     token: Cookies.get('oada_UID') || false,
     token_expire: Cookies.get('oada_UID_expire') || false,
     token_check_interval: 600000, //2 minutes = 120000
+    token_total_minutes_remaining: 0,
     token_time_left: {
       minutes: 0,
       seconds: 0
@@ -42,11 +43,11 @@ export default {
     checkForExpire: function(state){
       if( !!state.token ){
         state.getTimeLeft(state)
-        if( state.token_time_left.minutes > 0 && state.token_time_left.minutes <= state.token_expire_threshold ){
+        if( state.token_total_minutes_remaining > 0 && state.token_total_minutes_remaining <= state.token_expire_threshold ){
           state.showLoginPrompt = !state.showLoginPromptOverride ? true : false
           state.token_check_interval = 1000
           state.start_token_timer(state)
-        }else if(state.token_time_left.minutes <= 0 && state.token_time_left.seconds <= 0 ){
+        }else if(state.token_total_minutes_remaining <= 0 ){
           state.stop_token_timer(state)
           window.App.$store.dispatch('auth/logout', window.App.$router)
         }else{
@@ -56,10 +57,12 @@ export default {
     },
     getTimeLeft: function(state){
       var current_date = Date.now()
-      var remaining = Number( (state.token_expire - current_date) / 1000 )
+      var seconds_remaining = Number( (state.token_expire - current_date) / 1000 )
+
+      state.token_total_minutes_remaining = (seconds_remaining / 3600) * 60
       
-      state.token_time_left.minutes = Math.floor(remaining % 3600 / 60)
-      state.token_time_left.seconds = Math.floor(remaining % 3600 % 60)
+      state.token_time_left.minutes = Math.floor(seconds_remaining % 3600 / 60)
+      state.token_time_left.seconds = Math.floor(seconds_remaining % 3600 % 60)
     }
   },
   mutations: {
@@ -104,6 +107,7 @@ export default {
           Cookies.set('oada_UID_expire', state.token_expire * 1000, { expires: 1 })
           state.showLoginPrompt = false
           state.token_check_interval = 600000
+          token_total_minutes_remaining = 0
           state.token_time_left.minutes = 0
           state.token_time_left.seconds = 0
           state.checkForExpire(state)
@@ -148,6 +152,7 @@ export default {
       state.token_check_interval = 600000
       state.token_time_left.minutes = 0
       state.token_time_left.seconds = 0
+      token_total_minutes_remaining = 0
       
       Cookies.remove('oada_UID')
       Cookies.remove('oada_UID_expire')
