@@ -152,7 +152,7 @@ export default {
       state.token_check_interval = 600000
       state.token_time_left.minutes = 0
       state.token_time_left.seconds = 0
-      token_total_minutes_remaining = 0
+      state.token_total_minutes_remaining = 0
       
       Cookies.remove('oada_UID')
       Cookies.remove('oada_UID_expire')
