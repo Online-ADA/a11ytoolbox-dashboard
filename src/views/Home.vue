@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center mt-32 container mx-auto">
     <div v-if="message" class="text-red">{{message}}</div>
     <h1>Welcome to the OnlineADA Toolbox</h1>
-    You have {{total}} minutes remaining
+    
     <div class="flex flex-col items-center" v-show="$store.state.auth.user">
       <h2 class="py-3">Choose an Account:</h2>
         <div v-for="account in accountsWithRole" :key="'acct-'+account.id">
