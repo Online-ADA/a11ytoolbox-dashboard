@@ -385,7 +385,8 @@ export default {
 			"Regression",
 			"Best Practice",
 			"Third party problem",
-			"Resolved by removal"
+			"Resolved by removal",
+			"Usability Problem",
 		],
 		darkMode: false,
 		issueModalOpen: false,

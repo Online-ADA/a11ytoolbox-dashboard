@@ -84,6 +84,7 @@ tr.regression td{ background-color: #D9D2E9; }
 tr.best-practice td{ background-color: #CFE2F3; }
 tr.third-party-problem td{ background-color: #D9D9D9; }
 tr.resolved-by-removal td{ background-color: #D9D9D9; }
+tr.usability-problem td{ background-color: #FCE5CD; }
 table.condensed td > *{
     max-height: 82px;
     height: 82px;
