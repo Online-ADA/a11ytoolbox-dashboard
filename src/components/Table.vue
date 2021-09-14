@@ -104,7 +104,7 @@
 				</thead>
 				<tbody>
 					<tr 
-					:aria-description="!data.hasOwnProperty('unique') ? 'This row cannot be selected because it cannot be removed.' : false"
+					:aria-description="!rowCanBeRemoved(data) ? 'This row cannot be selected because it cannot be removed.' : false"
 					:aria-selected="selected.includes(data['unique']) ? true : false"
 					:id="index == 0 ? 'a' + data['issue_number'] : false"
 					:class="rowClasses(data)" 
@@ -263,6 +263,15 @@
 			}
 		},
 		methods: {
+			rowCanBeRemoved(data){
+				if( this.importing && data.hasOwnProperty('unique') ){
+					return true
+				}
+				if( !this.importing ){
+					return true
+				}
+				return false
+			},
 			getTDClasses(subIndex, key){
 				let classes = "";
 				if( this.headers[subIndex].sticky ){
