@@ -4,7 +4,6 @@
 
 <script>
 
-import domains from '../../store/modules/domains'
 export default {
     data: () => ({
     }),
@@ -16,12 +15,8 @@ export default {
     methods: {
     },
     created() {
-      if( !this.$store.state.domains){
-        this.$store.registerModule('domains', domains)
-      }
     },
     beforeDestroy(){
-      // this.$store.unregisterModule("domains")
       this.$store.dispatch("domains/resetState")
     },
     mounted() {

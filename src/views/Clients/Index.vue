@@ -4,7 +4,6 @@
 
 <script>
 
-import clients from '../../store/modules/clients'
 export default {
     data: () => ({
     }),
@@ -16,10 +15,10 @@ export default {
     methods: {
     },
     created() {
-      this.$store.registerModule('clients', clients)
+      
     },
     beforeDestroy(){
-      this.$store.unregisterModule("clients")
+      this.$store.dispatch("clients/resetState")
     },
     mounted() {
     },

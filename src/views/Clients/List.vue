@@ -37,7 +37,6 @@ export default {
     created() {
     },
     mounted() {
-      this.$store.dispatch("clients/getClients", {router: this.$router})
     },
     components: {
       Loader,

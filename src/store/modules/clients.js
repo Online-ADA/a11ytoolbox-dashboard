@@ -1,6 +1,18 @@
 import Vue from 'vue'
 import Cookies from 'js-cookie'
 
+const getDefaultState = () => {
+	return {
+		all: [],
+		projects: [],
+		client: false,
+		clientID: Cookies.get('toolboxClient'),
+		API: "https://apitoolbox.ngrok.io/api/user",
+		// API: "https://toolboxapi.ngrok.io/api/user",
+		loading: false
+	}
+}
+
 export default {
 	namespaced:true,
 	state: {
@@ -8,7 +20,8 @@ export default {
 		projects: [],
 		client: false,
 		clientID: Cookies.get('toolboxClient'),
-		API: "https://toolboxapi.ngrok.io/api/user",
+		API: "https://apitoolbox.ngrok.io/api/user",
+		// API: "https://toolboxapi.ngrok.io/api/user",
 		loading: false
 	},
 	mutations: {
@@ -17,6 +30,9 @@ export default {
 		},
 	},
 	actions: {
+		resetState (state) {
+			Object.assign(state, getDefaultState())
+		},
 		getProjects({state, rootState}){
 			state.loading = true
 			
@@ -70,14 +86,14 @@ export default {
 					},
 					onError: {
 						title:'Error',
-						text:'Creating this client caused an error',
+						text:'Getting this client caused an error',
 						callback: function(){
 							state.loading = false
 						}
 					},
 					onWarn: {
 						title: "Warning",
-						text: "There was a problem creating the client",
+						text: "There was a problem getting the client",
 						callback: function(){
 							state.loading = false
 						}
@@ -97,10 +113,10 @@ export default {
 					callback: function(){
 						state.loading = false
 						setTimeout(()=>{
-							if( rootGetters["auth/isManager"] ){
-								args.router.push({path: "/manage/clients"})
-								return
-							}
+							// if( rootGetters["auth/isManager"] ){
+							// 	args.router.push({path: "/manage/clients"})
+							// 	return
+							// }
 							args.router.push({path: "/clients/list"})
 						}, 2000)
 					}

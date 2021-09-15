@@ -8,7 +8,7 @@
 
       <h1>Welcome to the OnlineADA Toolbox</h1>
 
-      <div class="flex flex-col items-center" v-if="$store.state.auth.user  && !$store.state.auth.account">
+      <div class="flex flex-col items-center" v-if="$store.state.auth.user && !$store.state.auth.account">
         <h2 class="py-3">Choose an Account:</h2>
           <div v-for="account in accountsWithRole" :key="'acct-'+account.id">
             <Button :hover="true" class="my-1" color="white" @click.native.prevent="setAccount(account.id)">
@@ -19,21 +19,30 @@
         </div>
       </div>
 
-      <div class="flex flex-col items-center" v-else-if="$store.state.auth.user  && $store.state.auth.account && !$store.state.clients.client">
-        <h2 class="py-3">Choose a Client:</h2>
+      <div class="flex flex-col items-center" v-else-if="$store.state.auth.user && $store.state.auth.account && !$store.state.clients.client">
+        <template v-if="getClients.length">
+          <h2 class="py-3">Choose a Client:</h2>
           <div v-for="client in getClients" :key="'client-'+client.id">
             <Button :hover="true" class="my-1" color="white" @click.native.prevent="setClient(client.id)">
               <div>{{client.name}}</div>
             </Button>
-        </div>
+          </div>
+        </template>
+        <template v-else>
+          <h2 class="py-3">There are no clients on this account</h2>
+          <div v-if="$store.getters['auth/isManager']">
+            <A type="router-link" :to="{path: '/clients/create'}" class="my-1 text-lg" color="white">
+              Create one
+            </A>
+          </div>
+        </template>
+        
       </div>
 
-       <div class="flex flex-col items-center" v-else-if="$store.state.auth.user  && this.$store.state.auth.account && $store.state.clients.client">
+       <div class="flex flex-col items-center" v-else-if="$store.state.auth.user && this.$store.state.auth.account && $store.state.clients.client">
         <h3>Account: {{ accountsWithRole.find( x => x.id == this.$store.state.auth.account).name }}</h3>
         <h3>Client: {{ $store.state.clients.client.name}}</h3>
       </div>
-      
-
     </Card>
   </div>
 </template>
@@ -43,21 +52,20 @@ import admin from '../store/modules/admin'
 import Button from '../components/Button'
 import Card from '../components/Card'
 import Loader from '../components/Loader'
+import A from '../components/Link'
 
-// import A from '../components/Link'
 export default {
   name: 'Home',
   data(){
     return {
       message: "",
-      date: false
     }
   },
   components: {
     Button,
     Card,
     Loader,
-    // A
+    A
   },
   methods:{
     setAccount(id){
@@ -73,7 +81,7 @@ export default {
     },
 
     setClient(id){
-        this.$store.dispatch("clients/getClient", {id: id, vm: this})
+      this.$store.dispatch("clients/getClient", {id: id, vm: this})
     }
   },
   mounted(){
@@ -91,7 +99,7 @@ export default {
       return this.$store.state.auth.token_total_minutes_remaining
     },
     getClients() {
-      return this.$store.state.clients.all;
+      return this.$store.state.clients.all || [];
     }
   },
   watch:{

@@ -4,7 +4,6 @@
 
 <script>
 
-import projects from '../../store/modules/project'
 export default {
     name: 'ProjectsIndex',
     data: () => ({
@@ -17,12 +16,9 @@ export default {
     methods: {
     },
     created() {
-      if(this.$store.state.projects === undefined){
-        this.$store.registerModule('projects', projects)
-      }
+      
     },
     beforeDestroy(){
-      // this.$store.unregisterModule("projects")
       this.$store.dispatch("projects/resetState")
     },
     mounted() {

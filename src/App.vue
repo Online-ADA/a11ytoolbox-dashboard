@@ -1,9 +1,9 @@
 <template>
   <div id="app" class="overflow-x-hidden bg-pallette-grey-bg">
-      <notifications/>
+    <notifications/>
     <div id="slider" class="transition-transform" v-bind:class="{ sidebarOpen: sidebarExpanded }" >
       
-        <ada-header class="fixed z-40" ></ada-header>
+      <ada-header class="fixed z-40" ></ada-header>
 
       <div id="content" class="flex" >
         <div id="sidebar" class=" z-50">
@@ -83,7 +83,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import SecondarySidebar from '@/components/SecondarySidebar.vue'
 import Modal from './components/Modal'
 import Btn from './components/Button'
-import Card from '@/components/Card.vue'
+// import Card from '@/components/Card.vue'
 import clients from './store/modules/clients'
 
 export default {
@@ -323,8 +323,8 @@ export default {
 #main-content {
   padding-right: 0px;
   transition-property: padding;
-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
 #main-content.sidebarOpen {

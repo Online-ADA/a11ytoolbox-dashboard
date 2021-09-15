@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full bg-white p-2 shadow-custom overflow-visible overflow-hidden shadow-custom">
+  <div class="flex w-full bg-white p-2 overflow-visible shadow-custom">
       <h1>{{label}}</h1>
   </div>
 </template>
