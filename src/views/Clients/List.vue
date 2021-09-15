@@ -37,7 +37,6 @@ export default {
     created() {
     },
     mounted() {
-        console.log(this.$store.state.clients.all)
       this.$store.dispatch("clients/getClients", {router: this.$router})
     },
     components: {

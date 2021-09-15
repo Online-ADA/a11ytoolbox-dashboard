@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Cookies from 'js-cookie'
 
 export default {
 	namespaced:true,
@@ -6,6 +7,7 @@ export default {
 		all: [],
 		projects: [],
 		client: false,
+		clientID: Cookies.get('toolboxClient'),
 		API: "https://toolboxapi.ngrok.io/api/user",
 		loading: false
 	},
@@ -48,34 +50,40 @@ export default {
 		},
 		getClient({state, rootState}, args){
 			state.loading = true
-			Request.get(`${state.API}/${rootState.auth.account}/clients/${args.id}`, {
-				onSuccess: {
-					title:'Success',
-					text:'Client retrieved',
-					callback: function(response){
-						state.loading = false
-						state.client = response.data.client[0]
-						if( args.vm ){
-							args.vm.client = state.client
+			if ( args.id == -1 )
+			{
+				state.client = false;
+				state.clientID = false;
+				state.loading = false;
+				Cookies.remove('toolboxClient')
+			}
+			else {
+				Request.get(`${state.API}/${rootState.auth.account}/clients/${args.id}`, {
+					onSuccess: {
+						title:'Success',
+						text:'Client retrieved',
+						callback: function(response){
+							state.loading = false
+							state.client = response.data.client[0]
+							Cookies.set('toolboxClient', state.client.id, 365)
 						}
-						return state.client;
+					},
+					onError: {
+						title:'Error',
+						text:'Creating this client caused an error',
+						callback: function(){
+							state.loading = false
+						}
+					},
+					onWarn: {
+						title: "Warning",
+						text: "There was a problem creating the client",
+						callback: function(){
+							state.loading = false
+						}
 					}
-				},
-				onError: {
-					title:'Error',
-					text:'Creating this client caused an error',
-					callback: function(){
-						state.loading = false
-					}
-				},
-				onWarn: {
-					title: "Warning",
-					text: "There was a problem creating the client",
-					callback: function(){
-						state.loading = false
-					}
-				}
-			})
+				})
+			}
 		},
 		createClient({state, rootGetters}, args){
 			state.loading = true;
@@ -127,6 +135,7 @@ export default {
 					callback: function(response){
 						state.loading = false
 						state.all = response.data.details
+						state.client = state.all.find(({ id }) => id == state.clientID )
 					}
 				},
 				onWarn:{

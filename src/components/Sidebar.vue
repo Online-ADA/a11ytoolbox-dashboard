@@ -8,15 +8,14 @@
             <div class="flex" style="width:200px">
                 <ul id="nav" class="pt-8 flex-1">
                     <li>
-                        <i class="fas fa-house pl-6 mr-2"></i><router-link class="pl-2 text-white hover:text-pallette-red" to="/">Home</router-link>
+                        <i class="fas fa-house pl-6 mr-2"></i><router-link class="pl-2 text-white hover:text-pallette -red" to="/">Home</router-link>
                     </li>
 
                     <li class="flex mt-2">
-
                         <template v-if="$store.getters['auth/isManager']" >
                             <div v-if="manage==true" class="w-full h-full bg-pallette-grey pt-2 shaddow-inner" >
                                 <div class="flex">
-                                    <i class="fas fa-tasks pt-2 pl-7 mr-2 mt-auto mb-auto"></i>
+                                    <i class="fas fa-tasks pt-2 pl-7 mr-2 mt-auto mb-auto"></i> 
                                     <div class="pl-3 pt-2 text-white cursor-pointer hover:text-pallette-red" @click="manageMenu()" aria-label="Expand the sidebar menu" aria-controls="fail-article">Manage</div>
                                 </div>
                                 <div class="w-4/5 pt-2 ml-auto mr-auto pb-2" style="border-bottom: 1px solid #424242"> </div>
@@ -64,6 +63,13 @@
                             </li>
                         </ul>
                     </div>
+
+                    <li v-if="$store.state.clients.client" class="">
+                        <div class="mt-2" >
+                            <i class="fas  pt-2 pl-6 fa-tools mr-2 mt-auto mb-auto"></i>
+                            <router-link class="pt-2 pl-2 text-white hover:text-pallette-red" to="/projects/list">Projects</router-link>
+                        </div>
+                    </li>
 
                     <li class="flex mt-2">
                         <i v-if="$store.getters['auth/isAuthenticated']" class="fas  pt-2 pl-6 fa-sign-out-alt mr-2 mt-auto mb-auto"></i>
@@ -124,7 +130,6 @@ export default {
             return this.pages;
         }
     },
-
     mounted() {
         this.$root.$on('menuClick', (menuOpen) => {
             this.expanded = menuOpen;

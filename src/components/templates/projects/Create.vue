@@ -8,7 +8,6 @@
       <Label for="status">Status</Label>
       
       <Select class="mx-auto" :options="statusSrc" v-model="project.status"></Select>
-      {{proje}}
 
       <Label for="status">Client</Label>
       <Select class="mx-auto" :options="clientList" v-model="project.clientID"></Select>

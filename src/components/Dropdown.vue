@@ -28,6 +28,9 @@
                     <template v-if="child.type == 'account'">
                         <A href="#" @click.native.prevent="setAccount(child.to)">{{child.label}}</A>
                     </template>
+                    <template v-if="child.type == 'client'">
+                        <A href="#" @click.native.prevent="setClient(child.to)">{{child.label}}</A>
+                    </template>
                 </li>
             </template>
             <template v-else>
@@ -57,6 +60,8 @@
 */
 import A from '../components/Link'
 import admin from '../store/modules/admin'
+import clients from '../store/modules/clients'
+
     export default {
         props:[
             'children',
@@ -79,8 +84,12 @@ import admin from '../store/modules/admin'
                 }else{
                     this.$store.unregisterModule("admin")
                 }
+            },
+
+            setClient(id){
+                this.$store.dispatch("clients/getClient", {id: id, vm: this})
             }
-        }
+        },
     }
 </script>
 <style scoped>

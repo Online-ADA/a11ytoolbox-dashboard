@@ -14,7 +14,7 @@
 
         <div class="flex">
           <transition name="slideright">
-            <secondary-sidebar v-if="this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate'" type="Projects"></secondary-sidebar>
+            <secondary-sidebar v-if="this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' || this.$route.name=='ProjectList'" type="Projects"></secondary-sidebar>
           </transition>
 
           <div class="flex-1">
@@ -64,6 +64,7 @@ import AdaSecondaryHeader from '@/components/SecondaryHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import SecondarySidebar from '@/components/SecondarySidebar.vue'
 import Card from '@/components/Card.vue'
+import clients from './store/modules/clients'
 
 export default {
   data(){
@@ -181,8 +182,16 @@ export default {
     }
   },
   computed: {
-    account(){
+    account() {
       return this.$store.getters["auth/account"]
+    },
+    client(){
+      if ( this.$store.state.clients )
+      {
+        if ( this.$store.state.clients.client )
+          return this.$store.state.clients.client;
+      }
+      return false;
     },
 
     contentWidth() {
@@ -200,13 +209,27 @@ export default {
     },
 
     showSecondaryHeader() {
-      if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' )
+      if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' || this.$route.name=='ProjectList' )
         return true;
       else
         return false;
     }
   },
-  
+  watch: {
+    account: function() {
+      if ( !this.account && this.$route.path != '/' )
+        this.$router.push({path: '/'}).catch(()=>{})
+    },
+    client: function() {
+      if ( !this.client && this.$route.path != '/' )
+        this.$router.push({path: '/'}).catch(()=>{})
+    }
+  },
+  created() {
+        if(this.$store.state.clients === undefined){
+            this.$store.registerModule('clients', clients)
+        }
+    },
   mounted() {
       this.$root.$on('menuClick', (menuOpen) => {
           this.sidebarExpanded = menuOpen;
