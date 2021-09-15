@@ -14,7 +14,7 @@
 
         <div class="flex">
           <transition name="slideright">
-            <secondary-sidebar v-if="this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate'" type="Projects"></secondary-sidebar>
+            <secondary-sidebar v-if="this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' || this.$route.name=='ProjectList'" type="Projects"></secondary-sidebar>
           </transition>
 
           <div class="flex-1">
@@ -24,7 +24,7 @@
             <div id="main-content" class="pt-12 " v-bind:class="{ sidebarOpen: sidebarExpanded }">
 
               <div class="flex-1">
-                <div id="nav" class="flex items-center relative z-30 w-full">
+                <!-- <div id="nav" class="flex items-center relative z-30 w-full">
                   <div class="w-1/3"></div>
                     <div class="flex place-content-center w-1/3 box-border py-1">
                       <router-link class="hover:text-gray-500 pl-4" to="/">Home</router-link>
@@ -44,7 +44,7 @@
                       <span v-if="account"><span aria-hidden="true" class="px-2">|</span>Account: {{account}}</span>
                     </div>
                     <div class="w-1/3"></div>
-                  </div>
+                  </div> -->
                   <router-view/>
                 </div>
               </div>
@@ -83,6 +83,8 @@ import Sidebar from '@/components/Sidebar.vue'
 import SecondarySidebar from '@/components/SecondarySidebar.vue'
 import Modal from './components/Modal'
 import Btn from './components/Button'
+import Card from '@/components/Card.vue'
+import clients from './store/modules/clients'
 
 export default {
   data(){
@@ -205,8 +207,16 @@ export default {
     },
   },
   computed: {
-    account(){
+    account() {
       return this.$store.getters["auth/account"]
+    },
+    client(){
+      if ( this.$store.state.clients )
+      {
+        if ( this.$store.state.clients.client )
+          return this.$store.state.clients.client;
+      }
+      return false;
     },
     contentWidth() {
       if ( sidebarExpanded)
@@ -221,7 +231,7 @@ export default {
         return false;
     },
     showSecondaryHeader() {
-      if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' )
+      if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' || this.$route.name=='ProjectList' )
         return true;
       else
         return false;
@@ -242,7 +252,21 @@ export default {
       }
     },
   },
-  
+  watch: {
+    account: function() {
+      if ( !this.account && this.$route.path != '/' )
+        this.$router.push({path: '/'}).catch(()=>{})
+    },
+    client: function() {
+      if ( !this.client && this.$route.path != '/' )
+        this.$router.push({path: '/'}).catch(()=>{})
+    }
+  },
+  created() {
+        if(this.$store.state.clients === undefined){
+            this.$store.registerModule('clients', clients)
+        }
+    },
   mounted() {
       this.$root.$on('menuClick', (menuOpen) => {
           this.sidebarExpanded = menuOpen;

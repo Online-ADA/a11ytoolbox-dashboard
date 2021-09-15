@@ -2,21 +2,20 @@
   <div class="flex h-full min-h-screen w-32 shadow-lg bg-pallette-grey-dark text-white " style="width:200px" >
       
       
-      <div class="fixed">
+      <div class="fixed" >
           <router-link class="" to="/manage"><img class="pl-3 pt-2" src="../assets/onlineadalogo.png" /></router-link>
                   
-            <div class="flex" >
+            <div class="flex" style="width:200px">
                 <ul id="nav" class="pt-8 flex-1">
                     <li>
-                    <i class="fas fa-house pl-6 mr-2"></i><router-link class="pl-2 text-white hover:text-pallette-red" to="/">Home</router-link>
+                        <i class="fas fa-house pl-6 mr-2"></i><router-link class="pl-2 text-white hover:text-pallette -red" to="/">Home</router-link>
                     </li>
 
                     <li class="flex mt-2">
-
                         <template v-if="$store.getters['auth/isManager']" >
                             <div v-if="manage==true" class="w-full h-full bg-pallette-grey pt-2 shaddow-inner" >
                                 <div class="flex">
-                                    <i class="fas fa-tasks pt-2 pl-7 mr-2 mt-auto mb-auto"></i>
+                                    <i class="fas fa-tasks pt-2 pl-7 mr-2 mt-auto mb-auto"></i> 
                                     <div class="pl-3 pt-2 text-white cursor-pointer hover:text-pallette-red" @click="manageMenu()" aria-label="Expand the sidebar menu" aria-controls="fail-article">Manage</div>
                                 </div>
                                 <div class="w-4/5 pt-2 ml-auto mr-auto pb-2" style="border-bottom: 1px solid #424242"> </div>
@@ -65,15 +64,18 @@
                         </ul>
                     </div>
 
+                    <li v-if="$store.state.clients.client" class="">
+                        <div class="mt-2" >
+                            <i class="fas  pt-2 pl-6 fa-tools mr-2 mt-auto mb-auto"></i>
+                            <router-link class="pt-2 pl-2 text-white hover:text-pallette-red" to="/projects/list">Projects</router-link>
+                        </div>
+                    </li>
+
                     <li class="flex mt-2">
                         <i v-if="$store.getters['auth/isAuthenticated']" class="fas  pt-2 pl-6 fa-sign-out-alt mr-2 mt-auto mb-auto"></i>
                         <i v-else class="fas fa-sign-in-alt pt-2 pl-7 mr-2 mt-auto mb-auto"></i>
                         <A v-if="$store.getters['auth/isAuthenticated']" class=" pt-2 pl-2 text-white hover:text-pallette-red" href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
                         <A v-else href="#" class="pt-2 pl-3 text-white hover:text-pallette-red" @click.native.prevent="$store.dispatch('auth/login')">Log in</A>
-                    </li>
-                    
-                    <li>
-                        <span v-if="account">Account: {{account}}</span>
                     </li>
                 </ul>
                 <!-- <button class="font-button h-4 rounded uppercase transition-colors duration-100 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-red hover:text-white text-xs" @click="expand_secondary_menu" aria-label="Expand the sidebar menu" aria-controls="fail-article">Menu</button>
@@ -128,7 +130,6 @@ export default {
             return this.pages;
         }
     },
-
     mounted() {
         this.$root.$on('menuClick', (menuOpen) => {
             this.expanded = menuOpen;

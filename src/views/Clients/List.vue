@@ -1,7 +1,7 @@
 <template>
     <div class="text-center mt-32">
         <Loader v-if="loading"></Loader>
-        <template v-if="clients.length">
+        <template v-if="clients.length > 0">
             <h2>Your Clients:</h2>
             <ul>
                 <li v-for="(client, id) in clients" :key="id">

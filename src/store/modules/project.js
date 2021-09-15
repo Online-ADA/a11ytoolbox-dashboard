@@ -105,16 +105,18 @@ export default {
 					state.loading = false;
 				})
 			},
-			getProjects({state, rootState}){
+			getProjects({state, rootState}, notify=true){
 				state.loading = true
-
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {params: {user_id: rootState.auth.user.id} })
+				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {params: {user_id: rootState.auth.user.id, clientID: rootState.clients.client.id } })
 				.then( re => {
-					Vue.notify({
-						title: "Success",
-						text: "Projects retrieved",
-						type:"success"
-					})
+					if ( notify )
+					{
+						Vue.notify({
+							title: "Success",
+							text: "Projects retrieved",
+							type:"success"
+						})
+					}
 					state.all = re.data.details
 				})
 				.catch( re => {

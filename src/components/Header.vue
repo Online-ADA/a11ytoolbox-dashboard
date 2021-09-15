@@ -4,7 +4,11 @@
       <i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" @click="menuClick()" ></i>
 
     <div v-if="accountsWithRole.length" class=" mr-auto mb-auto mt-auto">
-        <Dropdown  :children="accountDropdown" class="pl-8" labelColor="text-white"><template v-slot:label>Account</template></Dropdown>
+        <Dropdown  :children="accountDropdown" class="pl-8" labelColor="text-white"><template v-slot:label>{{selectedAccountName}}</template></Dropdown>
+    </div>
+
+    <div v-if="getClients.length" class=" mr-auto mb-auto mt-auto">
+        <Dropdown  :children="getClients" class="pl-8" labelColor="text-white"><template v-slot:label>{{selectedClient}}</template></Dropdown>
     </div>
 
    <Dropdown  :children="logoutDropdown" id="login" class="ml-auto mt-auto mb-auto transition-transform" labelColor="text-white" v-bind:class="{ menuOpen: menuOpen }">
@@ -30,9 +34,9 @@ export default {
                 label: 'Logout',
                 to: 'auth/logout'
                 },
-            ],
-
+            ], 
             menuOpen: true,
+            account: false,
         }
     },
     name: 'ada-header',
@@ -53,8 +57,44 @@ export default {
             }
 
             return accounts;
-        }
+        },
+
+        getClients() {
+            var clients = [];
+            for ( var i = 0; i < this.$store.state.clients.all.length; i++ )
+            {
+                clients.push({ type: 'client', label: this.$store.state.clients.all[i].name, to: this.$store.state.clients.all[i].id })
+            }
+            return clients;
+        },
+        selectedAccount() {      
+            if ( this.$store.state.auth.account )
+                return this.$store.state.auth.account;
+            return false;
+        },
+        selectedAccountName() {      
+            if ( this.$store.state.auth.account )
+                return this.accountsWithRole.find(({ id }) => id == this.$store.state.auth.account ).name
+            return "Accounts";
+        },
+        selectedClient() {
+            if ( this.$store.state.clients.client )
+                return this.$store.state.clients.client.name;
+            return "Clients";
+        },
     },
+    watch: {
+        selectedAccount: function() {
+            if ( this.account != this.selectedAccount )
+            {
+                if ( this.$store.state.clients.client )
+                    this.$store.dispatch("clients/getClient", {id: -1, vm: this})
+            }
+            
+            this.$store.dispatch("clients/getClients")
+        },
+    },
+
     methods: {
         menuClick() {
             this.menuOpen = !this.menuOpen;
@@ -65,6 +105,8 @@ export default {
         Dropdown,
     },
     created() {
+        this.$store.dispatch("clients/getClients");
+        this.account = this.selectedAccount;
     },
 }
 
