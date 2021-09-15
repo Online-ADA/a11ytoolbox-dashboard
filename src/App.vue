@@ -53,6 +53,24 @@
         </div>
       </div>
     </div>
+    <Modal class="z-50" :open="showLoginPrompt">
+      <div class="bg-white px-4 pt-5 pb-4 p-6 text-center">
+          <Btn aria-label="Close refresh session modal" @click.native.prevent="showLoginPrompt = false" class="absolute top-4 right-4" hover="true" color="white">X</Btn>
+          <h2 class="text-center pb-3">Your session is about to expire</h2>
+
+          <span class="text-sm">Time Remaining: {{tokenMinutesLeft}} minute<template v-if="tokenMinutesLeft != 1">s</template> and {{tokenSecondsLeft}} second<template v-if="tokenSecondsLeft != 1">s</template></span>
+          <div class="text-sm">When your session ends you will be redirected to the home page</div>
+      </div>
+      <div class="bg-gray-50 px-4 py-3 flex">
+          <button @click.prevent="refreshSession" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
+            Refresh Session
+          </button>
+          <button @click.prevent="showLoginPrompt = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
+            Close
+          </button>
+      </div>
+    </Modal>
+    
   </div>
 </template>
 
@@ -63,7 +81,8 @@ import AdaHeader from '@/components/Header.vue'
 import AdaSecondaryHeader from '@/components/SecondaryHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import SecondarySidebar from '@/components/SecondarySidebar.vue'
-import Card from '@/components/Card.vue'
+import Modal from './components/Modal'
+import Btn from './components/Button'
 
 export default {
   data(){
@@ -180,31 +199,48 @@ export default {
       ]
     }
   },
+  methods:{
+    refreshSession(){
+      this.$store.dispatch('auth/resetToken', this.$router.history.current.path)
+    },
+  },
   computed: {
     account(){
       return this.$store.getters["auth/account"]
     },
-
     contentWidth() {
       if ( sidebarExpanded)
         return document.getElementById("main-content").clientWidth - 200;
       else
         return document.getElementById("main-content").clientWidth;
     },
-
     secondaryHeaderLabel() {
       if ( "this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate'" )
         return "Projects";
       else
         return false;
     },
-
     showSecondaryHeader() {
       if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' )
         return true;
       else
         return false;
-    }
+    },
+    tokenSecondsLeft(){
+      return this.$store.state.auth.token_time_left.seconds
+    },
+    tokenMinutesLeft(){
+      return this.$store.state.auth.token_time_left.minutes
+    },
+    showLoginPrompt:{
+      get(){
+        return this.$store.state.auth.showLoginPrompt
+      },
+      set(val){
+        this.$store.commit("auth/setState", {key: 'showLoginPrompt', value: false})
+        this.$store.commit("auth/setState", {key: 'showLoginPromptOverride', value: true})
+      }
+    },
   },
   
   mounted() {
@@ -220,7 +256,8 @@ export default {
     AdaSecondaryHeader,
     Sidebar,
     SecondarySidebar,
-    Card
+    Modal,
+    Btn
   }
 }
 </script>

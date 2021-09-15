@@ -29,7 +29,8 @@ export default {
   name: 'Home',
   data(){
     return {
-      message: ""
+      message: "",
+      date: false
     }
   },
   components: {
@@ -51,7 +52,6 @@ export default {
     }
   },
   mounted(){
-    
   },
   computed: {
     accountsWithRole(){
@@ -62,6 +62,9 @@ export default {
       } )
       
     },
+    total(){
+      return this.$store.state.auth.token_total_minutes_remaining
+    }
   },
   watch:{
     "$store.state.auth.authMessage": {

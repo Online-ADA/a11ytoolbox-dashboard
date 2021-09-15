@@ -99,7 +99,7 @@
 								<div class="flex-1 mx-2 flex flex-col">
 									<Label class="text-lg leading-6 w-full" for="software_used">Software Used</Label>
 									<select style="min-width:200px;" id="software_used" class="flex-1" v-model="selectedSoftware">
-										<option :value="option" v-for="(option, index) in audit.software_used" :key="'software_used-'+index">{{option}}</option>
+										<option :value="option" v-for="(option, index) in audit.software_used" :key="'software_used-'+index">{{option}} TEST</option>
 									</select>
 								</div>
 								<div class="flex-1 mx-2 flex flex-col">
@@ -385,7 +385,9 @@ export default {
 			"Regression",
 			"Best Practice",
 			"Third party problem",
-			"Resolved by removal"
+			"Resolved by removal",
+			"Usability Problem",
+			"Duplicate",
 		],
 		darkMode: false,
 		issueModalOpen: false,
