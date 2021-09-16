@@ -4,7 +4,7 @@
             <slot name="label"></slot>
             <i v-if="!sub" class="fas fa-caret-down pl-1"></i>
         </a>
-        <ul class="mt-0 hidden absolute top-full border border-gray-400 bg-white rounded whitespace-nowrap pt-1 pb-1 right-0">
+        <ul class="mt-0 hidden absolute top-full border border-gray-400 bg-white rounded whitespace-nowrap pt-1 pb-1">
             <template v-if="children">
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in children" :key="index">
                     <template v-if="child.type == 'anchor' || !child.type">
@@ -106,5 +106,11 @@ import clients from '../store/modules/clients'
 
     ul li {
         padding: 8px;
+    }
+    .right-align ul{
+        right:0;
+    }
+    .left-align ul{
+        left:0;
     }
 </style>

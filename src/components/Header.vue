@@ -1,10 +1,10 @@
 <template>
   <div class="flex w-full px-4 py-2 bg-pallette-grey shadow-custom overflow-visible" style="margin-left: 200px">
       
-      <button :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
+    <button :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
     <div v-if="accountsWithRole.length" class=" mr-auto mb-auto mt-auto">
-        <Dropdown :children="accountDropdown" class="pl-8" labelColor="text-white"><template v-slot:label>{{selectedAccountName}}</template></Dropdown>
+        <Dropdown :children="accountDropdown" class="pl-8 left-align" labelColor="text-white"><template v-slot:label>{{selectedAccountName}}</template></Dropdown>
     </div>
 
     <div v-if="getClients.length" class=" mr-auto mb-auto mt-auto">
@@ -13,7 +13,7 @@
 
     <button v-if="!$store.state.auth.user" v-bind:class="{ menuOpen: menuOpen }" id="login" class="login-button ml-auto my-auto block whitespace-no-wrap no-underline text-white" @click.prevent="$store.dispatch('auth/login')">Login</button>
 
-   <Dropdown v-if="$store.state.auth.user" :children="logoutDropdown" id="login" class="ml-auto mt-auto mb-auto transition-transform" labelColor="text-white" v-bind:class="{ menuOpen: menuOpen }">
+   <Dropdown v-if="$store.state.auth.user" :children="logoutDropdown" id="login" class="ml-auto mt-auto mb-auto transition-transform right-align" labelColor="text-white" v-bind:class="{ menuOpen: menuOpen }">
        <template v-slot:label >{{$store.state.auth.user.first_name}}</template>
    </Dropdown>
   </div>
