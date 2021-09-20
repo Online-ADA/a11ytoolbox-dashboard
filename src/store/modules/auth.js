@@ -78,24 +78,23 @@ export default {
   },
   actions: {
     check({state}) {
-      Request.get(state.toolboxapi+'/api/state/init', {
-        onSuccess: {
-          silent: true,
-          callback: function(response){
-            state.user = response.data.details.user
-            state.accountsRoles = response.data.details.roles.accounts
-            state.accountsPermissions = response.data.details.permissions.accounts
-            state.accounts = response.data.details.accounts
-          }
-        }
+      Request.getPromise(state.toolboxapi+'/api/state/init')
+      .then( response => {
+        Cookies.set("initialLoginAttempt", false)
+        state.user = response.data.details.user
+        state.accountsRoles = response.data.details.roles.accounts
+        state.accountsPermissions = response.data.details.permissions.accounts
+        state.accounts = response.data.details.accounts
       })
+      .catch(re => console.log("PROBLEM", re))
+      .finally()
     },
     login({state}, redirect){
       if( redirect ){
         state.redirect = redirect
       }
       
-      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth&oada_token_name=Toolbox"
+      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth"
     },
     resetToken({state}){
       Request.postPromise(state.accapi + "/api/authenticate/reset")
@@ -117,6 +116,12 @@ export default {
         console.log(re.data)
       })
     },
+    checkLoggedIn({state, dispatch}){
+      if( Cookies.get("initialLoginAttempt") === "false" && !state.token && !state.user ){
+        Cookies.set("initialLoginAttempt", true)
+        dispatch("login")
+      }
+    },
     setToken({state, dispatch}, payload){
       Cookies.set('oada_UID', payload.token, { expires: 1 })
       Cookies.set('oada_UID_expire', payload.token_expire * 1000, { expires: 1 })
@@ -126,21 +131,15 @@ export default {
       state.checkForExpire(state)
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
       
-      if(payload.user){
-          state.user = payload.user
-      }
-      if(payload.roles){
-          state.roles = payload.roles
-      }
       if(payload.redirect) {
-          payload.router.push({path: payload.redirect})
+        payload.router.push({path: payload.redirect})
       }else{
-          payload.router.push({path: state.redirect})
+        payload.router.push({path: state.redirect})
       }
-
+      
       dispatch("check")
     },
-    logout({state}, router, refresh = false){
+    logout({state, dispatch}, router, refresh = false){
       state.token = false
       state.token_expire = false
       state.showLoginPrompt = false
@@ -157,6 +156,13 @@ export default {
       Cookies.remove('oada_UID')
       Cookies.remove('oada_UID_expire')
       Cookies.remove('toolboxAccount')
+      Cookies.remove('toolboxClient')
+
+      dispatch("audits/resetState", null, {root: true})
+      dispatch("clients/resetState", null, {root: true})
+      dispatch("domains/resetState", null, {root: true})
+      dispatch("projects/resetState", null, {root: true})
+      dispatch("scan/resetState", null, {root: true})
       
       if( router.app._route.path != "/" ){
         router.push({path: "/"})

@@ -19,6 +19,10 @@ window.Request = request
 Vue.config.productionTip = false
 Vue.prototype.$http = Axios;
 const token = Cookies.get('oada_UID')
+const initialLoginAttempt = Cookies.get("initialLoginAttempt")
+if( initialLoginAttempt == undefined ){
+  Cookies.set("initialLoginAttempt", false)
+}
 var apiHost = "https://apitoolbox.ngrok.io"
 var accountHost = "https://oadaaccounts.ngrok.io"
 var site = "toolboxdashboard.ngrok.io"
@@ -50,32 +54,34 @@ function run(){
   store.state.auth.toolboxapi = apiHost
   store.state.auth.userAPI = `${apiHost}/api/user`
   store.state.auth.adminAPI = `${apiHost}/api/admin`
+
+  console.log("Checking logged in...");
+  store.dispatch("auth/checkLoggedIn")
   
-  Request.getPromise(`${apiHost}/api/state/init`, {async: false})
-  .then( response => {
-      store.state.auth.checkForExpire(store.state.auth)
-      store.commit("auth/setState", {key: "user", value: response.data.details.user})
-      store.commit("auth/setState", {key: "accountsRoles", value: response.data.details.roles.accounts})
-      store.commit("auth/setState", {key: "accountsPermissions", value: response.data.details.permissions.accounts})
-      store.commit("auth/setState", {key: "accounts", value: response.data.details.accounts})
-      runBeforeEach()
-  })
-  .catch( () => {
-    if( router.currentRoute.path != "/" ){
-      router.push({path: "/"})
-      Request.unmute()
-    }
-  })
+  // Request.getPromise(`${apiHost}/api/state/init`, {async: false})
+  // .then( response => {
+  //     store.state.auth.checkForExpire(store.state.auth)
+  //     store.commit("auth/setState", {key: "user", value: response.data.details.user})
+  //     store.commit("auth/setState", {key: "accountsRoles", value: response.data.details.roles.accounts})
+  //     store.commit("auth/setState", {key: "accountsPermissions", value: response.data.details.permissions.accounts})
+  //     store.commit("auth/setState", {key: "accounts", value: response.data.details.accounts})
+  //     runBeforeEach()
+  // })
+  // .catch( re => {
+  //   console.log(re.message);
+  // })
+  // .finally( () => {})
 }
 run()
 
 
 function runBeforeEach(){
   router.beforeEach( (to, from, next) => {
-    if( to.path == "/auth" || from.path == "/auth" ){
-      next()
-      return
-    }
+    console.log("Is this running?");
+    // if( to.path == "/auth" || from.path == "/auth" ){
+    //   next()
+    //   return
+    // }
     
     //Route Heirarchy:check account has been selected, check roles and permissions, then check roles, then check permissions, then check logged in
     if( !store.state.auth.account && to.path != "/" ){
@@ -83,10 +89,10 @@ function runBeforeEach(){
       return
     }
 
-    if( !store.getters["auth/isAuthenticated"] && to.path != "/" ){
-      next("/")
-      return
-    }
+    // if( !store.getters["auth/isAuthenticated"] && to.path != "/" ){
+    //   next("/")
+    //   return
+    // }
     
     if( to.meta.role != undefined && to.meta.permissions != undefined ){
       //check for role and permissions

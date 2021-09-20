@@ -2,12 +2,12 @@
   <div class="flex w-full px-4 py-2 bg-pallette-grey shadow-custom overflow-visible" style="margin-left: 200px">
       
     <button :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
-
+    
     <div v-if="accountsWithRole.length" class=" mr-auto mb-auto mt-auto">
         <Dropdown :children="accountDropdown" class="pl-8 left-align" labelColor="text-white"><template v-slot:label>{{selectedAccountName}}</template></Dropdown>
     </div>
 
-    <div v-if="getClients.length" class=" mr-auto mb-auto mt-auto">
+    <div v-if="getClients.length && $store.getters['auth/isAuthenticated']" class=" mr-auto mb-auto mt-auto">
         <Dropdown :children="getClients" class="pl-8" labelColor="text-white"><template v-slot:label>{{selectedClient}}</template></Dropdown>
     </div>
 
@@ -85,14 +85,17 @@ export default {
         },
     },
     watch: {
-        selectedAccount: function() {
+        selectedAccount: function(newVal) {
             if ( this.account != this.selectedAccount )
             {
                 if ( this.$store.state.clients.client )
                     this.$store.dispatch("clients/getClient", {id: -1, vm: this})
             }
             
-            this.$store.dispatch("clients/getClients")
+            if( newVal ){
+                this.$store.dispatch("clients/getClients")
+            }
+            
         },
     },
 
