@@ -78,22 +78,27 @@ export default {
   },
   actions: {
     check({state}) {
+      console.log("INSIDE AUTH");
       Request.getPromise(state.toolboxapi+'/api/state/init')
       .then( response => {
-        Cookies.set("initialLoginAttempt", false)
         state.user = response.data.details.user
         state.accountsRoles = response.data.details.roles.accounts
         state.accountsPermissions = response.data.details.permissions.accounts
         state.accounts = response.data.details.accounts
+        Cookies.set("loggingIn", false)
       })
-      .catch(re => console.log("PROBLEM", re))
-      .finally()
+      .catch(re => console.log(re.response.data))
+      // .finally( ()=>{
+      //   if( !state.user && ! Cookies.get('oada_UID')){
+      //     window.location = state.accapi + "/signin"
+      //   }
+      // })
     },
     login({state}, redirect){
       if( redirect ){
         state.redirect = redirect
       }
-      
+      Cookies.set("loggingIn", true)
       window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth"
     },
     resetToken({state}){
@@ -115,12 +120,6 @@ export default {
       .catch(re=>{
         console.log(re.data)
       })
-    },
-    checkLoggedIn({state, dispatch}){
-      if( Cookies.get("initialLoginAttempt") === "false" && !state.token && !state.user ){
-        Cookies.set("initialLoginAttempt", true)
-        dispatch("login")
-      }
     },
     setToken({state, dispatch}, payload){
       Cookies.set('oada_UID', payload.token, { expires: 1 })
@@ -163,14 +162,8 @@ export default {
       dispatch("domains/resetState", null, {root: true})
       dispatch("projects/resetState", null, {root: true})
       dispatch("scan/resetState", null, {root: true})
-      
-      if( router.app._route.path != "/" ){
-        router.push({path: "/"})
-      }
-      
-      if(refresh){
-        router.go()
-      }
+
+      window.location = "https://dashboard.onlineada.com"
     },
   },
   getters: {
