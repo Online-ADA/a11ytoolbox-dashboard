@@ -29,6 +29,8 @@ if( Cookies.get("loggingIn") == undefined ){
   Cookies.set("loggingIn", false)
 }
 
+const params = new URLSearchParams(window.location.search)
+
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }
@@ -66,8 +68,10 @@ function run(){
       runBeforeEach()
     })
     .catch(re => {
-      if( Cookies.get("loggingIn") === "false" && re.response.data.message == "Unauthenticated." ){
-        store.dispatch("auth/login")
+      if( !params.get('oada_auth') ){
+        if( Cookies.get("loggingIn") === "false" && re.response.data.message == "Unauthenticated." ){
+          store.dispatch("auth/login")
+        }
       }
     })
 }

@@ -78,7 +78,6 @@ export default {
   },
   actions: {
     check({state}) {
-      console.log("INSIDE AUTH");
       Request.getPromise(state.toolboxapi+'/api/state/init')
       .then( response => {
         state.user = response.data.details.user
@@ -88,11 +87,11 @@ export default {
         Cookies.set("loggingIn", false)
       })
       .catch(re => console.log(re.response.data))
-      // .finally( ()=>{
-      //   if( !state.user && ! Cookies.get('oada_UID')){
-      //     window.location = state.accapi + "/signin"
-      //   }
-      // })
+      .finally( ()=>{
+        if( !state.user && ! Cookies.get('oada_UID')){
+          window.location = state.accapi + "/signin"
+        }
+      })
     },
     login({state}, redirect){
       if( redirect ){
