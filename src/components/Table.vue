@@ -406,7 +406,7 @@
 							for (let index = 0; index < data.length; index++) {
 								let content = ""
 								const element = data[index];
-								console.log(element);
+								
 								if( element.title ){
 									content += element.title
 								}
