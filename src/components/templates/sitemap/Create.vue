@@ -46,12 +46,12 @@
 				<span id="content-description" class="sr-only">If this field is left empty, it will not be added to the list upon saving but it will indicate a failure</span>
 				<div :key="'strucList-' + index" v-for="(item, index) in structured_items" class="flex items-center my-2">
 					<div class="flex flex-1 flex-col mx-1">
-						<Label :stacked="false" class="flex-1" :for="'content-' + index">Content<small aria-hidden="true" class="text-red-600">*</small></Label>
-						<TextInput aria-describedby="content-description" placeholder="All Modals, https://onlineada.com/contact..." class="flex-1" :id="'content-' + index" v-model="structured_items[index].content" />
+						<Label :stacked="false" class="flex-1" :for="'title-' + index">Title<small aria-hidden="true" class="text-red-600">*</small></Label>
+						<TextInput aria-describedby="content-description" placeholder="All Modals, https://onlineada.com/contact..." class="flex-1" :id="'title-' + index" v-model="structured_items[index].title" />
 					</div>
 					<div class="flex flex-1 flex-col mx-1">
-						<Label class="flex-1" :for="'screen-' + index">Screen</Label>
-						<TextInput placeholder="https://nimb.ws/AyYVWS" class="flex-1" :id="'screen-' + index" v-model="structured_items[index].screen" />
+						<Label class="flex-1" :for="'url-' + index">Url</Label>
+						<TextInput placeholder="https://nimb.ws/AyYVWS" class="flex-1" :id="'url-' + index" v-model="structured_items[index].url" />
 					</div>
 
 					<Button class="ml-2 self-end pb-2.5" color="delete" @click.native.prevent="popStructuredItem(index)"><i class="far fa-trash-alt"></i></Button>
@@ -71,16 +71,16 @@
 						<table class="w-full border border-black table-fixed">
 							<thead>
 								<tr>
-									<th class="text-center border border-black" width="40%" scope="col"><span id="sample-content">Content</span></th>
-									<th class="text-center border border-black" width="40%" scope="col"><span id="sample-screen">Screen</span></th>
+									<th class="text-center border border-black" width="40%" scope="col"><span id="sample-title">Title</span></th>
+									<th class="text-center border border-black" width="40%" scope="col"><span id="sample-url">Url</span></th>
 									<th class="text-center border border-black" width="10%" scope="col">Delete</th>
 									<th class="text-center border border-black" width="10%" scope="col">Save</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-for="sample in domain.sample" :key="sample.id">
-									<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.content" aria-labelledby="sample-content"></TextInput></td>
-									<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.screen" aria-labelledby="sample-screen"></TextInput></td>
+									<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.title" aria-labelledby="sample-title"></TextInput></td>
+									<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.url" aria-labelledby="sample-url"></TextInput></td>
 									<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="delete this sample item" @click.native.prevent="deleteItem(sample.id)" color="delete">X</Button></td>
 									<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="save edits to this sample item" @click.native.prevent="updateItem(sample)" color="orange"><i class="fas fa-save"></i></Button></td>
 								</tr>
@@ -154,7 +154,7 @@ export default {
 		data: {},
 		domain: false,
 		structured_items: [
-			{content: "", screen: ""}
+			{title: "", url: ""}
 		],
 		page: {
 			url: "",
@@ -231,13 +231,13 @@ export default {
 			this.structured_items.splice(index, 1)
 		},
 		addStructuredItem(){
-			this.structured_items.push({content: "", screen: ""})
+			this.structured_items.push({title: "", url: ""})
 		},
 		saveStructuredList(){
 			this.structuredListModalOpen = false
 			this.$store.dispatch("domains/saveSample", {id: this.domain.id, sample: this.structured_items, domain: this.domain.url})
 			this.structured_items=  [
-				{content: "", screen: ""}
+				{title: "", url: ""}
 			]
 		},
 		saveDomain(){

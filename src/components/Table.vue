@@ -401,7 +401,32 @@
 					let output = ""
 					if( data && data.length ){
 						output = "<ul><li class='list-disc break-words'>"
-						output += data.join("</li><li class='list-disc break-words'>")
+						if( key == "pages"){
+							
+							for (let index = 0; index < data.length; index++) {
+								let content = ""
+								const element = data[index];
+								console.log(element);
+								if( element.title ){
+									content += element.title
+								}
+								if( element.title && element.url ){
+									content += " - "
+								}
+								if( element.url ){
+									content += element.url
+								}
+								output += content
+								output += "</li>"
+								if( index !== data.length - 1 ){
+									output += "<li class='list-disc break-words'>"
+								}
+							}
+							
+						}else{
+							output += data.join("</li><li class='list-disc break-words'>")
+						}
+						
 						output += "</li></ul>"
 					}
 					
