@@ -111,7 +111,7 @@
 					tabindex="0" 
 					@mousedown="down" 
 					@keydown="checkRowSelect(data, $event)" 
-					@mouseup="up(data)" 
+					@mouseup="up(data, $event)" 
 					v-for="(data, index) in rows" 
 					:key="'row-'+index">
 						<td 
@@ -123,7 +123,10 @@
 						v-show="headers.hasOwnProperty(subIndex) && columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent ? true : false" 
 						:data-key="key" v-for="(value, key, subIndex) in data" 
 						:key="'key-'+subIndex">
-							<span tabindex="-1">
+							<span tabindex="-1" v-if="(key == 'articles' && $store.state.audits.articles.length) || 
+													   (key == 'techniques' && $store.state.audits.techniques.length) ||
+													   (key != 'techinques' && key != 'articles')"
+							>
 								<span tabindex="-1" class="text-left block" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
 								<span class="block break-words" tabindex="-1" v-else-if="key == 'target'" >{{displayValue(key, value)}}</span>
 								<span class="block" tabindex="-1" :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
@@ -306,11 +309,13 @@
 				this.dragData.dragging = true
 				this.dragData.x = 0
 			},
-			up(data){
-				this.dragData.dragging = false
-				if( this.dragData.x === 0 && !this.locked ){
-					if( (this.importing && data.hasOwnProperty('unique')) || !this.importing ){
-						this.$emit('rowClick', data)
+			up(data, event){
+				if( event.srcElement != 'a' ){
+					this.dragData.dragging = false
+					if( this.dragData.x === 0 && !this.locked ){
+						if( (this.importing && data.hasOwnProperty('unique')) || !this.importing ){
+							this.$emit('rowClick', data)
+						}
 					}
 				}
 			},
@@ -414,7 +419,12 @@
 									content += " - "
 								}
 								if( element.url ){
-									content += element.url
+									let domain = this.$store.state.audits.audit.domain.url
+									let url = element.url
+									if( !url.includes(domain) ){
+										url = domain + url
+									}
+									content += '<a target="_blank" href="'+url+'">' + url + '</a>'
 								}
 								output += content
 								output += "</li>"
@@ -433,17 +443,37 @@
 					return output
 				}
 				if( this.specialKeys.includes(key) ){
+					let source = this.$store.state.audits.articles
+					if( key == "techniques" ){
+						source = this.$store.state.audits.techniques
+					}
 					let output = ""
-					if( data ){
-						let mapped = data.map( d => d.display)
-						
-						if( mapped.length ){
+					if( data.length ){
+						if( data.length > 1 ){
 							output = "<ul><li class='list-disc break-words'>"
-							output += mapped.join("</li><li class='list-disc break-words'>")
+
+							for (let index = 0; index < data.length; index++) {
+								let urlOb = source.find( a=>a.id == data[index].id )
+								if( urlOb && urlOb.ext_url ){
+									output += `<a target="_blank" href='${urlOb.ext_url}'>${data[index].display}</a>`
+								}else{
+									output += data[index].display
+								}
+								
+								if( index+1 != data.length ){
+									output += "</li><li class='list-disc break-words'>"
+								}
+							}
 							output += "</li></ul>"
+						}else{
+							let urlOb = source.find( a=>a.id == data[0].id )
+							if( urlOb && urlOb.ext_url ){
+								output += `<a target="_blank" href='${urlOb}'>${data[0].display}</a>`
+							}else{
+								output += data[0].display
+							}
 						}
 					}
-					
 					
 					return output
 				}
