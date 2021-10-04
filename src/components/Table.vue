@@ -73,21 +73,21 @@
 
 									<button 
 										@click="sort(header.header)" 
-										v-if="!sortData.columns.includes(header.header.replaceAll(/[ ]/g, '_'))" 
+										v-if="!sortData.reference.includes(header.header.replaceAll(/[ ]/g, '_'))" 
 										:aria-label="`Currently unsorted. Click to sort column ${header.header} by ascending`" 
 										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 										<i class="fas fa-sort"></i>
 									</button>
 									<button 
 										@click="sort(header.header)" 
-										v-if="sortData.columns.includes(header.header.replaceAll(/[ ]/g, '_')) && sortData.orders[ sortData.columns.indexOf(header.header.replaceAll(/[ ]/g, '_')) ] == 'asc'"
+										v-if="sortData.reference.includes(header.header.replaceAll(/[ ]/g, '_')) && sortData.orders[ sortData.reference.indexOf(header.header.replaceAll(/[ ]/g, '_')) ] == 'asc'"
 										:aria-label="`Currently sorted by ascending. Click to sort column ${header.header} descending`" 
 										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 										<i class="fas fa-sort-up"></i>
 									</button>
 									<button 
 										@click="sort(header.header)"
-										v-if="sortData.columns.includes(header.header.replaceAll(/[ ]/g, '_')) && sortData.orders[ sortData.columns.indexOf(header.header.replaceAll(/[ ]/g, '_')) ] == 'desc'"
+										v-if="sortData.reference.includes(header.header.replaceAll(/[ ]/g, '_')) && sortData.orders[ sortData.reference.indexOf(header.header.replaceAll(/[ ]/g, '_')) ] == 'desc'"
 										:aria-label="`Currently sorted by descending. Click to remove sorting for ${header.header} column`" 
 										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 										<i class="fas fa-sort-down"></i>
@@ -230,7 +230,8 @@
 				specialKeys : ["articles", "techniques"],
 				sortData: {
 					columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
-					orders: [ "asc" ]
+					orders: [ "asc" ],
+					reference: ["id"]
 				},
 				columnPickerOpen: false,
 				headers: [],
@@ -330,29 +331,44 @@
 			sort( column ){
 				if( column ){
 					column = column.replaceAll(/[ ]/g, "_")
-					let index = this.sortData.columns.indexOf(column)
-					let indexOfID = this.sortData.columns.indexOf('id')
+					//String reference is necessary because sometimes our column becomes an anonymous function
+					let reference = column
+					if( column == "success_criteria" ){
+						column = ((item)=>{return item.articles[0].display})
+					}
+					if( column == "techniques" ){
+						column = ((item)=>{return item.techniques[0].display})
+					}
+					if( column == "pages" ){
+						column = ((item)=>{return item.pages[0].title})
+					}
+					let index = this.sortData.reference.indexOf(reference)
+					let indexOfID = this.sortData.reference.indexOf('id')
 					if( indexOfID >=0 ){
 						this.sortData.columns.splice(indexOfID, 1)
+						this.sortData.reference.splice(indexOfID, 1)
 						this.sortData.orders.splice(indexOfID, 1)
 					}
 					
 					if( index < 0 ){ //If sort.columns does not currently have this column
 						this.sortData.columns.push(column)
+						this.sortData.reference.push(reference)
 						this.sortData.orders.push("asc")
 					} else if( index >= 0 && this.sortData.orders[index] == 'asc' ){ //If sort.columns currently has this column
 						this.sortData.orders[index] = 'desc'
 					} else {
 						this.sortData.columns.splice(index, 1)
+						this.sortData.reference.splice(index, 1)
 						this.sortData.orders.splice(index, 1)
 					}
 
 					if( !this.sortData.columns.length ){
 						this.sortData.columns.push('id')
+						this.sortData.reference.push('id')
 						this.sortData.orders.push('asc')
 					}
 				}
-
+				
 				this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
 				this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
 			},
@@ -361,13 +377,26 @@
 					this.filtering = true
 					let self = this
 					this.filteredRows = this.columnData.filter( c => {
-						let column = self.search.column.replaceAll(/[ ]/g, "_")
+						let column = self.search.column.toLowerCase().replaceAll(/[ ]/g, "_")
+						if( column == "success_criteria" ){
+							column = "articles"
+						}
+						if( column == "audit_1_recommendations" ){
+							column = "recommendations"
+						}
 						
 						if( Array.isArray(c[column]) ){
-							if( !self.search.caseSensitive ){
-								return c[column].join("").toLowerCase().includes(self.search.term)
+							let toSearch = c[column]
+							if( column == "articles" ){
+								toSearch = c[column].map( a=>a.display)
 							}
-							return c[column].join("").includes(self.search.term)
+							if( column == "pages" ){
+								toSearch = c[column].map( a=>a.title)
+							}
+							if( !self.search.caseSensitive ){
+								return toSearch.join("").toLowerCase().includes(self.search.term)
+							}
+							return toSearch.join("").includes(self.search.term)
 						}else{
 							if( !self.search.caseSensitive ){
 								return c[column].toLowerCase().includes(self.search.term)
