@@ -74,7 +74,11 @@
 							<Label class="text-lg leading-6 w-full" :stacked="false" for="pages">Pages</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('pages') }" id="pages-validation">The pages field is required</small>
 							<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
-								<option class="break-words whitespace-normal" :value="page.content" v-for="(page, index) in audit.pages" :key="'page-'+index">{{page.content}}</option>
+								<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in audit.pages" :key="'page-'+index">
+									<template v-if="page.title">{{page.title}}</template>
+									<template v-if="page.title && page.url"> - </template>
+									<template v-if="page.url">{{page.url}}</template>
+								</option>
 							</select>
 						</div>
 						<div class="mx-2 flex-1">
@@ -99,7 +103,7 @@
 								<div class="flex-1 mx-2 flex flex-col">
 									<Label class="text-lg leading-6 w-full" for="software_used">Software Used</Label>
 									<select style="min-width:200px;" id="software_used" class="flex-1" v-model="selectedSoftware">
-										<option :value="option" v-for="(option, index) in audit.software_used" :key="'software_used-'+index">{{option}} TEST</option>
+										<option :value="option" v-for="(option, index) in audit.software_used" :key="'software_used-'+index">{{option}}</option>
 									</select>
 								</div>
 								<div class="flex-1 mx-2 flex flex-col">
