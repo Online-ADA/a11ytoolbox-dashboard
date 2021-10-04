@@ -19,14 +19,22 @@ window.Request = request
 Vue.config.productionTip = false
 Vue.prototype.$http = Axios;
 const token = Cookies.get('oada_UID')
+
 var apiHost = "https://apitoolbox.ngrok.io"
 var accountHost = "https://oadaaccounts.ngrok.io"
 var site = "toolboxdashboard.ngrok.io"
 Vue.prototype.$http.defaults.headers.common['Accept'] = "application/json"
 
+if( Cookies.get("loggingIn") == undefined ){
+  Cookies.set("loggingIn", false)
+}
+
+const params = new URLSearchParams(window.location.search)
+
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }
+
 if( window.location.hostname == "auditortools.onlineada.com" ){
   apiHost = "https://auditortoolsapi.onlineada.com"
   accountHost = "https://accounts.onlineada.com"
@@ -50,40 +58,30 @@ function run(){
   store.state.auth.toolboxapi = apiHost
   store.state.auth.userAPI = `${apiHost}/api/user`
   store.state.auth.adminAPI = `${apiHost}/api/admin`
-  
-  Request.getPromise(`${apiHost}/api/state/init`, {async: false})
-  .then( response => {
-      store.state.auth.checkForExpire(store.state.auth)
-      store.commit("auth/setState", {key: "user", value: response.data.details.user})
-      store.commit("auth/setState", {key: "accountsRoles", value: response.data.details.roles.accounts})
-      store.commit("auth/setState", {key: "accountsPermissions", value: response.data.details.permissions.accounts})
-      store.commit("auth/setState", {key: "accounts", value: response.data.details.accounts})
+
+  Request.getPromise(store.state.auth.toolboxapi+'/api/state/init')
+    .then( response => {
+      store.state.auth.user = response.data.details.user
+      store.state.auth.accountsRoles = response.data.details.roles.accounts
+      store.state.auth.accountsPermissions = response.data.details.permissions.accounts
+      store.state.auth.accounts = response.data.details.accounts
       runBeforeEach()
-  })
-  .catch( () => {
-    if( router.currentRoute.path != "/" ){
-      router.push({path: "/"})
-      Request.unmute()
-    }
-  })
+    })
+    .catch(re => {
+      if( !params.get('oada_auth') ){
+        if( Cookies.get("loggingIn") === "false" && re.response.data.message == "Unauthenticated." ){
+          store.dispatch("auth/login")
+        }
+      }
+    })
 }
 run()
 
-
 function runBeforeEach(){
   router.beforeEach( (to, from, next) => {
-    if( to.path == "/auth" || from.path == "/auth" ){
-      next()
-      return
-    }
     
     //Route Heirarchy:check account has been selected, check roles and permissions, then check roles, then check permissions, then check logged in
     if( !store.state.auth.account && to.path != "/" ){
-      next("/")
-      return
-    }
-
-    if( !store.getters["auth/isAuthenticated"] && to.path != "/" ){
       next("/")
       return
     }
