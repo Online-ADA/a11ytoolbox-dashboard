@@ -141,7 +141,6 @@ export default {
 				state.loading = true
 				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})
 				.then( re=>{
-					console.log(re);
 					if( !Request.muted() ){
 						Vue.notify({
 							title: "Success",

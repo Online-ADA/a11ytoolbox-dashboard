@@ -393,6 +393,9 @@ export default {
 		},
 		processSources(structured, sitemap){
 			this.$store.state.audits.loading = true
+			//The end product is calculated like this:
+			//The entire structured sample + a number of additional pages from the sitemap that equal 10% of the structured sample
+			//i.e. if the structured sample is 30 pages/screens, the working sample should be 3 additional pages
 
 			//Calculate what 10% of the structured list is
 			let tenPercent = parseInt( structured.length * .1 )
@@ -405,11 +408,16 @@ export default {
 
 			//Remove duplicates from structured sample
 			for( let i in structured ){
-				let found = structured_map.some( el => el.content == structured[i].content)
+				if( structured[i].title.toLowerCase() == "sitewide" ){
+					continue
+				}
+				let found = structured_map.some( el => el.title.toLowerCase() == structured[i].title.toLowerCase() ) &&
+							structured_map.some( el => el.url.toLowerCase() == structured[i].url.toLowerCase())
+
 				if( !found ){
 					structured_map.push({
-						content: structured[i].content,
-						screen: structured[i].screen
+						title: structured[i].title,
+						url: structured[i].url
 					})
 				}
 			}
@@ -424,26 +432,29 @@ export default {
 					if( !sitemap[index] ){
 						continue
 					}
-					let found = sitemap_sample.some( el => el.content == sitemap[index].url)
+					let found = sitemap_sample.some( el => el.url.toLowerCase() == sitemap[index].url.toLowerCase())
+
 					if( found ){
 						sitemap.splice(index, 1)
 						continue //break early for efficiency
 					}
-					found = structured_map.some( el => el.content == sitemap[index].url)
+					found = structured_map.some( el => el.title.toLowerCase() == sitemap[index].url.toLowerCase()) ||
+							structured_map.some( el => el.url.toLowerCase() == sitemap[index].url.toLowerCase())
+
 					if( found ){
 						sitemap.splice(index, 1)
 						continue
 					}
 
 					sitemap_sample.push( {
-						content: sitemap[index].url,
-						screen: ""
+						title: "",
+						url: sitemap[index].url
 					})
 					sitemap.splice(index, 1)
 				}
 			}
 
-			this.audit.working_sample = [...structured_map, ...sitemap_sample]
+			this.audit.working_sample = [{title: "Sitewide", url: null}, ...structured_map, ...sitemap_sample]
 			this.$store.state.audits.loading = false
 		},
 		generateWorkingSample(){

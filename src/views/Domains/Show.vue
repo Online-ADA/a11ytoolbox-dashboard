@@ -31,7 +31,7 @@
 					<template v-if="domain && domain.sample.length">
 						<ul class="mb-4 w-full">
 							<li v-for="item in domain.sample" :key="item.id">
-								{{item.content}}<span v-if="item.screen"> - <A :href="item.screen" :newTab="true" >{{item.screen}}</A></span>
+								{{item.title}}<span v-if="item.url"> - <A :href="item.url" :newTab="true" >{{item.url}}</A></span>
 								<!-- <A type='router-link' :to="{path: `/pages/${page.id}`}">{{page.url || page.description}}</A> -->
 							</li>
 						</ul>

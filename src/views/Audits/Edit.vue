@@ -155,12 +155,12 @@
 						<div class="flex flex-wrap w-full justify-center items-end">
 							<h3 class="w-full">Add new sample item</h3>
 							<Label class="flex-1 pr-3">
-								<span>Content</span>
-								<TextInput v-model="newSampleItem.content"></TextInput>
+								<span>Title</span>
+								<TextInput v-model="newSampleItem.title"></TextInput>
 							</Label>
 							<Label class="flex-1">
-								<span>Screen</span>
-								<TextInput v-model="newSampleItem.screen"></TextInput>
+								<span>Url</span>
+								<TextInput v-model="newSampleItem.url"></TextInput>
 							</Label>
 							<Button style="margin-bottom:13px" class="ml-3" color="red" hover="true" @click.native.prevent="addNewSampleItem">Add Item</Button>
 						</div>
@@ -170,15 +170,17 @@
 							<table class="w-full border border-black table-fixed">
 								<thead>
 									<tr>
-										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-content">Content</span></th>
-										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-screen">Screen</span></th>
+										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-title">Title</span></th>
+										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-url">Url</span></th>
 										<th class="text-center border border-black" width="10%" scope="col">Delete</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr v-for="(sample, index) in audit.pages" :key="'sample-'+index">
-										<td class="p-1.5 overflow-y-auto border border-black"><TextInput class="w-full" v-model="sample.content" aria-labelledby="sample-content"></TextInput></td>
-										<td class="p-1.5 overflow-y-auto border border-black"><TextInput class="w-full" v-model="sample.screen" aria-labelledby="sample-screen"></TextInput></td>
+										<td class="p-1.5 overflow-y-auto border border-black">
+											<TextInput class="w-full" v-model="sample.title" aria-labelledby="sample-title"></TextInput>
+										</td>
+										<td class="p-1.5 overflow-y-auto border border-black"><TextInput class="w-full" v-model="sample.url" aria-labelledby="sample-url"></TextInput></td>
 										<td class="p-1.5 overflow-y-auto border border-black"><Button @click.native.prevent="deleteItem(index)" color="delete">X</Button></td>
 									</tr>
 								</tbody>
@@ -206,7 +208,7 @@ import DatePicker from '../../components/Date'
 import Textarea from '../../components/TextArea'
 export default {
 	data: () => ({
-		newSampleItem: {content: "", screen: ""},
+		newSampleItem: {title: "", url: ""},
 		statusSrc: [
 			{name: 'In Progress', value:'in_progress'},
 			{name:'Complete', value:'complete'},
@@ -292,7 +294,7 @@ export default {
 		},
 		addNewSampleItem(){
 			this.audit.pages.push(this.newSampleItem)
-			this.newSampleItem = {content: "", screen: ""}
+			this.newSampleItem = {title: "", url: ""}
 		},
 		resetSample(){
 			this.$set(this.audit, "pages", JSON.parse(JSON.stringify(this.$store.state.audits.audit.pages)))
@@ -300,31 +302,59 @@ export default {
 		refreshWorkingSample(){
 			this.$store.state.audits.loading = true
 
-			//flatten current pages to get just the content
-			let current_sample_content = this.audit.pages.map( o=>o.content) 
-			//flatten structured sample
-			let structured_list = this.structuredSample.map( o=>o.content ) 
-			//figure out sitemap entries by checking against 2 flattened arrays. This gets us a flat array of the sitemap values
-			let sitemap_content_list = current_sample_content.filter( p=> !structured_list.includes(p))
-			//now get the actual objects from the current pages by comparing against the flat sitemap values array
-			let sitemap_list = this.audit.pages.filter( p=>sitemap_content_list.includes(p.content) )
+			//First get the current working sample
+			//Then get the structured sample. We don't want to alter the current sample in any way except to add any new entries from the structured sample in
+			//Loop through the structured sample. If the structured sample entry isn't in the current pages, we add it
 
-			let structured_map = []
-			let self = this
+			//flatten current sample properties for easier comparison
+			let current_existing_titles = this.audit.pages.map(p=>p.title)
+			let current_existing_urls = this.audit.pages.map(p=>p.url)
 
-			//Remove duplicates from structured sample
-			for( let i in self.structuredSample ){
-				let found = structured_map.some( el => el.content == self.structuredSample[i].content)
-				
+			//Now check to see if any of the structured sample objects exist within the current sample
+			let new_entries = this.structuredSample.filter( s=> {
+				if( s.title != null ){
+					let found = current_existing_titles.some( cet => cet != null && cet.toLowerCase() == s.title.toLowerCase() )
+					if( found ){
+						return false
+					}
+				}
+				if( s.url != null ){
+					let found = current_existing_urls.some( ceu => ceu != null && ceu.toLowerCase() == s.url.toLowerCase() )
+					if( found ){
+						return false
+					}
+				}
+				if( s.url == null && s.title == null ){
+					return false
+				}
+				return true
+			})
+
+			//Now remove duplicates.
+			let new_entries_final = []
+			for (let i = 0; i < new_entries.length; i++) {
+				const entry = new_entries[i];
+				let found = new_entries_final.some( ne=>{
+					if( ne.title != null && entry.title != null ){
+						if( ne.title.toLowerCase() == entry.title.toLowerCase() ){
+							return true
+						}
+					}
+					if( ne.url != null && entry.url != null ){
+						if( ne.url.toLowerCase() == entry.url.toLowerCase() ){
+							return true
+						}
+					}
+				})
 				if( !found ){
-					structured_map.push({
-						content: self.structuredSample[i].content,
-						screen: self.structuredSample[i].screen
+					new_entries_final.push({
+						title: entry.title,
+						url: entry.url
 					})
 				}
 			}
 
-			this.audit.pages = [...structured_map, ...sitemap_list]
+			this.audit.pages = [...this.audit.pages, ...new_entries_final]
 			this.$store.state.audits.loading = false
 		},
 		generateWorkingSample(){
@@ -332,6 +362,10 @@ export default {
 		},
 		processSources(structured, sitemap){
 			this.$store.state.audits.loading = true
+
+			//The end product is calculated like this:
+			//The entire structured sample + a number of additional pages from the sitemap that equal 10% of the structured sample
+			//i.e. if the structured sample is 30 pages/screens, the working sample should be 3 additional pages
 
 			//Calculate what 10% of the structured list is
 			let tenPercent = parseInt( structured.length * .1 )
@@ -344,14 +378,25 @@ export default {
 
 			//Remove duplicates from structured sample
 			for( let i in structured ){
-				let found = structured_map.some( el => el.content == structured[i].content)
-				
-				if( !found ){
-					structured_map.push({
-						content: structured[i].content,
-						screen: structured[i].screen
-					})
+				//console.log(structured[i].title, structured[i].url);
+				if( structured[i].title != null ){
+					if( structured[i].title.toLowerCase() == "sitewide" ){
+						continue
+					}
+					if( structured_map.some( el => el.title != null && el.title.toLowerCase() == structured[i].title.toLowerCase()) ){
+						continue
+					}
 				}
+				if( structured[i].url != null ){
+					if( structured_map.some( el => el.url != null && el.url.toLowerCase() == structured[i].url.toLowerCase()) ){
+						continue
+					}
+				}
+				
+				structured_map.push({
+					title: structured[i].title,
+					url: structured[i].url
+				})
 			}
 
 			if( sitemap.length ){
@@ -360,27 +405,30 @@ export default {
 					if( sitemap.length < 1 ){
 						break
 					}
-					let index = Math.floor( Math.random() * (sitemap.length - 1)) + 1
-					let found = sitemap_sample.some( el => el.content == sitemap[index].url)
-					if( found ){
+					let index = Math.floor( Math.random() * (sitemap.length - 1))
+					if( !sitemap[index] ){
+						continue
+					}
+					
+					if( sitemap_sample.some( el => el.url.toLowerCase() == sitemap[index].url.toLowerCase()) ){
 						sitemap.splice(index, 1)
 						continue //break early for efficiency
 					}
-					found = structured_map.some( el => el.content == sitemap[index].url)
-					if( found ){
+					
+					if( structured_map.some( el => el.url != null && el.url.toLowerCase() == sitemap[index].url.toLowerCase()) ){
 						sitemap.splice(index, 1)
 						continue
 					}
 
 					sitemap_sample.push( {
-						content: sitemap[index].url,
-						screen: ""
+						title: "",
+						url: sitemap[index].url.toLowerCase()
 					})
 					sitemap.splice(index, 1)
 				}
 			}
 
-			this.audit.pages = [...structured_map, ...sitemap_sample]
+			this.audit.pages = [{title: "Sitewide", url:null}, ...structured_map, ...sitemap_sample]
 			this.$store.state.audits.loading = false
 		},
 		deleteItem(index){
