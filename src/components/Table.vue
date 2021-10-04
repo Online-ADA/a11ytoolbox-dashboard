@@ -468,7 +468,7 @@
 						}else{
 							let urlOb = source.find( a=>a.id == data[0].id )
 							if( urlOb && urlOb.ext_url ){
-								output += `<a target="_blank" href='${urlOb}'>${data[0].display}</a>`
+								output += `<a target="_blank" href='${urlOb.ext_url}'>${data[0].display}</a>`
 							}else{
 								output += data[0].display
 							}
