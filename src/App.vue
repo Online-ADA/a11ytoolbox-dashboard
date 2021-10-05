@@ -12,8 +12,8 @@
 
         <ada-header class="fixed z-40"></ada-header>
 
-        <div class="w-full max-w-full pt-12" >
-          <div class="flex">
+        <div class="w-full h-full max-w-full pt-12" >
+          <div class="flex h-full">
             <transition name="slideright">
               <secondary-sidebar v-if="this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' || this.$route.name=='ProjectList'" type="Projects"></secondary-sidebar>
             </transition>
@@ -258,9 +258,9 @@ export default {
 
 <style scoped>
 
-/* .slideright-enter, .slideright-leave-to {
+.slideright-enter, .slideright-leave-to {
   transform: translateX(-200px);
-} */
+}
 
 #secondaryHeader {
   margin-top:-55px;

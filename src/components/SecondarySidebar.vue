@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full min-h-screen w-32 shadow-lg transition-all ">
+  <div class="flex w-32 shadow-lg transition-all ">
       <div class="fixed">
             <div class="flex" v-bind:style="{ width: currentWidth + 'px' }" >
                 <ul id="nav" class="pt-8 flex-1" v-if="type=='Projects'">
