@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full px-4 py-2 bg-pallette-grey shadow-custom overflow-visible" style="margin-left: 200px">
+  <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="flex w-full px-4 py-2 bg-pallette-grey shadow-custom overflow-visible">
       
     <button :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
     
@@ -120,12 +120,12 @@ export default {
 
 <style scoped>
 
-#login {
-    transform: translateX(-200px);
-}
-
-#login.menuOpen {
-    transform: translateX(-400px);
+#header-container.menuOpen{ padding-right:216px; }
+#header-container {
+    padding-right:16px;
+    transition-property: padding;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
 }
 
 #login.login-button{

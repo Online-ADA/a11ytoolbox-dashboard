@@ -1,7 +1,5 @@
 <template>
-  <div class="flex h-full min-h-screen w-32 shadow-lg bg-pallette-grey-dark text-white " style="width:200px" >
-      
-      
+  <div class="flex h-full min-h-screen shadow-lg bg-pallette-grey-dark text-white w-full" >
       <div class="fixed" >
           <router-link class="" to="/manage"><img class="pl-3 pt-2" src="../assets/onlineadalogo.png" /></router-link>
                   

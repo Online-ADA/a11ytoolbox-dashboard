@@ -15,19 +15,23 @@
 </template>
 
 <style scoped>
-    span.rotate-0{
-        --tw-rotate: 0deg;
-    }
-    i.opacity-100{
-        opacity: 100;
-    }
-    i, span{
-        transition: opacity .2s ease, transform .2s ease
-    }
-    input[type="checkbox"]:focus + span.border-pallette-blue{
-      outline: 2px dashed black;
-      outline-offset: 2px;
-    }
+  input[type="checkbox"] ~ span{
+    height:20px;
+    width:20px;
+  }
+  span.rotate-0{
+      --tw-rotate: 0deg;
+  }
+  i.opacity-100{
+      opacity: 100;
+  }
+  i, span{
+      transition: opacity .2s ease, transform .2s ease
+  }
+  input[type="checkbox"]:focus + span.border-pallette-blue{
+    outline: 2px dashed black;
+    outline-offset: 2px;
+  }
 </style>
 <script>
 export default {

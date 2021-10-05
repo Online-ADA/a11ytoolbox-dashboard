@@ -1,5 +1,5 @@
 <template>
-	<div class="text-center mt-32 mx-auto">
+	<div class="text-center mx-auto">
 		<Loader v-if="loading"></Loader>
 		
 		<template v-if="audit">
@@ -22,7 +22,7 @@
 				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
 		</template>
-		<div class="bg-white w-full border-t border-black p-4 flex justify-between fixed bottom-0 left-0" style="z-index:25;">
+		<div id="bottom-bar" class="bg-white w-full border-t border-black p-4 flex justify-between fixed bottom-0" style="z-index:25;">
 			<div class="flex w-1/3 items-center">
 				<Button class="mx-2" :color="shouldCondense ? 'red' : 'white'" @click.native.prevent="shouldCondense = !shouldCondense">
 					<span v-if="!shouldCondense">Condense </span>
@@ -934,5 +934,9 @@ export default {
 <style scoped>
 	#no-issues-import:hover{
 		color:white !important;
+	}
+	.sidebarOpen #bottom-bar{ 
+		padding-left:212px;
+		left:0;
 	}
 </style>
