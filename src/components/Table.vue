@@ -36,7 +36,7 @@
 				</div>
 				<Button style="margin-bottom:5px" class="ml-1" @click.native.prevent="submitTableSearch" :hover="true" color="red">Submit</Button>
 				<div class="text-right pl-2">
-					<div style="margin-bottom:2px;"><Button style="padding-bottom:1px;padding-top:0px;" class="mx-1" aria-label="Show or hide columns" @click.native.prevent="columnPickerOpen = true" hover="true">+</Button></div>
+					<div style="margin-bottom:2px;"><Button style="padding-bottom:1px;padding-top:0px;" class="mx-1" aria-label="Show or hide columns" @click.native.prevent="openModal(()=>{columnPickerOpen = true})" hover="true">+</Button></div>
 					<div v-if="!locked" style="margin-bottom:2px;margin-top:1px;"><Button class="text-xs mx-1" @click.native.prevent="selectAll" hover="true">Select all</Button></div>
 					<div v-if="!locked" style="margin-top:1px;"><Button class="text-xs mx-1" @click.native.prevent="deselectAll" hover="true">Deselect all</Button></div>
 				</div>
@@ -140,7 +140,7 @@
 		
 		<Modal class="z-30" :open="columnPickerOpen">
 			<div class="w-full p-3">
-				<Button @click.native.prevent="columnPickerOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<Button @click.native.prevent="closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<ul class="flex flex-wrap">
 					<template v-for="(header, index) in headers">
 						<li v-if="!header.hidePermanent" class="flex w-5/12 mx-2 my-2 justify-center items-center" :key="index">
@@ -267,6 +267,20 @@
 			}
 		},
 		methods: {
+			openModal( callback ){
+				let classList = document.body.classList
+				if( !classList.contains("modalOpen") ){
+					classList.add("modalOpen")
+				}
+				callback()
+			},
+			closeModal( callback ){
+				let classList = document.body.classList
+				if( classList.contains("modalOpen") ){
+					classList.remove("modalOpen")
+				}
+				callback()
+			},
 			rowCanBeRemoved(data){
 				if( this.importing && data.hasOwnProperty('unique') ){
 					return true
@@ -422,7 +436,7 @@
 					}
 				}
 
-				this.columnPickerOpen = false
+				this.closeModal(()=>{this.columnPickerOpen = false})
 			},
 			displayValue(key, data){
 				if( key == "unique" ){

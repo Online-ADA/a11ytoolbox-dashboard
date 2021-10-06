@@ -1,17 +1,12 @@
 <template>
   <div id="app" class="bg-pallette-grey-bg">
     <notifications/>
-
     <div id="page-container" class="transition-transform flex w-full height:100% flex-nowrap" >
-
-      
       <div id="sidebar" class="z-50" v-bind:class="{ sidebarOpen: sidebarExpanded }">
         <sidebar></sidebar>
       </div>
       <div id="content" class="flex" >
-
         <ada-header class="fixed z-40"></ada-header>
-
         <div class="w-full h-full max-w-full pt-12" >
           <div class="flex h-full">
             <transition name="slideright">
