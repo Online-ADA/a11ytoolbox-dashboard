@@ -122,7 +122,7 @@ export default{
     changePage: function (page, pressed) {
       if (page > 0 && page <= this.totalPages) {
         this.$emit('page-changed', page)
-        console.log(page, pressed);
+        
         if( pressed == 'page' ){
           setTimeout(() => {
             this.$refs['page-button-'+page][0].focus()

@@ -8,7 +8,7 @@
       <div id="sidebar" class="z-50" v-bind:class="{ sidebarOpen: sidebarExpanded }">
         <sidebar></sidebar>
       </div>
-      <div id="content" class="flex w-full max-w-full" >
+      <div id="content" class="flex" >
 
         <ada-header class="fixed z-40"></ada-header>
 
@@ -273,6 +273,7 @@ export default {
 #sidebar {
   margin-left:-200px;
   width:200px;
+  flex-shrink:0;
   transition-property: margin;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
@@ -286,13 +287,12 @@ export default {
   flex-basis:0%;
   flex-grow:1;
   flex-shrink:1;
+  max-width:100%;
 }
 
-/* #main-content {
-  padding-right: 0px;
-  transition-property: padding;
-  
-} */
+#sidebar.sidebarOpen ~ #content{
+  max-width: calc(100% - 200px);
+}
 
 
 </style>
