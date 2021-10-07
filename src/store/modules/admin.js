@@ -14,6 +14,7 @@ const getDefaultState = () => {
 		software_used: [],
 		assistive_techs: [],
 		clients: [],
+		client: false,
 		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
 		loading:{
 			articles: false,
@@ -41,6 +42,7 @@ export default {
 		software_used: [],
 		assistive_techs: [],
 		clients: [],
+		client: false,
 		roles: {1:'manager', 2:'auditor', 3:'client', 4:'partner agency'},
 		loading:{
 			articles: false,
@@ -62,6 +64,34 @@ export default {
 	actions: {
 		resetState({commit}) {
 			commit('resetState')
+		},
+		getClient({state, rootState}, args){
+			state.loading.clients = true
+			
+			Request.get(`${rootState.auth.adminAPI}/${rootState.auth.account}/clients/${args.id}`, {
+				onSuccess: {
+					title:'Success',
+					text:'Client retrieved',
+					callback: function(response){
+						state.loading.clients = false
+						state.client = response.data.details
+					}
+				},
+				onError: {
+					title:'Error',
+					text:'Getting this client caused an error',
+					callback: function(){
+						state.loading.clients = false
+					}
+				},
+				onWarn: {
+					title: "Warning",
+					text: "There was a problem getting the client",
+					callback: function(){
+						state.loading.clients= false
+					}
+				}
+			})
 		},
 		getAuditStates({state, rootState}){
 			state.loading.articles = true

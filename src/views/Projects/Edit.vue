@@ -7,8 +7,6 @@
         <TextInput id="name" name="name" v-model="project.name" />
         <Label for="status">Status</Label>
 
-        {{this.$store.state.projects}}
-        
         <Select class="mx-auto" :options="statusSrc" v-model="project.status"></Select>
         
          <template v-if="$store.getters['auth/isManager']">

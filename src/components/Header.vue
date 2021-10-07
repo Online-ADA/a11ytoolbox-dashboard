@@ -88,8 +88,9 @@ export default {
         selectedAccount: function(newVal) {
             if ( this.account != this.selectedAccount )
             {
-                if ( this.$store.state.clients.client )
+                if ( this.$store.state.clients.client ){
                     this.$store.dispatch("clients/getClient", {id: -1, vm: this})
+                }
             }
             
             if( newVal ){
@@ -110,7 +111,7 @@ export default {
     },
     created() {
         if( this.selectedAccount ){
-            this.$store.dispatch("clients/getClients");
+            // this.$store.dispatch("clients/getClients");
             this.account = this.selectedAccount;
         }
     },

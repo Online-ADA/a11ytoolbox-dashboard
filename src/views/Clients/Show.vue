@@ -3,17 +3,26 @@
     <Loader v-if="loading"></Loader>
     <template v-if="client">
       <A class="pr-3" type='router-link' :to="{path: `/clients/${$route.params.id}/edit`}">Edit Client</A>
-      <A type='router-link' :to="{path: `/projects/${client.project_id}`}">View Project</A>
       <h2 class="mb-3">{{client.name}}</h2>
       
       <div class="w-full flex">
         <div class="border border-pallette-grey h-auto p-4 rounded w-1/2 text-center mx-1.5">
           <h3>Audits</h3>
-          <ul>
-            <li v-for="audit in [{title: 'Audit 1', id: 1}, {title: 'Audit 2', id: 2}]" :key="audit.id">
+          <ul v-if="client.audits.length">
+            <li v-for="audit in client.audits" :key="audit.id">
               <A type='router-link' :to="{path: `/audits/${audit.id}`}">{{audit.title}}</A>
             </li>
           </ul>
+          <span v-else>There are no audits belonging to this client</span>
+        </div>
+        <div class="border border-pallette-grey h-auto p-4 rounded w-1/2 text-center mx-1.5">
+          <h3>Projects</h3>
+          <ul v-if="client.projects.length">
+            <li v-for="project in client.projects" :key="project.id">
+              <A type='router-link' :to="{path: `/projects/${project.id}`}">{{project.name}}</A>
+            </li>
+          </ul>
+          <span v-else>There are no projects belonging to this client</span>
         </div>
       </div>
 
@@ -29,13 +38,11 @@ export default {
     }),
     computed: {
       client() {
-        // return this.$store.state.clients.client || false;
-        let that = this
-        return this.$store.state.clients.all.find( c => c.id == that.$route.params.id && c.account_id == that.$store.state.auth.account ) || false
+        return this.$store.state.admin.client
       },
       loading(){
-        if( this.$store.state.clients ){
-          return this.$store.state.clients.loading
+        if( this.$store.state.admin.clients ){
+          return this.$store.state.admin.clients.loading
         }
         return false
       },
@@ -46,7 +53,7 @@ export default {
     methods: {
     },
     created() {
-      // this.$store.dispatch("clients/getClient", {id: this.$route.params.id, account_id: this.$store.state.auth.account})
+      this.$store.dispatch("admin/getClient", {id: this.$route.params.id, account_id: this.$store.state.auth.account})
     },
     mounted() {
     },

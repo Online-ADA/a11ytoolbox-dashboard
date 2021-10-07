@@ -1,18 +1,19 @@
 <template>
-    <div class="text-center mt-32">
+    <div class="clients text-center">
         <Loader v-if="loading"></Loader>
-        <template v-if="clients.length > 0">
-            <h2>Your Clients:</h2>
+        <h1>This is the Clients management page</h1>
+        <div v-if="clients.length">
+            <h2>Clients on this account:</h2>
             <ul>
                 <li v-for="(client, id) in clients" :key="id">
-                    <A type="router-link" :to="{path: `${client.id}`}">{{client.name}}</A>
+                <A type="router-link" :to="{path: `/manage/clients/${client.id}`}">{{client.name}}</A>
                 </li>
             </ul>
-        </template>
-        <template v-if="!loading && !clients.length">
-            <h2>You have no clients</h2>
-        </template>
-    </div>
+        </div>
+        <div v-if="!loading && !clients.length">
+            <h2>There are no clients on this account</h2>
+        </div>
+  </div>
 </template>
 
 <script>
@@ -23,10 +24,10 @@ export default {
     }),
     computed: {
         loading(){
-            return this.$store.state.clients.loading
+          return this.$store.state.admin.loading.clients
         },
         clients() {
-            return this.$store.state.clients.all
+          return this.$store.state.admin.clients
         },
     },
     props: [],
@@ -35,6 +36,7 @@ export default {
     methods: {
     },
     created() {
+        this.$store.dispatch("admin/getClients", this.$router)
     },
     mounted() {
     },

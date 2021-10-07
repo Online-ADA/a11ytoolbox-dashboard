@@ -65,7 +65,24 @@ function run(){
       store.state.auth.accountsRoles = response.data.details.roles.accounts
       store.state.auth.accountsPermissions = response.data.details.permissions.accounts
       store.state.auth.accounts = response.data.details.accounts
-      runBeforeEach()
+      let accountID = Cookies.get("toolboxAccount")
+      if( accountID ){
+        Request.getPromise(store.state.auth.toolboxapi+`/api/user/${accountID}/clients`)
+        .then( response => {
+          store.state.clients.all = response.data.details
+          let clientID = Cookies.get("toolboxClient")
+          if( clientID ){
+            store.state.clients.client = store.state.clients.all.find( c=>c.id == clientID )
+            Cookies.set('toolboxClient', store.state.clients.client.id, 365)
+          }
+          
+          runBeforeEach()
+        })
+        .catch()
+      }else{
+        runBeforeEach()
+      }
+      
     })
     .catch(re => {
       if( !params.get('oada_auth') ){

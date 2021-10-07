@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full min-h-screen shadow-lg bg-pallette-grey-dark text-white w-full" >
       <div class="fixed" >
-          <router-link class="" to="/manage"><img class="pl-3 pt-2" src="../assets/onlineadalogo.png" /></router-link>
+          <router-link to="/manage"><img class="pl-3 pt-2" src="../assets/onlineadalogo.png" /></router-link>
                   
             <div class="flex" style="width:200px">
                 <ul id="nav" class="pt-8 flex-1">
@@ -27,33 +27,38 @@
                     </li>
 
                     <div v-if="manage==true" class="bg-pallette-grey">
-                        <ul class="">
-                            
-                            <li class="">
+                        <ul>
+                            <li>
+                                <div v-bind:class="{ isCurrentPage: getPages['ManageClients'] }" class="pl-4 py-4" >
+                                    <i class="far fa-users pl-3 mr-2 mt-auto mb-auto"></i>
+                                    <router-link class="pl-3 text-white hover:text-pallette-red" to="/manage/clients">Clients</router-link>
+                                </div>
+                            </li>
+                            <li>
                                 <div v-bind:class="{ isCurrentPage: getPages['ManageUsers'] }" class="pl-4 py-4" >
                                     <i class="far fa-users pl-3 mr-2 mt-auto mb-auto"></i>
                                     <router-link class="pl-3 text-white hover:text-pallette-red" to="/manage/users">Users</router-link>
                                 </div>
                             </li>
-                            <li class="">
+                            <li>
                                 <div v-bind:class="{ isCurrentPage: getPages['ManageProjects'] }" class="pl-4 py-4" >
                                     <i class="far fa-tools pl-3 mr-2 mt-auto mb-auto"></i>
                                     <router-link class="pl-3 text-white hover:text-pallette-red" to="/manage/projects">Projects</router-link>
                                 </div>
                             </li>
-                            <li class="">
+                            <li>
                                 <div v-bind:class="{ isCurrentPage: getPages['ManageDomains'] }" class="pl-4 py-4" >
                                     <i class="far fa-browser pl-3 mr-2 mt-auto mb-auto"></i>
                                     <router-link class="pl-3 text-white hover:text-pallette-red" to="/manage/domains">Domains</router-link>
                                 </div>
                             </li>
-                            <li class="">
+                            <li>
                                 <div v-bind:class="{ isCurrentPage: getPages['ManageAudits'] }" class="pl-4 py-4" >
                                     <i class="far fa-line-columns pl-3 mr-2 mt-auto mb-auto"></i>
                                     <router-link class="pl-3 text-white hover:text-pallette-red" to="/manage/audits">Audits</router-link>
                                 </div>
                             </li>
-                            <li class="">
+                            <li>
                                 <div v-bind:class="{ isCurrentPage: getPages['ManageArticles'] }" class="pl-4 py-4" >
                                     <i class="far fa-tasks pl-3 mr-2 mt-auto mb-auto"></i>
                                     <router-link class="pl-3 text-white hover:text-pallette-red" to="/manage/articles">Success Criteria</router-link>
@@ -62,7 +67,7 @@
                         </ul>
                     </div>
 
-                    <li v-if="$store.state.clients.client" class="">
+                    <li v-if="$store.state.clients.client">
                         <div class="mt-2" >
                             <i class="fas  pt-2 pl-6 fa-tools mr-2 mt-auto mb-auto"></i>
                             <router-link class="pt-2 pl-2 text-white hover:text-pallette-red" to="/projects/list">Projects</router-link>
@@ -104,7 +109,7 @@ export default {
                 ManageUsers: false,
                 ManageProjects: false,
                 ManageAudits: false,
-                },
+            },
         }
     },
     name: 'sidebar',
