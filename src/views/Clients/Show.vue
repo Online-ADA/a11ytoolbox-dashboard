@@ -2,8 +2,9 @@
   <div class="text-center mt-32">
     <Loader v-if="loading"></Loader>
     <template v-if="client">
-      <A class="pr-3" type='router-link' :to="{path: `/clients/${$route.params.id}/edit`}">Edit Client</A>
-      <h2 class="mb-3">{{client.name}}</h2>
+      <A class="pr-3" type='router-link' :to="{path: `/manage/clients/${$route.params.id}/edit`}">Edit Client</A>
+      <h2 class="mb-1">{{client.name}}</h2>
+      <div class="mb-3">{{client.email}}</div>
       
       <div class="w-full flex">
         <div class="border border-pallette-grey h-auto p-4 rounded w-1/2 text-center mx-1.5">

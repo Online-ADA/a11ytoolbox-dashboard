@@ -107,6 +107,7 @@ export default {
                 ManageArticles: false,
                 ManageDomains: false,
                 ManageUsers: false,
+                ManageClients: false,
                 ManageProjects: false,
                 ManageAudits: false,
             },

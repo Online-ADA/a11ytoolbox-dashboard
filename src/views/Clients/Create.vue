@@ -39,33 +39,26 @@ export default {
 		}
 	}),
 	computed: {
-			loading(){
-				if( this.$store.state.clients ){
-					return this.$store.state.clients.loading
-				}
-				return false
-			},
-			projects(){
-				return this.$store.state.clients.projects
-			},
-			userID(){
-				return this.$store.state.auth.user.id
+		loading(){
+			if( this.$store.state.clients ){
+				return this.$store.state.clients.loading
 			}
+			return false
+		},
 	},
 	props: [],
 	watch: {
 	},
 	methods: {
 		createClient(){
-			this.client.created_by = this.userID
-			this.$store.dispatch("clients/createClient", {client: this.client, router: this.$router, vm: this})
+			this.client.created_by = this.$store.state.auth.user.id
+			this.client.account_id = this.$store.state.auth.account
+			this.$store.dispatch("admin/createClient", {client: this.client, router: this.$router})
 		}
 	},
 	created() {
 	},
 	mounted() {
-		this.$store.dispatch("clients/getProjects", {router: this.$router})
-		this.client.account_id = this.$store.state.auth.account
 	},
 	components: {
 		Loader,

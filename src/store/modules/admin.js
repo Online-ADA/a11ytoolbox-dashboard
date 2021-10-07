@@ -751,7 +751,74 @@ export default {
 					}
 				}
 			})
-		}
+		},
+		createClient({state, rootState}, args){
+			state.loading.clients = true;
+			Request.post(`${rootState.auth.adminAPI}/${args.client.account_id}/clients`, {
+				params: {
+					client: args.client
+				},
+				onSuccess: {
+					title:'Success',
+					text:'Client created. Redirecting to Clients List...',
+					callback: function(response){
+						state.loading.clients = false
+						console.log(response.data.details);
+						rootState.clients.all = response.data.details
+						setTimeout(()=>{
+							args.router.push({path: "/manage/clients"})
+						}, 2000)
+					}
+				},
+				onError: {
+					title:'Error',
+					text:'Creating this client caused an error',
+					callback: function(){
+						state.loading.clients = false
+					}
+				},
+				onWarn: {
+					title: "Warning",
+					text: "There was a problem creating the client",
+					callback: function(response){
+						state.loading.clients = false
+					}
+				}
+			})
+		},
+		updateClient({state, rootState}, args){
+			state.loading.clients = true;
+			Request.post(`${rootState.auth.adminAPI}/${args.client.account_id}/clients/${args.client.id}`, {
+				params: {
+					client: args.client
+				},
+				onSuccess: {
+					title:'Success',
+					text:'Client created. Redirecting to Clients List...',
+					callback: function(response){
+						state.loading.clients = false
+						rootState.clients.all = response.data.details
+						setTimeout(()=>{
+							args.router.push({path: "/manage/clients"})
+						}, 2000)
+					}
+				},
+				onError: {
+					title:'Error',
+					text:'Creating this client caused an error',
+					callback: function(){
+						state.loading.clients = false
+					}
+				},
+				onWarn: {
+					title: "Warning",
+					text: "There was a problem creating the client",
+					callback: function(response){
+						state.loading.clients = false
+					}
+				}
+			})
+		},
 	},
 	getters: { 
 		

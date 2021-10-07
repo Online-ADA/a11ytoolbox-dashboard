@@ -2,18 +2,18 @@
 	<div class="text-center mt-3">
 		<Loader v-if="loading"></Loader>
 		<h1>{{client.name}}</h1>
-			<Form @submit.native.prevent>
-				<Label for="name">Name</Label>
-				<TextInput class="mb-2" id="name" name="name" v-model="client.name" />
+		<Form @submit.native.prevent>
+			<Label for="name">Name</Label>
+			<TextInput class="mb-2" id="name" name="name" v-model="client.name" />
 
-				<Label for="email">Email</Label>
-				<TextInput id="email" name="email" v-model="client.email" />
+			<Label for="email">Email</Label>
+			<TextInput id="email" name="email" v-model="client.email" />
 
-				<Label for="status">Status</Label>
-				<Select class="mx-auto" :options="statusSrc" v-model="client.status"></Select>
+			<Label for="status">Status</Label>
+			<Select class="mx-auto" :options="statusSrc" v-model="client.status"></Select>
 
-				<Button hover="true" @click.native.prevent="saveClient">Save</Button>
-			</Form>
+			<Button hover="true" @click.native.prevent="saveClient">Save</Button>
+		</Form>
 	</div>
 </template>
 
@@ -45,17 +45,22 @@ export default {
 	},
 	props: [],
 	watch: {
+		"$store.state.admin.client": function(newVal){
+			console.log(newVal);
+			if( newVal ){
+				this.client = newVal
+			}
+		}
 	},
 	methods: {
 		saveClient(){
-			this.$store.dispatch("clients/updateClient", {client: this.client, router: this.$router, id: this.$route.params.id})
+			this.$store.dispatch("admin/updateClient", {client: this.client, router: this.$router, id: this.$route.params.id})
 		}
 	},
 	created() {
 	},
 	mounted() {
-		this.client.created_by = this.$store.state.auth.user.id
-		this.$store.dispatch("clients/getClient", {id: this.$route.params.id, vm: this})
+		this.$store.dispatch("admin/getClient", {id: this.$route.params.id})
 	},
 	components: {
 		Loader,

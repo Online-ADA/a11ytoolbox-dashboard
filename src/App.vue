@@ -196,7 +196,7 @@ export default {
         return false;
     },
     showSecondaryHeader() {
-      let showRoutes = ["ManageAudits", 'ManageProjects', 'ProjectCreate', 'ProjectList']
+      let showRoutes = ["ManageAudits", 'ManageProjects', 'ProjectCreate', 'ProjectList', 'ManageClients']
       if ( showRoutes.includes(this.$route.name) )
         return this.$route.name;
       else
