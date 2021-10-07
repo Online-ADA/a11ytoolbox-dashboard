@@ -11,7 +11,7 @@
         
          <template v-if="$store.getters['auth/isManager']">
             <Label for="status">Client</Label>
-            <Select class="mx-auto" :options="clientList" v-model="project.clientID"></Select>
+            <Select class="mx-auto" :options="clientList" v-model="project.client_id"></Select>
           </template>
 
         <template v-if="$store.getters['auth/isManager']">
@@ -66,7 +66,7 @@ export default {
         status: "",
         created_by: "",
         account_id: "",
-        clientID: ""
+        client_id: ""
       }
     }),
     computed: {
