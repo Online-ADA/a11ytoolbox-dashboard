@@ -10,10 +10,10 @@
         <div class="w-full h-full max-w-full pt-12" >
           <div class="flex h-full">
             <transition name="slideright">
-              <secondary-sidebar v-if="this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' || this.$route.name=='ProjectList'" type="Projects"></secondary-sidebar>
+              <secondary-sidebar v-if="showSecondaryHeader !== false" :type="showSecondaryHeader"></secondary-sidebar>
             </transition>
             <div class="max-w-full flex-1">
-              <ada-secondary-header id="secondaryHeader" class="transition-transform" :label="secondaryHeaderLabel" :aria-hidden="[ !showSecondaryHeader ? true : false ]" v-bind:class="{ open: showSecondaryHeader }" ></ada-secondary-header>
+              <ada-secondary-header v-if="secondaryHeaderLabel !== false" id="secondaryHeader" class="transition-transform" :label="secondaryHeaderLabel" :aria-hidden="[ !showSecondaryHeader ? true : false ]" v-bind:class="{ open: showSecondaryHeader }" ></ada-secondary-header>
               <div id="main-content" class="pt-12 " v-bind:class="{ sidebarOpen: sidebarExpanded }">
                 <div class="flex-1">
                   <router-view/>
@@ -190,14 +190,15 @@ export default {
       return false;
     },
     secondaryHeaderLabel() {
-      if ( "this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate'" )
+      if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' )
         return "Projects";
       else
         return false;
     },
     showSecondaryHeader() {
-      if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' || this.$route.name=='ProjectList' )
-        return true;
+      let showRoutes = ["ManageAudits", 'ManageProjects', 'ProjectCreate', 'ProjectList']
+      if ( showRoutes.includes(this.$route.name) )
+        return this.$route.name;
       else
         return false;
     },

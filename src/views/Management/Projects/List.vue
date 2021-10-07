@@ -3,7 +3,7 @@
     <Loader v-if="loading"></Loader>
     <h1>This is the Projects management page</h1>
     <template v-if="projects.length">
-      <Card class="mt-8 mr-auto ml-auto max-w-lg">
+      <Card class="mt-8 mr-auto ml-auto max-w-2xl">
         <h2>Projects on this account:</h2>
         <DT :headers="headers" :items="projects">
           <template v-slot:cells-main>

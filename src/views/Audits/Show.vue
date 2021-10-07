@@ -6,7 +6,7 @@
 			<div class="flex w-full justify-center items-center">
 				<A v-if="!audit.locked || isManager" class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
 				<A class="pr-3" type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
-				<A v-if="!audit.locked" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Import</A>
+				<A class="pr-3" v-if="!audit.locked" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Import</A>
 				<button v-if="issues.length" @click="openModal( ()=>{whichCSVModalOpen = true} )" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm">
 					Export
 				</button>

@@ -2,9 +2,14 @@
   <div class="flex w-32 shadow-lg transition-all ">
       <div class="fixed">
             <div class="flex" v-bind:style="{ width: currentWidth + 'px' }" >
-                <ul id="nav" class="pt-8 flex-1" v-if="type=='Projects'">
+                <ul id="nav" class="pt-8 flex-1" v-if="type=='ManageProjects'">
                     <li>
                         <i class="fas fa-house pl-4 mr-4"></i><router-link class="text-black hover:text-pallette-red" to="/projects/create">Create</router-link>
+                    </li>
+                </ul>
+                <ul id="nav" class="pt-8 flex-1" v-if="type=='ManageAudits'">
+                    <li>
+                        <i class="fas fa-house pl-4 mr-4"></i><router-link class="text-black hover:text-pallette-red" to="/audits/create">Create</router-link>
                     </li>
                 </ul>
                 <!-- <button class="font-button h-4 rounded uppercase transition-colors duration-100 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-red hover:text-white text-xs" @click="expand_secondary_menu" aria-label="Expand the sidebar menu" aria-controls="fail-article">Menu</button>

@@ -93,6 +93,9 @@ export default {
 				state.loading = true
 				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.project_id}/projectDomains`)
 				.then( re => {
+					if( args.project ){
+						args.project.domains = re.data.details
+					}
 					state.all = re.data.details
 				})
 				.catch( error => {

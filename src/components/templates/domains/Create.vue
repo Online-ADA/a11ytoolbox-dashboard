@@ -129,7 +129,7 @@ export default {
 						this.$emit("complete", {sheet: 'sheet1', key: 'domain', data: this.domain.id, sheetIndex: this.$parent.index})
 						this.reset()
 					}else{
-						this.$store.dispatch("domains/getProjectDomains", {project_id: this.project.id})
+						this.$store.dispatch("domains/getProjectDomains", {project_id: this.project.id, project: this.project})
 					}
 				}
 			}
@@ -158,14 +158,6 @@ export default {
 				}
 			}
 		},
-		// project: function(newVal){
-		// 	if( !this.independent ){
-		// 		//This works if you are an admin, but when pulling from Projects module, it does not return with the domains so this fails
-		// 		if( newVal && newVal.domains && newVal.domains.length ){
-		// 			this.selectedDomain = newVal.domains[0].id
-		// 		}
-		// 	}
-		// }
 	},
 	computed: {
 		domains(){
@@ -226,6 +218,7 @@ export default {
 			if( !this.domain.project_id && this.sheetData ){
 				this.domain.project_id = this.sheetData.sheet0.project
 			}
+			
 			this.$store.dispatch("domains/createDomain", {domain: this.domain, vm: this})
 		},
 		setFirstDomain(){
