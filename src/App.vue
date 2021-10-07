@@ -190,13 +190,13 @@ export default {
       return false;
     },
     secondaryHeaderLabel() {
-      if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectCreate' )
+      if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectList' )
         return "Projects";
       else
         return false;
     },
     showSecondaryHeader() {
-      let showRoutes = ["ManageAudits", 'ManageProjects', 'ProjectCreate', 'ProjectList', 'ManageClients']
+      let showRoutes = ["ManageAudits", 'ManageProjects', 'ProjectList', 'ManageClients']
       if ( showRoutes.includes(this.$route.name) )
         return this.$route.name;
       else

@@ -2,7 +2,7 @@
   <div class="flex w-32 shadow-lg transition-all ">
       <div class="fixed">
             <div class="flex" v-bind:style="{ width: currentWidth + 'px' }" >
-                <ul id="nav" class="pt-8 flex-1" v-if="type=='ManageProjects'">
+                <ul id="nav" class="pt-8 flex-1" v-if="type=='ManageProjects' || type=='ProjectList'">
                     <li>
                         <i class="fas fa-house pl-4 mr-4"></i><router-link class="text-black hover:text-pallette-red" to="/projects/create">Create</router-link>
                     </li>
