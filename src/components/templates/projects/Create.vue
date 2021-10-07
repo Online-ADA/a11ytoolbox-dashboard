@@ -9,6 +9,10 @@
       
       <Select class="mx-auto" :options="statusSrc" v-model="project.status"></Select>
 
+      <Label for="status">Client</Label>
+      <Select class="mx-auto" :options="clientList" v-model="project.client_id"></Select>
+      {{selectedClient}}
+
       <template v-if="isManager">
         <div class="flex my-3">
           <Card class="w-1/2">
@@ -44,13 +48,14 @@ import Select from '../../../components/Select'
 import Button from '../../../components/Button'
 import Card from '../../../components/Card'
 import projects from '../../../store/modules/project'
+import clients from '../../../store/modules/clients'
 
 export default {
     name: 'ProjectCreate',
     props: {
       independent: {
         type: Boolean,
-        default: false
+        default: true
       },
     },
     data: () => ({
@@ -65,8 +70,10 @@ export default {
         name: "",
         status: "active",
         created_by: "",
-        account_id: ""
+        account_id: "",
+        client_id: "",
       },
+      selectedClient: "",
       complete: false
     }),
     computed: {
@@ -78,6 +85,15 @@ export default {
         },
         isManager(){
           return this.$store.getters["auth/isManager"]
+        },
+        clientList() {
+          var clients = this.$store.state.clients.all;
+          var clientList = [];
+          for ( var i = 0; i < clients.length; i++ )
+          {
+            clientList.push({name: clients[i].name, value: clients[i].id});
+          }
+          return clientList;
         }
     },
     watch: {
@@ -116,12 +132,16 @@ export default {
       },
       createProject(){
         this.project.assigned = this.assigned;
-        this.$store.dispatch("projects/createProject", {project: this.project, router: this.$router, vm: this, redirect: true})
+        
+        this.$store.dispatch("projects/createProject", {project: this.project, router: this.$router, vm: this, redirect: this.independent})
       }
     },
     created() {
       if(this.$store.state.projects === undefined){
         this.$store.registerModule('projects', projects)
+      }
+      if(this.$store.state.clients === undefined){
+        this.$store.registerModule('clients', clients)
       }
     },
     mounted() {
@@ -135,6 +155,8 @@ export default {
       if( !this.independent ){
         this.$emit("initialized", {key: "ProjectCreate", instance: this})
       }
+
+      this.$store.dispatch("clients/getClients", {router: this.$router})
     },
     components: {
       Loader,

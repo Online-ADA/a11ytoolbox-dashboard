@@ -31,14 +31,7 @@
                 </template>
             </DT>
 
-
-            <!-- <ul class="pb-4">
-                <li v-for="(domain, index) in domains" :key="index">
-                    <A type="router-link" :to="{path: `/domains/${domain.id}`}">{{domain.title}} - {{domain.url}}</A>
-                    <Button class="ml-2" color="delete" @click.native.prevent="openModal(domain.id)" >delete</Button>
-                </li>
-            </ul> -->
-            <A hoverText="text-white" class="bg-pallette-orange block border border-gray-300 duration-100 hover:bg-pallette-orange-dark p-2 rounded text-white transition-colors w-2/12" type="router-link" :to="{path: `/domains/create`}">New Domain</A>
+            <A hoverText="text-white" class="bg-pallette-blue block border border-gray-300 duration-100 hover:bg-pallette-blue-dark p-2 rounded text-white transition-colors w-2/12" type="router-link" :to="{path: `/domains/create`}">New Domain</A>
 
             <Modal :open="modalOpen">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">

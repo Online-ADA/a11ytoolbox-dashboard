@@ -1,26 +1,28 @@
 <template>
-  <div id="app">
+  <div id="app" class="bg-pallette-grey-bg">
     <notifications/>
-    <div id="nav" class="flex items-center relative z-30 w-full">
-      <div class="w-1/3"></div>
-      <div class="flex place-content-center w-1/3 box-border py-1">
-        <router-link class="hover:text-gray-500 pl-4" to="/">Home</router-link>
-        <span class="px-2" aria-hidden="true">|</span>
-        <template v-if="$store.getters['auth/isManager']">
-          <Dropdown  :children="manageDropdown"><template v-slot:label>Manage</template></Dropdown>
-          <span class="px-2" aria-hidden="true">|</span>
-        </template>
-        <template v-if="$store.getters['auth/isAuthenticated'] && !!$store.state.auth.account">
-          <Dropdown :children="siteDropdown"><template v-slot:label>Site</template></Dropdown>
-          <span class="px-2" aria-hidden="true">|</span>
-        </template>
-        
-        <A v-if="$store.getters['auth/isAuthenticated']" href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
-        <A v-else href="#" @click.native.prevent="$store.dispatch('auth/login')">Log in</A>
-        
-        <span v-if="account"><span aria-hidden="true" class="px-2">|</span>Account: {{account}}</span>
+    <div id="page-container" class="transition-transform flex w-full height:100% flex-nowrap" >
+      <div id="sidebar" class="z-50" v-bind:class="{ sidebarOpen: sidebarExpanded }">
+        <sidebar></sidebar>
       </div>
-      <div class="w-1/3"></div>
+      <div id="content" class="flex" >
+        <ada-header class="fixed z-40"></ada-header>
+        <div class="w-full h-full max-w-full pt-12" >
+          <div class="flex h-full">
+            <transition name="slideright">
+              <secondary-sidebar v-if="showSecondaryHeader !== false" :type="showSecondaryHeader"></secondary-sidebar>
+            </transition>
+            <div class="max-w-full flex-1">
+              <ada-secondary-header v-if="secondaryHeaderLabel !== false" id="secondaryHeader" class="transition-transform" :label="secondaryHeaderLabel" :aria-hidden="[ !showSecondaryHeader ? true : false ]" v-bind:class="{ open: showSecondaryHeader }" ></ada-secondary-header>
+              <div id="main-content" class="pt-12 " v-bind:class="{ sidebarOpen: sidebarExpanded }">
+                <div class="flex-1">
+                  <router-view/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <Modal class="z-50" :open="showLoginPrompt">
       <div class="bg-white px-4 pt-5 pb-4 p-6 text-center">
@@ -39,19 +41,27 @@
           </button>
       </div>
     </Modal>
-    <router-view/>
+    
   </div>
 </template>
 
 <script>
 import A from './components/Link'
 import Dropdown from './components/Dropdown'
+import AdaHeader from '@/components/Header.vue'
+import AdaSecondaryHeader from '@/components/SecondaryHeader.vue'
+import Sidebar from '@/components/Sidebar.vue'
+import SecondarySidebar from '@/components/SecondarySidebar.vue'
 import Modal from './components/Modal'
 import Btn from './components/Button'
+// import Card from '@/components/Card.vue'
+import clients from './store/modules/clients'
 
 export default {
   data(){
     return {
+      sidebarExpanded: true,
+
       manageDropdown: [
         {
           type: 'router-link',
@@ -168,8 +178,29 @@ export default {
     },
   },
   computed: {
-    account(){
+    account() {
       return this.$store.getters["auth/account"]
+    },
+    client(){
+      if ( this.$store.state.clients )
+      {
+        if ( this.$store.state.clients.client )
+          return this.$store.state.clients.client;
+      }
+      return false;
+    },
+    secondaryHeaderLabel() {
+      if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectList' )
+        return "Projects";
+      else
+        return false;
+    },
+    showSecondaryHeader() {
+      let showRoutes = ["ManageAudits", 'ManageProjects', 'ProjectList', 'ManageClients']
+      if ( showRoutes.includes(this.$route.name) )
+        return this.$route.name;
+      else
+        return false;
     },
     tokenSecondsLeft(){
       return this.$store.state.auth.token_time_left.seconds
@@ -187,11 +218,77 @@ export default {
       }
     },
   },
+  watch: {
+    account: function() {
+      if ( !this.account && this.$route.path != '/' )
+        this.$router.push({path: '/'}).catch(()=>{})
+    },
+    client: function() {
+      if ( !this.client && this.$route.path != '/' )
+        this.$router.push({path: '/'}).catch(()=>{})
+    }
+  },
+  created() {
+        if(this.$store.state.clients === undefined){
+            this.$store.registerModule('clients', clients)
+        }
+    },
+  mounted() {
+      this.$root.$on('menuClick', (menuOpen) => {
+          this.sidebarExpanded = menuOpen;
+      } );
+  },
+
   components:{
     A,
     Dropdown,
+    AdaHeader,
+    AdaSecondaryHeader,
+    Sidebar,
+    SecondarySidebar,
     Modal,
     Btn
   }
 }
 </script>
+
+<style scoped>
+
+.slideright-enter, .slideright-leave-to {
+  transform: translateX(-200px);
+}
+
+#secondaryHeader {
+  margin-top:-55px;
+}
+
+#secondaryHeader.open {
+  margin-top:0px;
+}
+
+#sidebar {
+  margin-left:-200px;
+  width:200px;
+  flex-shrink:0;
+  transition-property: margin;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+#sidebar.sidebarOpen {
+  margin-left:0px;
+}
+
+#content {
+  flex-basis:0%;
+  flex-grow:1;
+  flex-shrink:1;
+  max-width:100%;
+}
+
+#sidebar.sidebarOpen ~ #content{
+  max-width: calc(100% - 200px);
+}
+
+
+</style>

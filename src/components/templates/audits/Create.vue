@@ -146,12 +146,12 @@
 						<div class="flex flex-wrap w-full justify-center items-end">
 							<h3 class="w-full">Add new sample item</h3>
 							<Label class="flex-1 pr-3">
-								<span>Content</span>
-								<TextInput v-model="newSampleItem.content"></TextInput>
+								<span>Title</span>
+								<TextInput v-model="newSampleItem.title"></TextInput>
 							</Label>
 							<Label class="flex-1">
-								<span>Screen</span>
-								<TextInput v-model="newSampleItem.screen"></TextInput>
+								<span>Url</span>
+								<TextInput v-model="newSampleItem.url"></TextInput>
 							</Label>
 							<Button style="margin-bottom:13px" class="ml-3" color="red" @click.native.prevent="addNewSampleItem">Add Item</Button>
 						</div>
@@ -161,15 +161,15 @@
 							<table class="w-full border border-black table-fixed">
 								<thead>
 									<tr>
-										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-content">Content</span></th>
-										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-screen">Screen</span></th>
+										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-title">Title</span></th>
+										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-url">Url</span></th>
 										<th class="text-center border border-black" width="10%" scope="col">Delete</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr v-for="(sample, index) in audit.working_sample" :key="'sample-'+index">
-										<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.content" aria-labelledby="sample-content"></TextInput></td>
-										<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.screen" aria-labelledby="sample-screen"></TextInput></td>
+										<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.title" aria-labelledby="sample-title"></TextInput></td>
+										<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.url" aria-labelledby="sample-url"></TextInput></td>
 										<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="Delete this sample item" @click.native.prevent="deleteItem(index)" color="delete">X</Button></td>
 									</tr>
 								</tbody>
@@ -246,7 +246,7 @@ export default {
 			conformance_target: "WCAG 2.1 Level AA"
 		},
         complete: false,
-		newSampleItem: {content: "", screen: ""},
+		newSampleItem: {title: "", url: ""},
 		createScan: false
 	}),
     watch:{

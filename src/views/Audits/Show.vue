@@ -1,13 +1,13 @@
 <template>
-	<div class="text-center mt-32 mx-auto">
+	<div class="text-center mx-auto">
 		<Loader v-if="loading"></Loader>
 		
 		<template v-if="audit">
 			<div class="flex w-full justify-center items-center">
 				<A v-if="!audit.locked || isManager" class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
 				<A class="pr-3" type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
-				<A v-if="!audit.locked" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Import</A>
-				<button v-if="issues.length" @click="whichCSVModalOpen = true" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm">
+				<A class="pr-3" v-if="!audit.locked" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Import</A>
+				<button v-if="issues.length" @click="openModal( ()=>{whichCSVModalOpen = true} )" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm">
 					Export
 				</button>
 				<A type='router-link' :to="{name: `NewScan`, params: {type:'audit', id: $route.params.id} }">Initiate Scan</A>
@@ -22,18 +22,18 @@
 				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
 		</template>
-		<div class="bg-white w-full border-t border-black p-4 flex justify-between fixed bottom-0 left-0" style="z-index:25;">
+		<div id="bottom-bar" class="bg-white w-full border-t border-black p-4 flex justify-between fixed bottom-0" style="z-index:25;">
 			<div class="flex w-1/3 items-center">
 				<Button class="mx-2" :color="shouldCondense ? 'red' : 'white'" @click.native.prevent="shouldCondense = !shouldCondense">
 					<span v-if="!shouldCondense">Condense </span>
 					<span v-else>Expand </span>
 					Table
 				</Button>
-				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="editIssue" class="mx-2" color="red" hover="true">Edit Issue</Button>
-				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="createFromCopy" class="mx-2" color="red" hover="true">Copy Issue</Button>
-				<Button v-if="selectedRows.length > 1 && !audit.locked" @click.native.prevent="confirmDeleteModalOpen = true" class="mx-2" color="delete" hover="true">Delete Issues</Button>
-				<Button v-if="selectedRows.length < 1 && !audit.locked" @click.native.prevent="newIssue" class="mx-2" color="red" hover="true">Add Issue</Button>
-				<Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'red' : 'white'" :hover="true">Dark Mode</Button>
+				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="openModal(editIssue)" class="mx-2" color="red" hover="true">Edit Issue</Button>
+				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="openModal(createFromCopy)" class="mx-2" color="red" hover="true">Copy Issue</Button>
+				<Button v-if="selectedRows.length > 1 && !audit.locked" @click.native.prevent="openModal( ()=>{confirmDeleteModalOpen = true} )" class="mx-2" color="delete" hover="true">Delete Issues</Button>
+				<Button v-if="selectedRows.length < 1 && !audit.locked" @click.native.prevent="openModal(newIssue)" class="mx-2" color="red" hover="true">Add Issue</Button>
+				<!-- <Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'red' : 'white'" :hover="true">Dark Mode</Button> -->
 			</div>
 			<div class="w-1/3 flex flex-wrap items-center justify-center">
 				<span aria-live="polite" aria-atomic="true">Issues Selected: {{selectedRows.length}}</span>
@@ -52,7 +52,7 @@
 				<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
 			</div>
 			<div style="padding-bottom:60px;" class="bg-white px-4 pt-5 p-6">
-				<Button aria-label="Close add issue modal" @click.native.prevent="issueModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<Button aria-label="Close add issue modal" @click.native.prevent="closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
 				<div class="flex items-start mt-3 text-left w-full flex-wrap">
 					
@@ -217,7 +217,7 @@
 				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 w-auto">
 					Delete
 				</button>
-				<button @click="issueModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 w-auto">
+				<button @click="closeModal( ()=>{issueModalOpen = false} )" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 w-auto">
 					Cancel
 				</button>
 				<button @click="saveIssue" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 w-auto">
@@ -333,7 +333,7 @@
 		</Modal>
 		<Modal style="z-index:60;" :open="whichCSVModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<Button aria-label="Close select descriptions modal" @click.native.prevent="whichCSVModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<Button aria-label="Close select descriptions modal" @click.native.prevent="closeModal(()=>{whichCSVModalOpen = false})" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<h2 class="text-center">Which item do you want to export?</h2>
 				<div class="flex my-4 justify-center">
 					<Button @click.native.prevent="getIssuesCSV" class="mx-2" color="red" hover="true">Issues (.xlsx spreadsheet)</Button>
@@ -341,7 +341,7 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="whichCSVModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700  w-auto text-sm">
+				<button @click="closeModal(()=>{whichCSVModalOpen = false})" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700  w-auto text-sm">
 					Cancel
 				</button>
 			</div>
@@ -632,9 +632,23 @@ export default {
 				.catch( response=>{console.log(response)})
 				.then( () => this.$store.state.audits.loading = false )
 			}
-		}
+		},
 	},
 	methods: {
+		openModal( callback ){
+			let classList = document.body.classList
+			if( !classList.contains("modalOpen") ){
+				classList.add("modalOpen")
+			}
+			callback()
+		},
+		closeModal( callback ){
+			let classList = document.body.classList
+			if( classList.contains("modalOpen") ){
+				classList.remove("modalOpen")
+			}
+			callback()
+		},
 		isHeaderHidePermanent(key){
 			if( this.audit.number == 1 && ( key == "second_audit_comments" || key == "third_audit_comments" ) ){
 				return true
@@ -682,6 +696,8 @@ export default {
 		createFromCopy(){
 			let copy = JSON.parse(JSON.stringify(this.audit.issues.find( i => i.id == this.selectedRows[0] )))
 			this.issue = copy
+			this.addIssuePagesToGlobalPagesList()
+
 			delete this.issue.id
 			this.descriptionsQuill.root.innerHTML = this.issue.descriptions
 			this.recommendationsQuill.root.innerHTML = this.issue.recommendations
@@ -690,20 +706,22 @@ export default {
 		},
 		editIssue(){
 			let copy = JSON.parse(JSON.stringify(this.audit.issues.find( i => i.id == this.selectedRows[0] )))
+			
+			// Copy the issue
+			// Check to see if the pages on the issue are an object or a string value
+			// - If string value, check to see if the value is a URL
+			// -- If URL, check against the current audit's pages.url
+			// -- otherwise check against the current audit's pages.title
+			// - If an object, check to see if page.title and page.url match before adding
 			this.issue = copy
-			let allPages = this.audit.pages.map( p=>p.content)
-			for( let p in this.issue.pages ){
-				if( !allPages.includes(this.issue.pages[p]) ){
-					this.$store.state.audits.audit.pages.push({
-						content: this.issue.pages[p],
-						screen: null
-					})
-				}
-			}
+			
+			this.addIssuePagesToGlobalPagesList()
+			
 			this.descriptionsQuill.root.innerHTML = this.issue.descriptions
 			this.recommendationsQuill.root.innerHTML = this.issue.recommendations
 			
 			this.issueModalOpen = true
+
 		},
 		saveIssue(){
 			if( !this.issue.id   ){
@@ -712,20 +730,73 @@ export default {
 				this.updateIssue()
 			}
 		},
+		addIssuePagesToGlobalPagesList(){
+			for( let p = 0; p < this.issue.pages.length; p++ ){
+				if( typeof this.issue.pages[p] == 'object' ){ //this would look like {title: 'xyz', url: ''}
+					let addMe = true
+
+					for (let index = 0; index < this.audit.pages.length; index++) {
+						const existingPage = this.audit.pages[index];
+						if( existingPage.title !== null && 
+							existingPage.title !== "" &&
+							this.issue.pages[p].title !== null &&
+							this.issue.pages[p].title !== "" &&
+							existingPage.title == this.issue.pages[p].title ){
+								addMe = false
+								break
+						}
+						if( existingPage.url !== null && 
+							existingPage.url !== "" &&
+							this.issue.pages[p].url !== null &&
+							this.issue.pages[p].url !== "" &&
+							existingPage.url == this.issue.pages[p].url ){
+								addMe = false
+								break
+						}
+					}
+
+					if( addMe ){
+						this.$store.state.audits.audit.pages.push({
+							title: this.issue.pages[p].title,
+							url: this.issue.pages[p].url
+						})
+					}
+				}
+				if( typeof this.issue.pages[p] == 'string' ){
+					let regX = /^\/|^http/g
+					let match = this.issue.pages[p].match(regX)
+					
+					if( match === null ){
+						let urls = this.audit.pages.map(ap=>ap.url)
+						if( !urls.includes(this.issue.pages[p]) ){
+							this.$store.state.audits.audit.pages.push({
+								title: "",
+								url: this.issue.pages[p]
+							})
+						}
+					}else{
+						this.$store.state.audits.audit.pages.push({
+							title: this.issue.pages[p],
+							url: ""
+						})
+					}
+				}
+			}
+		},
 		deleteSelectedIssues(){
 			this.$store.dispatch("audits/deleteIssues", { issues: this.selectedRows, audit_id: this.$route.params.id })
 			this.issue = this.getDefault()
 			this.descriptionsQuill.root.innerHTML = ""
 			this.recommendationsQuill.root.innerHTML = ""
-			this.issueModalOpen = false
-			this.selectedRows = []
 			this.confirmDeleteModalOpen = false
+			this.closeModal(()=>{this.issueModalOpen = false})
+			this.selectedRows = []
 		},
 		createReferenceLink(){
 			let builder = `<a href="https://toolboxdashboard.ngrok.io/audits/${this.selectedReference.audit}/overview#${this.selectedReference.issue.issue_number}" target="_blank" rel="nofollow">${this.selectedReference.linkText}</a>`
 
 			this.descriptionsQuill.root.innerHTML += builder
-			this.addIssueReferenceLinkModalOpen = false
+			this.closeModal(()=>{this.addIssueReferenceLinkModalOpen = false})
 			this.selectedReference = { audit: null, issue: null, issues: [], linkText: "" }
 		},
 		selectRow(issue){
@@ -749,7 +820,7 @@ export default {
 			
 			this.descriptionsQuill.root.innerHTML += builder
 			
-			this.selectDescriptionsModalOpen = false
+			this.closeModal(()=>{this.selectDescriptionsModalOpen = false})
 			this.selectedDescriptions = []
 		},
 		addSelectedRecommendations(){
@@ -761,7 +832,7 @@ export default {
 			
 			this.recommendationsQuill.root.innerHTML += builder
 			
-			this.selectRecommendationsModalOpen = false
+			this.closeModal(()=>{this.selectRecommendationsModalOpen = false})
 		},
 		addBrowserCombo(){
 			this.issue.browser_combos.push(this.browserCombo)
@@ -836,7 +907,8 @@ export default {
 				this.issue.issue_number = uniqid
 				
 				this.$store.dispatch("audits/createIssue", {issue: this.issue})
-				this.issueModalOpen = false
+				
+				this.closeModal(()=>{console.log(this.issueModalOpen);this.issueModalOpen = false})
 				this.issue = this.getDefault()
 				this.descriptionsQuill.root.innerHTML = ""
 				this.recommendationsQuill.root.innerHTML = ""
@@ -845,7 +917,7 @@ export default {
 		updateIssue(){
 			if( this.validate() ){
 				this.$store.dispatch("audits/updateIssue", {issue: this.issue, audit_id: this.$route.params.id})
-				this.issueModalOpen = false
+				this.closeModal(()=>{this.issueModalOpen = false})
 				this.issue = this.getDefault()
 				this.descriptionsQuill.root.innerHTML = ""
 				this.recommendationsQuill.root.innerHTML = ""
@@ -934,5 +1006,9 @@ export default {
 <style scoped>
 	#no-issues-import:hover{
 		color:white !important;
+	}
+	.sidebarOpen #bottom-bar{ 
+		padding-left:212px;
+		left:0;
 	}
 </style>

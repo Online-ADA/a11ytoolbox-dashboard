@@ -7,14 +7,6 @@
       <p class="text-base mb-3">Status: {{project.status}}</p>
       
       <div class="w-full flex">
-        <!-- <div class="border border-pallette-grey h-auto p-4 rounded w-1/2 text-center mx-1.5">
-          <h3>Clients</h3>
-          <ul>
-            <li v-for="client in clients" :key="client.id">
-              <A type='router-link' :to="{path: `/clients/${client.id}`}">{{client.name}}</A>
-            </li>
-          </ul>
-        </div> -->
         
         <Card class="flex-1">
           <h3>Audits</h3>

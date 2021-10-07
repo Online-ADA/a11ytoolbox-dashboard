@@ -42,17 +42,36 @@
 import Loader from '../../components/Loader'
 import A from '../../components/Link'
 import DT from '../../components/DynamicTable'
+import clients from '../../store/modules/clients'
 export default {
     name: 'ProjectsList',
     data: () => ({
         headers: ["Name", "Status", "View", "Edit", "Create New Audit"],
+        client: {}
     }),
     computed: {
         loading(){
-            return this.$store.state.projects.loading
+            if ( this.$store.state.projects.loading )
+                return true;
+            else if ( this.$store.state.clients.loading )
+                return true;
+            else
+                return false;
+        },
+        currentClient() {
+            if ( this.$store.state.clients.client )
+            {
+                this.$store.dispatch("projects/getProjects");
+                return this.$store.state.clients.client;
+            }
+            else
+                return {}
         },
         projects() {
-            return this.$store.state.projects.all
+            if ( this.currentClient )
+                return this.$store.state.projects.all
+            else
+                return {}
         },
         can(){
             return this.$store.state.auth.accountsPermissions[this.$store.state.auth.account].projects.write || this.$store.getters["auth/isManager"]
@@ -64,9 +83,11 @@ export default {
     methods: {
     },
     created() {
+        if(this.$store.state.clients === undefined){
+            this.$store.registerModule('clients', clients)
+        }
     },
     mounted() {
-        this.$store.dispatch("projects/getProjects")
     },
     components: {
       Loader,

@@ -6,12 +6,18 @@
         <Label for="name">Name</Label>
         <TextInput id="name" name="name" v-model="project.name" />
         <Label for="status">Status</Label>
-        
+
         <Select class="mx-auto" :options="statusSrc" v-model="project.status"></Select>
+        
+         <template v-if="$store.getters['auth/isManager']">
+            <Label for="status">Client</Label>
+            <Select class="mx-auto" :options="clientList" v-model="project.client_id"></Select>
+          </template>
 
         <template v-if="$store.getters['auth/isManager']">
           <div class="flex my-3">
             <Card class="w-1/2">
+
               <h3>Users</h3>
               <ul v-if="unassigned.length">
                 <li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
@@ -44,6 +50,8 @@ import Label from '../../components/Label'
 import Select from '../../components/Select'
 import Form from '../../components/Form'
 import Button from '../../components/Button'
+import clients from '../../store/modules/clients'
+
 export default {
     data: () => ({
       statusSrc: [
@@ -57,7 +65,8 @@ export default {
         name: "",
         status: "",
         created_by: "",
-        account_id: ""
+        account_id: "",
+        client_id: ""
       }
     }),
     computed: {
@@ -72,6 +81,15 @@ export default {
             return this.$store.state.project.assignees
           }
           return []
+        },
+        clientList() {
+          var clients = this.$store.state.clients.all;
+          var clientList = [];
+          for ( var i = 0; i < clients.length; i++ )
+          {
+            clientList.push({name: clients[i].name, value: clients[i].id});
+          }
+          return clientList;
         }
     },
     props: [],
@@ -103,10 +121,14 @@ export default {
       }
     },
     created() {
+      if(this.$store.state.clients === undefined){
+        this.$store.registerModule('clients', clients)
+      }
     },
     mounted() {
       this.project.created_by = this.$store.state.auth.user.id
       this.$store.dispatch("projects/getProject", {id: this.$route.params.id, vm: this})
+      this.$store.dispatch("clients/getClients", {router: this.$router}, false)
     },
     components: {
       Loader,

@@ -42,10 +42,17 @@
                     }
                 }
                 if( this.color == "red" ){
-                    classes.push("bg-pallette-red-light");
+                    classes.push("bg-pallette-red");
                     classes.push("text-white");
                     if( this.hover ){
-                        classes.push("hover:bg-pallette-red");
+                        classes.push("hover:bg-pallette-red-dark");
+                    }
+                }
+                if( this.color == "blue" ){
+                    classes.push("bg-pallette-blue");
+                    classes.push("text-white");
+                    if( this.hover ){
+                        classes.push("hover:bg-pallette-blue");
                     }
                 }
                 if( this.color == "grey" ){

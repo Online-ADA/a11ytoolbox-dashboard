@@ -13,7 +13,7 @@
                 :id="groupName + '-' + index" 
                 :value="item.value" 
                 />
-                <button @click="select(index)" tabindex="-1" class="hover:bg-pallette-orange hover:text-white bg-white text-pallette-grey border-pallette-grey border-opacity-40 shadow border px-2 py-1 font-button rounded uppercase transition-colors duration-100 relative z-10">
+                <button @click="select(index)" tabindex="-1" class="hover:bg-pallette-red hover:text-white bg-white text-pallette-grey border-pallette-grey border-opacity-40 shadow border px-2 py-1 font-button rounded uppercase transition-colors duration-100 relative z-10">
                     <span :id="groupName + '-' + index + '-label'">{{item.display}}</span>
                 </button>
             </div>
@@ -63,7 +63,7 @@ export default {
         color: #000;
     }
     .radio input:checked ~ button {
-        background-color: rgb(235, 140, 47);
+        background-color: #005E86;
         color: #fff;
     }
     input[type="radio"]:focus{

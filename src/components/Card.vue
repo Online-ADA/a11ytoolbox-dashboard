@@ -1,5 +1,5 @@
 <template>
-    <div :class="{'text-center': center, 'mx-1.5': gutters}" class="border border-pallette-grey h-auto p-4 rounded">
+    <div :class="{'text-center': center, 'mx-1.5': gutters}" class="bg-white shadow-custom h-auto p-4 rounded-sm">
         <slot></slot>
     </div>
 </template>
