@@ -1,18 +1,11 @@
 <template>
   <div class="text-center container mx-auto">
-    <Card class="max-w-md ml-auto mr-auto mb-20">
-      <h5>The logged in user is {{user.first_name}} {{user.last_name}}</h5>
-      <h6>Your role is: </h6>
-      
-      <span>{{role}}</span>
-    </Card>
     <router-view/>
   </div>
 </template>
 
 <script>
 import admin from '../../store/modules/admin'
-import Card from '../../components/Card'
 
 export default {
     data: () => ({
@@ -39,11 +32,10 @@ export default {
       }
     },
     beforeDestroy(){
-      // this.$store.unregisterModule("admin")
       this.$store.dispatch("admin/resetState")
     },
     mounted() {
     },
-    components: { Card },
+    components: {},
 }
 </script>

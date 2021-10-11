@@ -65,15 +65,24 @@ function run(){
       store.state.auth.accountsRoles = response.data.details.roles.accounts
       store.state.auth.accountsPermissions = response.data.details.permissions.accounts
       store.state.auth.accounts = response.data.details.accounts
+
+      if( Cookies.get("toolboxAccount") === undefined ){
+        Cookies.set("toolboxAccount", parseInt(store.state.auth.accounts[0].id))
+      }
+
+      if( store.state.auth.account === false ){
+        store.state.auth.account = Cookies.get("toolboxAccount")
+      }
+      
       let accountID = Cookies.get("toolboxAccount")
       if( accountID ){
         Request.getPromise(store.state.auth.toolboxapi+`/api/user/${accountID}/clients`)
         .then( response => {
           store.state.clients.all = response.data.details
-          let clientID = Cookies.get("toolboxClient")
+          let clientID = parseInt(Cookies.get("toolboxClient"))
           if( clientID ){
             store.state.clients.client = store.state.clients.all.find( c=>c.id == clientID )
-            Cookies.set('toolboxClient', store.state.clients.client.id, 365)
+            Cookies.set('toolboxClient', parseInt(store.state.clients.client.id, 365))
           }
           
           runBeforeEach()

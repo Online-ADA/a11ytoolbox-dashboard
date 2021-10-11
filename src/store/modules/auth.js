@@ -1,6 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import Vue from 'vue'
+import store from '..'
 
 export default {
   namespaced:true,
@@ -23,7 +24,7 @@ export default {
     showLoginPromptOverride: false,
     token_expire_threshold: 10,
     token_timer: false,
-    account: Cookies.get('toolboxAccount') || false,
+    account: parseInt(Cookies.get('toolboxAccount')) || false,
     accounts: [],
     authMessage: "",
     authMessages: {
@@ -68,12 +69,12 @@ export default {
   mutations: {
     setState(state,payload) {
       if(payload.key == 'account'){
-        Cookies.set('toolboxAccount', payload.value, 1)
+        Cookies.set('toolboxAccount', payload.value, 365)
       }
       Vue.set(state,payload.key,payload.value)
     },
     setAuthState(state,payload) {
-        state[payload.key] = payload.value
+      state[payload.key] = payload.value
     },
   },
   actions: {
@@ -84,6 +85,15 @@ export default {
         state.accountsRoles = response.data.details.roles.accounts
         state.accountsPermissions = response.data.details.permissions.accounts
         state.accounts = response.data.details.accounts
+        
+        if( Cookies.get("toolboxAccount") === undefined ){
+          Cookies.set("toolboxAccount", parseInt(state.accounts[0].id))
+        }
+
+        if( state.account === false ){
+          state.account = Cookies.get("toolboxAccount")
+        }
+
         Cookies.set("loggingIn", false)
       })
       .catch(re => console.log(re.response.data))

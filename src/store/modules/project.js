@@ -35,16 +35,6 @@ export default {
 			resetState({commit}) {
 				commit('resetState')
 			},
-			// getUsers({state, rootState}, args){
-			// 	state.usersLoading = true
-			// 	Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/users`)
-			// 	.then( re=>{
-			// 		args.vm.users = Object.values(re.data.details)
-			// 		args.vm.unassigned = args.vm.users.filter( u => !args.vm.assigned.includes(u.user_id) ).map(u => u.user_id)
-			// 	})
-			// 	.catch( re=> console.log(re))
-			// 	.then( ()=> state.usersLoading = false)
-			// },
 			getAssignable({state, rootState}, args){
 				state.usersLoading = true
 				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/assignable`)

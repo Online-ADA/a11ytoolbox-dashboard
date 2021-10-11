@@ -61,115 +61,6 @@ export default {
   data(){
     return {
       sidebarExpanded: true,
-
-      manageDropdown: [
-        {
-          type: 'router-link',
-          label: 'Dashboard',
-          to: '/manage'
-        },
-        {
-          type: 'router-link',
-          label: 'Users',
-          to: '/manage/users'
-        },
-        {
-          type: 'router-link',
-          label: 'Projects',
-          to: '/manage/projects'
-        },
-        {
-          type: 'router-link',
-          label: 'Domains',
-          to: '/manage/domains'
-        },
-        // {
-        //   type: 'router-link',
-        //   label: 'Clients',
-        //   to: '/manage/clients'
-        // },
-        {
-          type: 'router-link',
-          label: 'Audits',
-          to: '/manage/audits'
-        },
-        {
-          type: 'router-link',
-          label: 'Success Criteria',
-          to: '/manage/articles'
-        },
-      ],
-      siteDropdown: [
-        {
-          type: 'dropdown',
-          label: 'Projects',
-          children: [
-            {
-              type: 'router-link',
-              label: 'My Projects',
-              to: '/projects/list'
-            },
-            {
-              type: 'router-link',
-              label: 'Create',
-              to: '/projects/create'
-            },
-          ]
-        },
-        {
-          type: 'dropdown',
-          label: 'Domains',
-          children: [
-            {
-              type: 'router-link',
-              label: 'My Domains',
-              to: '/domains/list'
-            },
-            {
-              type: 'router-link',
-              label: 'Create',
-              to: '/domains/create'
-            },
-          ]
-        },
-        {
-          type: 'dropdown',
-          label: 'Audits',
-          children: [
-            {
-              type: 'router-link',
-              label: 'My Audits',
-              to: '/audits/list'
-            },
-            {
-              type: 'router-link',
-              label: 'Create',
-              to: '/audits/create'
-            },
-          ]
-        },
-        {
-          type: 'router-link',
-          label: 'Scan History',
-          to: '/scan/history'
-        },
-        // {
-        //   type: 'dropdown',
-        //   label: 'Scan',
-        //   children: [
-        //     {
-        //       type: 'router-link',
-        //       label: 'Start New',
-        //       to: '/scan/new'
-        //     },
-        //     {
-        //       type: 'router-link',
-        //       label: 'My History',
-        //       to: '/scan/list'
-        //     },
-        //   ]
-        // }
-      ]
     }
   },
   methods:{
@@ -226,16 +117,16 @@ export default {
     client: function() {
       if ( !this.client && this.$route.path != '/' )
         this.$router.push({path: '/'}).catch(()=>{})
-    }
+    },
   },
   created() {
-        if(this.$store.state.clients === undefined){
-            this.$store.registerModule('clients', clients)
-        }
+      if(this.$store.state.clients === undefined){
+        this.$store.registerModule('clients', clients)
+      }
     },
   mounted() {
       this.$root.$on('menuClick', (menuOpen) => {
-          this.sidebarExpanded = menuOpen;
+        this.sidebarExpanded = menuOpen;
       } );
   },
 

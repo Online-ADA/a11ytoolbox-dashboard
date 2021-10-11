@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import authModule from './modules/auth.js'
+import adminModule from './modules/admin.js'
 import clientsModule from './modules/clients.js'
 import auditsModule from './modules/audits.js'
 import projectsModule from './modules/project.js'
@@ -17,5 +18,6 @@ export default new Vuex.Store({
         projects: projectsModule,
         domains: domainsModule,
         scan: scanModule,
+        admin: adminModule
     }
 })

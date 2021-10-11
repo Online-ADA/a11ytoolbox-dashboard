@@ -8,12 +8,12 @@
             <template v-if="children">
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in children" :key="index">
                     <template v-if="child.type == 'anchor' || !child.type">
-                        <A :to="child.to || '#'" @click.native.prevent class="hover:text-gray-500 block pt-1 px-5">
+                        <A :to="child.to || '#'" @click.native.prevent class="hover:text-gray-500 block">
                             <span v-html="child.label"></span>
                         </A>
                     </template>
                     <template v-if="child.type == 'router-link'">
-                        <router-link class="hover:text-gray-500 pt-1 px-5 block" :to="child.to"><span v-html="child.label"></span></router-link>
+                        <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
                     </template>
                     <template v-if="child.type == 'dropdown'">
                         <Dropdown :sub="true" class="pt-1 px-5" :children="child.children">
