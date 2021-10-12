@@ -670,24 +670,47 @@ export default {
 		},
 		getProjects({state, rootState}){
 			state.loading.projects = true
-			Request.get( `${rootState.auth.adminAPI}/${rootState.auth.account}/projects`, {
-				onSuccess: {
-					silent: true,
-					callback: function(response){
-						state.loading.projects = false
-						state.projects = response.data.details
-					}
-				},
-				onWarns: {
-					silent: true,
-				},
-				onError: {
-					silent: true,
-					callback: function(){
-						state.loading.projects = false
-					}
-				}
+			Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/projects`, {
+				params: {
+					client_id: rootState.clients.client.id,
+				} 
 			})
+			.then(response=>{
+				state.projects = response.data.details
+				Vue.notify({
+					title: "Success",
+					text: "Projects retrieved",
+					type:"success"
+				})
+			})
+			.catch( re=>{
+				console.log(re)
+				Vue.notify({
+					title: "Error",
+					text: "Failed getting projects",
+					type:"error"
+				})
+			})
+			.finally(()=>{state.loading.projects = false})
+
+			// Request.get( `${rootState.auth.adminAPI}/${rootState.auth.account}/projects`, {
+			// 	onSuccess: {
+			// 		silent: true,
+			// 		callback: function(response){
+			// 			state.loading.projects = false
+			// 			state.projects = response.data.details
+			// 		}
+			// 	},
+			// 	onWarns: {
+			// 		silent: true,
+			// 	},
+			// 	onError: {
+			// 		silent: true,
+			// 		callback: function(){
+			// 			state.loading.projects = false
+			// 		}
+			// 	}
+			// })
 		},
 		getAudits({state, rootState}){
 			state.loading.projects = true

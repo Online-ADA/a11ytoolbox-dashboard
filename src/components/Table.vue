@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col relative px-5">
+	<div class="flex flex-col relative pl-5 pr-8">
 		<div class="flex w-full px-10 mb-2 relative overflow-y-auto h-1/3">
 			<div class="flex flex-wrap items-end pb-3 w-full mx-auto">
 				<h2 class="w-full text-2xl my-3">Table description (what should this say?)</h2>

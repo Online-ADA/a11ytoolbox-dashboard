@@ -24,7 +24,7 @@
 import Dropdown from '../components/Dropdown'
 import Card from '../components/Card'
 import Loader from '../components/Loader'
-import admin from '../store/modules/admin'
+// import admin from '../store/modules/admin'
 
 export default {
     name: 'ChangeAccount',
@@ -34,6 +34,7 @@ export default {
     methods:{
         setAccount(id){
             this.$store.commit("auth/setState", {key: "account", value: parseInt(id)})
+            this.$store.state.clients.clientID = ""
             this.$store.dispatch("clients/getClients")
         },
     },

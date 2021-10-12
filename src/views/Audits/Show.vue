@@ -577,7 +577,7 @@ export default {
 			return arr
 		},
 		audit(){
-			return this.$store.state.audits && this.$store.state.audits.audit ? this.$store.state.audits.audit : false
+			return this.$store.state.audits.audit ? this.$store.state.audits.audit : false
 		},
 		project(){
 			return this.$store.state.projects.project ? this.$store.state.projects.project : false
@@ -585,6 +585,11 @@ export default {
 	},
 	props: [],
 	watch: {
+		"$route.params.id": function(newVal){
+			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
+			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
+			this.$store.dispatch("admin/getAuditStates")
+		},
 		"$store.state.audits.audit": function(newVal){
 			this.selectedSoftware = newVal.software_used[0]
 			this.$store.dispatch("projects/getProject", {id: newVal.project_id})
@@ -1009,6 +1014,10 @@ export default {
 	}
 	.sidebarOpen #bottom-bar{ 
 		padding-left:212px;
+		left:0;
+	}
+	.sidebarOpen.subSidebarExpanded #bottom-bar{ 
+		padding-left:412px;
 		left:0;
 	}
 </style>

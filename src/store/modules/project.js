@@ -95,9 +95,16 @@ export default {
 					state.loading = false;
 				})
 			},
-			getProjects({state, rootState}, notify=true){
+			getProjects({state, rootState, rootGetters}, notify=true){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {params: {user_id: rootState.auth.user.id, clientID: rootState.clients.client.id } })
+				
+				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {
+					params: {
+						user_id: rootState.auth.user.id, 
+						clientID: rootState.clients.client.id,
+						isManager: rootGetters["auth/isManager"]
+					} 
+				})
 				.then( re => {
 					if ( notify )
 					{

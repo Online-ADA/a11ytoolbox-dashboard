@@ -78,7 +78,7 @@ export default {
     },
   },
   actions: {
-    check({state}) {
+    check({state, rootState}) {
       Request.getPromise(state.toolboxapi+'/api/state/init')
       .then( response => {
         state.user = response.data.details.user
@@ -92,6 +92,29 @@ export default {
 
         if( state.account === false ){
           state.account = Cookies.get("toolboxAccount")
+        }
+
+        if( Cookies.get("toolboxClient") && rootState.clients.all.length ){
+          rootState.clients.client = rootState.clients.all.find(cl=>cl.id == Cookies.get("toolboxClient"))
+        }
+        if( !Cookies.get("toolboxClient") && rootState.clients.all.length){
+          rootState.clients.client = rootState.clients.all[0]
+          Cookies.set("toolboxClient", rootState.clients.all[0].id)
+        }
+        if( !Cookies.get("toolboxClient") && !rootState.clients.all.length ){
+          Request.getPromise(`${state.toolboxapi}/api/admin/${rootState.auth.account}/clients`, {
+            params: {
+              user_id: rootState.auth.user.id
+            }
+          })
+          .then(response=>{
+            if( response.data.details.length ){
+              rootState.clients.all = response.data.details
+              rootState.clients.client = rootState.clients.all[0]
+              Cookies.set("toolboxClient", rootState.clients.all[0].id)
+            }
+          })
+          .catch()
         }
 
         Cookies.set("loggingIn", false)

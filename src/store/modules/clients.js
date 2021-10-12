@@ -151,7 +151,14 @@ export default {
 					callback: function(response){
 						state.loading = false
 						state.all = response.data.details
-						state.client = state.all.find(({ id }) => id == state.clientID )
+						if( state.all.length ){
+							if( state.clientID ){
+								state.client = state.all.find( id  => id == state.clientID )
+							}else{
+								state.client = state.all[0]
+								state.clientID = state.client.id
+							}
+						}
 					}
 				},
 				onWarn:{

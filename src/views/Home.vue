@@ -7,7 +7,7 @@
     <Card class="w-1/2">
 
       <h1>Welcome to the OnlineADA Toolbox</h1>
-      {{$store.state.auth.accounts.find(acc=>acc.id == $store.state.auth.account)}}
+      
     </Card>
   </div>
 </template>

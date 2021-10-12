@@ -80,7 +80,7 @@ import clients from '../store/modules/clients'
                     if( this.$store.state.admin === undefined ){
                     this.$store.registerModule('admin', admin)
                     }
-                    this.$store.dispatch("admin/getProjects", this.$router)
+                    this.$store.dispatch("admin/getProjects", {router: this.$router, client_id: this.$store.state.clients.client.id})
                 }else{
                     this.$store.unregisterModule("admin")
                 }

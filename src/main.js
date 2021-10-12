@@ -80,9 +80,18 @@ function run(){
         .then( response => {
           store.state.clients.all = response.data.details
           let clientID = parseInt(Cookies.get("toolboxClient"))
+          
           if( clientID ){
-            store.state.clients.client = store.state.clients.all.find( c=>c.id == clientID )
-            Cookies.set('toolboxClient', parseInt(store.state.clients.client.id, 365))
+            store.state.clients.client = store.state.clients.all.find( c=>c.id === clientID )
+            //Resets the cookie
+            if(store.state.clients.client){
+              Cookies.set('toolboxClient', store.state.clients.client.id, 365)
+            }
+            
+          }
+          if( !clientID && store.state.clients.all.length){
+            store.state.clients.client = store.state.clients.all[0]
+            Cookies.set('toolboxClient', store.state.clients.client.id, 365)
           }
           
           runBeforeEach()
@@ -116,6 +125,7 @@ function runBeforeEach(){
       //check for role and permissions
       let hasRole = store.state.auth.accountsRoles[store.state.auth.account].includes(to.meta.role)
       let hasPermission = store.state.auth.accountsPermissions[store.state.auth.account][to.meta.permissions.entity][to.meta.permissions.action] === 1
+      
       if( hasRole && hasPermission ){
         next()
         return

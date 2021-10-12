@@ -240,7 +240,7 @@ export default {
 	},
 	mounted() {
 		if( this.independent ){
-			this.$store.dispatch("domains/getProjects")
+			this.$store.dispatch("domains/getProjects", {client_id: this.$store.state.clients.client.id})
 		}
 	},
 	components: {
