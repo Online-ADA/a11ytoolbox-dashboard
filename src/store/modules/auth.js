@@ -1,6 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import Vue from 'vue'
+import store from '..'
 
 export default {
   namespaced:true,
@@ -23,7 +24,7 @@ export default {
     showLoginPromptOverride: false,
     token_expire_threshold: 10,
     token_timer: false,
-    account: Cookies.get('toolboxAccount') || false,
+    account: parseInt(Cookies.get('toolboxAccount')) || false,
     accounts: [],
     authMessage: "",
     authMessages: {
@@ -68,22 +69,54 @@ export default {
   mutations: {
     setState(state,payload) {
       if(payload.key == 'account'){
-        Cookies.set('toolboxAccount', payload.value, 1)
+        Cookies.set('toolboxAccount', payload.value, 365)
       }
       Vue.set(state,payload.key,payload.value)
     },
     setAuthState(state,payload) {
-        state[payload.key] = payload.value
+      state[payload.key] = payload.value
     },
   },
   actions: {
-    check({state}) {
+    check({state, rootState}) {
       Request.getPromise(state.toolboxapi+'/api/state/init')
       .then( response => {
         state.user = response.data.details.user
         state.accountsRoles = response.data.details.roles.accounts
         state.accountsPermissions = response.data.details.permissions.accounts
         state.accounts = response.data.details.accounts
+        
+        if( Cookies.get("toolboxAccount") === undefined ){
+          Cookies.set("toolboxAccount", parseInt(state.accounts[0].id))
+        }
+
+        if( state.account === false ){
+          state.account = Cookies.get("toolboxAccount")
+        }
+
+        if( Cookies.get("toolboxClient") && rootState.clients.all.length ){
+          rootState.clients.client = rootState.clients.all.find(cl=>cl.id == Cookies.get("toolboxClient"))
+        }
+        if( !Cookies.get("toolboxClient") && rootState.clients.all.length){
+          rootState.clients.client = rootState.clients.all[0]
+          Cookies.set("toolboxClient", rootState.clients.all[0].id)
+        }
+        if( !Cookies.get("toolboxClient") && !rootState.clients.all.length ){
+          Request.getPromise(`${state.toolboxapi}/api/admin/${rootState.auth.account}/clients`, {
+            params: {
+              user_id: rootState.auth.user.id
+            }
+          })
+          .then(response=>{
+            if( response.data.details.length ){
+              rootState.clients.all = response.data.details
+              rootState.clients.client = rootState.clients.all[0]
+              Cookies.set("toolboxClient", rootState.clients.all[0].id)
+            }
+          })
+          .catch()
+        }
+
         Cookies.set("loggingIn", false)
       })
       .catch(re => console.log(re.response.data))

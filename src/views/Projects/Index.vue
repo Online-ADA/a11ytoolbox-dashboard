@@ -16,7 +16,6 @@ export default {
     methods: {
     },
     created() {
-      
     },
     beforeDestroy(){
       this.$store.dispatch("projects/resetState")

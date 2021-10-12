@@ -77,10 +77,10 @@ export default {
 				.then( re => {
 					state.projects = re.data.details
 					if( args.project_id ){
-						dispatch("getProjectDomains", {project_id: args.project_id})
+						dispatch("getProjectDomains", {project_id: args.project_id, client_id: rootState.clients.client.id})
 					}
 					else{
-						dispatch("getProjectDomains", {project_id: state.projects[0].id})
+						dispatch("getProjectDomains", {project_id: state.projects[0].id, client_id: rootState.clients.client.id})
 					}
 					
 				})

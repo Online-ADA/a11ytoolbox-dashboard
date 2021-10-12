@@ -2,7 +2,7 @@
   <div id="app" class="bg-pallette-grey-bg">
     <notifications/>
     <div id="page-container" class="transition-transform flex w-full height:100% flex-nowrap" >
-      <div id="sidebar" class="z-50" v-bind:class="{ sidebarOpen: sidebarExpanded }">
+      <div id="sidebar" class="z-50" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarOpen: $store.state.projects.audits.length && sidebarExpanded }">
         <sidebar></sidebar>
       </div>
       <div id="content" class="flex" >
@@ -10,13 +10,13 @@
         <div class="w-full h-full max-w-full pt-12" >
           <div class="flex h-full">
             <transition name="slideright">
-              <secondary-sidebar v-if="showSecondaryHeader !== false" :type="showSecondaryHeader"></secondary-sidebar>
+              <secondary-sidebar v-if="secondarySidebarType !== false" :type="secondarySidebarType"></secondary-sidebar>
             </transition>
             <div class="max-w-full flex-1">
               <ada-secondary-header v-if="secondaryHeaderLabel !== false" id="secondaryHeader" class="transition-transform" :label="secondaryHeaderLabel" :aria-hidden="[ !showSecondaryHeader ? true : false ]" v-bind:class="{ open: showSecondaryHeader }" ></ada-secondary-header>
-              <div id="main-content" class="pt-12 " v-bind:class="{ sidebarOpen: sidebarExpanded }">
+              <div id="main-content" class="pt-12" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarExpanded: $store.state.projects.audits.length }">
                 <div class="flex-1">
-                  <router-view/>
+                  <router-view></router-view>
                 </div>
               </div>
             </div>
@@ -55,121 +55,12 @@ import SecondarySidebar from '@/components/SecondarySidebar.vue'
 import Modal from './components/Modal'
 import Btn from './components/Button'
 // import Card from '@/components/Card.vue'
-import clients from './store/modules/clients'
+// import clients from './store/modules/clients'
 
 export default {
   data(){
     return {
       sidebarExpanded: true,
-
-      manageDropdown: [
-        {
-          type: 'router-link',
-          label: 'Dashboard',
-          to: '/manage'
-        },
-        {
-          type: 'router-link',
-          label: 'Users',
-          to: '/manage/users'
-        },
-        {
-          type: 'router-link',
-          label: 'Projects',
-          to: '/manage/projects'
-        },
-        {
-          type: 'router-link',
-          label: 'Domains',
-          to: '/manage/domains'
-        },
-        // {
-        //   type: 'router-link',
-        //   label: 'Clients',
-        //   to: '/manage/clients'
-        // },
-        {
-          type: 'router-link',
-          label: 'Audits',
-          to: '/manage/audits'
-        },
-        {
-          type: 'router-link',
-          label: 'Success Criteria',
-          to: '/manage/articles'
-        },
-      ],
-      siteDropdown: [
-        {
-          type: 'dropdown',
-          label: 'Projects',
-          children: [
-            {
-              type: 'router-link',
-              label: 'My Projects',
-              to: '/projects/list'
-            },
-            {
-              type: 'router-link',
-              label: 'Create',
-              to: '/projects/create'
-            },
-          ]
-        },
-        {
-          type: 'dropdown',
-          label: 'Domains',
-          children: [
-            {
-              type: 'router-link',
-              label: 'My Domains',
-              to: '/domains/list'
-            },
-            {
-              type: 'router-link',
-              label: 'Create',
-              to: '/domains/create'
-            },
-          ]
-        },
-        {
-          type: 'dropdown',
-          label: 'Audits',
-          children: [
-            {
-              type: 'router-link',
-              label: 'My Audits',
-              to: '/audits/list'
-            },
-            {
-              type: 'router-link',
-              label: 'Create',
-              to: '/audits/create'
-            },
-          ]
-        },
-        {
-          type: 'router-link',
-          label: 'Scan History',
-          to: '/scan/history'
-        },
-        // {
-        //   type: 'dropdown',
-        //   label: 'Scan',
-        //   children: [
-        //     {
-        //       type: 'router-link',
-        //       label: 'Start New',
-        //       to: '/scan/new'
-        //     },
-        //     {
-        //       type: 'router-link',
-        //       label: 'My History',
-        //       to: '/scan/list'
-        //     },
-        //   ]
-        // }
-      ]
     }
   },
   methods:{
@@ -185,7 +76,7 @@ export default {
       if ( this.$store.state.clients )
       {
         if ( this.$store.state.clients.client )
-          return this.$store.state.clients.client;
+          return this.$store.state.clients.client
       }
       return false;
     },
@@ -201,6 +92,14 @@ export default {
         return this.$route.name;
       else
         return false;
+    },
+    secondarySidebarType(){
+      //Its possible this will change based on routes in the future, but for now default to always showing projects
+      if( this.$store.getters["auth/isManager"] ){
+        return 'ManagerAudits'
+      }
+
+      return 'ProjectAudits'
     },
     tokenSecondsLeft(){
       return this.$store.state.auth.token_time_left.seconds
@@ -226,16 +125,13 @@ export default {
     client: function() {
       if ( !this.client && this.$route.path != '/' )
         this.$router.push({path: '/'}).catch(()=>{})
-    }
+    },
   },
   created() {
-        if(this.$store.state.clients === undefined){
-            this.$store.registerModule('clients', clients)
-        }
-    },
+  },
   mounted() {
       this.$root.$on('menuClick', (menuOpen) => {
-          this.sidebarExpanded = menuOpen;
+        this.sidebarExpanded = menuOpen;
       } );
   },
 
@@ -283,11 +179,14 @@ export default {
   flex-basis:0%;
   flex-grow:1;
   flex-shrink:1;
-  max-width:100%;
+  max-width:100vw;
 }
 
 #sidebar.sidebarOpen ~ #content{
-  max-width: calc(100% - 200px);
+  max-width: calc(100vw - 200px);
+}
+#sidebar.sidebarOpen.subSidebarOpen ~ #content{
+  max-width: calc(100vw - 400px);
 }
 
 

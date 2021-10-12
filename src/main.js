@@ -65,14 +65,32 @@ function run(){
       store.state.auth.accountsRoles = response.data.details.roles.accounts
       store.state.auth.accountsPermissions = response.data.details.permissions.accounts
       store.state.auth.accounts = response.data.details.accounts
+
+      if( Cookies.get("toolboxAccount") === undefined ){
+        Cookies.set("toolboxAccount", parseInt(store.state.auth.accounts[0].id))
+      }
+
+      if( store.state.auth.account === false ){
+        store.state.auth.account = Cookies.get("toolboxAccount")
+      }
+      
       let accountID = Cookies.get("toolboxAccount")
       if( accountID ){
         Request.getPromise(store.state.auth.toolboxapi+`/api/user/${accountID}/clients`)
         .then( response => {
           store.state.clients.all = response.data.details
-          let clientID = Cookies.get("toolboxClient")
+          let clientID = parseInt(Cookies.get("toolboxClient"))
+          
           if( clientID ){
-            store.state.clients.client = store.state.clients.all.find( c=>c.id == clientID )
+            store.state.clients.client = store.state.clients.all.find( c=>c.id === clientID )
+            //Resets the cookie
+            if(store.state.clients.client){
+              Cookies.set('toolboxClient', store.state.clients.client.id, 365)
+            }
+            
+          }
+          if( !clientID && store.state.clients.all.length){
+            store.state.clients.client = store.state.clients.all[0]
             Cookies.set('toolboxClient', store.state.clients.client.id, 365)
           }
           
@@ -107,6 +125,7 @@ function runBeforeEach(){
       //check for role and permissions
       let hasRole = store.state.auth.accountsRoles[store.state.auth.account].includes(to.meta.role)
       let hasPermission = store.state.auth.accountsPermissions[store.state.auth.account][to.meta.permissions.entity][to.meta.permissions.action] === 1
+      
       if( hasRole && hasPermission ){
         next()
         return
