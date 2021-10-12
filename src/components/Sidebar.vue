@@ -124,6 +124,11 @@ export default {
 #sidebar li.selected > *{
     z-index:-1;
 }
+#nav{
+    height: calc(100vh - 48px);
+    max-height: 100%;
+    overflow-y: auto;
+}
 
 img {
     height: 48px;
