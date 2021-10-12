@@ -151,9 +151,10 @@ export default {
 					callback: function(response){
 						state.loading = false
 						state.all = response.data.details
+						
 						if( state.all.length ){
 							if( state.clientID ){
-								state.client = state.all.find( id  => id == state.clientID )
+								state.client = state.all.find( (ob) => ob.id == parseInt(state.clientID) )
 							}else{
 								state.client = state.all[0]
 								state.clientID = state.client.id

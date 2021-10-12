@@ -47,8 +47,8 @@ import Label from '../../../components/Label'
 import Select from '../../../components/Select'
 import Button from '../../../components/Button'
 import Card from '../../../components/Card'
-import projects from '../../../store/modules/project'
-import clients from '../../../store/modules/clients'
+// import projects from '../../../store/modules/project'
+// import clients from '../../../store/modules/clients'
 
 export default {
     name: 'ProjectCreate',
@@ -136,14 +136,7 @@ export default {
         this.$store.dispatch("projects/createProject", {project: this.project, router: this.$router, vm: this, redirect: this.independent})
       }
     },
-    created() {
-      if(this.$store.state.projects === undefined){
-        this.$store.registerModule('projects', projects)
-      }
-      if(this.$store.state.clients === undefined){
-        this.$store.registerModule('clients', clients)
-      }
-    },
+    created() {},
     mounted() {
       this.project.created_by = this.$store.state.auth.user.id
       this.project.account_id = this.$store.state.auth.account
@@ -155,8 +148,8 @@ export default {
       if( !this.independent ){
         this.$emit("initialized", {key: "ProjectCreate", instance: this})
       }
-
-      this.$store.dispatch("clients/getClients", {router: this.$router})
+      
+      this.$store.dispatch("clients/getClients")
     },
     components: {
       Loader,

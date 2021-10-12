@@ -16,7 +16,7 @@
               <ada-secondary-header v-if="secondaryHeaderLabel !== false" id="secondaryHeader" class="transition-transform" :label="secondaryHeaderLabel" :aria-hidden="[ !showSecondaryHeader ? true : false ]" v-bind:class="{ open: showSecondaryHeader }" ></ada-secondary-header>
               <div id="main-content" class="pt-12" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarExpanded: $store.state.projects.audits.length }">
                 <div class="flex-1">
-                  <router-view/>
+                  <router-view></router-view>
                 </div>
               </div>
             </div>
@@ -76,7 +76,7 @@ export default {
       if ( this.$store.state.clients )
       {
         if ( this.$store.state.clients.client )
-          return this.$store.state.clients.client;
+          return this.$store.state.clients.client
       }
       return false;
     },

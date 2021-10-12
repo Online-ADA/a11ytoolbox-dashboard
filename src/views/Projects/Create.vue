@@ -18,7 +18,7 @@ export default {
     methods: {
     },
     mounted() {
-      
+      console.log("HELLO WORLD");
     },
     components: {
       ProjectCreate

@@ -3,6 +3,9 @@
         <div class="fixed">
             <div class="flex sub-nav-container" >
                 <ul class="pt-8 flex-1 px-5">
+                    <li class="text-sm">
+                        <router-link class="text-black hover:text-pallette-red" :to="{path: '/audits/create'}">Create New</router-link>
+                    </li>
                     <li class="text-sm" v-for="item in source" :key="item.id">
                         <router-link class="text-black hover:text-pallette-red" @click="updateAudit" :to="{path: getRoute(item)}">{{getTitle(item)}}</router-link>
                     </li>

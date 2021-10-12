@@ -6,10 +6,10 @@
             <div class="flex" style="width:200px;overflow-y:auto;">
                 <ul v-if="$store.state.clients.client" id="nav" class="pt-8 flex-1">
                     <li class="flex">
-                        <router-link :class="[$route.path == '/projects/create' ? 'selected' : '']" class="w-full h-full bg-pallette-grey pt-2 shaddow-inner" to="/projects/create">Create New</router-link>
+                        <router-link class="text-center w-full h-full bg-pallette-grey py-2 shadow-inner" :to="{name: 'ProjectCreate'}">Create New</router-link>
                     </li>
                     <li :class="[selectedProject.id == project.id ? 'selected' : '']" class="flex" v-for="project in projects" :key="project.id">
-                        <button class="w-full h-full bg-pallette-grey pt-2 shaddow-inner" @click="setCurrentProject(project.id)">{{project.name}}</button>
+                        <button class="w-full h-full bg-pallette-grey py-2 shadow-inner" @click="setCurrentProject(project.id)">{{project.name}}</button>
                     </li>
 
                     <!-- <li>
