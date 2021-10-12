@@ -187,6 +187,10 @@
 <style>
     #sidebar.sidebarOpen ~ #content .sheet-holder .sheet{
         margin-left:200px;
-        width:calc(100% - 200px);
+        width:calc(100vw - 200px);
+    }
+    #sidebar.sidebarOpen.subSidebarOpen ~ #content .sheet-holder .sheet{
+        margin-left:400px;
+        width:calc(100vw - 400px);
     }
 </style>
