@@ -1,10 +1,13 @@
 <template>
-    <div :class="{ 'expanded': source.length }" class="flex shadow-lg transition-all sub-sidebar">
+    <div class="expanded flex shadow-lg transition-all sub-sidebar">
         <div class="fixed">
             <div class="flex sub-nav-container" >
                 <ul class="pt-8 flex-1 px-5">
-                    <li class="text-sm">
-                        <router-link class="text-black hover:text-pallette-red" :to="{path: '/audits/create'}">Create New</router-link>
+                    <li class="flex">
+                        <router-link class="text-black hover:text-pallette-red" :to="{path: `/projects/${$store.state.projects.project.id}/edit`}">Project Settings</router-link>
+                    </li>
+                    <li class="flex">
+                        <router-link class="text-black hover:text-pallette-red" :to="{path: '/audits/create'}">Create New Audit</router-link>
                     </li>
                     <li class="text-sm" v-for="item in source" :key="item.id">
                         <router-link class="text-black hover:text-pallette-red" @click="updateAudit" :to="{path: getRoute(item)}">{{getTitle(item)}}</router-link>
@@ -74,8 +77,10 @@ export default {
     },
     watch: {
         "$store.state.projects.project": function(newVal){
+            //ALWAYS reset audits to empty if project is switched.
+            this.$store.state.projects.audits = [] 
             if( newVal ){
-                this.$store.state.projects.audits = []
+                //If not false, we get the new audits
                 this.$store.dispatch("projects/getAuditsForProject", {project_id: this.$store.state.projects.project.id})
             }
         }

@@ -5,10 +5,10 @@
                   
             <div class="flex" style="width:200px;overflow-y:auto;">
                 <ul v-if="$store.state.clients.client" id="nav" class="pt-8 flex-1">
-                    <li class="flex">
+                    <li :class="[$route.path == '/projects/create' ? 'selected' : '']" class="flex">
                         <router-link class="text-center w-full h-full bg-pallette-grey py-2 shadow-inner" :to="{name: 'ProjectCreate'}">Create New</router-link>
                     </li>
-                    <li :class="[selectedProject.id == project.id ? 'selected' : '']" class="flex" v-for="project in projects" :key="project.id">
+                    <li :class="[selectedProject.id == project.id && $route.path != '/projects/create' ? 'selected' : '']" class="flex" v-for="project in projects" :key="project.id">
                         <button class="w-full h-full bg-pallette-grey py-2 shadow-inner" @click="setCurrentProject(project.id)">{{project.name}}</button>
                     </li>
 
@@ -68,14 +68,15 @@ export default {
     watch: {
         "$store.state.clients.client": function(newVal){
             if( newVal !== false && newVal !== undefined){
-                this.$store.state.projects.audits = []
                 Cookies.set('toolboxClient', parseInt(this.$store.state.clients.client.id))
                 this.getProjects()
             }
         },
         "$store.state.projects.all":function(newVal){
             if( newVal.length ){
-                this.$store.state.projects.project = this.$store.state.projects.all[0]
+                if( !this.$store.state.projects.project ){
+                    this.$store.state.projects.project = this.$store.state.projects.all[0]
+                }
             }
         }
     },
@@ -87,7 +88,7 @@ export default {
             this.$store.state.projects.project = this.projects.find(p=>p.id === id)
         },
         getProjects(){
-            this.$store.dispatch("projects/getProjects", {client_id: this.$store.state.clients.client.id})
+            this.$store.dispatch("projects/getProjects")
         }
     },
     computed: {
@@ -103,9 +104,9 @@ export default {
             this.expanded = menuOpen;
         } );
 
-        if( this.$store.state.clients.client ){
-            this.getProjects()
-        }
+        // if( this.$store.state.clients.client ){
+        //     this.getProjects()
+        // }
     }
 }
 

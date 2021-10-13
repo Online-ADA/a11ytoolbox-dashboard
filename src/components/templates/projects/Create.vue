@@ -10,8 +10,10 @@
       <Select class="mx-auto" :options="statusSrc" v-model="project.status"></Select>
 
       <Label for="status">Client</Label>
-      <Select class="mx-auto" :options="clientList" v-model="project.client_id"></Select>
-      {{selectedClient}}
+      <!-- <Select class="mx-auto" :options="clientList" v-model="project.client_id"></Select> -->
+      <select v-model="project.client_id" class="mx-auto block border cursor-pointer focus:ring-1 outline-none ring-pallette-blue-light p-2 rounded shadow">
+        <option :value="option.id" v-for="option in $store.state.clients.all" :key="'client-' + option.id">{{option.name}}</option>
+      </select>
 
       <template v-if="isManager">
         <div class="flex my-3">
@@ -86,15 +88,6 @@ export default {
         isManager(){
           return this.$store.getters["auth/isManager"]
         },
-        clientList() {
-          var clients = this.$store.state.clients.all;
-          var clientList = [];
-          for ( var i = 0; i < clients.length; i++ )
-          {
-            clientList.push({name: clients[i].name, value: clients[i].id});
-          }
-          return clientList;
-        }
     },
     watch: {
       complete(newVal){
@@ -105,6 +98,11 @@ export default {
       isManager(newVal){
         if( this.independent && newVal ){
           this.getUsers()
+        }
+      },
+      "$store.state.clients.client": function(newVal){
+        if( newVal ){
+          this.project.client_id = parseInt(this.$store.state.clients.client.id)
         }
       }
     },
@@ -133,13 +131,14 @@ export default {
       createProject(){
         this.project.assigned = this.assigned;
         
-        this.$store.dispatch("projects/createProject", {project: this.project, router: this.$router, vm: this, redirect: this.independent})
+        this.$store.dispatch("projects/createProject", {project: this.project, router: this.$router, vm: this})
       }
     },
     created() {},
     mounted() {
       this.project.created_by = this.$store.state.auth.user.id
       this.project.account_id = this.$store.state.auth.account
+      this.project.client_id = this.$store.state.clients.client.id
       
       if( this.independent && this.isManager ){
         this.getUsers()
@@ -149,7 +148,9 @@ export default {
         this.$emit("initialized", {key: "ProjectCreate", instance: this})
       }
       
-      this.$store.dispatch("clients/getClients")
+      // if( !this.$store.state.clients.all.length ){
+      //   this.$store.dispatch("clients/getClients")
+      // }
     },
     components: {
       Loader,

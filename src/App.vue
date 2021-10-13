@@ -2,7 +2,7 @@
   <div id="app" class="bg-pallette-grey-bg">
     <notifications/>
     <div id="page-container" class="transition-transform flex w-full height:100% flex-nowrap" >
-      <div id="sidebar" class="z-50" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarOpen: $store.state.projects.audits.length && sidebarExpanded }">
+      <div id="sidebar" class="z-50" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarOpen: sidebarExpanded && $route.path != '/projects/create' }">
         <sidebar></sidebar>
       </div>
       <div id="content" class="flex" >
@@ -10,7 +10,7 @@
         <div class="w-full h-full max-w-full pt-12" >
           <div class="flex h-full">
             <transition name="slideright">
-              <secondary-sidebar v-if="secondarySidebarType !== false" :type="secondarySidebarType"></secondary-sidebar>
+              <secondary-sidebar v-if="$route.path != '/projects/create'" :type="secondarySidebarType"></secondary-sidebar>
             </transition>
             <div class="max-w-full flex-1">
               <ada-secondary-header v-if="secondaryHeaderLabel !== false" id="secondaryHeader" class="transition-transform" :label="secondaryHeaderLabel" :aria-hidden="[ !showSecondaryHeader ? true : false ]" v-bind:class="{ open: showSecondaryHeader }" ></ada-secondary-header>
@@ -133,6 +133,9 @@ export default {
       this.$root.$on('menuClick', (menuOpen) => {
         this.sidebarExpanded = menuOpen;
       } );
+      if( this.$route.path == "/projects/create" ){
+          this.$store.state.projects.project = false
+      }
   },
 
   components:{

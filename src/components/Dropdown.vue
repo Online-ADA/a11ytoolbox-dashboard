@@ -87,6 +87,7 @@ import clients from '../store/modules/clients'
             },
 
             setClient(id){
+                this.$store.state.projects.project = false
                 this.$store.dispatch("clients/getClient", {id: id, vm: this})
             }
         },

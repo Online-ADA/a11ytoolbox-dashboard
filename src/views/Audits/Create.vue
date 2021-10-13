@@ -36,10 +36,6 @@
 <script>
     import Sheets from '../../components/Sheets'
     import Button from '../../components/Button'
-    import admin from '../../store/modules/admin'
-    import projects from '../../store/modules/project'
-    import audits from '../../store/modules/audits'
-    import domains from '../../store/modules/domains'
     
     export default {
         name: "AuditCreate",
@@ -114,13 +110,7 @@
         },
         computed:{
             projects(){
-                if( this.isManager && this.$store.state.admin ){
-                    return this.$store.state.admin.projects
-                }
-                if( this.$store.state.projects ){
-                    return this.$store.state.projects.all
-                }
-                return []
+                return this.$store.state.projects.all
             },
             isManager(){
                 return this.$store.getters["auth/isManager"]
@@ -133,36 +123,16 @@
             },
         },
         mounted(){
-            this.getProjects()
+            if( this.$route.params.id ){
+                this.sheetData["sheet0"].project = this.$route.params.id
+                this.showSheet(1)
+            }
         },
         created(){
-            if( this.$store.state.admin === undefined ){
-                this.$store.registerModule('admin', admin)
-            }
-            if(this.$store.state.projects === undefined){
-                this.$store.registerModule('projects', projects)
-            }
-            if(this.$store.state.audits === undefined){
-                this.$store.registerModule('audits', audits)
-            }
-            if(this.$store.state.domains === undefined){
-                this.$store.registerModule('domains', domains)
-            }
         },
         methods: {
             setInitialData(data){
                 this.$store.dispatch("projects/getAssignable", {vm: data.instance})
-            },
-            getProjects(){
-                if( this.$store.getters["auth/isManager"] && this.$store.state.admin ){
-                    this.$store.dispatch("admin/getProjects")
-                }else{
-                    this.$store.dispatch("projects/getProjects")
-                }
-                if( this.$route.params.id ){
-                    this.sheetData["sheet0"].project = this.$route.params.id
-                    this.showSheet(1)
-                }
             },
             displayMessage(message){
                 this.sheetMessage = message

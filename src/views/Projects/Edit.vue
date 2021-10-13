@@ -117,7 +117,7 @@ export default {
       },
       saveProject(){
         this.project["assigned"] = this.assigned
-        this.$store.dispatch("projects/updateProject", {project: this.project, router: this.$router, id: this.$route.params.id})
+        this.$store.dispatch("projects/updateProject", {project: this.project, id: this.$route.params.id})
       }
     },
     created() {
@@ -128,7 +128,7 @@ export default {
     mounted() {
       this.project.created_by = this.$store.state.auth.user.id
       this.$store.dispatch("projects/getProject", {id: this.$route.params.id, vm: this})
-      this.$store.dispatch("clients/getClients", {router: this.$router}, false)
+      this.$store.dispatch("clients/getClients", false)
     },
     components: {
       Loader,

@@ -18,7 +18,7 @@ export default {
     created() {
     },
     beforeDestroy(){
-      this.$store.dispatch("projects/resetState")
+      // this.$store.dispatch("projects/resetState")
     },
     mounted() {
     },

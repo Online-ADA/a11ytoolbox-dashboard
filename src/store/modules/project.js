@@ -50,8 +50,18 @@ export default {
 				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.id}`)
 				.then( re => {
 					state.project = re.data.details
+					
+					if( rootState.clients.client.id !== re.data.details.client_id ){
+						rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
+						rootState.clients.clientID = rootState.clients.client.id
+					}
 					if( args.vm ){
-						args.vm.project = state.project
+						// args.vm.project = state.project
+						args.vm.project.name = state.project.name
+						args.vm.project.account_id = state.project.account_id
+						args.vm.project.client_id = state.project.client_id
+						args.vm.project.status = state.project.status
+						args.vm.project.created_by = state.project.created_by
 						args.vm.assigned = state.project.assignees.map( u => u.id )
 					}
 				})
@@ -62,7 +72,7 @@ export default {
 					state.loading = false
 				})
 			},
-			createProject({state, rootState, rootGetters}, args){
+			createProject({state, rootState, dispatch}, args){
 				state.loading = true;
 				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {
 					params: {
@@ -72,20 +82,30 @@ export default {
 				.then( re=>{
 					Vue.notify({
 						title:"Success",
-						text:"Project created. Redirecting back to list...",
+						text:"Project created",
 						type: "success"
 					})
-					args.vm.project = re.data.details
-					args.vm.complete = true
+					if( !args.vm.independent ){
+						args.vm.complete = true
+					}
 
-					if( args.redirect ){
-						setTimeout(()=>{
-							if( rootGetters["auth/isManager"] ){
-								args.router.push({path: "/manage/projects"})
-								return
-							}
-							args.router.push({path: "/projects/list"})
-						}, 2000)
+					//If the client this project was created for is the same as the current global, trigger an update to the projects list in the sidebar
+					if( rootState.clients.client.id === re.data.details.client_id ){
+						dispatch("getProjects", false)
+					}
+
+					//If the client this project was created for was not the same as the current client, switch global client to new value
+					//This will trigger an update of the projects because of the watcher on App.vue
+					if( rootState.clients.client.id !== re.data.details.client_id ){
+						rootState.projects.project = false
+						rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
+						rootState.clients.clientID = rootState.clients.client.id
+					}
+					
+					//Redirect to the homepage with the new project/client selected
+					if(args.vm.independent){
+						state.project = re.data.details
+						args.router.push({path: "/"})
 					}
 				})
 				.catch( re=>{
@@ -126,7 +146,7 @@ export default {
 				})
 				.then( ()=> state.loading = false)
 			},
-			updateProject({state, rootState, rootGetters}, args){
+			updateProject({state, rootState}, args){
 				state.loading = true
 				let requestArgs = {
 					params: {
@@ -136,13 +156,12 @@ export default {
 					onSuccess: {
 						title: "Success",
 						text: "Project updated",
-						callback: function(){
+						callback: function(re){
 							state.loading = false
-							if( rootGetters["auth/isManager"] ){
-								args.router.push({path: "/manage/projects"})
-								return
+							if( rootState.clients.client.id !== re.data.details.client_id ){
+								rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
+								rootState.clients.clientID = rootState.clients.client.id
 							}
-							args.router.push({path: "/projects/list"})
 						}
 					},
 					onWarn:{
