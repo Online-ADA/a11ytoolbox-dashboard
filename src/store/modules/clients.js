@@ -76,7 +76,7 @@ export default {
 						text:'Client retrieved',
 						callback: function(response){
 							state.loading = false
-							state.client = response.data.client[0]
+							state.client = response.data.details
 							Cookies.set('toolboxClient', state.client.id, 365)
 						}
 					},

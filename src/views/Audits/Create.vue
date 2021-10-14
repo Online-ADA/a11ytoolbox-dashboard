@@ -143,7 +143,6 @@
             },
             handleSheetComplete(sheet){
                 if( sheet == "sheet0" ){
-                    this.$store.dispatch("admin/getProjects")
                     this.$store.dispatch("projects/getProjects")
                 }
             }

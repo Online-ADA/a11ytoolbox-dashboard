@@ -31,6 +31,9 @@
                     <template v-if="child.type == 'client'">
                         <A href="#" @click.native.prevent="setClient(child.to)">{{child.label}}</A>
                     </template>
+                    <template v-if="child.type == 'static'">
+                        <span class="static">{{child.label}}</span>
+                    </template>
                 </li>
             </template>
             <template v-else>
@@ -60,7 +63,6 @@
 */
 import A from '../components/Link'
 import admin from '../store/modules/admin'
-import clients from '../store/modules/clients'
 
     export default {
         props:[
@@ -88,12 +90,13 @@ import clients from '../store/modules/clients'
 
             setClient(id){
                 this.$store.state.projects.project = false
-                this.$store.dispatch("clients/getClient", {id: id, vm: this})
+                this.$store.dispatch("clients/getClient", {id: id})
             }
         },
     }
 </script>
 <style scoped>
+    .static{font-size:12px}
     .dropdown:hover > ul{
         display:block !important;
     }

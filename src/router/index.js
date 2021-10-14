@@ -55,6 +55,56 @@ const routes = [
     ]
   },
   {
+    path: "/clients",
+    component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Index.vue'),
+    children: [
+      {
+        path:"/",
+        name:"ClientsList",
+        component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/List.vue'),
+        meta: {
+          permissions: {
+            entity: "clients",
+            action: "view"
+          }
+        },
+      },
+      {
+        path:":id",
+        name:"ClientShow",
+        component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue'),
+        meta: {
+          permissions: {
+            entity: "clients",
+            action: "view"
+          }
+        },
+      },
+      {
+        path:":id/edit",
+        name:"ClientEdit",
+        component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Edit.vue'),
+        meta: {
+          permissions: {
+            entity: "clients",
+            action: "write"
+          }
+        },
+      },
+      {
+        path:"create",
+        name:"ClientCreate",
+        component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Create.vue'),
+        meta: {
+          permissions: {
+            entity: "clients",
+            action: "write"
+          }
+        },
+      },
+    ]
+  },
+  {
     path: "/projects", //Just this user's projects
     name: "Projects",
     component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Index.vue'),
@@ -171,67 +221,6 @@ const routes = [
             action: "write"
           }
         }
-      },
-      {
-        path: "clients",
-        component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Index.vue'),
-        meta: {
-          role: "manager",
-          permissions: {
-            entity: "clients",
-            action: "read"
-          }
-        },
-        children:[
-          {
-            path: "/",
-            name: "ManageClients",
-            component: () => import(/* webpackChunkName: "manage" */ '../views/Clients/List.vue'),
-            meta: {
-              role: "manager",
-              permissions: {
-                entity: "clients",
-                action: "read"
-              }
-            },
-          },
-          {
-            path: "create",
-            name: "ClientCreate",
-            meta: {
-              role: "manager",
-              permissions: {
-                entity: "clients",
-                action: "write"
-              }
-            },
-            component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Create.vue')
-          },
-          {
-            path: ":id/edit",
-            name: "ClientEdit",
-            component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Edit.vue'),
-            meta: {
-              role: "manager",
-              permission: {
-                entity: "clients",
-                action: "write"
-              }
-            }
-          },
-          {
-            path: ":id",
-            name: "ClientShow",
-            component: () => import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue'),
-            meta: {
-              role: "manager",
-              permission: {
-                entity: "clients",
-                action: "read"
-              }
-            }
-          },
-        ]
       },
 
       {

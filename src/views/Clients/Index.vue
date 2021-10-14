@@ -15,10 +15,9 @@ export default {
     methods: {
     },
     created() {
-      
     },
     beforeDestroy(){
-      this.$store.dispatch("clients/resetState")
+      // this.$store.dispatch("audits/resetState")
     },
     mounted() {
     },

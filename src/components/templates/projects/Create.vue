@@ -139,6 +139,8 @@ export default {
       this.project.created_by = this.$store.state.auth.user.id
       this.project.account_id = this.$store.state.auth.account
       this.project.client_id = this.$store.state.clients.client.id
+
+      this.$store.state.projects.project = false
       
       if( this.independent && this.isManager ){
         this.getUsers()

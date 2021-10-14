@@ -20,14 +20,15 @@
 import Loader from '../../components/Loader'
 import A from '../../components/Link'
 export default {
+    name: "HelloWorld",
     data: () => ({
     }),
     computed: {
         loading(){
-          return this.$store.state.admin.loading.clients
+          return this.$store.state.clients.loading
         },
         clients() {
-          return this.$store.state.admin.clients
+          return this.$store.state.clients.all
         },
     },
     props: [],
@@ -36,7 +37,7 @@ export default {
     methods: {
     },
     created() {
-        this.$store.dispatch("admin/getClients", this.$router)
+      // this.$store.dispatch("admin/getClients", this.$router)
     },
     mounted() {
     },
