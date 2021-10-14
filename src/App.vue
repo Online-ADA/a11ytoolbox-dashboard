@@ -115,11 +115,11 @@ export default {
       if ( !this.client && this.$route.path != '/' )
         this.$router.push({path: '/'}).catch(()=>{})
     },
-    "$store.state.projects.project": function(newVal){
-      if( newVal && this.$route.path !== `/projects/${newVal.id}` ){
-        this.$router.push({path:`/projects/${newVal.id}`})
-      }
-    }
+    // "$store.state.projects.project": function(newVal){
+    //   if( newVal && this.$route.path !== `/projects/${newVal.id}` ){
+    //     this.$router.push({path:`/projects/${newVal.id}`})
+    //   }
+    // }
   },
   created() {
   },
