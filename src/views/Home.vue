@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center mt-32 container mx-auto">
     <Loader v-if="$store.state.clients.loading || !$store.getters['auth/isAuthenticated']"></Loader>
 
-    <div v-if="message" class="text-red">{{message}}</div>
+    <div v-if="message" class="text-red-600">{{message}}</div>
 
     <Card class="w-1/2">
 
@@ -34,6 +34,7 @@ export default {
   methods:{
   },
   mounted(){
+    this.$store.state.projects.project = false
   },
   computed: {
     total(){

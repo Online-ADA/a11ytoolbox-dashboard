@@ -170,7 +170,7 @@ export default {
 				}
 			})
 		},
-		updateClient({state, rootState, rootGetters}, args){
+		updateClient({state, rootState}, args){
 			state.loading = true
 			let requestArgs = {
 				params: {
@@ -182,11 +182,11 @@ export default {
 					text: "Client updated",
 					callback: function(){
 						state.loading = false
-						if( rootGetters["auth/isManager"] ){
-							args.router.push({path: "/manage/clients"})
-							return
-						}
-						args.router.push({path: "/clients/list"})
+						// if( rootGetters["auth/isManager"] ){
+						// 	args.router.push({path: "/manage/clients"})
+						// 	return
+						// }
+						args.router.push({path: "/"})
 					}
 				},
 				onWarn:{

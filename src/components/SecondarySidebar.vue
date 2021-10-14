@@ -2,22 +2,28 @@
     <div class="flex shadow-lg transition-all sub-sidebar secondary relative">
         <div class="fixed">
             <div class="flex sub-nav-container" >
-                <ul class="pt-8 flex-1 px-5">
-                    <li class="flex py-1">
-                        <router-link class="text-black hover:text-pallette-red" :to="{path: `/projects/${$store.state.projects.project.id}/edit`}">Project Settings</router-link>
-                    </li>
-                    <li class="flex py-1">
-                        <router-link class="text-black hover:text-pallette-red" :to="{path: '/audits/create'}">Create New Audit</router-link>
-                    </li>
-                    <li class="text-sm py-1" v-for="item in $store.state.projects.audits" :key="item.id">
-                        <router-link class="text-black hover:text-pallette-red" @click="updateAudit" :to="{path: getRoute(item)}">{{getTitle(item)}}</router-link>
+                <ul class="pt-1.5 flex-1 px-5">
+                    <!-- Tools Level -->
+                    <li class="py-1 tool-container" :class="[expanded.includes('audits') ? 'expanded' : '']">
+                        <span class="flex items-center">
+                            <i v-if="!expanded.includes('audits')" class="fas fa-caret-left"></i>
+                            <i v-else class="fas fa-caret-down"></i>
+                            <button @click.prevent="expand('audits')" class="">
+                                Audits
+                            </button>
+                        </span>
+                        <div class="block">
+                            <ul>
+                                <!-- <li>
+                                    <router-link class="text-sm py-2 text-black hover:text-pallette-red" :to="{path: '/audits/create'}">Create New Audit</router-link>
+                                </li> -->
+                                <li class="text-sm py-2" v-for="item in $store.state.projects.audits" :key="item.id">
+                                    <router-link class="text-black hover:text-pallette-red" @click="updateAudit" :to="{path: getRoute(item)}">{{getTitle(item)}}</router-link>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                 </ul>
-
-                <!-- <button class="font-button h-4 rounded uppercase transition-colors duration-100 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-red hover:text-white text-xs" @click="expand_secondary_menu" aria-label="Expand the sidebar menu" aria-controls="fail-article">Menu</button>
-                <div v-if="secondaryExpanded == true">
-                    secondary menu
-                </div> -->
             </div>
         </div>
     </div>
@@ -29,13 +35,11 @@ import Button from './Button'
 
 export default {
     props:{
-        type: {
-            default: ""
-        },
+        
     },
     data() {
         return {
-            currentRoute: "None",
+            expanded: []
         }
     },
     name: 'secondary-sidebar',
@@ -54,6 +58,14 @@ export default {
         getTitle(item){
             return item.title
         },
+        expand(tool){
+            if( this.expanded.includes(tool) ){
+                let index = this.expanded.indexOf(tool)
+                this.expanded.splice(index, 1)
+            }else{
+                this.expanded.push(tool)
+            }
+        }
     },
     watch: {
         "$store.state.projects.project": function(newVal){
@@ -68,15 +80,39 @@ export default {
     computed: {},
 
     mounted() {
-        // this.$root.$on('menuClick', (menuOpen) => {
-        //     this.expanded = menuOpen;
-        // } );
+        
     }
 }
 
 </script>
 
 <style scoped>
+
+.tool-container button{
+    width:100%;
+    text-align:left;
+    padding-left: 7px;
+}
+.tool-container > div{
+    overflow:hidden;
+    height:auto;
+}
+.tool-container ul{
+    height:auto;
+    padding-left:4px;
+    max-height: 0px;
+    overflow-y: auto;
+    transition: max-height;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tool-container.expanded ul{
+    max-height:100%;
+}
+.tool-container ul li{
+    border-left: 3px solid rgba(202, 202, 202, 0.8);
+    padding-left:12px;
+}
 
 .sub-sidebar{
     overflow-y:auto;
@@ -104,7 +140,7 @@ export default {
 #sidebar.subSidebarOpen .sub-nav-container{
     width:200px;
     overflow-y:auto;
-    height:calc(100vh - 50px);
+    max-height:calc(100vh - 60px);
 }
 
 </style>

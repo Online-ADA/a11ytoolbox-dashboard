@@ -3,10 +3,10 @@
 		<Loader v-if="loading"></Loader>
 		<h1>{{client.name}}</h1>
 		<Form @submit.native.prevent>
-			<Label for="name">Name</Label>
+			<Label for="name">Client Name</Label>
 			<TextInput class="mb-2" id="name" name="name" v-model="client.name" />
 
-			<Label for="email">Email</Label>
+			<Label for="email">Client Email</Label>
 			<TextInput id="email" name="email" v-model="client.email" />
 
 			<Label for="status">Status</Label>
@@ -45,8 +45,7 @@ export default {
 	},
 	props: [],
 	watch: {
-		"$store.state.admin.client": function(newVal){
-			console.log(newVal);
+		"$store.state.clients.client": function(newVal){
 			if( newVal ){
 				this.client = newVal
 			}
@@ -54,13 +53,13 @@ export default {
 	},
 	methods: {
 		saveClient(){
-			this.$store.dispatch("admin/updateClient", {client: this.client, router: this.$router, id: this.$route.params.id})
+			this.$store.dispatch("clients/updateClient", {client: this.client, router: this.$router, id: this.$route.params.id})
 		}
 	},
 	created() {
 	},
 	mounted() {
-		this.$store.dispatch("admin/getClient", {id: this.$route.params.id})
+		this.$store.dispatch("clients/getClient", {id: this.$route.params.id})
 	},
 	components: {
 		Loader,

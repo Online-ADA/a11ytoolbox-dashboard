@@ -1,46 +1,69 @@
 <template>
-  <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full fixed px-4 py-2 bg-pallette-grey shadow-custom overflow-visible">
-    <router-link class="block" :to="{path:'/'}"><img alt="Ally Toolbox by Online ADA" src="../assets/logo-toolbox.png" /></router-link>
-    <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
+    <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full fixed px-4 py-2 bg-pallette-grey shadow-custom overflow-visible">
+        <router-link class="block" :to="{path:'/'}"><img alt="Ally Toolbox by Online ADA" src="../assets/logo-toolbox.png" /></router-link>
+        <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
-    <div class="mb-auto mt-auto">
-        <Dropdown :children="getClients" class="pl-8" labelColor="text-white"><template v-slot:label>{{selectedClient}}</template></Dropdown>
-    </div>
-
-    <div class="border mx-3 project-divider"></div>
-    <div class="text-white capitalize">{{$store.state.projects.project.name}}</div>
-
-    <!-- <button v-if="!$store.state.auth.user" v-bind:class="{ menuOpen: menuOpen }" id="login" class="login-button ml-auto my-auto block whitespace-no-wrap no-underline text-white" @click.prevent="$store.dispatch('auth/login')">Login</button> -->
-
-   <Dropdown :sub="true" v-if="$store.getters['auth/isManager']" :children="manageDropdown" id="manage" class="ml-auto mt-auto mb-auto transition-transform right-align" labelColor="text-white" v-bind:class="{ menuOpen: menuOpen }">
-       <template v-slot:label >
-           <span aria-label="Management Dropdown">
-               <i class="fas fa-tools"></i>
-           </span>
-        </template>
-   </Dropdown>
-   <div class="user-container relative flex flex-col ml-5 items-end">
-        <div id="login" v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
-            <a @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
-                {{$store.state.auth.user.first_name}}
-            </a>
+        <div class="mb-auto mt-auto">
+            <div class="dropdown-container dropdown-nolabel relative flex flex-col pl-8">
+                <div v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
+                    <a @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
+                        {{selectedClient}}
+                    </a>
+                </div>
+                <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
+                    <li class="hover:bg-pallette-grey-light" v-for="(child, index) in getClients" :key="index">
+                        <template v-if="child.type == 'router-link'">
+                            <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
+                        </template>
+                        <template v-if="child.type == 'client'">
+                            <A href="#" @click.native.prevent="setClient(child.to)">{{child.label}}</A>
+                        </template>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <ul class="mt-0 hidden absolute border border-gray-400 bg-white rounded whitespace-nowrap pt-1 pb-1">
-            <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
-                <template v-if="child.type == 'router-link'">
-                    <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
-                </template>
-                <template v-if="child.type == 'logout'">
-                    <A href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
-                </template>
-            </li>
-        </ul>
-        <!-- <Dropdown :sub="true" v-if="$store.state.auth.user" :children="userDropdown" id="login" class="ml-5 mt-auto mb-auto transition-transform right-align" labelColor="text-white" v-bind:class="{ menuOpen: menuOpen }">
-            <template v-slot:label >{{$store.state.auth.user.first_name}}</template>
-        </Dropdown> -->
-        <span class="account text-white">{{account}}</span>
-   </div>
-  </div>
+
+        <div class="border mx-3 project-divider"></div>
+        <div class="text-white capitalize">{{$store.state.projects.project.name}}</div>
+
+        <div v-if="$store.getters['auth/isManager']" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
+            <div id="manage" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
+                <a @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
+                    <span aria-label="Management Dropdown">
+                        <i class="fas fa-tools"></i>
+                    </span>
+                </a>
+            </div>
+            <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
+                <li class="hover:bg-pallette-grey-light" v-for="(child, index) in manageDropdown" :key="index">
+                    <template v-if="child.type == 'router-link'">
+                        <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
+                    </template>
+                </li>
+            </ul>
+            <span class="sub-label text-white uppercase"><div>Manager</div>Settings</span>
+        </div>
+
+        <div :class="[!$store.getters['auth/isManager'] ? 'ml-auto' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
+            <div id="login" v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
+                <a @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
+                    {{$store.state.auth.user.first_name}}
+                </a>
+            </div>
+            <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
+                <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
+                    <template v-if="child.type == 'router-link'">
+                        <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
+                    </template>
+                    <template v-if="child.type == 'logout'">
+                        <A href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
+                    </template>
+                </li>
+            </ul>
+            
+            <span class="sub-label text-white">{{account}}</span>
+        </div>
+    </div>
 </template>
 
 
@@ -141,6 +164,10 @@ export default {
             this.menuOpen = !this.menuOpen;
             this.$root.$emit('menuClick', this.menuOpen );
         },
+        setClient(id){
+            this.$store.state.projects.project = false
+            this.$store.dispatch("clients/getClient", {id: id})
+        }
     },
     components:{
         Dropdown,
@@ -169,7 +196,12 @@ export default {
     margin-left:60px;
     width:40px;
 }
-#header-container .account{
+#header-container .manager-dropdown .sub-label{
+    font-size: 8px;
+    line-height:1.2;
+    letter-spacing: 0.5px;
+}
+#header-container .sub-label{
     font-size:10px;
     line-height:0.8;
 }
@@ -192,33 +224,60 @@ img {
     transition-duration: 150ms;
 }
 
-.user-container:hover ul{
-    display:block !important;
+.dropdown-container:hover ul{
+    display:block;
+    animation-name: showDropdown;
 }
-.user-container .dropdown ul ul{
+.dropdown-container .dropdown ul ul{
     left:95%;
     top: 0;
 }
-.user-container ul {
+.dropdown-container ul{
+    display:none;
+    animation-duration: 150ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-direction: forwards;
     z-index:99;
-    top:130%;
+    /* transition:opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms; */
 }
-.user-container ul:before{
+.dropdown-container.manager-dropdown ul{
+    top:121%;
+}
+.dropdown-container.manager-dropdown ul:before{
+    top: -10px;
+    height: 10px;
+}
+.dropdown-container.dropdown-w-label:not(.manager-dropdown ) ul  {
+    top:145%;
+}
+.dropdown-container.dropdown-nolabel:not(.manager-dropdown ) ul {
+    top:175%;
+}
+.dropdown-container:not(.manager-dropdown ) ul:before{
+    top: -20px;
+    height: 20px;
+}
+.dropdown-container ul:before{
     content: " ";
     position: absolute;
-    height: 10px;
     display: block;
     width: 100%;
-    top: -10px;
     left: 0;
     right: 0;
 }
 
-.user-container ul li {
+.dropdown-container ul li {
     padding: 8px;
 }
-.user-container .right-align ul{
+.dropdown-container .right-align ul{
     right:0;
+}
+
+@keyframes showDropdown {
+    0%{  opacity:0; }
+    100%{ opacity: 1; }
 }
 
 </style>

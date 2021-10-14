@@ -56,7 +56,6 @@ export default {
     methods: {
         setCurrentProject(id){
             this.$store.state.projects.project = this.projects.find(p=>p.id === id)
-            this.$router.push({path: "/"})
         },
         getProjects(){
             this.$store.dispatch("projects/getProjects")
