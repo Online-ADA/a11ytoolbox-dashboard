@@ -31,9 +31,6 @@
                     <template v-if="child.type == 'client'">
                         <A href="#" @click.native.prevent="setClient(child.to)">{{child.label}}</A>
                     </template>
-                    <template v-if="child.type == 'static'">
-                        <span class="static">{{child.label}}</span>
-                    </template>
                 </li>
             </template>
             <template v-else>
@@ -96,7 +93,6 @@ import admin from '../store/modules/admin'
     }
 </script>
 <style scoped>
-    .static{font-size:12px}
     .dropdown:hover > ul{
         display:block !important;
     }

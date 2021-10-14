@@ -1,6 +1,6 @@
 <template>
   <div class="primary flex shadow-lg bg-pallette-grey-dark text-white relative" >
-        <div class="fixed" >
+        <div>
             <div class="flex" style="width:200px;overflow-y:auto;">
                 <ul v-if="$store.state.clients.client" id="nav" class="flex-1">
                     <li :class="[$route.path == '/projects/create' && $store.state.projects.project === false ? 'selected' : '']" class="flex">
@@ -35,7 +35,9 @@ export default {
     name: 'sidebar',
     watch: {
         "$store.state.clients.client": function(newVal){
-            if( newVal !== false && newVal !== undefined){
+            this.$store.state.projects.audits = []
+            this.$store.state.projects.project = false
+            if( newVal !== false && newVal !== undefined && newVal !== null ){
                 Cookies.set('toolboxClient', parseInt(this.$store.state.clients.client.id))
                 this.getProjects()
             }
@@ -43,7 +45,6 @@ export default {
         "$store.state.projects.all":function(newVal){
             if( newVal.length ){
                 if( !this.$store.state.projects.project && this.$route.path !== "/projects/create" ){
-                    
                     this.$store.state.projects.project = this.$store.state.projects.all[0]
                 }
             }

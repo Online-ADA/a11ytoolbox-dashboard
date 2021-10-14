@@ -39,13 +39,10 @@ export default {
     }),
     computed: {
       client() {
-        return this.$store.state.admin.client
+        return this.$store.state.clients.client
       },
       loading(){
-        if( this.$store.state.admin.clients ){
-          return this.$store.state.admin.clients.loading
-        }
-        return false
+        return this.$store.state.clients.loading
       },
     },
     props: [],
@@ -54,7 +51,7 @@ export default {
     methods: {
     },
     created() {
-      this.$store.dispatch("admin/getClient", {id: this.$route.params.id, account_id: this.$store.state.auth.account})
+      this.$store.dispatch("clients/getClient", {id: this.$route.params.id, account_id: this.$store.state.auth.account})
     },
     mounted() {
     },

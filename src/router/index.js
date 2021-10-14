@@ -62,45 +62,45 @@ const routes = [
         path:"/",
         name:"ClientsList",
         component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/List.vue'),
-        meta: {
-          permissions: {
-            entity: "clients",
-            action: "view"
-          }
-        },
+        // meta: {
+        //   permissions: {
+        //     entity: "clients",
+        //     action: "view"
+        //   }
+        // },
       },
-      {
-        path:":id",
-        name:"ClientShow",
-        component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue'),
-        meta: {
-          permissions: {
-            entity: "clients",
-            action: "view"
-          }
-        },
-      },
+      // {
+      //   path:":id",
+      //   name:"ClientShow",
+      //   component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue'),
+      //   // meta: {
+      //   //   permissions: {
+      //   //     entity: "clients",
+      //   //     action: "view"
+      //   //   }
+      //   // },
+      // },
       {
         path:":id/edit",
         name:"ClientEdit",
         component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Edit.vue'),
-        meta: {
-          permissions: {
-            entity: "clients",
-            action: "write"
-          }
-        },
+        // meta: {
+        //   permissions: {
+        //     entity: "clients",
+        //     action: "write"
+        //   }
+        // },
       },
       {
         path:"create",
         name:"ClientCreate",
         component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Create.vue'),
-        meta: {
-          permissions: {
-            entity: "clients",
-            action: "write"
-          }
-        },
+        // meta: {
+        //   permissions: {
+        //     entity: "clients",
+        //     action: "write"
+        //   }
+        // },
       },
     ]
   },

@@ -1,19 +1,19 @@
 <template>
-  <div id="app" class="bg-pallette-grey-bg">
+  <div id="app" class="bg-pallette-grey-bg h-full">
     <notifications/>
     <ada-header class="fixed z-40"></ada-header>
     <div id="page-container" class="transition-transform flex w-full height:100% flex-nowrap" >
-      <div id="sidebar" class="z-50 flex" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarOpen: sidebarExpanded && $store.state.projects.project !== false }">
+      <div id="sidebar" class="z-50 flex fixed" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarOpen: sidebarExpanded && $store.state.projects.project !== false }">
         <sidebar></sidebar>
         <transition name="slideright">
           <secondary-sidebar v-show="$store.state.projects.project !== false"></secondary-sidebar>
         </transition>
       </div>
-      <div id="content" class="flex" >
+      <div id="content" class="flex ml-auto" >
         <div class="w-full h-full max-w-full pt-12" >
           <div class="flex h-full">
             <div class="max-w-full flex-1">
-              <ada-secondary-header v-if="secondaryHeaderLabel !== false" id="secondaryHeader" class="transition-transform" :label="secondaryHeaderLabel" :aria-hidden="[ !showSecondaryHeader ? true : false ]" v-bind:class="{ open: showSecondaryHeader }" ></ada-secondary-header>
+              <!-- <ada-secondary-header v-if="secondaryHeaderLabel !== false" id="secondaryHeader" class="transition-transform" :label="secondaryHeaderLabel" :aria-hidden="[ !showSecondaryHeader ? true : false ]" v-bind:class="{ open: showSecondaryHeader }" ></ada-secondary-header> -->
               <div id="main-content" class="pt-12" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarExpanded: $store.state.projects.project !== false }">
                 <div class="flex-1">
                   <router-view></router-view>
@@ -156,8 +156,6 @@ export default {
 
 #sidebar {
   z-index: 26;
-  position:relative;
-  height: calc(100vh - 60px);
   margin-top:60px;
   margin-left:-200px;
   max-width:400px;
@@ -179,14 +177,14 @@ export default {
   flex-basis:0%;
   flex-grow:1;
   flex-shrink:1;
-  max-width:100vw;
+  max-width:100%;
 }
 
 #sidebar.sidebarOpen ~ #content{
-  max-width: calc(100vw - 200px);
+  max-width: calc(100vw - 216px);
 }
 #sidebar.sidebarOpen.subSidebarOpen ~ #content{
-  max-width: calc(100vw - 400px);
+  max-width: calc(100vw - 416px);
 }
 
 

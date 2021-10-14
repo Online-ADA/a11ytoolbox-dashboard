@@ -3,10 +3,10 @@
 		<Loader v-if="loading"></Loader>
 		<h1>Create new Client</h1>
 		<Form @submit.native.prevent>
-			<Label for="name">Name</Label>
+			<Label for="name">Client Name</Label>
 			<TextInput id="name" name="name" v-model="client.name" />
 			
-			<Label for="email">Email</Label>
+			<Label for="email">Client Email</Label>
 			<TextInput id="email" name="email" v-model="client.email" />
 
 			<Label for="status">Status</Label>
@@ -53,7 +53,7 @@ export default {
 		createClient(){
 			this.client.created_by = this.$store.state.auth.user.id
 			this.client.account_id = this.$store.state.auth.account
-			this.$store.dispatch("admin/createClient", {client: this.client, router: this.$router})
+			this.$store.dispatch("clients/createClient", {client: this.client, router: this.$router})
 		}
 	},
 	created() {

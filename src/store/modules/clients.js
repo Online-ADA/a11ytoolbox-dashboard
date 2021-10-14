@@ -97,7 +97,7 @@ export default {
 				})
 			}
 		},
-		createClient({state}, args){
+		createClient({state, rootState}, args){
 			state.loading = true;
 			Request.post(`${rootState.auth.userAPI}/${args.client.account_id}/clients`, {
 				params: {
@@ -105,15 +105,13 @@ export default {
 				},
 				onSuccess: {
 					title:'Success',
-					text:'Client created. Redirecting to Clients List...',
-					callback: function(){
+					text:'Client created. Redirecting to homepage...',
+					callback: function(response){
 						state.loading = false
+						state.client = response.data.created
+						state.all = response.data.details
 						setTimeout(()=>{
-							// if( rootGetters["auth/isManager"] ){
-							// 	args.router.push({path: "/manage/clients"})
-							// 	return
-							// }
-							args.router.push({path: "/clients/list"})
+							args.router.push({path: "/"})
 						}, 2000)
 					}
 				},

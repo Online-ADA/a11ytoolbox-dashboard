@@ -1,6 +1,6 @@
 <template>
-  <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full px-4 py-2 bg-pallette-grey shadow-custom overflow-visible">
-    <img src="../assets/logo-toolbox.png" />
+  <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full fixed px-4 py-2 bg-pallette-grey shadow-custom overflow-visible">
+    <router-link class="block" :to="{path:'/'}"><img alt="Ally Toolbox by Online ADA" src="../assets/logo-toolbox.png" /></router-link>
     <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
     <div class="mb-auto mt-auto">
@@ -19,10 +19,25 @@
            </span>
         </template>
    </Dropdown>
-   <div class="flex flex-col ml-5">
-        <Dropdown :sub="true" v-if="$store.state.auth.user" :children="userDropdown" id="login" class="ml-5 mt-auto mb-auto transition-transform right-align" labelColor="text-white" v-bind:class="{ menuOpen: menuOpen }">
+   <div class="user-container relative flex flex-col ml-5 items-end">
+        <div id="login" v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
+            <a @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
+                {{$store.state.auth.user.first_name}}
+            </a>
+        </div>
+        <ul class="mt-0 hidden absolute border border-gray-400 bg-white rounded whitespace-nowrap pt-1 pb-1">
+            <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
+                <template v-if="child.type == 'router-link'">
+                    <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
+                </template>
+                <template v-if="child.type == 'logout'">
+                    <A href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
+                </template>
+            </li>
+        </ul>
+        <!-- <Dropdown :sub="true" v-if="$store.state.auth.user" :children="userDropdown" id="login" class="ml-5 mt-auto mb-auto transition-transform right-align" labelColor="text-white" v-bind:class="{ menuOpen: menuOpen }">
             <template v-slot:label >{{$store.state.auth.user.first_name}}</template>
-        </Dropdown>
+        </Dropdown> -->
         <span class="account text-white">{{account}}</span>
    </div>
   </div>
@@ -52,11 +67,6 @@ export default {
             manageDropdown: [
                 {
                     type: 'router-link',
-                    label: 'Dashboard',
-                    to: '/manage'
-                },
-                {
-                    type: 'router-link',
                     label: 'Users',
                     to: '/manage/users'
                 },
@@ -70,11 +80,6 @@ export default {
                     label: 'Domains',
                     to: '/manage/domains'
                 },
-                // {
-                //   type: 'router-link',
-                //   label: 'Clients',
-                //   to: '/manage/clients'
-                // },
                 {
                     type: 'router-link',
                     label: 'Audits',
@@ -104,13 +109,11 @@ export default {
         },
         getClients() {
             let clients = [];
-            if( this.$store.getters["auth/isManager"] ){
-                clients.push({
-                    type: "router-link", 
-                    label:"Create Client", 
-                    to:"/manage/clients/create"
-                })
-            }
+            clients.push({
+                type: "router-link", 
+                label:"Create Client", 
+                to:"/clients/create"
+            })
             for ( let i = 0; i < this.$store.state.clients.all.length; i++ )
             {
                 clients.push({ type: 'client', label: this.$store.state.clients.all[i].name, to: this.$store.state.clients.all[i].id })
@@ -170,6 +173,7 @@ export default {
     font-size:10px;
     line-height:0.8;
 }
+
 .menu-button > i{
     margin:0;
     display:block;
@@ -186,6 +190,35 @@ img {
 #login.login-button{
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
+}
+
+.user-container:hover ul{
+    display:block !important;
+}
+.user-container .dropdown ul ul{
+    left:95%;
+    top: 0;
+}
+.user-container ul {
+    z-index:99;
+    top:130%;
+}
+.user-container ul:before{
+    content: " ";
+    position: absolute;
+    height: 10px;
+    display: block;
+    width: 100%;
+    top: -10px;
+    left: 0;
+    right: 0;
+}
+
+.user-container ul li {
+    padding: 8px;
+}
+.user-container .right-align ul{
+    right:0;
 }
 
 </style>
