@@ -171,10 +171,6 @@ export default {
 		},
 		projects(){
 			if( !this.independent ){
-				if( this.$store.getters["auth/isManager"] && this.$store.state.admin ){
-					return this.$store.state.admin.projects
-				}
-
 				return this.$store.state.projects.all
 			}
 			else{
@@ -184,7 +180,7 @@ export default {
 		project(){
 			if(!this.independent){
 				let self = this
-				
+				console.log(self.sheetData.sheet0.project);
 				return this.projects.filter( p=>{
 					return parseInt(p.id) === parseInt(self.sheetData.sheet0.project)
 				})[0]
