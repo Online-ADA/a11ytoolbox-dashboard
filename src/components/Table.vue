@@ -2,7 +2,7 @@
 	<div class="flex flex-col relative px-5">
 		<div class="flex w-full px-10 mb-2 relative overflow-y-auto h-1/3">
 			<div class="flex flex-wrap items-end pb-3 w-full mx-auto">
-				<h2 class="w-full text-2xl my-3">Table description (what should this say?)</h2>
+				<!-- <h2 class="w-full text-2xl my-3">Table description (what should this say?)</h2>
 				<div class="w-full flex">
 					<div v-show="!condense" class="w-1/4"></div>
 					<div :class="condense ? 'w-full' : 'w-2/4'">
@@ -15,7 +15,7 @@
 						</ul>
 					</div>
 					<div v-show="!condense" class="w-1/4"></div>
-				</div>
+				</div> -->
 				<h2 class="w-full text-base">
 					<div class="text-2xl">Search</div>
 					<small>First choose which column you want to search from the dropdown, then enter your search criteria, then click submit</small>
