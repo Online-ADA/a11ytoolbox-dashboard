@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="bg-pallette-grey-bg h-full">
     <notifications/>
-    <ada-header class="fixed z-40"></ada-header>
+    <ada-header class="fixed"></ada-header>
     <div id="page-container" class="transition-transform flex w-full height:100% flex-nowrap" >
       <a class="skip-link" href="#main-content">Skip Sidebar Navigation</a>
       <div id="sidebar" class="z-50 flex fixed" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarOpen: sidebarExpanded && $store.state.projects.project !== false }">
@@ -11,10 +11,10 @@
         </transition>
       </div>
       <div id="content" class="flex ml-auto" >
-        <div class="w-full h-full max-w-full pt-12" >
+        <div class="w-full h-full max-w-full" >
           <div class="flex h-full">
             <div class="max-w-full flex-1">
-              <!-- <ada-secondary-header v-if="secondaryHeaderLabel !== false" id="secondaryHeader" class="transition-transform" :label="secondaryHeaderLabel" :aria-hidden="[ !showSecondaryHeader ? true : false ]" v-bind:class="{ open: showSecondaryHeader }" ></ada-secondary-header> -->
+              <CanvasToolbar v-if="tool" :tool="tool"></CanvasToolbar>
               <div id="main-content" class="pt-12" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarExpanded: $store.state.projects.project !== false }">
                 <div class="flex-1">
                   <router-view></router-view>
@@ -49,7 +49,7 @@
 import A from './components/Link'
 import Dropdown from './components/Dropdown'
 import AdaHeader from '@/components/Header.vue'
-import AdaSecondaryHeader from '@/components/SecondaryHeader.vue'
+import CanvasToolbar from '@/components/CanvasToolbar.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import SecondarySidebar from '@/components/SecondarySidebar.vue'
 import Modal from './components/Modal'
@@ -67,6 +67,9 @@ export default {
     },
   },
   computed: {
+    tool(){
+      return this.$store.state.projects.tool
+    },
     account() {
       return this.$store.getters["auth/account"]
     },
@@ -126,13 +129,19 @@ export default {
       if( this.$route.path == "/projects/create" ){
         this.$store.state.projects.project = false
       }
+      if( this.$store.state.projects.project ){
+        if( this.$store.state.audits.audit ){
+          console.log("is this firing");
+          this.$store.state.projects.tool = "audit"
+        }
+      }
   },
 
   components:{
     A,
     Dropdown,
     AdaHeader,
-    AdaSecondaryHeader,
+    CanvasToolbar,
     Sidebar,
     SecondarySidebar,
     Modal,
@@ -156,7 +165,7 @@ export default {
 }
 
 #sidebar {
-  z-index: 26;
+  z-index: 60;
   margin-top:60px;
   margin-left:-200px;
   max-width:400px;
@@ -171,6 +180,12 @@ export default {
   margin-left:0px;
   display:flex;
 }
+#sidebar.sidebarOpen .primary{
+  z-index:10;
+}
+#sidebar.sidebarOpen.subSidebarOpen .secondary{
+  z-index:1;
+}
 #sidebar.sidebarOpen .primary,
 #sidebar.sidebarOpen.subSidebarOpen .secondary{
   width:200px;
@@ -181,13 +196,14 @@ export default {
   flex-grow:1;
   flex-shrink:1;
   max-width:100%;
+  padding-top:60px;
 }
 
 #sidebar.sidebarOpen ~ #content{
-  max-width: calc(100vw - 216px);
+  max-width: calc(100vw - 207px);
 }
 #sidebar.sidebarOpen.subSidebarOpen ~ #content{
-  max-width: calc(100vw - 416px);
+  max-width: calc(100vw - 407px);
 }
 .skip-link{
   position: absolute;

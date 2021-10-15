@@ -8,7 +8,8 @@ const getDefaultState = () => {
 		project: false,
 		loading: false,
 		usersLoading: false,
-		domainsLoading: false
+		domainsLoading: false,
+		tool: ""
 	}
 }
 
@@ -21,7 +22,8 @@ export default {
 			project: false,
 			loading: false,
 			usersLoading: false,
-			domainsLoading: false
+			domainsLoading: false,
+			tool: ""
 		},
 		mutations: {
 			setState(state,payload) {

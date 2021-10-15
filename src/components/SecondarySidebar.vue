@@ -17,8 +17,8 @@
                                 <li>
                                     <router-link class="text-sm py-2 text-black hover:text-pallette-red" :to="{path: '/audits/create'}">Create New Audit</router-link>
                                 </li>
-                                <li class="text-sm py-2" v-for="item in $store.state.projects.audits" :key="item.id">
-                                    <router-link class="text-black hover:text-pallette-red" @click="updateAudit" :to="{path: getRoute(item)}">{{getTitle(item)}}</router-link>
+                                <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.projects.audits" :key="item.id">
+                                    <button class="text-black hover:text-pallette-red" @click="updateAudit(item)">{{getTitle(item)}}</button>
                                 </li>
                             </ul>
                         </div>
@@ -49,8 +49,9 @@ export default {
         Button,
     },
     methods: {
-        updateAudit(){
-            this.$store.dispatch("audits/get")
+        updateAudit(item){
+            this.$store.state.projects.tool = "audit"
+            this.$router.push({path: this.getRoute(item)})
         },
         getRoute(item){
             return "/audits/" + item.id
@@ -113,7 +114,9 @@ export default {
     border-left: 3px solid rgba(202, 202, 202, 0.8);
     padding-left:12px;
 }
-
+.tool-container ul li.selected{
+    background-color: rgba(202, 202, 202, 0.8);
+}
 .sub-sidebar{
     overflow-y:auto;
     width:0px;

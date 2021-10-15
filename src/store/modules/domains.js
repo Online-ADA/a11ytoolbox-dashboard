@@ -93,6 +93,9 @@ export default {
 					state.loading = false
 					console.log(error);
 				})
+				.finally(()=>{
+					state.loading = false
+				})
 			},
 			getProjectDomains({state, rootState}, args){
 				state.loading = true

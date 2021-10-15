@@ -121,21 +121,21 @@ export default {
         if( this.$store.state.auth.accounts !== false && this.$store.state.auth.accounts.length ){
             this.updateAccountName()
         }
-        // let allDropdowns = document.querySelectorAll(".dropdown-container")
-        // document.body.addEventListener("keydown", (e)=>{
-        //     setTimeout(()=>{
-        //         if (e.code == 'Tab') {
-        //             for (let index = 0; index < allDropdowns.length; index++) {
-        //                 const element = allDropdowns[index];
-        //                 if(  element == document.activeElement ){
-        //                     element.setAttribute("aria-expanded", true)
-        //                 }else{
-        //                     element.setAttribute("aria-expanded", false)
-        //                 }
-        //             }
-        //         }
-        //     }, 1)
-        // })
+        let allDropdowns = document.querySelectorAll(".dropdown-container")
+        document.body.addEventListener("keyup", (e)=>{
+            setTimeout(()=>{
+                if (e.code == 'Tab') {
+                    for (let index = 0; index < allDropdowns.length; index++) {
+                        const element = allDropdowns[index];
+                        if(  element == document.activeElement ){
+                            element.setAttribute("aria-expanded", true)
+                        }else{
+                            element.setAttribute("aria-expanded", false)
+                        }
+                    }
+                }
+            }, 1)
+        })
     },
     computed: {
         account(){
@@ -200,6 +200,7 @@ export default {
     margin-bottom: auto;
 }
 #header-container {
+    z-index:70;
     height:60px;
     padding-right:16px;
     transition-property: padding;
@@ -249,6 +250,8 @@ img {
     top: 0;
 }
 .dropdown-container ul{
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
     display:none;
     animation-duration: 150ms;
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
