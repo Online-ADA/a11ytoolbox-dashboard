@@ -4,7 +4,7 @@
         <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
         <div class="mb-auto mt-auto">
-            <div role="button" tabindex="0" aria-expanded="false" class="dropdown-container dropdown-nolabel relative flex flex-col pl-8">
+            <div role="button" tabindex="0" aria-expanded="false" class="dropdown-container dropdown-nolabel client-dropdown relative flex flex-col pl-8">
                 <div v-if="$store.state.auth.user" class="flex items-center dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
                     <span @click.prevent class="block whitespace-no-wrap no-underline text-white" >
                         {{selectedClient}}
@@ -257,16 +257,19 @@ img {
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     animation-direction: forwards;
     z-index:99;
-    /* transition:opacity;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms; */
 }
 .dropdown-container.manager-dropdown ul{
     top:121%;
 }
-.dropdown-container.manager-dropdown ul:before{
-    top: -10px;
-    height: 10px;
+.dropdown-container:after{
+    content: " ";
+    position: absolute;
+    display: block;
+    width: 100%;
+    left: 0;
+    right: 0;
+    height: 30px;
+    top: 22px;
 }
 .dropdown-container.dropdown-w-label:not(.manager-dropdown ) ul  {
     top:145%;
@@ -274,19 +277,6 @@ img {
 .dropdown-container.dropdown-nolabel:not(.manager-dropdown ) ul {
     top:175%;
 }
-.dropdown-container:not(.manager-dropdown ) ul:before{
-    top: -20px;
-    height: 20px;
-}
-.dropdown-container ul:before{
-    content: " ";
-    position: absolute;
-    display: block;
-    width: 100%;
-    left: 0;
-    right: 0;
-}
-
 .dropdown-container ul li {
     padding: 8px;
 }
