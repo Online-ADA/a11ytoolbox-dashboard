@@ -411,8 +411,16 @@ export default {
 				if( structured[i].title.toLowerCase() == "sitewide" ){
 					continue
 				}
-				let found = structured_map.some( el => el.title.toLowerCase() == structured[i].title.toLowerCase() ) &&
-							structured_map.some( el => el.url.toLowerCase() == structured[i].url.toLowerCase())
+				let found = structured_map.some( el => {
+								if(el.title && structured[i].title){
+									return el.title.toLowerCase() == structured[i].title.toLowerCase()
+								}
+							}) &&
+							structured_map.some( el => {
+								if(el.url && structured[i].url){
+									return el.url.toLowerCase() == structured[i].url.toLowerCase()
+								}
+							})
 
 				if( !found ){
 					structured_map.push({
@@ -432,14 +440,26 @@ export default {
 					if( !sitemap[index] ){
 						continue
 					}
-					let found = sitemap_sample.some( el => el.url.toLowerCase() == sitemap[index].url.toLowerCase())
+					let found = sitemap_sample.some( el => {
+						if(el.url && sitemap[index].url){
+							el.url.toLowerCase() == sitemap[index].url.toLowerCase()
+						}
+					})
 
 					if( found ){
 						sitemap.splice(index, 1)
 						continue //break early for efficiency
 					}
-					found = structured_map.some( el => el.title.toLowerCase() == sitemap[index].url.toLowerCase()) ||
-							structured_map.some( el => el.url.toLowerCase() == sitemap[index].url.toLowerCase())
+					found = structured_map.some( el => {
+								if( el.title && sitemap[index].url ){
+									el.title.toLowerCase() == sitemap[index].url.toLowerCase()
+								}
+							}) ||
+							structured_map.some( el => {
+								if(el.url && sitemap[index].url){
+									el.url.toLowerCase() == sitemap[index].url.toLowerCase()
+								}
+							})
 
 					if( found ){
 						sitemap.splice(index, 1)
