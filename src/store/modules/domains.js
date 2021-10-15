@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Cookies from 'js-cookie'
 
 const getDefaultState = () => {
 	return {
@@ -67,21 +68,25 @@ export default {
 			},
 			getProjects({state, dispatch, rootState, rootGetters}, args = {}){
 				state.loading = true
-				let url = `${rootState.auth.userAPI}/${rootState.auth.account}/projects`
-				
-				if( rootGetters["auth/isManager"] ){
-					url = `${rootState.auth.adminAPI}/${rootState.auth.account}/projects`
+				let client_id = rootState.clients.client.id
+				if( !client_id ){
+					client_id = Cookies.get("toolboxClient")
 				}
-				
-				Request.getPromise(url)
+				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {
+					params: {
+						user_id: rootState.auth.user.id, 
+						clientID: client_id,
+						isManager: rootGetters["auth/isManager"]
+					} 
+				})
 				.then( re => {
 					state.projects = re.data.details
-					if( args.project_id ){
-						dispatch("getProjectDomains", {project_id: args.project_id, client_id: rootState.clients.client.id})
-					}
-					else{
-						dispatch("getProjectDomains", {project_id: state.projects[0].id, client_id: rootState.clients.client.id})
-					}
+					// if( args.project_id ){
+					// 	dispatch("getProjectDomains", {project_id: args.project_id, client_id: rootState.clients.client.id})
+					// }
+					// else{
+					// 	dispatch("getProjectDomains", {project_id: state.projects[0].id, client_id: rootState.clients.client.id})
+					// }
 					
 				})
 				.catch( error => {

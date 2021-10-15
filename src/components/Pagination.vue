@@ -24,7 +24,7 @@
         <li class="" v-if="hasPrev()">
           <button aria-label="Go to previous page" class="relative inline-flex items-center border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" 
           @click.prevent="changePage(prevPage, 'previous')">
-            <div class="flex items-center justify-center hover:bg-gray-200 h-6 w-6">
+            <div aria-label="Previous page" class="flex items-center justify-center hover:bg-gray-200 h-6 w-6">
               &lt;
             </div>
           </button>
@@ -33,7 +33,7 @@
           <button :ref="`page-button-${1}`" aria-label="Go to first page" class="relative inline-flex items-center border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" 
           @click.prevent="changePage(1, 'page')">
             <div class="flex hover:bg-gray-200 h-6 w-6 items-center justify-center">
-              <span class="">
+              <span :aria-current="[current == page ? 'page' : false]" class="">
                 1
               </span>
             </div>
@@ -45,7 +45,7 @@
           @click.prevent="changePage(page, 'page')">
             <div :class="{'bg-pallette-grey text-white': current == page}"
                 class="flex hover:bg-gray-200 h-6 w-6 items-center justify-center">
-              <span class="">{{ page }}</span>
+              <span :aria-current="[current == page ? 'page' : false]" class="">{{ page }}</span>
             </div>
           </button>
         </li>
@@ -63,7 +63,7 @@
         <li class="" v-if="hasNext()">
           <button aria-label="Go to next page" class="relative inline-flex items-center border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" 
           @click.prevent="changePage(nextPage, 'next')">
-            <div class="flex items-center justify-center hover:bg-gray-200 h-6 w-6">
+            <div aria-label="Next page" class="flex items-center justify-center hover:bg-gray-200 h-6 w-6">
               &gt;
             </div>
           </button>

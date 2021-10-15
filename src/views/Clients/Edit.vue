@@ -10,7 +10,7 @@
 			<TextInput id="email" name="email" v-model="client.email" />
 
 			<Label for="status">Status</Label>
-			<Select class="mx-auto" :options="statusSrc" v-model="client.status"></Select>
+			<Select id="status" class="mx-auto" :options="statusSrc" v-model="client.status"></Select>
 
 			<Button hover="true" @click.native.prevent="saveClient">Save</Button>
 		</Form>

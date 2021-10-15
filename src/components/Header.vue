@@ -5,10 +5,11 @@
 
         <div class="mb-auto mt-auto">
             <div class="dropdown-container dropdown-nolabel relative flex flex-col pl-8">
-                <div v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
+                <div v-if="$store.state.auth.user" class="flex items-center dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
                     <a @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                         {{selectedClient}}
                     </a>
+                    <i class="fas fa-caret-down pl-1 text-white"></i>
                 </div>
                 <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                     <li class="hover:bg-pallette-grey-light" v-for="(child, index) in getClients" :key="index">
@@ -28,8 +29,8 @@
 
         <div v-if="$store.getters['auth/isManager']" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="manage" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
-                <a @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
-                    <span aria-label="Management Dropdown">
+                <a aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
+                    <span>
                         <i class="fas fa-tools"></i>
                     </span>
                 </a>
@@ -41,7 +42,7 @@
                     </template>
                 </li>
             </ul>
-            <span class="sub-label text-white uppercase"><div>Manager</div>Settings</span>
+            <span id="management-label" class="sub-label text-white uppercase"><div>Manager</div>Settings</span>
         </div>
 
         <div :class="[!$store.getters['auth/isManager'] ? 'ml-auto' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">

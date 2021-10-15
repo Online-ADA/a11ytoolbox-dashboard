@@ -6,7 +6,7 @@
                     <!-- Tools Level -->
                     <li class="py-1 tool-container" :class="[expanded.includes('audits') ? 'expanded' : '']">
                         <span class="flex items-center">
-                            <i v-if="!expanded.includes('audits')" class="fas fa-caret-left"></i>
+                            <i v-if="!expanded.includes('audits')" class="fas fa-caret-right"></i>
                             <i v-else class="fas fa-caret-down"></i>
                             <button @click.prevent="expand('audits')" class="">
                                 Audits
@@ -14,9 +14,9 @@
                         </span>
                         <div class="block">
                             <ul>
-                                <!-- <li>
+                                <li>
                                     <router-link class="text-sm py-2 text-black hover:text-pallette-red" :to="{path: '/audits/create'}">Create New Audit</router-link>
-                                </li> -->
+                                </li>
                                 <li class="text-sm py-2" v-for="item in $store.state.projects.audits" :key="item.id">
                                     <router-link class="text-black hover:text-pallette-red" @click="updateAudit" :to="{path: getRoute(item)}">{{getTitle(item)}}</router-link>
                                 </li>

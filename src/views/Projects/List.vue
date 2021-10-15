@@ -8,9 +8,9 @@
                     <div class="hidden"></div>
                 </template>
                 <template v-slot:cells-extra="row">
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <th class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">{{row.data.name}}</div>
-                    </td>
+                    </th>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="capitalize text-sm text-gray-900">{{row.data.status}}</div>
                     </td>

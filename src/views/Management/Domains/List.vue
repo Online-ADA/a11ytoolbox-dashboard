@@ -13,11 +13,11 @@
                     <td class="hidden"></td>
                 </template>
                 <template v-slot:cells-extra="row">
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <th class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">
                             <A type="router-link" :to="{path: `/domains/${row.data.id}`}">{{row.data.title}}</A>
                         </div>
-                    </td>
+                    </th>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">
                             {{row.data.url}}

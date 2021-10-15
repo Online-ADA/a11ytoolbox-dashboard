@@ -3,6 +3,7 @@
     <notifications/>
     <ada-header class="fixed z-40"></ada-header>
     <div id="page-container" class="transition-transform flex w-full height:100% flex-nowrap" >
+      <a class="skip-link" href="#main-content">Skip Sidebar Navigation</a>
       <div id="sidebar" class="z-50 flex fixed" v-bind:class="{ sidebarOpen: sidebarExpanded, subSidebarOpen: sidebarExpanded && $store.state.projects.project !== false }">
         <sidebar></sidebar>
         <transition name="slideright">
@@ -115,11 +116,6 @@ export default {
       if ( !this.client && this.$route.path != '/' )
         this.$router.push({path: '/'}).catch(()=>{})
     },
-    // "$store.state.projects.project": function(newVal){
-    //   if( newVal && this.$route.path !== `/projects/${newVal.id}` ){
-    //     this.$router.push({path:`/projects/${newVal.id}`})
-    //   }
-    // }
   },
   created() {
   },
@@ -164,6 +160,7 @@ export default {
   margin-top:60px;
   margin-left:-200px;
   max-width:400px;
+  display:none;
   flex-shrink:0;
   transition-property: margin;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -172,6 +169,7 @@ export default {
 
 #sidebar.sidebarOpen {
   margin-left:0px;
+  display:block;
 }
 #sidebar.sidebarOpen .primary,
 #sidebar.sidebarOpen.subSidebarOpen .secondary{
@@ -191,6 +189,23 @@ export default {
 #sidebar.sidebarOpen.subSidebarOpen ~ #content{
   max-width: calc(100vw - 416px);
 }
-
+.skip-link{
+  position: absolute;
+  left: -999px;
+  width:1px;
+  height: 1px;
+  top: auto;
+}
+.skip-link:focus{
+  left: 13px;
+  display: inline-block;
+  height: auto;
+  width: auto;
+  margin: auto;
+  z-index: 99;
+  top: 50px;
+  background-color: white;
+  color: black;
+}
 
 </style>
