@@ -140,7 +140,7 @@
 		
 		<Modal class="z-30" :open="columnPickerOpen">
 			<div class="w-full p-3">
-				<Button @click.native.prevent="closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<Button aria-label="Close column selector modal" @click.native.prevent="closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4" hover="true" color="white">X</Button>
 				<ul class="flex flex-wrap">
 					<template v-for="(header, index) in headers">
 						<li v-if="!header.hidePermanent" class="flex w-5/12 mx-2 my-2 justify-center items-center" :key="index">
@@ -149,7 +149,8 @@
 						</li>
 					</template>
 				</ul>
-				<Button @click.native.prevent="showHideColumns">Submit</Button>
+				<!-- <Button @keyup.enter="showHideColumns" @keyup.space="showHideColumns" @click="showHideColumns">Submit</Button> -->
+				<button @keyup.enter="showHideColumns" @keyup.space="showHideColumns" @click="showHideColumns" class="px-2 py-1 font-button rounded uppercase transition-colors duration-100 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-blue hover:text-white">Submit</button>
 			</div>
 		</Modal>
 	</div>
@@ -424,6 +425,7 @@
 				}
 			},
 			showHideColumns(){
+				
 				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
 				let allStickied = this.headers.filter( el => el.show && el.sticky )
 				for( let i in allStickied ){
@@ -435,7 +437,7 @@
 						this.$set(this.headers[realIndex].style, "left", this.getLeftValue(realIndex))
 					}
 				}
-
+	
 				this.closeModal(()=>{this.columnPickerOpen = false})
 			},
 			displayValue(key, data){

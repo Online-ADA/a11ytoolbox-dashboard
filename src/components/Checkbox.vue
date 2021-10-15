@@ -28,7 +28,7 @@
   i, span{
       transition: opacity .2s ease, transform .2s ease
   }
-  input[type="checkbox"]:focus + span.border-pallette-blue{
+  input[type="checkbox"]:focus ~ span{
     outline: 2px dashed black;
     outline-offset: 2px;
   }

@@ -169,7 +169,7 @@ export default {
 
 #sidebar.sidebarOpen {
   margin-left:0px;
-  display:block;
+  display:flex;
 }
 #sidebar.sidebarOpen .primary,
 #sidebar.sidebarOpen.subSidebarOpen .secondary{

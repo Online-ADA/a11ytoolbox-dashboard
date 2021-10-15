@@ -4,7 +4,7 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2 class="mb-2">Success Critera</h2>
-                <button @click="displayArticlePopup(newItem({item: newArticle, extra: 'article'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <button aria-label="Add new success criterion" @click="displayArticlePopup(newItem({item: newArticle, extra: 'article'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && articles.length">
                     <SearchList :dataSendBack="'article'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['title', 'number', 'description']" :items="articles"></SearchList>
                 </template>
@@ -14,7 +14,7 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2>Techniques</h2>
-                <button @click="displayArticlePopup(newItem({item: newTechnique, extra: 'technique'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <button aria-label="Add new technique" @click="displayArticlePopup(newItem({item: newTechnique, extra: 'technique'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && techniques.length">
                     <SearchList :dataSendBack="'technique'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['title', 'number', 'description']" :items="techniques"></SearchList>
                 </template>
@@ -24,7 +24,7 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2>Recommendations</h2>
-                <button @click="displayArticlePopup(newItem({item: newRecommendation, extra: 'recommendation'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <button aria-label="Add new recommendation" @click="displayArticlePopup(newItem({item: newRecommendation, extra: 'recommendation'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && recommendations.length">
                     <SearchList :dataSendBack="'recommendation'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['description']" :items="recommendations"></SearchList>
                 </template>
@@ -34,7 +34,7 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2>Audit States</h2>
-                <button @click="displayArticlePopup(newItem({item: newState, extra: 'audit_state'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <button aria-label="Add a new audit state" @click="displayArticlePopup(newItem({item: newState, extra: 'audit_state'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && states.length">
                     <SearchList :displayProps="['content']" :dataSendBack="'audit_state'" @click="displayArticlePopup" hover-effect="grow" :items="states"></SearchList>
                 </template>
@@ -44,7 +44,7 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2>Assistive Technologies</h2>
-                <button @click="displayArticlePopup(newItem({item: newAsstTech, extra: 'assistive_tech'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <button aria-label="Add a new assistive technology" @click="displayArticlePopup(newItem({item: newAsstTech, extra: 'assistive_tech'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && assistiveTechnologies.length">
                     <SearchList :displayProps="['content']" :dataSendBack="'assistive_tech'" @click="displayArticlePopup" hover-effect="grow" :items="assistiveTechnologies"></SearchList>
                 </template>
@@ -54,7 +54,7 @@
         <div class="flex w-full justify-center my-4">
             <Card class="w-2/3 mx-auto relative">
                 <h2>Software Used</h2>
-                <button @click="displayArticlePopup(newItem({item: newSoftwareUsed, extra: 'software_used'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
+                <button aria-label="Add new software used" @click="displayArticlePopup(newItem({item: newSoftwareUsed, extra: 'software_used'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && softwareUsed.length">
                     <SearchList :displayProps="['content']" :dataSendBack="'software_used'" @click="displayArticlePopup" hover-effect="grow" :items="softwareUsed"></SearchList>
                 </template>

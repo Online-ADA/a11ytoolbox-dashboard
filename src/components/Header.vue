@@ -4,11 +4,11 @@
         <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
         <div class="mb-auto mt-auto">
-            <div class="dropdown-container dropdown-nolabel relative flex flex-col pl-8">
+            <div role="button" tabindex="0" aria-expanded="false" class="dropdown-container dropdown-nolabel relative flex flex-col pl-8">
                 <div v-if="$store.state.auth.user" class="flex items-center dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
-                    <a @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
+                    <span @click.prevent class="block whitespace-no-wrap no-underline text-white" >
                         {{selectedClient}}
-                    </a>
+                    </span>
                     <i class="fas fa-caret-down pl-1 text-white"></i>
                 </div>
                 <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
@@ -27,13 +27,11 @@
         <div class="border mx-3 project-divider"></div>
         <div class="text-white capitalize">{{$store.state.projects.project.name}}</div>
 
-        <div v-if="$store.getters['auth/isManager']" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
+        <div role="button" tabindex="0" aria-expanded="false" v-if="$store.getters['auth/isManager']" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="manage" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
-                <a aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
-                    <span>
-                        <i class="fas fa-tools"></i>
-                    </span>
-                </a>
+                <span aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
+                    <i class="fas fa-tools"></i>
+                </span>
             </div>
             <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in manageDropdown" :key="index">
@@ -45,11 +43,11 @@
             <span id="management-label" class="sub-label text-white uppercase"><div>Manager</div>Settings</span>
         </div>
 
-        <div :class="[!$store.getters['auth/isManager'] ? 'ml-auto' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
+        <div role="button" tabindex="0" aria-expanded="false" :class="[!$store.getters['auth/isManager'] ? 'ml-auto' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
             <div id="login" v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
-                <a @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
+                <span @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     {{$store.state.auth.user.first_name}}
-                </a>
+                </span>
             </div>
             <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
@@ -123,6 +121,21 @@ export default {
         if( this.$store.state.auth.accounts !== false && this.$store.state.auth.accounts.length ){
             this.updateAccountName()
         }
+        // let allDropdowns = document.querySelectorAll(".dropdown-container")
+        // document.body.addEventListener("keydown", (e)=>{
+        //     setTimeout(()=>{
+        //         if (e.code == 'Tab') {
+        //             for (let index = 0; index < allDropdowns.length; index++) {
+        //                 const element = allDropdowns[index];
+        //                 if(  element == document.activeElement ){
+        //                     element.setAttribute("aria-expanded", true)
+        //                 }else{
+        //                     element.setAttribute("aria-expanded", false)
+        //                 }
+        //             }
+        //         }
+        //     }, 1)
+        // })
     },
     computed: {
         account(){
@@ -225,10 +238,12 @@ img {
     transition-duration: 150ms;
 }
 
+.dropdown-container:focus ul,
 .dropdown-container:hover ul{
     display:block;
     animation-name: showDropdown;
 }
+
 .dropdown-container .dropdown ul ul{
     left:95%;
     top: 0;

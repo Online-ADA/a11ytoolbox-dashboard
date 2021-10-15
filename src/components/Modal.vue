@@ -86,7 +86,7 @@ export default {
 			let self = this
 
 			self.modal.addEventListener('keydown', function(e) {
-				if (!e.code === 'Tab') {
+				if (e.code !== 'Tab') {
 					return
 				}
 

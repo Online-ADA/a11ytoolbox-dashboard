@@ -3,10 +3,10 @@
         <div>
             <div class="flex" style="width:200px;overflow-y:auto;">
                 <ul v-if="$store.state.clients.client" id="nav" class="flex-1">
-                    <li :aria-selected="[$route.path == '/projects/create' && $store.state.projects.project === false ? 'true' : false]" :class="[$route.path == '/projects/create' && $store.state.projects.project === false ? 'selected' : '']" class="flex">
+                    <li :aria-current="[$route.path == '/projects/create' && $store.state.projects.project === false ? 'true' : false]" :class="[$route.path == '/projects/create' && $store.state.projects.project === false ? 'selected' : '']" class="flex">
                         <router-link class="text-center w-full h-full py-2 text-base" :to="{name: 'ProjectCreate'}">Create New Project</router-link>
                     </li>
-                    <li :aria-selected="[$store.state.projects.project !== false && selectedProject.id === project.id  ? 'true' : false]" :class="[$store.state.projects.project !== false && selectedProject.id === project.id  ? 'selected' : '']" class="flex" v-for="project in projects" :key="project.id">
+                    <li :aria-current="[$store.state.projects.project !== false && selectedProject.id === project.id  ? 'true' : false]" :class="[$store.state.projects.project !== false && selectedProject.id === project.id  ? 'selected' : '']" class="flex" v-for="project in projects" :key="project.id">
                         <button class="w-full h-full py-2 text-left pl-2.5" @click="setCurrentProject(project.id)">{{project.name}}</button>
                     </li>
                 </ul>
