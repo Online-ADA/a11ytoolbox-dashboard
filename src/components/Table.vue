@@ -614,10 +614,14 @@
 
 			let that = this
 			EventBus.$on('toolbarEmit', (payload)=>{
-				if( payload.action == 'audit-search' ){
+				if( payload.action == 'audit-search-open' ){
 					that.search = payload.data
 					that.submitTableSearch()
 					return
+				}
+				if( payload.action == 'audit-search-close' ){
+					that.filtering = false
+					that.filteredRows = []
 				}
 			})
 		},

@@ -11,27 +11,37 @@
                 </div>
                 <span class="w-auto mr-2 flex items-center">
                     <!-- Issue Tools -->
+                    <select class="text-13 border-l-0 border-r-0 border-t-0 border-black shadow-none rounded-none" v-model="issueStatus" v-if="auditRowsSelected === 1 && !audit.locked" >
+                        <option :value="status" v-for="(status, index) in issueStatuses" :key="'toolbarStatus-'+index">{{status}}</option>
+                    </select>
+                    
+                    <!-- Edit Issue -->
                     <button v-if="auditRowsSelected === 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-edit-issue')">
                         <span title="Edit Issue" ><i class="far fa-file-edit"></i></span>
                     </button>
+                    <!-- Copy Issue -->
                     <button v-if="auditRowsSelected === 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-copy-issue')">
                         <span title="Copy Issue" ><i class="far fa-copy"></i></span>
                     </button>
+                    <!-- Delete Selected Issue -->
                     <button v-if="auditRowsSelected > 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-delete-many')">
                         <span title="Delete All Selected Issues" ><i class="far fa-minus-hexagon"></i></span>
                     </button>
+                    <!-- Add Issue -->
                     <button v-if="auditRowsSelected < 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-add-issue')">
                         <span title="Add Issue" ><i class="far fa-plus-square"></i></span>
                     </button>
+                    <!-- Locked Icon -->
                     <span title="This Audit is Locked and Cannot be Modified" v-if="audit.locked"><i class="fas fa-lock" aria-hidden="true"></i></span>
+                    <!-- Condense Table -->
                     <button class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-condense')">
                         <span title="Compress Table" v-if="!toggled.includes('audit-condense')"><i class="far fa-compress-alt"></i></span>
                         <span title="Decompress Table" v-else><i class="fas fa-expand-alt"></i></span>
                     </button>
+                    <!-- Search Audit -->
                     <button class="ml-3.5 bg-transparent" @click.prevent="searchBarOpen = !searchBarOpen">
                         <span title="Search Audit" ><i class="far fa-search"></i></span>
                     </button>
-                    
                     <div class="border border-black mx-3.5 divider"></div>
                     <!-- Audit Tools -->
                     <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Edit Audit"><i class="far fa-edit"></i></router-link>
@@ -81,6 +91,7 @@ export default {
     data() {
         return {
             toggled: [],
+            issueStatus: false,
             auditRowsSelected: 0,
             auditFilteredRows: 0,
             searchBarOpen: false,
@@ -138,6 +149,18 @@ export default {
                     value: "essential_functionality",
                     display: "Essential Functionality"
                 },
+            ],
+            issueStatuses: [
+                "New",
+                "Resolved",
+                "Partly Resolved",
+                "Remains",
+                "Regression",
+                "Best Practice",
+                "Third party problem",
+                "Resolved by removal",
+                "Usability Problem",
+                "Duplicate",
             ]
         }
     },
@@ -154,6 +177,22 @@ export default {
                 value: "third_audit_comments",
                 display: "Third Audit Comments"
             })
+        }
+    },
+    watch:{
+        searchBarOpen: function(newVal){
+            if( newVal ){
+                this.auditFilteredRows = this.audit.issues.length
+            }
+            if( !newVal ){
+                this.auditFilteredRows = 0
+                this.toolbarEmit('audit-search')
+            }
+        },
+        issueStatus:function(newVal, oldVal){
+            if( oldVal !== false && newVal !== false && newVal !== oldVal ){
+                EventBus.$emit('toolbarEmit', {action: 'audit-issue-status-change', data: newVal})
+            }
         }
     },
     computed: {
@@ -174,7 +213,13 @@ export default {
                 this.toggle(action)
             }
             if( action=='audit-search' ){
-                data = this.searchData
+                if( this.searchBarOpen ){
+                    data = this.searchData
+                    action='audit-search-open'
+                }
+                if( !this.searchBarOpen ){
+                    action='audit-search-close'
+                }
             }
             EventBus.$emit('toolbarEmit', {action: action, data: data})
         },
@@ -197,12 +242,17 @@ export default {
     },
     created() {
         let that = this
+        EventBus.$on('auditRowSelected', (data)=>{
+            that.issueStatus = data
+        })
         EventBus.$on('auditSelectedRowsUpdated', (data)=>{
             that.auditRowsSelected = data
+            if( data !== 1 ){
+                this.issueStatus = false
+            }
         })
         EventBus.$on('auditFilteredRows', (data)=>{
-            console.log("This is firing", data);
-            that.auditRowsSelected = data
+            that.auditFilteredRows = data
         })
     },
 }

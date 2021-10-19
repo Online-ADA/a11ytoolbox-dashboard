@@ -645,6 +645,7 @@ export default {
 		},
 		deselectAll(){
 			this.selectedRows = []
+			EventBus.$emit('auditSelectedRowsUpdated', this.selectedRows.length)
 		},
 		markComplete(){
 			this.$store.dispatch("audits/completeAudit", {audit_id: this.$route.params.id})
@@ -772,6 +773,7 @@ export default {
 			this.confirmDeleteModalOpen = false
 			this.closeModal(()=>{this.issueModalOpen = false})
 			this.selectedRows = []
+			EventBus.$emit('auditSelectedRowsUpdated', this.selectedRows.length)
 		},
 		createReferenceLink(){
 			let builder = `<a href="https://toolboxdashboard.ngrok.io/audits/${this.selectedReference.audit}/overview#${this.selectedReference.issue.issue_number}" target="_blank" rel="nofollow">${this.selectedReference.linkText}</a>`
@@ -788,6 +790,10 @@ export default {
 				this.selectedRows.push( issue.id )
 			}
 
+			if( this.selectedRows.length === 1 ){
+				let row = this.issues.find( i=> i.id === this.selectedRows[0])
+				EventBus.$emit('auditRowSelected', row.status)
+			}
 			EventBus.$emit('auditSelectedRowsUpdated', this.selectedRows.length)
 		},
 		htmlDecode(input) {
@@ -905,6 +911,7 @@ export default {
 				this.descriptionsQuill.root.innerHTML = ""
 				this.recommendationsQuill.root.innerHTML = ""
 				this.selectedRows = []
+				EventBus.$emit('auditSelectedRowsUpdated', this.selectedRows.length)
 			}
 		},
 		generateUniqueID(){
@@ -952,6 +959,13 @@ export default {
 			if( payload.action == 'audit-complete' ){
 				that.openModal(that.markComplete)
 				return
+			}
+			if( payload.action == 'audit-issue-status-change' ){
+				let found = that.issues.find( i=>i.id == that.selectedRows[0])
+				console.log(that.selectedRows, found, payload.data);
+				found.status = payload.data
+				this.issue = found
+				this.saveIssue()
 			}
 		})
 		
