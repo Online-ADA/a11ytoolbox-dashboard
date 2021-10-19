@@ -1,45 +1,20 @@
 <template>
 	<div class="flex flex-col relative px-5">
-		<div class="flex w-full px-10 mb-2 relative overflow-y-auto h-1/3">
-			<div class="flex flex-wrap items-end pb-3 w-full mx-auto">
-				<!-- <h2 class="w-full text-2xl my-3">Table description (what should this say?)</h2>
-				<div class="w-full flex">
-					<div v-show="!condense" class="w-1/4"></div>
-					<div :class="condense ? 'w-full' : 'w-2/4'">
-						<p>Here is a list of the various functionality you can expect on the table below:</p>
-						<ul class="list-disc text-left mb-3">
-							<li><strong>Horizontal scrolling:</strong> at any point while focused inside the table, using the left and right arrow keys will scroll the table to the left and right</li>
-							<li><strong>Freezing Columns:</strong> Each column has a button for freezing it in place, such that while scrolling the table left and right, the column will remain in its position while the rest of the unfrozen columns scroll like normal</li>
-							<li><strong>Multi Column Sorting:</strong> The sort buttons have 3 modes: Unsorted, Ascending and Descending. If more than one column has been sorted, the columns will sort in order across all sorted columns, i.e. sorting by column A by ascending and column B by descending will sort both columns respectively first by column A then by column B.</li>
-							<li><strong>Repositioning of Columns:</strong> Each column, while not frozen, can be moved left or right to reposition them within the table.</li>
-						</ul>
-					</div>
-					<div v-show="!condense" class="w-1/4"></div>
-				</div> -->
-				<h2 class="w-full text-base">
-					<div class="text-2xl">Search</div>
-					<small>First choose which column you want to search from the dropdown, then enter your search criteria, then click submit</small>
-				</h2>
-				<div class="w-full flex justify-start">
-					<Label for="case-sensitive">Case Sensitive</Label>
-					<Checkbox v-model="search.caseSensitive" id="case-sensitive"></Checkbox>
-				</div>
-				<div class="flex flex-col flex-1 mr-1">
-					<Label for="search-column">Search column</Label>
-					<select v-model="search.column" id="search-column" name="search-column" class="flex-1">
-						<option v-for=" (column, index) in headers.filter( h=>h.show ) " :value="column.header" :key="'search-columns-'+index">{{column.header}}</option>
-					</select>
-				</div>
-				<div class="flex flex-col flex-1 mx-1">
-					<Label for="search-criteria">Search criteria</Label>
-					<TextInput style="max-height:39px;" v-model="search.term" name="search-criteria" id="search-criteria" class="flex-1"></TextInput>
-				</div>
-				<Button style="margin-bottom:5px" class="ml-1" @click.native.prevent="submitTableSearch" :hover="true" color="red">Submit</Button>
-				<div class="text-right pl-2">
-					<div style="margin-bottom:2px;"><Button style="padding-bottom:1px;padding-top:0px;" class="mx-1" aria-label="Show or hide columns" @click.native.prevent="openModal(()=>{columnPickerOpen = true})" hover="true">+</Button></div>
-					<div v-if="!locked" style="margin-bottom:2px;margin-top:1px;"><Button class="text-xs mx-1" @click.native.prevent="selectAll" hover="true">Select all</Button></div>
-					<div v-if="!locked" style="margin-top:1px;"><Button class="text-xs mx-1" @click.native.prevent="deselectAll" hover="true">Deselect all</Button></div>
-				</div>
+		<div style="padding-right:1px;" class="flex w-full relative justify-end items-center">
+			<div v-if="!locked">
+				<button title="Select All Rows" class="text-lg leading-none" @click.prevent="selectAll" >
+					<i class="fas fa-grip-horizontal"></i>
+				</button>
+			</div>
+			<div v-if="!locked">
+				<button class="text-lg leading-none mx-3.5" title="Deselect All Rows" @click.prevent="deselectAll">
+					<i class="fal fa-grip-horizontal"></i>
+				</button>
+			</div>
+			<div>
+				<button class="text-base leading-none" title="Open Show or Hide Columns Modal" @click.prevent="openModal(()=>{columnPickerOpen = true})" >
+					<i class="far fa-thumbtack"></i>
+				</button>
 			</div>
 		</div>
 		<div tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-24 h-2/3">
@@ -163,6 +138,9 @@
 	import Label from "../components/Label"
 	import TextInput from "../components/TextInput"
 	import { dragscroll } from 'vue-dragscroll'
+	import { EventBus } from '../services/eventBus'
+
+
 	export default {
 		directives: {
 			dragscroll
@@ -393,6 +371,7 @@
 					let self = this
 					this.filteredRows = this.columnData.filter( c => {
 						let column = self.search.column.toLowerCase().replaceAll(/[ ]/g, "_")
+						console.log(column);
 						if( column == "success_criteria" ){
 							column = "articles"
 						}
@@ -402,6 +381,7 @@
 						
 						if( Array.isArray(c[column]) ){
 							let toSearch = c[column]
+							console.log("Was array", c, column, c[column]);
 							if( column == "articles" ){
 								toSearch = c[column].map( a=>a.display)
 							}
@@ -413,6 +393,7 @@
 							}
 							return toSearch.join("").includes(self.search.term)
 						}else{
+							console.log("Not an array", c, column, c[column]);
 							if( !self.search.caseSensitive ){
 								return c[column].toLowerCase().includes(self.search.term)
 							}
@@ -629,6 +610,15 @@
 						document.activeElement.scrollIntoView({behavior: "smooth", inline:inline, block:"center"})
 					}
 				}, 1)
+			})
+
+			let that = this
+			EventBus.$on('toolbarEmit', (payload)=>{
+				if( payload.action == 'audit-search' ){
+					that.search = payload.data
+					that.submitTableSearch()
+					return
+				}
 			})
 		},
 		created(){

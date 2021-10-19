@@ -16,8 +16,10 @@
 
 <style scoped>
   input[type="checkbox"] ~ span{
-    height:20px;
-    width:20px;
+    height:16px;
+    width:16px;
+    /* height:20px;
+    width:20px; */
   }
   span.rotate-0{
       --tw-rotate: 0deg;

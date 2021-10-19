@@ -9,7 +9,10 @@ const getDefaultState = () => {
 		loading: false,
 		usersLoading: false,
 		domainsLoading: false,
-		tool: ""
+		tool: {
+			type: false,
+			info: ""
+		}
 	}
 }
 
@@ -23,7 +26,10 @@ export default {
 			loading: false,
 			usersLoading: false,
 			domainsLoading: false,
-			tool: ""
+			tool: {
+				type: false,
+				info: ""
+			}
 		},
 		mutations: {
 			setState(state,payload) {

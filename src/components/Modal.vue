@@ -1,5 +1,5 @@
 <template>
-	<div :id="`a${id}`" :class="{'fixed':open, 'hidden': !open}" class="inset-0 overflow-y-auto z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+	<div style="z-index:99" :id="`a${id}`" :class="{'fixed':open, 'hidden': !open}" class="inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
 		<div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center p-0">
 			<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
 

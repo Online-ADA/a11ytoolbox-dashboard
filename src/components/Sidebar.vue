@@ -22,7 +22,6 @@
 
 <script>
 import Button from './Button'
-import Cookies from 'js-cookie'
 
 export default {
     props:{},
@@ -33,23 +32,7 @@ export default {
         }
     },
     name: 'sidebar',
-    watch: {
-        "$store.state.clients.client": function(newVal){
-            this.$store.state.projects.audits = []
-            this.$store.state.projects.project = false
-            if( newVal !== false && newVal !== undefined && newVal !== null ){
-                Cookies.set('toolboxClient', parseInt(this.$store.state.clients.client.id))
-                this.getProjects()
-            }
-        },
-        "$store.state.projects.all":function(newVal){
-            if( newVal.length ){
-                if( !this.$store.state.projects.project && this.$route.path !== "/projects/create" ){
-                    this.$store.state.projects.project = this.$store.state.projects.all[0]
-                }
-            }
-        }
-    },
+    watch: {},
     components:{
         Button,
     },
@@ -58,9 +41,6 @@ export default {
             this.$store.state.projects.project = this.projects.find(p=>p.id === id)
             this.$router.push({path:`/projects/${id}`})
         },
-        getProjects(){
-            this.$store.dispatch("projects/getProjects")
-        }
     },
     computed: {
         projects(){
@@ -94,13 +74,17 @@ export default {
 #nav li{
     font-size:13px;
 }
+#sidebar .primary li{
+    border-left-width: 4px;
+    border-left-color:#424242;
+}
+#sidebar .primary li:focus,
+#sidebar .primary li:hover{
+    border-left-color: #C80A00;
+}
 #sidebar .primary li.selected {
     border-left-color: #C80A00;
-    border-left-width: 4px;
     background-color: rgba(97, 97, 97, 1);
-    /* -webkit-box-shadow: inset 5px 3px 5px #222222;
-    -moz-box-shadow: inset 5px 3px 5px #222222;
-    box-shadow: inset 5px 3px 5px #222222; */
 }
 #nav{
     height: calc(100vh - 60px);

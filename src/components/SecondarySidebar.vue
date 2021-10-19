@@ -4,21 +4,21 @@
             <div class="flex sub-nav-container" >
                 <ul class="pt-1.5 flex-1 px-5">
                     <!-- Tools Level -->
-                    <li class="py-1 tool-container" :class="[expanded.includes('audits') ? 'expanded' : '']">
+                    <li class="py-1 tool-container" :class="[expanded.includes('audit') ? 'expanded' : '']">
                         <span class="flex items-center">
-                            <i v-if="!expanded.includes('audits')" class="fas fa-caret-right"></i>
+                            <i v-if="!expanded.includes('audit')" class="fas fa-caret-right"></i>
                             <i v-else class="fas fa-caret-down"></i>
-                            <button @click.prevent="expand('audits')" class="">
+                            <button @click.prevent="expand('audit')" class="">
                                 Audits
                             </button>
                         </span>
                         <div class="block">
                             <ul>
                                 <li>
-                                    <router-link class="text-sm py-2 text-black hover:text-pallette-red" :to="{path: '/audits/create'}">Create New Audit</router-link>
+                                    <router-link class="text-sm py-2 text-black" :to="{path: '/audits/create'}">Create New Audit</router-link>
                                 </li>
                                 <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.projects.audits" :key="item.id">
-                                    <button class="text-black hover:text-pallette-red" @click="updateAudit(item)">{{getTitle(item)}}</button>
+                                    <button class="text-black" @click="updateAudit(item)">{{getTitle(item)}}</button>
                                 </li>
                             </ul>
                         </div>
@@ -50,7 +50,6 @@ export default {
     },
     methods: {
         updateAudit(item){
-            this.$store.state.projects.tool = "audit"
             this.$router.push({path: this.getRoute(item)})
         },
         getRoute(item){
@@ -69,19 +68,30 @@ export default {
         }
     },
     watch: {
-        "$store.state.projects.project": function(newVal){
-            //ALWAYS reset audits to empty if project is switched.
-            this.$store.state.projects.audits = []
-            if( newVal !== false ){
-                //If not false, we get the new audits
+        "$store.state.projects.project": function(newVal, oldVal){
+            if( newVal === false ){
+                this.$store.state.projects.audits = []
+                return
+            }
+
+            if( oldVal === false && newVal !== false ){
+                this.$store.state.projects.audits = []
                 this.$store.dispatch("projects/getAuditsForProject", {project_id: this.$store.state.projects.project.id})
             }
+
+            if( newVal.id !== oldVal.id ){
+                this.$store.dispatch("projects/getAuditsForProject", {project_id: this.$store.state.projects.project.id})
+            }
+        },
+        "$store.state.projects.tool.type":function(newVal){
+            this.expanded.push(newVal)
         }
     },
     computed: {},
-
     mounted() {
-        
+        if( this.$store.state.projects.tool.type == 'audit' ){
+            this.expanded.push('audit')
+        }
     }
 }
 
@@ -100,6 +110,7 @@ export default {
 }
 .tool-container ul{
     height:auto;
+    min-height:30px;
     padding-left:4px;
     max-height: 0px;
     overflow-y: auto;
@@ -110,12 +121,18 @@ export default {
 .tool-container.expanded ul{
     max-height:100%;
 }
+.tool-container ul li:hover,
+.tool-container ul li:focus{
+    border-left-color:#C80A00;
+}
 .tool-container ul li{
-    border-left: 3px solid rgba(202, 202, 202, 0.8);
+    border-left: 3px solid;
+    border-left-color: rgba(202, 202, 202, 0.8);
     padding-left:12px;
 }
 .tool-container ul li.selected{
     background-color: rgba(202, 202, 202, 0.8);
+    border-left-color:#C80A00;
 }
 .sub-sidebar{
     overflow-y:auto;
@@ -128,19 +145,19 @@ export default {
 .sub-sidebar > div.fixed{
     display:none;
 }
-#sidebar.subSidebarOpen .sub-sidebar > div.fixed{
+#sidebar.subSidebarExpanded .sub-sidebar > div.fixed{
     display:block;
 }
-#sidebar.subSidebarOpen .sub-sidebar{
+#sidebar.subSidebarExpanded .sub-sidebar{
     width:200px;
     flex-grow:1;
     max-width:200px;
     overflow-y:auto;
 }
 .sub-sidebar li{
-    word-break:break-all;
+    word-break: break-word;
 }
-#sidebar.subSidebarOpen .sub-nav-container{
+#sidebar.subSidebarExpanded .sub-nav-container{
     width:200px;
     overflow-y:auto;
     max-height:calc(100vh - 60px);

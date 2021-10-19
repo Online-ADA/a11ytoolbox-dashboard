@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "build-dev": "vue-cli-service build --mode development",
     "lint": "vue-cli-service lint",
-    "buildcss": "npx tailwindcss build -i ./src/assets/tailwind.css -o ./public/tailwind.css"
+    "buildcss": "npx tailwindcss build ./src/assets/tailwind.css -o ./public/tailwind.css"
   },
   "dependencies": {
     "@burhanahmeed/vue-modal-2": "^1.1.11",

@@ -22,8 +22,8 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        button: ['DM Sans', 'sans-serif'],
-        body: ['DM Sans', 'sans-serif']
+        button: ['Montserrat', 'sans-serif'],
+        body: ['Open Sans', 'sans-serif']
       },
       colors: {
         pallette: {
@@ -56,6 +56,10 @@ module.exports = {
           },
           gold: {
             DEFAULT: "#F9A51A"
+          },
+          button:{
+            DEFAULT: "#004358",
+            hover: "#005e86"
           }
         },
       },

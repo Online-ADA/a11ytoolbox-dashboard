@@ -3,47 +3,24 @@
 		<Loader v-if="loading"></Loader>
 		
 		<template v-if="audit">
-			<div class="flex w-full justify-center items-center">
-				<A v-if="!audit.locked || isManager" class="pr-3" type='router-link' :to="{path: `/audits/${$route.params.id}/edit`}">Edit Audit</A>
-				<A class="pr-3" type='router-link' :to="{path: `/projects/${audit.project_id}`}">View Project</A>
-				<A class="pr-3" v-if="!audit.locked" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Import</A>
-				<button v-if="issues.length" @click="openModal( ()=>{whichCSVModalOpen = true} )" type="button" class="hover:text-white hover:bg-pallette-orange mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm">
-					Export
-				</button>
-				<A type='router-link' :to="{name: `NewScan`, params: {type:'audit', id: $route.params.id} }">Initiate Scan</A>
-			</div>
-			<h2 class="mb-1 text-xl">{{audit.title}}</h2>
-			<h3 v-if="audit.domain" class="mb-3 text-base">{{audit.domain.url}}</h3>
-			<h3 v-else class="mb-3 text-base font-bold">This audit has no domain</h3>
-			<span v-if="audit.locked" class="text-2xl"><i class="fas fa-lock" aria-hidden="true"></i></span>
-			<h3 class="text-base" v-if="audit.locked">This audit is locked and cannot be modified</h3>
+			<!-- <h2 class="mb-1 text-xl">{{audit.title}}</h2> -->
+			
 			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
 		</template>
-		<div id="bottom-bar" class="bg-white w-full border-t border-black p-4 flex justify-between fixed bottom-0" style="z-index:25;">
+		<!-- <div id="bottom-bar" class="bg-white w-full border-t border-black p-4 flex justify-between fixed bottom-0" style="z-index:25;">
 			<div class="flex w-1/3 items-center">
-				<Button class="mx-2" :color="shouldCondense ? 'red' : 'white'" @click.native.prevent="shouldCondense = !shouldCondense">
-					<span v-if="!shouldCondense">Condense </span>
-					<span v-else>Expand </span>
-					Table
-				</Button>
-				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="openModal(editIssue)" class="mx-2" color="red" hover="true">Edit Issue</Button>
-				<Button v-if="selectedRows.length === 1 && !audit.locked" @click.native.prevent="openModal(createFromCopy)" class="mx-2" color="red" hover="true">Copy Issue</Button>
-				<Button v-if="selectedRows.length > 1 && !audit.locked" @click.native.prevent="openModal( ()=>{confirmDeleteModalOpen = true} )" class="mx-2" color="delete" hover="true">Delete Issues</Button>
-				<Button v-if="selectedRows.length < 1 && !audit.locked" @click.native.prevent="openModal(newIssue)" class="mx-2" color="red" hover="true">Add Issue</Button>
-				<!-- <Button @click.native.prevent="darkMode = !darkMode" class="mx-2" :color="darkMode ? 'red' : 'white'" :hover="true">Dark Mode</Button> -->
 			</div>
 			<div class="w-1/3 flex flex-wrap items-center justify-center">
 				<span aria-live="polite" aria-atomic="true">Issues Selected: {{selectedRows.length}}</span>
 				<div class="w-full mt-2">Total Issues: {{issues.length}}</div>
 			</div>
 			<div class="flex w-1/3 justify-end items-center">
-				<Button v-if="!audit.locked" @click.native.prevent="markComplete" class="mx-2" color="red" hover="true">Complete Audit</Button>
 				<Button v-if="audit.locked && audit.number > 0 < 3" @click.native.prevent="createNextAudit" class="mx-2" color="red" hover="true">Create next audit</Button>
 			</div>
-		</div>
+		</div> -->
 		
 		
 		<Modal class="z-40" size="full" :open="issueModalOpen">
@@ -360,8 +337,7 @@ import Card from '../../components/Card'
 import Label from '../../components/Label'
 import TextInput from '../../components/TextInput'
 import TextArea from '../../components/TextArea'
-import projects from '../../store/modules/project'
-import admin from '../../store/modules/admin'
+import { EventBus } from '../../services/eventBus'
 
 export default {
 	data: () => ({
@@ -585,7 +561,7 @@ export default {
 	},
 	props: [],
 	watch: {
-		"$route.params.id": function(newVal){
+		"$route.params.id": function(){
 			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
 			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
 			this.$store.dispatch("admin/getAuditStates")
@@ -811,6 +787,8 @@ export default {
 			}else{
 				this.selectedRows.push( issue.id )
 			}
+
+			EventBus.$emit('auditSelectedRowsUpdated', this.selectedRows.length)
 		},
 		htmlDecode(input) {
 			var doc = new DOMParser().parseFromString(input, "text/html");
@@ -940,19 +918,58 @@ export default {
 		}
 	},
 	created() {
-		if(this.$store.state.projects === undefined){
-			this.$store.registerModule('projects', projects)
-		}
-		if(this.$store.state.admin === undefined){
-			this.$store.registerModule('admin', admin)
-		}
 		if( this.$store.state.audits ){
 			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
 			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
 			this.$store.dispatch("admin/getAuditStates")
 		}
+		let that = this
+		EventBus.$on('toolbarEmit', (payload)=>{
+			if( payload.action == 'audit-condense' ){
+				that.shouldCondense = !that.shouldCondense
+				return
+			}
+			if( payload.action == 'audit-add-issue' ){
+				that.openModal(that.newIssue)
+				return
+			}
+			if( payload.action == 'audit-delete-many' ){
+				that.openModal( ()=>{that.confirmDeleteModalOpen = true} )
+				return
+			}
+			if( payload.action == 'audit-edit-issue' ){
+				that.openModal( that.editIssue )
+				return
+			}
+			if( payload.action == 'audit-copy-issue' ){
+				that.openModal( that.createFromCopy )
+				return
+			}
+			if( payload.action == 'audit-issues-download' ){
+				that.openModal(()=>{that.whichCSVModalOpen = true})
+				return
+			}
+			if( payload.action == 'audit-complete' ){
+				that.openModal(that.markComplete)
+				return
+			}
+		})
+		
 	},
 	mounted() {
+		this.$store.state.projects.tool.type = "audit"
+		this.$store.state.projects.tool.info = '<p>Here is a list of the various functionality you can expect on the audit issues table:</p>'+
+			'<ul class="list-disc text-left mb-3">'+
+			'	<li><strong>Horizontal scrolling:</strong> at any point while focused inside the table, using the left and right arrow keys will scroll the table to the left and right</li>'+
+			'	<li><strong>Freezing Columns:</strong> Each column has a button for freezing it in place, such that while scrolling the table left and right, the column will remain in its position while the rest of the unfrozen columns scroll like normal</li>'+
+			'	<li><strong>Multi Column Sorting:</strong> The sort buttons have 3 modes: Unsorted, Ascending and Descending. If more than one column has been sorted, the columns will sort in order across all sorted columns, i.e. sorting by column A by ascending and column B by descending will sort both columns respectively first by column A then by column B.</li>'+
+			'	<li><strong>Repositioning of Columns:</strong> Each column, while not frozen, can be moved left or right to reposition them within the table.</li>'+
+			'</ul>'+
+			'<h2 style="line-height:18px;font-size:12px;" class="pt-5 w-full">'+
+			'	<div style="font-size:14px">Search</div>'+
+			'	<span style="font-size:12px">First choose which column you want to search from the dropdown, then enter your search criteria, then click submit</span>'+
+			'</h2>'
+
 		var Block = Quill.import('blots/block');
 		Block.tagName = 'DIV';
 		Quill.register(Block, true);
@@ -1007,6 +1024,7 @@ export default {
 		TextArea
 	},
 }
+
 </script>
 <style scoped>
 	#no-issues-import:hover{

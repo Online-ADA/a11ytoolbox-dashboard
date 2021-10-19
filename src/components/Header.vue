@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="border mx-3 project-divider"></div>
+        <div class="border mx-3 divider"></div>
         <div class="text-white capitalize">{{$store.state.projects.project.name}}</div>
 
         <div role="button" tabindex="0" aria-expanded="false" v-if="$store.getters['auth/isManager']" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
@@ -194,7 +194,7 @@ export default {
 
 <style scoped>
 
-#header-container .project-divider{
+#header-container .divider{
     height: 35px;
     margin-top: auto;
     margin-bottom: auto;

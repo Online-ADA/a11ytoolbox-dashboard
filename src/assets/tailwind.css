@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 @layer base {
-    h1 {
-    	@apply text-4xl;
-    }
-    h2 {
+   h1 {
+   	@apply text-4xl;
+   }
+   h2 {
     	@apply text-3xl;
 	}
 	h3{
@@ -16,7 +16,7 @@
 		@apply text-xl;
 	}
 	select {
-		@apply block border cursor-pointer focus:ring-1 outline-none ring-pallette-blue p-2 rounded shadow;
+		@apply block border cursor-pointer focus:ring-1 outline-none ring-pallette-blue rounded shadow;
 	}
 	table :not(.ql-editor) ol{
 		@apply list-decimal pl-4;
@@ -29,5 +29,8 @@
 	}
 	:not(tr), button{
 		@apply focus:outline-black;
+	}
+	button.standard{
+		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover text-base font-semibold transition-colors text-white;
 	}
 }
