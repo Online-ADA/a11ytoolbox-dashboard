@@ -7,7 +7,7 @@
                     <span>{{audit.domain.title}}</span>
                     <div class="border border-black mx-3.5 divider"></div>
                     <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
-                    <span>Total Issues: {{audit.issues.length}}</span>
+                    <span>Total Issues: {{totalRows}}</span>
                 </div>
                 <span class="w-auto mr-2 flex items-center">
                     <!-- Issue Tools -->
@@ -45,7 +45,7 @@
                 </span>
             </div>
         </div>
-        <div class="search-bar items-center flex w-full shadow-lg p-1 bg-white text-13" :class="{open: searchBarOpen}" >
+        <div class="search-bar justify-end items-center flex w-full shadow-lg p-1 bg-white text-13" :class="{open: searchBarOpen}" >
             <!-- <label class="flex items-center">
                 <span class="pr-1">Case Sensitive:</span>
                 <Checkbox v-model="searchData.caseSensitive"></Checkbox>
@@ -62,6 +62,7 @@
             </label>
             
             <button class="ml-5 standard px-2" @click.prevent="toolbarEmit('audit-search')" >Submit</button>
+            <button title="Close Search Bar" class="ml-3.5 mr-5" @click.prevent="searchBarOpen = false" >X</button>
         </div>
     </div>
     
@@ -81,7 +82,7 @@ export default {
         return {
             toggled: [],
             auditRowsSelected: 0,
-            auditTotalRows: 0,
+            auditFilteredRows: 0,
             searchBarOpen: false,
             searchData: {
                 term: "",
@@ -158,6 +159,12 @@ export default {
     computed: {
         audit(){
             return this.$store.state.audits.audit
+        },
+        totalRows(){
+            if( this.searchBarOpen ){
+                return this.auditFilteredRows
+            }
+            return this.audit.issues.length
         }
     },
     methods: {
@@ -168,7 +175,6 @@ export default {
             }
             if( action=='audit-search' ){
                 data = this.searchData
-                this.searchBarOpen = false
             }
             EventBus.$emit('toolbarEmit', {action: action, data: data})
         },
@@ -194,8 +200,9 @@ export default {
         EventBus.$on('auditSelectedRowsUpdated', (data)=>{
             that.auditRowsSelected = data
         })
-        EventBus.$on('auditTotalRowsUpdated', (data)=>{
-            that.auditTotalRows = data
+        EventBus.$on('auditFilteredRows', (data)=>{
+            console.log("This is firing", data);
+            that.auditRowsSelected = data
         })
     },
 }

@@ -371,7 +371,7 @@
 					let self = this
 					this.filteredRows = this.columnData.filter( c => {
 						let column = self.search.column.toLowerCase().replaceAll(/[ ]/g, "_")
-						console.log(column);
+						
 						if( column == "success_criteria" ){
 							column = "articles"
 						}
@@ -381,7 +381,7 @@
 						
 						if( Array.isArray(c[column]) ){
 							let toSearch = c[column]
-							console.log("Was array", c, column, c[column]);
+							
 							if( column == "articles" ){
 								toSearch = c[column].map( a=>a.display)
 							}
@@ -393,7 +393,6 @@
 							}
 							return toSearch.join("").includes(self.search.term)
 						}else{
-							console.log("Not an array", c, column, c[column]);
 							if( !self.search.caseSensitive ){
 								return c[column].toLowerCase().includes(self.search.term)
 							}
@@ -404,6 +403,7 @@
 					this.filtering = false
 					this.filteredRows = []
 				}
+				EventBus.$emit("auditFilteredRows", this.rows.length)
 			},
 			showHideColumns(){
 				

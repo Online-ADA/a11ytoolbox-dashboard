@@ -27,7 +27,7 @@ tr.selected {
     transform:translateY(-2px);
 }
 tr.selected td {
-    background-color: rgb(235, 140, 47) !important;
+    background-color: #F9A51A !important;
 }
 tr:focus td{
     background-color:#1Dacd6 !important;
@@ -77,15 +77,15 @@ table{
     z-index:1
 }
 tr.new td{ background-color: #FFFFFF; }
-tr.resolved td{ background-color: #C5F8BE; }
-tr.partly-resolved td{ background-color: #FFF2CC; }
-tr.remains td{ background-color: #F4CCCC; }
-tr.regression td{ background-color: #D9D2E9; }
-tr.best-practice td{ background-color: #CFE2F3; }
-tr.third-party-problem td{ background-color: #D9D9D9; }
-tr.resolved-by-removal td{ background-color: #D9D9D9; }
-tr.usability-problem td{ background-color: #FCE5CD; }
-tr.duplicate td{ background-color: #c27ba0; }
+tr.resolved td{ background-color: #CEE4D7; }
+tr.partly-resolved td{ background-color: #FEEAD1; }
+tr.remains td{ background-color: #F4CCCD; }
+tr.regression td{ background-color: #D2D0D3; }
+tr.best-practice td{ background-color: #CCE1E7; }
+tr.third-party-problem td{ background-color: #D3D3D3; }
+tr.resolved-by-removal td{ background-color: #D3D3D3; }
+tr.usability-problem td{ background-color: #FEEAD1; }
+tr.duplicate td{ background-color: #FBD4D3; }
 table.condensed td > *{
     max-height: 82px;
     height: 82px;

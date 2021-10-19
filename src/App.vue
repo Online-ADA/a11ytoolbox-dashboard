@@ -16,7 +16,7 @@
 		<div id="content" class="flex ml-auto h-full">
 			<div class="w-full h-full max-w-full">
 				<div class="flex h-full">
-					<div class="max-w-full flex-1">
+					<div class="max-w-full flex flex-1">
 						<CanvasToolbar @showInfoSidebar="showInfoSidebar" v-if="tool.type" :tool="tool"></CanvasToolbar>
 						
 						<div
@@ -255,13 +255,16 @@ export default {
   color: black;
 }
 .info-sidebar{
+	top:105px;
 	width:200px;
 	padding:10px;
 	font-size:12px;
 	background-color: #E5E5E5;
 	overflow-x: hidden;
+	overflow-y:auto;
 	transition: max-width 150ms ease;
 	height:100vh;
+	max-height:calc(100vh - 105px);
 	display:none;
 	animation-duration: 150ms;
    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
