@@ -113,9 +113,9 @@
 			<span v-show="!rows.length">No issues</span>
 		</div>
 		
-		<Modal class="z-30" :open="columnPickerOpen">
+		<Modal style="z-index:71" :open="columnPickerOpen">
 			<div class="w-full p-3">
-				<Button aria-label="Close column selector modal" @click.native.prevent="closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<button aria-label="Close column selector modal" @click.prevent="closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4 px-2 standard">X</button>
 				<ul class="flex flex-wrap">
 					<template v-for="(header, index) in headers">
 						<li v-if="!header.hidePermanent" class="flex w-5/12 mx-2 my-2 justify-center items-center" :key="index">
@@ -125,7 +125,7 @@
 					</template>
 				</ul>
 				<!-- <Button @keyup.enter="showHideColumns" @keyup.space="showHideColumns" @click="showHideColumns">Submit</Button> -->
-				<button @keyup.enter="showHideColumns" @keyup.space="showHideColumns" @click="showHideColumns" class="px-2 py-1 font-button rounded uppercase transition-colors duration-100 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-blue hover:text-white">Submit</button>
+				<button @keyup.enter="showHideColumns" @keyup.space="showHideColumns" @click="showHideColumns" class="px-2 standard">Submit</button>
 			</div>
 		</Modal>
 	</div>

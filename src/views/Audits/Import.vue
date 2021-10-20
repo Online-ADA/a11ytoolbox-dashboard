@@ -378,7 +378,7 @@ export default {
     watch: {
         primaryAudit(newVal){
             if( newVal ){
-                this.$store.dispatch("projects/getAuditsForProject", {project_id: newVal.project_id})
+                this.$store.dispatch("projects/getAuditsForProject", {project_id: newVal.project_id}, true)
                 this.$store.dispatch("projects/getScansForProject", {project_id: newVal.project_id})
             }
         },

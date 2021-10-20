@@ -27,6 +27,10 @@ module.exports = {
       },
       colors: {
         pallette: {
+          alert:{
+            DEFAULT: "#840002",
+            hover: "#c80a00"
+          },
           grey: {
             light: "#F0F0F0",
             DEFAULT: "#616161",

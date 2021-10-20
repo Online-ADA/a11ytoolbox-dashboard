@@ -1,5 +1,5 @@
 <template>
-	<div style="z-index:99" :id="`a${id}`" :class="{'fixed':open, 'hidden': !open}" class="inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+	<div :id="`a${id}`" :class="{'fixed':open, 'hidden': !open}" class="inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
 		<div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center p-0">
 			<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
 
@@ -8,13 +8,13 @@
 			
 			<div :class="{'max-w-lg': size == 'compact', 'max-w-4xl': size == 'wide', 'max-w-full': size == 'full'}" class="modal-main relative inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform align-middle p-4 w-full">
 				<div v-if="sizeButtons" class="flex ml-3 mt-2 absolute">
-					<button @click="changeSize('compact')" aria-label="Change the size of this modal to be compact" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-blue hover:text-white text-xs">
+					<button @click="changeSize('compact')" aria-label="Change the size of this modal to be compact" class="standard px-2">
 						Compact
 					</button>
-					<button @click="changeSize('wide')"  aria-label="Change the size of this modal to be wide" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-blue hover:text-white text-xs">
+					<button @click="changeSize('wide')"  aria-label="Change the size of this modal to be wide" class="standard px-2">
 						Wide
 					</button>
-					<button @click="changeSize('full')"  aria-label="Change the size of this modal to be full width" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-blue hover:text-white text-xs">
+					<button @click="changeSize('full')"  aria-label="Change the size of this modal to be full width" class="standard px-2">
 						Full
 					</button>
 				</div>

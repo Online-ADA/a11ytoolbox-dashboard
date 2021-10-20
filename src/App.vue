@@ -262,7 +262,7 @@ export default {
 	background-color: #E5E5E5;
 	overflow-x: hidden;
 	overflow-y:auto;
-	transition: max-width 150ms ease;
+	/* transition: max-width 150ms ease; */
 	height:100vh;
 	max-height:calc(100vh - 105px);
 	display:none;

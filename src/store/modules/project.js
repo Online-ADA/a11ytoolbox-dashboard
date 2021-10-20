@@ -194,10 +194,17 @@ export default {
 				.catch( re=> console.log(re))
 				.then( ()=>state.domainsLoading = false)
 			},
-			getAuditsForProject({state, rootState}, args){
+			getAuditsForProject({state, rootState, rootGetters}, args, withIssues=false){
 				state.loading = true
 
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.project_id}/audits`)
+				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.project_id}/audits`, {
+					params: {
+						user_id: rootState.auth.user.id, 
+						clientID: rootState.clients.client.id,
+						isManager: rootGetters["auth/isManager"],
+						withIssues: withIssues
+					}
+				})
 				.then( re=>state.audits = re.data.details)
 				.catch( re=>console.log(re))
 				.then( ()=>state.loading = false)

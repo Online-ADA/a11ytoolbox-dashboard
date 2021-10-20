@@ -23,13 +23,13 @@
 		</div> -->
 		
 		
-		<Modal class="z-40" size="full" :open="issueModalOpen">
+		<Modal style="z-index:71;" size="full" :open="issueModalOpen">
 			<div role="alert" :class="{ 'hidden': !showValidationAlert}" class="sr-only">
 				The following validation errors are present on the add issue form: 
 				<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
 			</div>
 			<div style="padding-bottom:60px;" class="bg-white px-4 pt-5 p-6">
-				<Button aria-label="Close add issue modal" @click.native.prevent="closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<button aria-label="Close add issue modal" @click.prevent="closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard px-2">X</button>
 				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
 				<div class="flex items-start mt-3 text-left w-full flex-wrap">
 					
@@ -91,14 +91,14 @@
 									</select>
 								</div>
 							</div>
-							<Button style="margin-top:40px" class="py-2 px-2" color="red" hover="true" @click.native.prevent="addBrowserCombo">Add Combo</Button>
+							<button style="margin-top:40px" class="px-2 standard" @click.prevent="addBrowserCombo">Add Combo</button>
 							<div class="flex-1 mx-2">
 								<Label style="margin-bottom:0;" for="browser_combos" class="text-lg leading-6">
 									Browser Combinations
 									<Card :gutters="false" :center="false" style="min-height:8rem" class="overflow-y-auto w-full text-left max-h-32 my-2">
 										<div class="flex mb-3" v-for="(input, i) in issue.browser_combos" :key="`bc-${i}`">
 											<TextInput class="flex-1" name="browser_combos" id="browser_combos" v-model="issue.browser_combos[i]"></TextInput>
-											<Button class="ml-1" :hover="true" @click.native.prevent="removeBrowserCombo(i)"><i class="fas fa-trash-alt"></i></Button>
+											<button title="Remove this browser combination" class="ml-1 standard alert px-2" @click.prevent="removeBrowserCombo(i)"><i class="fas fa-trash-alt"></i></button>
 										</div>
 									</Card>
 								</Label>
@@ -125,10 +125,10 @@
 								<Card :gutters="false" :center="false" class="overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.screenshots" :key="`screen-${i}`">
 										<TextInput class="flex-1" name="screenshots" id="screenshots" v-model="issue.screenshots[i]"></TextInput>
-										<Button class="ml-1" :aria-label="'Remove screenshot ' + issue.screenshots[i]" :hover="true" @click.native.prevent="removeScreenshot(i)"><i class="fas fa-trash-alt"></i></Button>
+										<button class="ml-1 standard alert px-2" :title="'Remove screenshot ' + issue.screenshots[i]" @click.prevent="removeScreenshot(i)"><i class="fas fa-trash-alt"></i></button>
 									</div>
 									
-									<Button :hover="true" @click.native.prevent="addNewScreenshot">Add New</Button>
+									<button class="standard px-2" @click.prevent="addNewScreenshot">Add New</button>
 								</Card>
 							</Label>
 						</div>
@@ -138,10 +138,10 @@
 								<Card :gutters="false" :center="false" class="overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.resources" :key="`resource-${i}`">
 										<TextInput class="flex-1" name="resources" id="resources" v-model="issue.resources[i]"></TextInput>
-										<Button :aria-label="'Remove resource ' + issue.resources[i]" class="ml-1" :hover="true" @click.native.prevent="removeResource(i)"><i class="fas fa-trash-alt"></i></Button>
+										<button :title="'Remove resource ' + issue.resources[i]" class="ml-1 standard alert px-2" @click.prevent="removeResource(i)"><i class="fas fa-trash-alt"></i></button>
 									</div>
 									
-									<Button :hover="true" @click.native.prevent="addNewResource">Add New</Button>
+									<button class="standard px-2" @click.prevent="addNewResource">Add New</button>
 								</Card>
 							</Label>
 						</div>
@@ -162,15 +162,15 @@
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Success Criteria Descriptions <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
 							<div class="flex items-start mb-1">
-								<Button class="mr-2" @click.native.prevent="selectDescriptionsModalOpen = true" color="red" hover="true">Add Descriptions</Button>
-								<Button @click.native.prevent="addIssueReferenceLinkModalOpen = true" color="red" hover="true">Add issue reference</Button>
+								<button class="mr-2 standard px-2" @click.prevent="selectDescriptionsModalOpen = true" >Add Descriptions</button>
+								<!-- <Button @click.native.prevent="addIssueReferenceLinkModalOpen = true" color="red" hover="true">Add issue reference</Button> -->
 							</div>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1" ></div>
 						</div>
 						<div class="w-1/2 flex flex-col px-2">
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
-							<Button class="self-start mb-1" @click.native.prevent="selectRecommendationsModalOpen = true" color="red" hover="true">Add Recommendations</Button>
+							<button class="self-start mb-1 standard px-2" @click.prevent="selectRecommendationsModalOpen = true" >Add Recommendations</button>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
 						</div>
 					</div>
@@ -191,20 +191,20 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 w-auto">
+				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" class="mx-2 standard alert px-2">
 					Delete
 				</button>
-				<button @click="closeModal( ()=>{issueModalOpen = false} )" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 w-auto">
+				<button @click="closeModal( ()=>{issueModalOpen = false} )" type="button" class="standard px-2">
 					Cancel
 				</button>
-				<button @click="saveIssue" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 w-auto">
+				<button @click="saveIssue" type="button" class="mx-2 standard px-2">
 					Save
 				</button>
 			</div>
 		</Modal>
-		<Modal size="wide" v-if="project" class="z-50" :open="addIssueReferenceLinkModalOpen">
+		<!-- <Modal size="wide" v-if="project" class="z-50" :open="addIssueReferenceLinkModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<Button aria-label="Close select descriptions modal" @click.native.prevent="addIssueReferenceLinkModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<button aria-label="Close select descriptions modal" @click.prevent="addIssueReferenceLinkModalOpen = false" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">Select which audit and issue</h2>
 				<Label for="referenceAudits">Audit</Label>
 				<select id="referenceAudits" name="referenceAudits" aria-label="Select audit" class="m-2 w-full" v-model="selectedReference.audit">
@@ -254,71 +254,71 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="addIssueReferenceLinkModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700  w-auto text-sm">
+				<button @click="addIssueReferenceLinkModalOpen = false" class="standard px-2">
 					Cancel
 				</button>
-				<button @click.prevent="createReferenceLink" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700  w-auto text-sm">
+				<button @click.prevent="createReferenceLink" class="standard px-2">
 					Create Reference
 				</button>
 			</div>
 			
-		</Modal>
-		<Modal class="z-50" :open="selectDescriptionsModalOpen">
+		</Modal> -->
+		<Modal style="z-index:72;" :open="selectDescriptionsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<Button aria-label="Close select descriptions modal" @click.native.prevent="selectDescriptionsModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<button aria-label="Close select descriptions modal" @click.prevent="selectDescriptionsModalOpen = false" class="absolute top-4 right-4 standard px-2" >X</button>
 				<h2 class="text-center">Which Success Criteria descriptions would you like to add?</h2>
 				<select aria-label="Select descriptions" class="m-2 w-full" multiple v-model="selectedDescriptions">
 					<option :value="articles.find( a=>a.id == option.id)" v-for="(option, index) in issue.articles" :key="'descriptions-'+index">{{articles.find( a=>a.id == option.id).number}}</option>
 				</select>
-				<Button @click.native.prevent="addSelectedDescriptions" class="mx-2" color="red" hover="true">Add</Button>
+				<button @click.prevent="addSelectedDescriptions" class="mx-2 standard px-2">Add</button>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="selectDescriptionsModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700  w-auto text-sm">
+				<button @click="selectDescriptionsModalOpen = false" class="standard px-2">
 					Cancel
 				</button>
 			</div>
 		</Modal>
-		<Modal class="z-50" :open="selectRecommendationsModalOpen">
+		<Modal style="z-index:72;" :open="selectRecommendationsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<Button aria-label="Close select recommendations modal" @click.native.prevent="selectRecommendationsModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<button aria-label="Close select recommendations modal" @click.prevent="selectRecommendationsModalOpen = false" class="absolute top-4 right-4 standard px-2" >X</button>
 				<h2 class="text-center">Which recommendations would you like to add?</h2>
 				<select aria-label="Select recommendations" class="m-2 w-full" multiple v-model="selectedRecommendations">
 					<option :value="option" v-for="(option, index) in filteredRecommendations" :key="'recommendations-'+index">{{option.description}}</option>
 				</select>
-				<Button @click.native.prevent="addSelectedRecommendations" class="mx-2" color="red" hover="true">Add</Button>
+				<button @click.prevent="addSelectedRecommendations" class="mx-2 standard px-2">Add</button>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
-				<button @click="selectRecommendationsModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700  w-auto text-sm">
+				<button @click="selectRecommendationsModalOpen = false" class="standard px-2">
 				Cancel
 				</button>
 			</div>
 		</Modal>
-		<Modal style="z-index:60;" :open="confirmDeleteModalOpen">
+		<Modal style="z-index:73;" :open="confirmDeleteModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<Button aria-label="Close select descriptions modal" @click.native.prevent="confirmDeleteModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<button aria-label="Close select descriptions modal" @click.prevent="confirmDeleteModalOpen = false" class="absolute top-4 right-4 standard px-2">X</button>
 				<h2 class="text-center">Are you sure you want to delete {{ selectedRows.length === 1 ? 'this issue' : 'these issues' }}?</h2>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="confirmDeleteModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700  w-auto text-sm">
+				<button @click="confirmDeleteModalOpen = false" class="standard px-2">
 					Cancel
 				</button>
-				<button @click="deleteSelectedIssues" v-if="selectedRows.length" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 font-medium text-white hover:bg-red-700  w-auto text-sm">
+				<button @click="deleteSelectedIssues" v-if="selectedRows.length" class="standard alert px-2">
 					Delete
 				</button>
 			</div>
 			
 		</Modal>
-		<Modal style="z-index:60;" :open="whichCSVModalOpen">
+		<Modal style="z-index:72;" :open="whichCSVModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<Button aria-label="Close select descriptions modal" @click.native.prevent="closeModal(()=>{whichCSVModalOpen = false})" class="absolute top-4 right-4" hover="true" color="white">X</Button>
+				<button aria-label="Close select descriptions modal" @click.prevent="closeModal(()=>{whichCSVModalOpen = false})" class="absolute top-4 right-4 standard px-2">X</button>
 				<h2 class="text-center">Which item do you want to export?</h2>
 				<div class="flex my-4 justify-center">
-					<Button @click.native.prevent="getIssuesCSV" class="mx-2" color="red" hover="true">Issues (.xlsx spreadsheet)</Button>
-					<Button @click.native.prevent="getSampleCSV" class="mx-2" color="red" hover="true">Working Sample (CSV)</Button>
+					<button @click.prevent="getIssuesCSV" class="mx-2 standard px-2">Issues (.xlsx spreadsheet)</button>
+					<button @click.prevent="getSampleCSV" class="mx-2 standard px-2">Working Sample (CSV)</button>
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="closeModal(()=>{whichCSVModalOpen = false})" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white font-medium text-gray-700  w-auto text-sm">
+				<button @click="closeModal(()=>{whichCSVModalOpen = false})" class="standard px-2">
 					Cancel
 				</button>
 			</div>

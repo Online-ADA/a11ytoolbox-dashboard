@@ -6,10 +6,10 @@
                     <!-- Tools Level -->
                     <li class="py-1 tool-container" :class="[expanded.includes('audit') ? 'expanded' : '']">
                         <span class="flex items-center">
+                            <button @click.prevent="expand('audit')" class="">
                             <i v-if="!expanded.includes('audit')" class="fas fa-caret-right"></i>
                             <i v-else class="fas fa-caret-down"></i>
-                            <button @click.prevent="expand('audit')" class="">
-                                Audits
+                            <span class="ml-2">Audits</span>
                             </button>
                         </span>
                         <div class="block">
@@ -102,7 +102,6 @@ export default {
 .tool-container button{
     width:100%;
     text-align:left;
-    padding-left: 7px;
 }
 .tool-container > div{
     overflow:hidden;
@@ -110,16 +109,18 @@ export default {
 }
 .tool-container ul{
     height:auto;
-    min-height:30px;
     padding-left:4px;
-    max-height: 0px;
+    display:none;
+    /* max-height: 0px; */
     overflow-y: auto;
-    transition: max-height;
+    /* transition: max-height;
     transition-duration: 150ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); */
 }
 .tool-container.expanded ul{
-    max-height:100%;
+    /* max-height:100%; */
+    display:block;
+    min-height:30px;
 }
 .tool-container ul li:hover,
 .tool-container ul li:focus{
