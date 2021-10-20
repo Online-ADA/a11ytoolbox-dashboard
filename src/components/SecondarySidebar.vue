@@ -31,7 +31,6 @@
 
 
 <script>
-import Button from './Button'
 
 export default {
     props:{
@@ -45,9 +44,7 @@ export default {
     name: 'secondary-sidebar',
     computed: {
     },
-    components:{
-        Button,
-    },
+    components:{},
     methods: {
         updateAudit(item){
             this.$router.push({path: this.getRoute(item)})

@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import Button from './Button'
 
 export default {
     props:{},
@@ -34,7 +33,6 @@ export default {
     name: 'sidebar',
     watch: {},
     components:{
-        Button,
     },
     methods: {
         setCurrentProject(id){

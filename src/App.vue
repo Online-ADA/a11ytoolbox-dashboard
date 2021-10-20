@@ -18,9 +18,7 @@
 				<div class="flex h-full">
 					<div class="max-w-full flex flex-1">
 						<CanvasToolbar @showInfoSidebar="showInfoSidebar" v-if="tool.type" :tool="tool"></CanvasToolbar>
-						
 						<div
-						style="margin-top:50px"
 						class="flex-1"
 						:class="{'info-sidebar-expanded':infoSidebarExpanded}"
 						id="main-content"
@@ -262,7 +260,6 @@ export default {
 	background-color: #E5E5E5;
 	overflow-x: hidden;
 	overflow-y:auto;
-	/* transition: max-width 150ms ease; */
 	height:100vh;
 	max-height:calc(100vh - 105px);
 	display:none;
@@ -283,11 +280,15 @@ export default {
 	transition:margin 150ms ease;
 	margin-right:0px;
 	max-width:100%;
+	margin-top:50px;
 }
 
 #main-content.info-sidebar-expanded{
 	margin-right:200px;
 	max-width: calc(100% - 200px);
+}
+#toolbar-container.search-bar-open + #main-content{
+	margin-top:85px;
 }
 
 </style>

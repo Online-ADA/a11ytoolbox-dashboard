@@ -29,7 +29,7 @@
 				<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
 			</div>
 			<div style="padding-bottom:60px;" class="bg-white px-4 pt-5 p-6">
-				<button aria-label="Close add issue modal" @click.prevent="closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard px-2">X</button>
+				<button aria-label="Close add issue modal" @click.prevent="closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
 				<div class="flex items-start mt-3 text-left w-full flex-wrap">
 					
@@ -125,10 +125,10 @@
 								<Card :gutters="false" :center="false" class="overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.screenshots" :key="`screen-${i}`">
 										<TextInput class="flex-1" name="screenshots" id="screenshots" v-model="issue.screenshots[i]"></TextInput>
-										<button class="ml-1 standard alert px-2" :title="'Remove screenshot ' + issue.screenshots[i]" @click.prevent="removeScreenshot(i)"><i class="fas fa-trash-alt"></i></button>
+										<button class="ml-1 standard alert" :title="'Remove screenshot ' + issue.screenshots[i]" @click.prevent="removeScreenshot(i)"><i class="fas fa-trash-alt"></i></button>
 									</div>
 									
-									<button class="standard px-2" @click.prevent="addNewScreenshot">Add New</button>
+									<button class="standard" @click.prevent="addNewScreenshot">Add New</button>
 								</Card>
 							</Label>
 						</div>
@@ -138,10 +138,10 @@
 								<Card :gutters="false" :center="false" class="overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.resources" :key="`resource-${i}`">
 										<TextInput class="flex-1" name="resources" id="resources" v-model="issue.resources[i]"></TextInput>
-										<button :title="'Remove resource ' + issue.resources[i]" class="ml-1 standard alert px-2" @click.prevent="removeResource(i)"><i class="fas fa-trash-alt"></i></button>
+										<button :title="'Remove resource ' + issue.resources[i]" class="ml-1 standard alert" @click.prevent="removeResource(i)"><i class="fas fa-trash-alt"></i></button>
 									</div>
 									
-									<button class="standard px-2" @click.prevent="addNewResource">Add New</button>
+									<button class="standard" @click.prevent="addNewResource">Add New</button>
 								</Card>
 							</Label>
 						</div>
@@ -162,7 +162,7 @@
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Success Criteria Descriptions <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
 							<div class="flex items-start mb-1">
-								<button class="mr-2 standard px-2" @click.prevent="selectDescriptionsModalOpen = true" >Add Descriptions</button>
+								<button class="mr-2 standard" @click.prevent="selectDescriptionsModalOpen = true" >Add Descriptions</button>
 								<!-- <Button @click.native.prevent="addIssueReferenceLinkModalOpen = true" color="red" hover="true">Add issue reference</Button> -->
 							</div>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1" ></div>
@@ -170,7 +170,7 @@
 						<div class="w-1/2 flex flex-col px-2">
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
-							<button class="self-start mb-1 standard px-2" @click.prevent="selectRecommendationsModalOpen = true" >Add Recommendations</button>
+							<button class="self-start mb-1 standard" @click.prevent="selectRecommendationsModalOpen = true" >Add Recommendations</button>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
 						</div>
 					</div>
@@ -191,13 +191,13 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" class="mx-2 standard alert px-2">
+				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" class="mx-2 standard alert">
 					Delete
 				</button>
-				<button @click="closeModal( ()=>{issueModalOpen = false} )" type="button" class="standard px-2">
+				<button @click="closeModal( ()=>{issueModalOpen = false} )" type="button" class="standard">
 					Cancel
 				</button>
-				<button @click="saveIssue" type="button" class="mx-2 standard px-2">
+				<button @click="saveIssue" type="button" class="mx-2 standard">
 					Save
 				</button>
 			</div>
@@ -254,10 +254,10 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="addIssueReferenceLinkModalOpen = false" class="standard px-2">
+				<button @click="addIssueReferenceLinkModalOpen = false" class="standard">
 					Cancel
 				</button>
-				<button @click.prevent="createReferenceLink" class="standard px-2">
+				<button @click.prevent="createReferenceLink" class="standard">
 					Create Reference
 				</button>
 			</div>
@@ -265,44 +265,44 @@
 		</Modal> -->
 		<Modal style="z-index:72;" :open="selectDescriptionsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<button aria-label="Close select descriptions modal" @click.prevent="selectDescriptionsModalOpen = false" class="absolute top-4 right-4 standard px-2" >X</button>
+				<button aria-label="Close select descriptions modal" @click.prevent="selectDescriptionsModalOpen = false" class="absolute top-4 right-4 standard" >X</button>
 				<h2 class="text-center">Which Success Criteria descriptions would you like to add?</h2>
 				<select aria-label="Select descriptions" class="m-2 w-full" multiple v-model="selectedDescriptions">
 					<option :value="articles.find( a=>a.id == option.id)" v-for="(option, index) in issue.articles" :key="'descriptions-'+index">{{articles.find( a=>a.id == option.id).number}}</option>
 				</select>
-				<button @click.prevent="addSelectedDescriptions" class="mx-2 standard px-2">Add</button>
+				<button @click.prevent="addSelectedDescriptions" class="mx-2 standard">Add</button>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="selectDescriptionsModalOpen = false" class="standard px-2">
+				<button @click="selectDescriptionsModalOpen = false" class="standard">
 					Cancel
 				</button>
 			</div>
 		</Modal>
 		<Modal style="z-index:72;" :open="selectRecommendationsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<button aria-label="Close select recommendations modal" @click.prevent="selectRecommendationsModalOpen = false" class="absolute top-4 right-4 standard px-2" >X</button>
+				<button aria-label="Close select recommendations modal" @click.prevent="selectRecommendationsModalOpen = false" class="absolute top-4 right-4 standard" >X</button>
 				<h2 class="text-center">Which recommendations would you like to add?</h2>
 				<select aria-label="Select recommendations" class="m-2 w-full" multiple v-model="selectedRecommendations">
 					<option :value="option" v-for="(option, index) in filteredRecommendations" :key="'recommendations-'+index">{{option.description}}</option>
 				</select>
-				<button @click.prevent="addSelectedRecommendations" class="mx-2 standard px-2">Add</button>
+				<button @click.prevent="addSelectedRecommendations" class="mx-2 standard">Add</button>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
-				<button @click="selectRecommendationsModalOpen = false" class="standard px-2">
+				<button @click="selectRecommendationsModalOpen = false" class="standard">
 				Cancel
 				</button>
 			</div>
 		</Modal>
 		<Modal style="z-index:73;" :open="confirmDeleteModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<button aria-label="Close select descriptions modal" @click.prevent="confirmDeleteModalOpen = false" class="absolute top-4 right-4 standard px-2">X</button>
+				<button aria-label="Close select descriptions modal" @click.prevent="confirmDeleteModalOpen = false" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">Are you sure you want to delete {{ selectedRows.length === 1 ? 'this issue' : 'these issues' }}?</h2>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="confirmDeleteModalOpen = false" class="standard px-2">
+				<button @click="confirmDeleteModalOpen = false" class="standard">
 					Cancel
 				</button>
-				<button @click="deleteSelectedIssues" v-if="selectedRows.length" class="standard alert px-2">
+				<button @click="deleteSelectedIssues" v-if="selectedRows.length" class="standard alert">
 					Delete
 				</button>
 			</div>
@@ -310,15 +310,15 @@
 		</Modal>
 		<Modal style="z-index:72;" :open="whichCSVModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<button aria-label="Close select descriptions modal" @click.prevent="closeModal(()=>{whichCSVModalOpen = false})" class="absolute top-4 right-4 standard px-2">X</button>
+				<button aria-label="Close select descriptions modal" @click.prevent="closeModal(()=>{whichCSVModalOpen = false})" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">Which item do you want to export?</h2>
 				<div class="flex my-4 justify-center">
-					<button @click.prevent="getIssuesCSV" class="mx-2 standard px-2">Issues (.xlsx spreadsheet)</button>
-					<button @click.prevent="getSampleCSV" class="mx-2 standard px-2">Working Sample (CSV)</button>
+					<button @click.prevent="getIssuesCSV" class="mx-2 standard">Issues (.xlsx spreadsheet)</button>
+					<button @click.prevent="getSampleCSV" class="mx-2 standard">Working Sample (CSV)</button>
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="closeModal(()=>{whichCSVModalOpen = false})" class="standard px-2">
+				<button @click="closeModal(()=>{whichCSVModalOpen = false})" class="standard">
 					Cancel
 				</button>
 			</div>

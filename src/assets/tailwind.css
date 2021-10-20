@@ -31,9 +31,9 @@
 		@apply focus:outline-black;
 	}
 	button.standard{
-		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover text-base font-semibold transition-colors text-white;
+		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover text-base font-semibold transition-colors text-white px-2;
 	}
 	button.standard.alert{
-		@apply bg-pallette-alert hover:bg-pallette-alert-hover
+		@apply bg-pallette-alert hover:bg-pallette-alert-hover;
 	}
 }

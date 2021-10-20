@@ -1,5 +1,5 @@
 <template>
-    <div id="toolbar-container" class="fixed z-50 w-full h-12" v-if="tool.type == 'audit' && audit">
+    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full h-12" v-if="tool.type == 'audit' && audit">
         <div id="toolbar" class="w-full p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
             <div class="justify-between flex items-center">
@@ -71,8 +71,8 @@
                 <input class="px-1 border border-black border-l-0 border-r-0 border-t-0" style="max-height:39px;font-size:12px;" v-model="searchData.term" name="search-criteria" />
             </label>
             
-            <button class="ml-5 standard px-2" @click.prevent="toolbarEmit('audit-search')" >Submit</button>
-            <button title="Close Search Bar" class="ml-3.5 mr-5" @click.prevent="searchBarOpen = false" >X</button>
+            <button class="ml-5 standard" @click.prevent="toolbarEmit('audit-search')" >Submit</button>
+            <button title="Close Search Bar" class="ml-3.5 mr-5 standard" @click.prevent="searchBarOpen = false" >X</button>
         </div>
     </div>
     
@@ -80,7 +80,6 @@
 
 
 <script>
-import Button from "./Button.vue"
 import Checkbox from "./Checkbox.vue"
 import { EventBus } from '../services/eventBus'
 
@@ -237,7 +236,6 @@ export default {
         }
     },
     components:{
-        Button,
         Checkbox
     },
     created() {
@@ -269,6 +267,7 @@ export default {
     #toolbar-container{
         width: calc(100%);
     }
+    
     #toolbar .search-bar button{ font-size:14px; }
     #toolbar .divider{
         height: 30px;
@@ -283,12 +282,20 @@ export default {
         height:35px;
         z-index:0;
         position:relative;
-        top:-35px;
+        display:none;
+        animation-duration: 150ms;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        animation-direction: forwards;
     }
     .search-bar.open{
-        top:0px;
+        display:flex;
+        animation-name: showSearchbar;
     }
     .text-13, .text-13 *{
         font-size:13px;
+    }
+    @keyframes showSearchbar{
+        0%{ top:-35px; }
+        100%{ top:0px; }
     }
 </style>

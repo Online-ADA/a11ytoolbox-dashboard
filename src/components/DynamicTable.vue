@@ -8,7 +8,7 @@
 						<input name="search" id="search" v-model="searchOpts.term" class="border m-1 p-1" />
 						<label class="text-sm" for="case">Case Sensitive</label>
 						<Checkbox size="small" class="mx-1" name="case" id="case" v-model="searchOpts.caseSensitive"></Checkbox>
-						<Button @click.native.prevent="submitSearch" class="ml-1 text-sm" :hover="true">Submit</Button>
+						<button @click.prevent="submitSearch" class="ml-1 text-sm standard" :hover="true">Submit</button>
 					</div>
 					<table class="min-w-full divide-y divide-gray-200 border-collapse">
 						<thead class="bg-gray-50">
