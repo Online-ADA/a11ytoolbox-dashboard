@@ -7,6 +7,7 @@ import auditsModule from './modules/audits.js'
 import projectsModule from './modules/project.js'
 import domainsModule from './modules/domains.js'
 import scanModule from './modules/scan.js'
+import userModule from './modules/user.js'
 
 Vue.use(Vuex)
 
@@ -18,6 +19,7 @@ export default new Vuex.Store({
         projects: projectsModule,
         domains: domainsModule,
         scan: scanModule,
-        admin: adminModule
+        admin: adminModule,
+        user: userModule,
     }
 })

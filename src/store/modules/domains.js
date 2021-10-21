@@ -131,19 +131,22 @@ export default {
 								return
 							}
 							args.router.push({path: "/projects/list"})
-						}
+						},
+						position: 'bottom right'
 					},
 					onWarn:{
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					},
 					onError: {
 						title: "Error",
 						text: "Failed updating project",
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					}
 				};
 				Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.id}`, requestArgs)
@@ -156,7 +159,8 @@ export default {
 						Vue.notify({
 							title: "Success",
 							text: "Sample item updated",
-							type: "success"
+							type: "success",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -166,7 +170,8 @@ export default {
 						Vue.notify({
 							title: "Error",
 							text: "Problem updating the sample item. Please see the console for more information",
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -183,19 +188,22 @@ export default {
 						callback: function(response){
 							state.loading = false
 							state.domain = response.data.details
-						}
+						},
+						position: 'bottom right'
 					},
 					onWarn:{
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					},
 					onError: {
 						title: "Error",
 						text: "Failed getting projects",
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					}
 				};
 				Request.get(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}`, requestArgs)
@@ -213,7 +221,8 @@ export default {
 						Vue.notify({
 							title: "Success",
 							text: "page saved successfully",
-							type: "success"
+							type: "success",
+							position: 'bottom right'
 						})
 					}
 					state.domain = response.data.details
@@ -223,7 +232,8 @@ export default {
 						Vue.notify({
 							title: "Error",
 							text: response.error,
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -241,7 +251,8 @@ export default {
 						Vue.notify({
 							title: "Success",
 							text: "Item deleted",
-							type: "success"
+							type: "success",
+							position: 'bottom right'
 						})
 					}
 					state.domain = response.data.details
@@ -251,7 +262,8 @@ export default {
 						Vue.notify({
 							title: "Error",
 							text: response.error,
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -267,7 +279,8 @@ export default {
 						Vue.notify({
 							title: "Success",
 							text: "Page deleted",
-							type: "success"
+							type: "success",
+							position: 'bottom right'
 						})
 					}
 					state.domain = response.data.details
@@ -277,7 +290,8 @@ export default {
 						Vue.notify({
 							title: "Error",
 							text: response.error,
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -331,19 +345,22 @@ export default {
 						callback: function(response){
 							state.loading = false
 							state.domain = response.data.details
-						}
+						},
+						position: 'bottom right'
 					},
 					onWarn:{
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					},
 					onError: {
 						title: "Error",
 						text: "Failed saving sitemap",
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					}
 				};
 				Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sitemap`, requestArgs)
@@ -356,7 +373,8 @@ export default {
 						Vue.notify({
 							title: "Success",
 							text: "Sitemap deleted",
-							type: "success"
+							type: "success",
+							position: 'bottom right'
 						})
 					}
 					state.domain = response.data.details
@@ -366,7 +384,8 @@ export default {
 						Vue.notify({
 							title: "Error",
 							text: response.error,
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -382,7 +401,8 @@ export default {
 						Vue.notify({
 							title: "Success",
 							text: "Structured sample deleted",
-							type: "success"
+							type: "success",
+							position: 'bottom right'
 						})
 					}
 					state.domain = response.data.details
@@ -392,7 +412,8 @@ export default {
 						Vue.notify({
 							title: "Error",
 							text: response.error,
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -409,7 +430,8 @@ export default {
 						Vue.notify({
 							title: "Success",
 							text: "Domain updated",
-							type: "success"
+							type: "success",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -419,7 +441,8 @@ export default {
 						Vue.notify({
 							title: "Error",
 							text: re,
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -435,7 +458,8 @@ export default {
 						Vue.notify({
 							title: "Success",
 							text: "Structured sample deleted",
-							type: "success"
+							type: "success",
+							position: 'bottom right'
 						})
 					}
 					state.domain = response.data.details
@@ -445,7 +469,8 @@ export default {
 						Vue.notify({
 							title: "Error",
 							text: response.error,
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})

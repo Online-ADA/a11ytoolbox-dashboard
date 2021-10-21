@@ -33,7 +33,8 @@ export default {
 					Vue.notify({
 						title: "Success",
 						text: "A scan has been initiated.",
-						type: "success"
+						type: "success",
+						position: 'bottom right'
 					})
 				})
 				.catch( re=>console.log(re))

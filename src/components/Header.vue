@@ -33,7 +33,7 @@
                     <i class="fas fa-tools"></i>
                 </span>
             </div>
-            <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
+            <ul class="text-left mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in manageDropdown" :key="index">
                     <template v-if="child.type == 'router-link'">
                         <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
@@ -62,6 +62,8 @@
             
             <span class="sub-label text-white">{{account}}</span>
         </div>
+
+        <router-link to="/user/profile"><img :src="user_avatar" class="avatar" /></router-link>
     </div>
 </template>
 
@@ -162,6 +164,12 @@ export default {
                 return this.$store.state.clients.client.name;
             return "Clients";
         },
+        user_avatar(){
+            if( this.$store.state.auth.user && this.$store.state.auth.user.meta.avatar != undefined ){
+                return this.$store.state.auth.user.meta.avatar.url
+            }
+            return "/img/user.3ed95c69.gif"
+        }
     },
     watch: {
         "$store.state.auth.accounts":function(newVal){
@@ -232,6 +240,13 @@ img {
     image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
     image-rendering: crisp-edges;
     -ms-interpolation-mode: nearest-neighbor;
+}
+img.avatar{
+    width: 31px;
+    height: 31px;
+    margin-left: 10px;
+    margin-top: 5px;
+    clip-path: circle(50% at 50% 50%);
 }
 
 #login.login-button{

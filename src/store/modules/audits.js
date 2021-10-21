@@ -68,7 +68,8 @@ export default {
 					Vue.notify({
 						title: "Success",
 						text: "A temporary audit has been created",
-						type: "success"
+						type: "success",
+						position: 'bottom right'
 					})
 					
 					let newTemp = {
@@ -87,7 +88,8 @@ export default {
 					Vue.notify({
 						title: "Success",
 						text: "Audit has been marked complete and is now locked",
-						type: "success"
+						type: "success",
+						position: 'bottom right'
 					})
 
 					state.audit = re.data.details
@@ -101,7 +103,8 @@ export default {
 					Vue.notify({
 						title: "Audit created",
 						text: "Redirecting to new audit...",
-						type: "success"
+						type: "success",
+						position: 'bottom right'
 					})
 					window.location.href = `https://${rootState.auth.site}/audits/${re.data.details}/import`
 				})
@@ -117,21 +120,24 @@ export default {
 						callback: function(response){
 							state.loading = false
 							state.project = response.data.details
-						}
+						},
+						position: 'bottom right'
 					},
 					onError: {
 						title:'Error',
 						text:'Retrieving this project caused an error',
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					},
 					onWarn: {
 						title: "Warning",
 						text: "There was a problem retrieving the project",
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					}
 				})
 			},
@@ -147,21 +153,24 @@ export default {
 						callback: function(response){
 							state.loading = false
 							state.projects = response.data.details
-						}
+						},
+						position: 'bottom right'
 					},
 					onError: {
 						title:'Error',
 						text:'Retrieving this projects caused an error',
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					},
 					onWarn: {
 						title: "Warning",
 						text: "There was a problem retrieving the projects",
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					}
 				})
 			},
@@ -192,7 +201,8 @@ export default {
 						Vue.notify({
 							title:"Success",
 							text: "Audit was create successfully. Redirecting to the audit...",
-							type: "success"
+							type: "success",
+							position: 'bottom right'
 						})
 					}
 					setTimeout(()=>{
@@ -209,7 +219,8 @@ export default {
 						Vue.notify({
 							title: "Error",
 							text: "There was an error when trying to create the audit. Please see the dev console for more information",
-							type:"error"
+							type:"error",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -226,7 +237,8 @@ export default {
 						Vue.notify({
 							title: "Success",
 							text: "Audits retrieved",
-							type: "success"
+							type: "success",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -236,7 +248,8 @@ export default {
 						Vue.notify({
 							title: "Error",
 							text: re.error,
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -276,19 +289,22 @@ export default {
 								return
 							}
 							args.router.push({path: "/audits/list"})
-						}
+						},
+						position: 'bottom right'
 					},
 					onWarn:{
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					},
 					onError: {
 						title: "Error",
 						text: "Failed updating audit",
 						callback: function(){
 							state.loading = false
-						}
+						},
+						position: 'bottom right'
 					}
 				};
 				Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.id}`, requestArgs)
@@ -380,7 +396,8 @@ export default {
 						Vue.notify({
 							title: "Error retrieving assistive technologies",
 							text: re.error,
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})
@@ -400,7 +417,8 @@ export default {
 						Vue.notify({
 							title: "Error retrieving software used",
 							text: re.error,
-							type: "error"
+							type: "error",
+							position: 'bottom right'
 						})
 					}
 				})

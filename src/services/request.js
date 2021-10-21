@@ -38,19 +38,23 @@ class Request {
     constructor(){
         this.defaultError = {
             title: 'Error',
-            type: 'error'
+            type: 'error',
+            position: 'bottom right'
         }
         this.defaultSuccess = {
             title: 'Success',
-            type: 'success'
+            type: 'success',
+            position: 'bottom right'
         }
         this.defaultInfo = {
             title: 'Info',
-            type: 'info'
+            type: 'info',
+            position: 'bottom right'
         }
         this.defaultWarn = {
             title: 'Warning',
-            type: 'warn'
+            type: 'warn',
+            position: 'bottom right'
         }
     }
 
@@ -161,6 +165,7 @@ class Request {
             if( response.data.success && args.onSuccess ){
                 if( args.onSuccess.type == undefined ){
                     args.onSuccess.type = "success"
+                    args.onSuccess.position = "bottom right"
                 }
                 this.parseArgs(args.onSuccess, response)
                 return
@@ -168,6 +173,7 @@ class Request {
             if( !response.data.success && args.onWarn ){
                 if( args.onWarn.type == undefined ){
                     args.onWarn.type = "warn"
+                    args.onWarn.position = "bottom right"
                 }
                 this.parseArgs(args.onWarn, response)
                 return
@@ -178,6 +184,7 @@ class Request {
             if( args.onError ){
                 if( args.onError.type == undefined ){
                     args.onError.type = "error"
+                    args.onError.position = "bottom right"
                 }
                 this.parseArgs(args.onError, error)
             }
@@ -197,12 +204,14 @@ class Request {
             if( response.data.success && args.onSuccess ){
                 if( args.onSuccess.type == undefined ){
                     args.onSuccess.type = "success"
+                    args.onSuccess.position = "bottom right"
                 }
                 this.parseArgs(args.onSuccess, response)
             }
             if( !response.data.success && args.onWarn ){
                 if( args.onWarn.type == undefined ){
                     args.onWarn.type = "warn"
+                    args.onWarn.position = "bottom right"
                 }
                 this.parseArgs(args.onWarn, response)
                 return
@@ -213,6 +222,7 @@ class Request {
             if( args.onError ){
                 if( args.onError.type == undefined ){
                     args.onError.type = "error"
+                    args.onError.position = "bottom right"
                 }
                 this.parseArgs(args.onError, error)
             }

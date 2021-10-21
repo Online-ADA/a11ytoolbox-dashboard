@@ -91,7 +91,8 @@ export default {
 					Vue.notify({
 						title:"Success",
 						text:"Project created",
-						type: "success"
+						type: "success",
+						position: 'bottom right'
 					})
 					if( !args.vm.independent ){
 						args.vm.complete = true
@@ -139,7 +140,8 @@ export default {
 						Vue.notify({
 							title: "Success",
 							text: "Projects retrieved",
-							type:"success"
+							type:"success",
+							position: 'bottom right'
 						})
 					}
 					state.all = re.data.details
@@ -149,7 +151,8 @@ export default {
 					Vue.notify({
 						title: "Error",
 						text: "Failed getting projects",
-						type:"error"
+						type:"error",
+						position: 'bottom right'
 					})
 				})
 				.then( ()=> state.loading = false)
