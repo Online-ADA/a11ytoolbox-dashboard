@@ -45,6 +45,11 @@ if( window.location.hostname == "dashboardtoolbox.ngrok.io" ){
   accountHost = "https://accountstoolbox.ngrok.io"
   site = "dashboardtoolbox.ngrok.io"
 }
+if( window.location.hostname == "toolboxdashboardd.ngrok.io" ){
+  apiHost = "https://toolboxapii.ngrok.io"
+  accountHost = "https://oadaaccountss.ngrok.io"
+  site = "toolboxdashboardd.ngrok.io"
+}
 
 window.App = new Vue({
   router,
@@ -58,7 +63,7 @@ function run(){
   store.state.auth.toolboxapi = apiHost
   store.state.auth.userAPI = `${apiHost}/api/user`
   store.state.auth.adminAPI = `${apiHost}/api/admin`
-
+  
   Request.getPromise(store.state.auth.toolboxapi+'/api/state/init')
     .then( response => {
       store.state.auth.user = response.data.details.user
