@@ -160,14 +160,14 @@ export default {
                     width: "150px",
                     hidePermanent: false
                 },
-                {
-                    header: "group id",
-                    show: false,
-                    sticky: false,
-                    style: {},
-                    width: "150px",
-                    hidePermanent: true
-                },
+                // {
+                //     header: "group id",
+                //     show: false,
+                //     sticky: false,
+                //     style: {},
+                //     width: "150px",
+                //     hidePermanent: true
+                // },
                 {
                     header: "pages",
                     show: true,
