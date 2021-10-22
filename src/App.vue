@@ -144,16 +144,6 @@ export default {
 				}
 			}
 		},
-		// account: function() {
-		// 	if ( !this.account && this.$route.path != '/' ){
-		// 		this.$router.push({path: '/'}).catch(()=>{})
-		// 	}
-		// },
-		// client: function() {
-		// 	if ( !this.client && this.$route.path != '/' ){
-		// 		this.$router.push({path: '/'}).catch(()=>{})
-		// 	}
-		// },
 	},
 	created() {
 	},

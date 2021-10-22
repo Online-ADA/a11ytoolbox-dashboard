@@ -110,6 +110,7 @@ function run(){
     .catch(re => {
       if( !params.get('oada_auth') ){
         if( Cookies.get("loggingIn") === "false" && re.response.data.message == "Unauthenticated." ){
+          console.log("THIS IS FIRING");
           store.dispatch("auth/login")
         }
       }

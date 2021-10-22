@@ -4,7 +4,7 @@
         <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
         <div class="mb-auto mt-auto">
-            <div role="button" tabindex="0" aria-expanded="false" class="dropdown-container dropdown-nolabel client-dropdown relative flex flex-col pl-8">
+            <div role="button" tabindex="0" :aria-expanded="[ dropdownsExpanded.includes('client') ? 'true' : 'false' ]" @click.prevent="expandDropdown('client')" :class="{expanded: dropdownsExpanded.includes('client')}" class="dropdown-container dropdown-nolabel client-dropdown relative flex flex-col pl-8">
                 <div v-if="$store.state.auth.user" class="flex items-center dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
                     <span @click.prevent class="block whitespace-no-wrap no-underline text-white" >
                         {{selectedClient}}
@@ -27,7 +27,7 @@
         <div class="border mx-3 divider"></div>
         <div class="text-white capitalize">{{$store.state.projects.project.name}}</div>
 
-        <div role="button" tabindex="0" aria-expanded="false" v-if="$store.getters['auth/isManager']" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
+        <div role="button" tabindex="0" @click.prevent="expandDropdown('manage')" :aria-expanded="[ dropdownsExpanded.includes('manage') ? 'true' : 'false' ]" v-if="$store.getters['auth/isManager']" :class="{expanded: dropdownsExpanded.includes('manage')}" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="manage" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
                 <span aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     <i class="fas fa-tools"></i>
@@ -43,7 +43,7 @@
             <span id="management-label" class="sub-label text-white uppercase"><div>Manager</div>Settings</span>
         </div>
 
-        <div role="button" tabindex="0" aria-expanded="false" :class="[!$store.getters['auth/isManager'] ? 'ml-auto' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
+        <div role="button" tabindex="0" @click.prevent="expandDropdown('user')" :aria-expanded="[ dropdownsExpanded.includes('user') ? 'true' : 'false' ]" :class="[!$store.getters['auth/isManager'] ? 'ml-auto' : '', dropdownsExpanded.includes('user') ? 'expanded' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
             <div id="login" v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
                 <span @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     {{$store.state.auth.user.first_name}}
@@ -116,6 +116,7 @@ export default {
                 },
             ],
             menuOpen: true,
+            dropdownsExpanded: []
         }
     },
     name: 'ada-header',
@@ -123,21 +124,6 @@ export default {
         if( this.$store.state.auth.accounts !== false && this.$store.state.auth.accounts.length ){
             this.updateAccountName()
         }
-        let allDropdowns = document.querySelectorAll(".dropdown-container")
-        document.body.addEventListener("keyup", (e)=>{
-            setTimeout(()=>{
-                if (e.code == 'Tab') {
-                    for (let index = 0; index < allDropdowns.length; index++) {
-                        const element = allDropdowns[index];
-                        if(  element == document.activeElement ){
-                            element.setAttribute("aria-expanded", true)
-                        }else{
-                            element.setAttribute("aria-expanded", false)
-                        }
-                    }
-                }
-            }, 1)
-        })
     },
     computed: {
         account(){
@@ -182,6 +168,14 @@ export default {
         }
     },
     methods: {
+        expandDropdown(value){
+            if( this.dropdownsExpanded.includes(value) ){
+                let index = this.dropdownsExpanded.indexOf(value)
+                this.dropdownsExpanded.splice(index, 1)
+            }else{
+                this.dropdownsExpanded.push(value)
+            }
+        },
         updateAccountName(){
             this.userDropdown[0].label = this.$store.state.auth.accounts.find(acc=>acc.id == this.$store.state.auth.account).name
         },
@@ -257,11 +251,16 @@ img.avatar{
     transition-duration: 150ms;
 }
 
-.dropdown-container:focus ul,
-.dropdown-container:hover ul{
+.dropdown-container.expanded ul{
     display:block;
     animation-name: showDropdown;
 }
+
+/* .dropdown-container:focus ul,
+.dropdown-container:hover ul{
+    display:block;
+    animation-name: showDropdown;
+} */
 
 .dropdown-container .dropdown ul ul{
     left:95%;
