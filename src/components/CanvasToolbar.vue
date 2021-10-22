@@ -1,5 +1,5 @@
 <template>
-    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full h-12" v-if="tool.type == 'audit' && audit && $route.name != 'AuditImport'">
+    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full h-12" v-if="showToolbar">
         <div id="toolbar" class="w-full p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
             <div class="justify-between flex items-center">
@@ -199,13 +199,18 @@ export default {
             return this.$store.state.audits.audit
         },
         totalRows(){
-            if( this.searchBarOpen ){
-                return this.auditFilteredRows
+            if( this.showToolbar ){
+                if( this.searchBarOpen ){
+                    return this.auditFilteredRows
+                }
+                return this.audit.issues.length
             }
-            return this.audit.issues.length
         }
     },
     methods: {
+        showToolbar(){
+            return tool.type == 'audit' && audit && $route.name != 'AuditImport'
+        },
         toolbarEmit(action){
             let data = null
             if( action=='audit-condense' ){
