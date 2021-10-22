@@ -165,10 +165,13 @@ export default {
             return "Clients";
         },
         user_avatar(){
-            if( this.$store.state.auth.user && this.$store.state.auth.user.meta.avatar != undefined ){
-                return this.$store.state.auth.user.meta.avatar.url
+            if( this.$store.state.auth.user && this.$store.state.auth.user.meta != undefined ){
+                if( this.$store.state.auth.user.meta.avatar != undefined && this.$store.state.auth.user.meta.avatar.url != undefined ){
+                    return this.$store.state.auth.user.meta.avatar.url
+                }
             }
-            return "/img/user.3ed95c69.gif"
+            
+            return require('../assets/user.gif')
         }
     },
     watch: {

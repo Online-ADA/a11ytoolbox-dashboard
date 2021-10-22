@@ -102,7 +102,7 @@ export default {
           Cookies.set("toolboxClient", rootState.clients.all[0].id)
         }
         if( !Cookies.get("toolboxClient") && !rootState.clients.all.length ){
-          Request.getPromise(`${state.toolboxapi}/api/admin/${rootState.auth.account}/clients`, {
+          Request.getPromise(`${state.toolboxapi}/api/user/${rootState.auth.account}/clients`, {
             params: {
               user_id: rootState.auth.user.id
             }

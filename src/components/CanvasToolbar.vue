@@ -1,5 +1,5 @@
 <template>
-    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full h-12" v-if="tool.type == 'audit' && audit">
+    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full h-12" v-if="tool.type == 'audit' && audit && $route.name != 'AuditImport'">
         <div id="toolbar" class="w-full p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
             <div class="justify-between flex items-center">
@@ -46,7 +46,7 @@
                     <!-- Audit Tools -->
                     <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Edit Audit"><i class="far fa-edit"></i></router-link>
                     <button class="ml-3.5 bg-transparent" @click="toolbarEmit('audit-issues-download')" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
-                    <router-link class="ml-3.5" :to="{path: `/audits/${audit.id}`}" title="Import Issues to This Audit"><i class="far fa-file-import"></i></router-link>
+                    <router-link class="ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues to This Audit"><i class="far fa-file-import"></i></router-link>
                     <router-link class="ml-3.5" :to="{name: `NewScan`, params: {type:'audit', id: audit.id} }" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
 
                     <button title="Mark Audit Complete" v-if="!audit.locked" class="ml-3.5" @click="toolbarEmit('audit-complete')"><i class="fas fa-lock-open-alt"></i></button>

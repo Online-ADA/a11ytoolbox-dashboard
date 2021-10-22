@@ -66,18 +66,26 @@ export default {
     },
     watch: {
         "$store.state.projects.project": function(newVal, oldVal){
+            console.log(newVal, oldVal);
             if( newVal === false ){
                 this.$store.state.projects.audits = []
                 return
             }
 
             if( oldVal === false && newVal !== false ){
+                console.log("OLDVAL WAS FALSE BUT NEWVAL WAS NOT FALSE");
                 this.$store.state.projects.audits = []
                 this.$store.dispatch("projects/getAuditsForProject", {project_id: this.$store.state.projects.project.id})
+                return
             }
 
             if( newVal.id !== oldVal.id ){
-                this.$store.dispatch("projects/getAuditsForProject", {project_id: this.$store.state.projects.project.id})
+                let withIssues = false
+                if( this.$route.name == "AuditImport" ){
+                    withIssues = true
+                }
+                console.log("OLDVAL HAD AN ID AND IT WAS DIFFERENT FROM NEWVAL's ID");
+                this.$store.dispatch("projects/getAuditsForProject", {project_id: this.$store.state.projects.project.id}, withIssues)
             }
         },
         "$store.state.projects.tool.type":function(newVal){

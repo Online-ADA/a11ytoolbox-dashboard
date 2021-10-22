@@ -144,11 +144,6 @@ export default {
 				}
 			}
 		},
-		"$store.state.auth.user":function(newVal){
-			if( newVal.meta == undefined || newVal.meta.avatar == undefined ){
-				this.$store.state.auth.user.meta.avatar.url = "/img/user.3ed95c69.gif"
-			}
-		}
 		// account: function() {
 		// 	if ( !this.account && this.$route.path != '/' ){
 		// 		this.$router.push({path: '/'}).catch(()=>{})
