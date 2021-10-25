@@ -15,7 +15,7 @@
 			<h3 class="pr-2">{{domain.url}}</h3>
 			<Button @click.native.prevent="editDomainOpen = true" :hover="true"><i class="far fa-edit"></i></Button>
 		</div>
-		<Modal :open="editDomainOpen">
+		<Modal style="z-index:71;" :open="editDomainOpen">
 			<div class="bg-white px-4 pt-5 pb-4">
 				<div class="flex items-start">
 					<div class="mt-3 text-left w-full">
@@ -37,7 +37,7 @@
 				<Button class="mr-2" @click.native.prevent="editDomainOpen = false" :hover="false">Cancel</Button>
 			</div>
 		</Modal>
-		<Modal :size="'wide'" :open="structuredListModalOpen">
+		<Modal style="z-index:71;" :size="'wide'" :open="structuredListModalOpen">
 			<div class="w-full flex justify-between">
 				<h4 class="mb-3">Add item</h4>
 				<Button @click.native.prevent="structuredListModalOpen = false" aria-label="Close add items to structured list modal" :hover="true">X</Button>
