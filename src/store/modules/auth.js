@@ -10,8 +10,8 @@ export default {
     accapi: "",
     toolboxapi: "",
     user: false,
-    accountsRoles: [],
-    accountsPermissions: [],
+    // accountsRoles: [],
+    // accountsPermissions: [],
     token: Cookies.get('oada_UID') || false,
     token_expire: Cookies.get('oada_UID_expire') || false,
     token_check_interval: 600000, //2 minutes = 120000
@@ -78,11 +78,11 @@ export default {
   },
   actions: {
     check({state, rootState}) {
-      Request.getPromise(state.toolboxapi+'/api/state/init')
+      console.log("CHECK IS FIRING");
+      Request.getPromise(state.API+'/state/init')
       .then( response => {
+        console.log("AUTH CHECK HAS RETURNED!", response, response.data.details);
         state.user = response.data.details.user
-        state.accountsRoles = response.data.details.roles.accounts
-        state.accountsPermissions = response.data.details.permissions.accounts
         state.accounts = response.data.details.accounts
         
         if( Cookies.get("toolboxAccount") === undefined ){
@@ -101,11 +101,7 @@ export default {
           Cookies.set("toolboxClient", rootState.clients.all[0].id)
         }
         if( !Cookies.get("toolboxClient") && !rootState.clients.all.length ){
-          Request.getPromise(`${state.toolboxapi}/api/admin/${rootState.auth.account}/clients`, {
-            params: {
-              user_id: rootState.auth.user.id
-            }
-          })
+          Request.getPromise(`${state.API}/${rootState.auth.account}/clients`)
           .then(response=>{
             if( response.data.details.length ){
               rootState.clients.all = response.data.details
@@ -202,14 +198,14 @@ export default {
       return !!state.token && !!state.user
     },
     isManager: (state, getters) => {
-      if( state.account && getters.isAuthenticated ){
-        return state.accountsRoles[state.account].includes("manager")
+      if( state.account && getters.isAuthenticated && getters.account ){
+        return getters.account.pivot.role_id == 1
       }
       return false
     },
     account: state=> {
       let account = state.accounts.find( acc => acc.id == state.account)
-      return account ? account.name : false
+      return account ? account : false
     }
   },
 }

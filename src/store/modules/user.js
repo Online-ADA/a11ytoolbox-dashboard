@@ -26,7 +26,7 @@ export default {
 		uploadAvatar({rootState}, args){
 			let form_data = new FormData()
 			form_data.append('avatar', args.file)
-			Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/user/avatar`, {params: form_data, headers:{ 'Content-Type': 'multipart/form-data' }})
+			Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/user/avatar`, {params: form_data, headers:{ 'Content-Type': 'multipart/form-data' }})
 			.then( re=>{
 				Vue.notify({
 					title: "Success",

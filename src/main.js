@@ -61,14 +61,12 @@ function run(){
   store.state.auth.site = site
   store.state.auth.accapi = accountHost
   store.state.auth.toolboxapi = apiHost
-  store.state.auth.userAPI = `${apiHost}/api/user`
-  store.state.auth.adminAPI = `${apiHost}/api/admin`
+  store.state.auth.API = `${apiHost}/api`
   
-  Request.getPromise(store.state.auth.toolboxapi+'/api/state/init')
+  Request.getPromise(store.state.auth.API+'/state/init')
     .then( response => {
+      console.log("MAIN.JS INIT CHECK HAS RETURNED", response.data.details);
       store.state.auth.user = response.data.details.user
-      store.state.auth.accountsRoles = response.data.details.roles.accounts
-      store.state.auth.accountsPermissions = response.data.details.permissions.accounts
       store.state.auth.accounts = response.data.details.accounts
 
       if( Cookies.get("toolboxAccount") === undefined ){
@@ -81,8 +79,9 @@ function run(){
       
       let accountID = Cookies.get("toolboxAccount")
       if( accountID ){
-        Request.getPromise(store.state.auth.toolboxapi+`/api/user/${accountID}/clients`)
+        Request.getPromise(store.state.auth.API+`/${accountID}/clients`)
         .then( response => {
+          console.log("MAIN.JS GET CLIENTS HAS RETURNED");
           store.state.clients.all = response.data.details
           let clientID = parseInt(Cookies.get("toolboxClient"))
           
@@ -110,7 +109,7 @@ function run(){
     .catch(re => {
       if( !params.get('oada_auth') ){
         if( Cookies.get("loggingIn") === "false" && re.response.data.message == "Unauthenticated." ){
-          console.log("THIS IS FIRING");
+          
           store.dispatch("auth/login")
         }
       }

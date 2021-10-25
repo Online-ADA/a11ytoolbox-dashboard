@@ -73,7 +73,7 @@ export default {
 
             if( oldVal === false && newVal !== false ){
                 this.$store.state.projects.audits = []
-                this.$store.dispatch("projects/getAuditsForProject", {project_id: this.$store.state.projects.project.id})
+                this.$store.dispatch("audits/getAudits", {project_id: this.$store.state.projects.project.id})
             }
 
             if( newVal.id !== oldVal.id ){

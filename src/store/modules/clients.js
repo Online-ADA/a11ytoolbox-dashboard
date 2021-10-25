@@ -32,7 +32,7 @@ export default {
 		getProjects({state, rootState}){
 			state.loading = true
 			
-			Request.get(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {
+			Request.get(`${rootState.auth.API}/${rootState.auth.account}/projects`, {
 				params: {
 					params: {
 						user_id: rootState.auth.user.id
@@ -70,7 +70,7 @@ export default {
 				Cookies.remove('toolboxClient')
 			}
 			else {
-				Request.get(`${rootState.auth.userAPI}/${rootState.auth.account}/clients/${args.id}`, {
+				Request.get(`${rootState.auth.API}/${rootState.auth.account}/clients/${args.id}`, {
 					onSuccess: {
 						title:'Success',
 						text:'Client retrieved',
@@ -99,7 +99,7 @@ export default {
 		},
 		createClient({state, rootState}, args){
 			state.loading = true;
-			Request.post(`${rootState.auth.userAPI}/${args.client.account_id}/clients`, {
+			Request.post(`${rootState.auth.API}/${args.client.account_id}/clients`, {
 				params: {
 					client: args.client
 				},
@@ -133,7 +133,7 @@ export default {
 		},
 		getClients({state, rootState}){
 			state.loading = true
-			Request.get(`${rootState.auth.userAPI}/${rootState.auth.account}/clients`, {
+			Request.get(`${rootState.auth.API}/${rootState.auth.account}/clients`, {
 				params: {
 					params: {
 						user_id: rootState.auth.user.id
@@ -202,7 +202,7 @@ export default {
 					}
 				}
 			};
-			Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/clients/${args.id}`, requestArgs)
+			Request.post(`${rootState.auth.API}/${rootState.auth.account}/clients/${args.id}`, requestArgs)
 		},
 	},
 	getters: { 
