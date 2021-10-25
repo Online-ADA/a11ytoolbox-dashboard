@@ -35,7 +35,7 @@ export default {
 			getProject({state, rootState}, args){
 				state.loading = true
 				
-				Request.getPromise(`${rootState.auth.userAPI}/${args.account_id}/projects/${args.id}`)
+				Request.getPromise(`${rootState.auth.API}/${args.account_id}/projects/${args.id}`)
 				.then( re => {
 					state.project = re.data.project[0]
 				})
@@ -48,7 +48,7 @@ export default {
 			},
 			createDomain({state, rootState}, args){
 				state.loading = true;
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains`, {
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains`, {
 					params: {
 						domain: args.domain
 					}
@@ -72,7 +72,7 @@ export default {
 				if( !client_id ){
 					client_id = Cookies.get("toolboxClient")
 				}
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/projects`, {
 					params: {
 						user_id: rootState.auth.user.id, 
 						clientID: client_id,
@@ -99,7 +99,7 @@ export default {
 			},
 			getProjectDomains({state, rootState}, args){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.project_id}/projectDomains`)
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.project_id}/projectDomains`)
 				.then( re => {
 					if( args.project ){
 						args.project.domains = re.data.details
@@ -149,11 +149,11 @@ export default {
 						position: 'bottom right'
 					}
 				};
-				Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.id}`, requestArgs)
+				Request.post(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.id}`, requestArgs)
 			},
 			updateStructuredSampleItem({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})
 				.then( re=>{
 					if( !Request.muted() ){
 						Vue.notify({
@@ -206,7 +206,7 @@ export default {
 						position: 'bottom right'
 					}
 				};
-				Request.get(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}`, requestArgs)
+				Request.get(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}`, requestArgs)
 			},
 			addPageToSitemap({state, rootState}, args){
 				state.loading = true
@@ -215,7 +215,7 @@ export default {
 						page: args.page
 					}
 				}
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.page.domain_id}/page`, requestArgs)
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.page.domain_id}/page`, requestArgs)
 				.then( (response) => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -245,7 +245,7 @@ export default {
 			},
 			removeItemFromSample({state, rootState}, args){
 				state.loading = true
-				Request.destroyPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.domain_id}/item/${args.item_id}`)
+				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}/item/${args.item_id}`)
 				.then( (response) => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -273,7 +273,7 @@ export default {
 			},
 			removePageFromSitemap({state, rootState}, args){
 				state.loading = true
-				Request.destroyPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.domain_id}/page/${args.page_id}`)
+				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}/page/${args.page_id}`)
 				.then( (response) => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -318,7 +318,7 @@ export default {
 					}
 				}
 
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sample`, requestArgs)
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sample`, requestArgs)
 				.then( re=>{
 					state.domain = re.data.details
 				})
@@ -363,11 +363,11 @@ export default {
 						position: 'bottom right'
 					}
 				};
-				Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sitemap`, requestArgs)
+				Request.post(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sitemap`, requestArgs)
 			},
 			emptySitemap({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sitemapEmpty`)
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sitemapEmpty`)
 				.then( response => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -395,7 +395,7 @@ export default {
 			},
 			emptySample({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
 				.then( response => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -423,7 +423,7 @@ export default {
 			},
 			saveDomain({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}`, {params: {domain: args.domain}})
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}`, {params: {domain: args.domain}})
 				.then( re=>{
 					state.domain = re.data.details
 					if( !Request.muted() ){
@@ -452,7 +452,7 @@ export default {
 			},
 			getAudits({state, rootState}, args){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
 				.then( response => {
 					if( !Request.muted() ){
 						Vue.notify({
