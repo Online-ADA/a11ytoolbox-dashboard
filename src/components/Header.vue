@@ -156,6 +156,7 @@ export default {
                     return this.$store.state.auth.user.meta.avatar.url
                 }
             }
+            
             return require('../assets/user.gif')
         }
     },

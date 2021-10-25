@@ -246,7 +246,10 @@ export default {
         },
         pages(){
             if( this.scanType == "audit" ){
-                return this.$store.state.audits && this.$store.state.audits.audit ? this.$store.state.audits.audit.pages.map( p=>p.content) : []
+                if( this.$store.state.audits && this.$store.state.audits.audit ){
+                    return this.$store.state.audits.audit.pages.filter( p=> p.url).map( p=>p.url)
+                }
+                return  []
             }
 
             if( this.scanType == "domain" ){

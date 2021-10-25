@@ -44,7 +44,7 @@
             </div>
         </div>
     </div>
-    <div class="w-full flex fixed bottom-0 left-0 right-0 px-3 py-3 bg-white border-t" style="z-index:25;">
+    <div class="w-full flex fixed bottom-0 left-0 right-0 px-3 py-3 bg-white border-t" style="z-index:25;max-width:calc(100% - 400px);margin-left:auto;">
         <div class="w-1/3">
             <Btn v-if="selectedAuditRows.length > 1 || selectedScanRows.length > 1 || (selectedAuditRows.length >= 1 && selectedScanRows.length >= 1)" @click.native.prevent="compareIssuesModalOpen = true" class="mx-2" color="red" hover="true">Compare issues</Btn>
             <Btn v-if="selectedAuditRows.length > 0 || selectedScanRows.length > 0" @click.native.prevent="addSelectedToAudit()" class="mx-2" color="red" hover="true">Import selected</Btn>
@@ -95,7 +95,6 @@ import Table from '../../components/Table'
 import Btn from '../../components/Button'
 import Modal from '../../components/Modal'
 import FileInput from '../../components/FileInput'
-import projects from '../../store/modules/project'
 export default {
     data: ()=>({
         selectedCompareRows: [], //Rows selected whilst comparing issues
@@ -161,14 +160,14 @@ export default {
                     width: "150px",
                     hidePermanent: false
                 },
-                {
-                    header: "group id",
-                    show: false,
-                    sticky: false,
-                    style: {},
-                    width: "150px",
-                    hidePermanent: true
-                },
+                // {
+                //     header: "group id",
+                //     show: false,
+                //     sticky: false,
+                //     style: {},
+                //     width: "150px",
+                //     hidePermanent: true
+                // },
                 {
                     header: "pages",
                     show: true,
@@ -351,7 +350,7 @@ export default {
         },
         allIssues(){
             let all = [...this.audits.map( a => a.issues).flat(), ...this.scans.map( s => s.issues).flat()]
-
+            
             var x = 0, l = all.length;
             while (x < l) {
                 if( all[x].hasOwnProperty('audit_id') ){
@@ -378,7 +377,7 @@ export default {
     watch: {
         primaryAudit(newVal){
             if( newVal ){
-                this.$store.dispatch("projects/getAuditsForProject", {project_id: newVal.project_id}, true)
+                // this.$store.dispatch("projects/getAuditsForProject", {project_id: newVal.project_id}, true)
                 this.$store.dispatch("projects/getScansForProject", {project_id: newVal.project_id})
             }
         },
@@ -487,9 +486,6 @@ export default {
     },
     created() {
         this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
-        if(this.$store.state.projects === undefined){
-			this.$store.registerModule('projects', projects)
-		}
     },
     mounted() {
         

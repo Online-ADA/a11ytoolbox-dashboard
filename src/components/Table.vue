@@ -422,6 +422,9 @@
 				this.closeModal(()=>{this.columnPickerOpen = false})
 			},
 			displayValue(key, data){
+				if( data == undefined ){
+					return ""
+				}
 				if( key == "unique" ){
 					return ""
 				}
@@ -630,6 +633,7 @@
 			this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
 			this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
 			this.headers = JSON.parse(JSON.stringify(this.headersData))
+
 		},
 		watch:{
 			rows(val){
