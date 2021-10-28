@@ -960,6 +960,10 @@ export default {
 				that.openModal(that.markComplete)
 				return
 			}
+			if( payload.action == 'audit-next' ){
+				that.openModal(that.createNextAudit)
+				return
+			}
 			if( payload.action == 'audit-issue-status-change' ){
 				let found = that.issues.find( i=>i.id == that.selectedRows[0])
 				console.log(that.selectedRows, found, payload.data);
