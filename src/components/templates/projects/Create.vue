@@ -77,6 +77,7 @@ export default {
     }),
     computed: {
       users(){
+        console.log("IN USERS COMPUTED", this.$store.state.user.all);
         return this.$store.state.user.all
       },
       loading(){
@@ -109,6 +110,7 @@ export default {
         }
       },
       displayUser(id){
+        console.log("IN DISPLAYUSER", this.users);
         let user = this.users.find( u => u.id == id )
         console.log(user);
         return user != undefined ? `${user.first_name} ${user.last_name}` : false
