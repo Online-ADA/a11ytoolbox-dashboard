@@ -250,42 +250,38 @@ export default {
 		createScan: false
 	}),
     watch:{
-        complete(newVal){
+      complete(newVal){
 			if( newVal ){
 				this.$emit("complete", {sheetIndex: this.$parent.index})
 			}
 		},
-		isManager(newVal){
-			if( newVal ){
-				this.$store.dispatch("audits/getAuditors", {vm: this})
-			}
-		},
-		auditors(newVal){
+		
+		team_members(newVal){
 			this.unassigned = newVal.map( o=>o.id)
 		}
     },
 	computed: {
-        loading(){
-            if( this.$store.state.audits ){
-                return this.$store.state.audits.loading
-            }
-            return false
-        },
+		loading(){
+			if( this.$store.state.audits ){
+				return this.$store.state.audits.loading
+			}
+			return false
+		},
 		assistive_tech_src(){
 			return this.$store.state.audits.assistive_tech.map( o=>o.content ) || []
 		},
 		software_used_src(){
 			return this.$store.state.audits.software_used.map( o=>o.content ) || []
 		},
-        userID(){
-            return this.$store.state.auth.user.id
-        },
-        auditors(){
-            return this.$store.state.audits.auditors
-        },
-        isManager(){
-            return this.$store.getters["auth/isManager"]
-        },
+		userID(){
+			return this.$store.state.auth.user.id
+		},
+		team_members(){
+			return this.$store.state.audits.team_members
+		},
+		isManager(){
+			return this.$store.getters["auth/isManager"]
+		},
 		sheetData(){
 			return this.$parent.$parent.sheetData
 		},
@@ -361,7 +357,7 @@ export default {
 			this.audit.working_sample = []
 		},
 		displayUser(id){
-			let user = this.auditors.find( u => u.id == id )
+			let user = this.team_members.find( u => u.id == id )
 			return user != undefined ? `${user.first_name} ${user.last_name}` : false
 		},
 		assign(id){
@@ -515,8 +511,8 @@ export default {
 		
 	},
 	mounted() {
-		if( this.isManager && !this.auditors.length ){
-			this.$store.dispatch("audits/getAuditors")
+		if( this.isManager && !this.team_members.length ){
+			this.$store.dispatch("user/getTeamMembers", {team: 2})
 		}
 		
 		this.$store.dispatch("audits/getAssistiveTech")

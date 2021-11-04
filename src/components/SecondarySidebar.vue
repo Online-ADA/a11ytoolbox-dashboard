@@ -17,7 +17,7 @@
                                 <li>
                                     <router-link class="text-sm py-2 text-black" :to="{path: '/audits/create'}">Create New Audit</router-link>
                                 </li>
-                                <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.projects.audits" :key="item.id">
+                                <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.audits.all" :key="item.id">
                                     <button class="text-black" @click="updateAudit(item)">{{getTitle(item)}}</button>
                                 </li>
                             </ul>
@@ -66,16 +66,15 @@ export default {
     },
     watch: {
         "$store.state.projects.project": function(newVal, oldVal){
-            console.log(newVal, oldVal);
             if( newVal === false ){
                 this.$store.state.projects.audits = []
                 return
             }
 
             if( oldVal === false && newVal !== false ){
-                console.log("OLDVAL WAS FALSE BUT NEWVAL WAS NOT FALSE");
                 this.$store.state.projects.audits = []
                 this.$store.dispatch("audits/getAudits", {project_id: this.$store.state.projects.project.id})
+                return
             }
 
             if( newVal.id !== oldVal.id ){
@@ -83,17 +82,18 @@ export default {
                 if( this.$route.name == "AuditImport" ){
                     withIssues = true
                 }
-                console.log("OLDVAL HAD AN ID AND IT WAS DIFFERENT FROM NEWVAL's ID");
-                this.$store.dispatch("projects/getAuditsForProject", {project_id: this.$store.state.projects.project.id}, withIssues)
+                this.$store.dispatch("audits/getAudits", {project_id: this.$store.state.projects.project.id}, withIssues)
             }
         },
         "$store.state.projects.tool.type":function(newVal){
-            this.expanded.push(newVal)
+            if( newVal ){
+                this.expanded.push(newVal)
+            }
         }
     },
     computed: {},
     mounted() {
-        if( this.$store.state.projects.tool.type == 'audit' ){
+        if( this.$store.state.projects.tool.type === 'audit' ){
             this.expanded.push('audit')
         }
     }

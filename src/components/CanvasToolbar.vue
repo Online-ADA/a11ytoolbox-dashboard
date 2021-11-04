@@ -4,7 +4,7 @@
             <!-- Audit Toolbar -->
             <div class="justify-between flex items-center">
                 <div class="flex items-center text-13">
-                    <span>{{audit.domain.title}}</span>
+                    <span v-if="audit.domain">{{audit.domain.title}}</span>
                     <div class="border border-black mx-3.5 divider"></div>
                     <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
                     <span>Total Issues: {{totalRows}}</span>
@@ -199,7 +199,7 @@ export default {
             return this.$store.state.audits.audit
         },
         totalRows(){
-            if( this.showToolbar ){
+            if( this.showToolbar && this.audit ){
                 if( this.searchBarOpen ){
                     return this.auditFilteredRows
                 }
@@ -209,7 +209,7 @@ export default {
     },
     methods: {
         showToolbar(){
-            return tool.type == 'audit' && audit && $route.name != 'AuditImport'
+            return tool.type === 'audit' && audit
         },
         toolbarEmit(action){
             let data = null

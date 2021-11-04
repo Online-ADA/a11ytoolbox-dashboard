@@ -93,25 +93,7 @@ export default {
 				}
 			})
 		},
-		getAuditStates({state, rootState}){
-			state.loading.articles = true
-			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/states`)
-			.then( res => {
-				state.audit_states = res.data.details
-			})
-			.catch(res => {
-				console.log(res.error)
-				if( !Request.muted() ){
-					Vue.notify({
-						title: 'Error',
-						text: res.error,
-						type: 'error'
-					})
-				}
-				
-				state.loading.articles = false
-			})
-		},
+		
 		getAsstTechnologies({state, rootState}){
 			state.loading.articles = true
 			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/technologies`)

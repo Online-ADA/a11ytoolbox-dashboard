@@ -38,33 +38,29 @@ export default {
       assigned: [],
       unassigned: [],
       users: [],
-      domains: []
     }),
     computed: {
       project() {
         return this.$store.state.projects.project
       },
       audits(){
-        if( this.$store.state.projects ){
-          return this.$store.state.projects.project.audits
-        }
-        return []
+        return this.$store.state.audits.all
+      },
+      domains(){
+        return this.$store.state.domains.all
       },
       // clients(){
       //   return this.$store.state.projects.project.clients
       // },
       loading(){
-        if( this.$store.state.projects ){
-          return this.$store.state.projects.loading || this.$store.state.projects.domainsLoading
-        }
-        return false
+        return this.$store.state.domains.loading || this.$store.state.projects.loading || this.$store.state.audits.loading
       },
     },
     props: [],
     watch: {
       "$store.state.projects.project": function(newVal){
         if(newVal){
-          this.$store.dispatch("projects/getProjectDomains", {id: this.$route.params.id, vm: this})
+          this.$store.dispatch("domains/getDomains", {project_id: this.$route.params.id, vm: this})
         }
       }
     },

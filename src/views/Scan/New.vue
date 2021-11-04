@@ -267,12 +267,7 @@ export default {
         }
     },
     created(){
-        if(this.$store.state.audits === undefined){
-			this.$store.registerModule('audits', audits)
-		}
-        if(this.$store.state.domains === undefined){
-			this.$store.registerModule('domains', domains)
-		}
+        
     },
     mounted(){
         if( Object.values(this.$route.params).length ){

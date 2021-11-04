@@ -4,11 +4,8 @@ const getDefaultState = () => {
 	return {
 		all: [],
 		audit: false,
-		auditors: [],
-		project: false,
-		projects: [],
+		team_members: [],
 		loading: false,
-		auditorsLoading: false,
 		structured_sample: false,
 		sitemap: false,
 		assistive_tech: [],
@@ -34,11 +31,8 @@ export default {
 		state: {
 			all: [],
 			audit: false,
-			auditors: [],
-			project: false,
-			projects: [],
+			team_members: [],
 			loading: false,
-			auditorsLoading: false,
 			structured_sample: false,
 			sitemap: false,
 			assistive_tech: [],
@@ -111,69 +105,69 @@ export default {
 				.catch()
 				.then()
 			},
-			getProject({state, rootState}, args){
-				state.loading = true
-				Request.get(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}`, {
-					onSuccess: {
-						title:'Success',
-						text:'Project retrieved',
-						callback: function(response){
-							state.loading = false
-							state.project = response.data.details
-						},
-						position: 'bottom right'
-					},
-					onError: {
-						title:'Error',
-						text:'Retrieving this project caused an error',
-						callback: function(){
-							state.loading = false
-						},
-						position: 'bottom right'
-					},
-					onWarn: {
-						title: "Warning",
-						text: "There was a problem retrieving the project",
-						callback: function(){
-							state.loading = false
-						},
-						position: 'bottom right'
-					}
-				})
-			},
-			getProjects({state, rootGetters, rootState}){
-				state.loading = true
-				let url = `${rootState.auth.API}/${rootState.auth.account}/projects`
-				if( rootGetters["auth/isManager"] ){
-					url = `${rootState.auth.API}/${rootState.auth.account}/projects`
-				}
-				Request.get(url, {
-					onSuccess: {
-						silent:true,
-						callback: function(response){
-							state.loading = false
-							state.projects = response.data.details
-						},
-						position: 'bottom right'
-					},
-					onError: {
-						title:'Error',
-						text:'Retrieving this projects caused an error',
-						callback: function(){
-							state.loading = false
-						},
-						position: 'bottom right'
-					},
-					onWarn: {
-						title: "Warning",
-						text: "There was a problem retrieving the projects",
-						callback: function(){
-							state.loading = false
-						},
-						position: 'bottom right'
-					}
-				})
-			},
+			// getProject({state, rootState}, args){
+			// 	state.loading = true
+			// 	Request.get(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}`, {
+			// 		onSuccess: {
+			// 			title:'Success',
+			// 			text:'Project retrieved',
+			// 			callback: function(response){
+			// 				state.loading = false
+			// 				state.project = response.data.details
+			// 			},
+			// 			position: 'bottom right'
+			// 		},
+			// 		onError: {
+			// 			title:'Error',
+			// 			text:'Retrieving this project caused an error',
+			// 			callback: function(){
+			// 				state.loading = false
+			// 			},
+			// 			position: 'bottom right'
+			// 		},
+			// 		onWarn: {
+			// 			title: "Warning",
+			// 			text: "There was a problem retrieving the project",
+			// 			callback: function(){
+			// 				state.loading = false
+			// 			},
+			// 			position: 'bottom right'
+			// 		}
+			// 	})
+			// },
+			// getProjects({state, rootGetters, rootState}){
+			// 	state.loading = true
+			// 	let url = `${rootState.auth.API}/${rootState.auth.account}/projects`
+			// 	if( rootGetters["auth/isManager"] ){
+			// 		url = `${rootState.auth.API}/${rootState.auth.account}/projects`
+			// 	}
+			// 	Request.get(url, {
+			// 		onSuccess: {
+			// 			silent:true,
+			// 			callback: function(response){
+			// 				state.loading = false
+			// 				state.projects = response.data.details
+			// 			},
+			// 			position: 'bottom right'
+			// 		},
+			// 		onError: {
+			// 			title:'Error',
+			// 			text:'Retrieving this projects caused an error',
+			// 			callback: function(){
+			// 				state.loading = false
+			// 			},
+			// 			position: 'bottom right'
+			// 		},
+			// 		onWarn: {
+			// 			title: "Warning",
+			// 			text: "There was a problem retrieving the projects",
+			// 			callback: function(){
+			// 				state.loading = false
+			// 			},
+			// 			position: 'bottom right'
+			// 		}
+			// 	})
+			// },
 			getAudit({state, rootState}, args = {withIssues: false}){
 				state.loading = true
 				
@@ -205,13 +199,13 @@ export default {
 							position: 'bottom right'
 						})
 					}
-					setTimeout(()=>{
-						// if( rootGetters["auth/isManager"] ){
-						// 	args.router.push({path: "/manage/audits"})
-						// 	return
-						// }
-						args.router.push({path: `/audits/${re.data.details}`})
-					}, 2000)
+					// setTimeout(()=>{
+					// 	// if( rootGetters["auth/isManager"] ){
+					// 	// 	args.router.push({path: "/manage/audits"})
+					// 	// 	return
+					// 	// }
+					// 	args.router.push({path: `/audits/${re.data.details}`})
+					// }, 2000)
 				})
 				.catch(re=>{
 					console.log(re)
@@ -228,7 +222,26 @@ export default {
 					state.loading = false
 				})
 			},
-			getAudits({state, rootState}){
+			getAuditStates({state, rootState}){
+				state.loading = true
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/states`)
+				.then( res => {
+					state.audit_states = res.data.details
+				})
+				.catch(res => {
+					console.log(res.error)
+					if( !Request.muted() ){
+						Vue.notify({
+							title: 'Error',
+							text: res.error,
+							type: 'error'
+						})
+					}
+					
+					state.loading = false
+				})
+			},
+			getAudits({state, rootState}, args, withIssues=false){
 				state.loading = true
 				
 				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits`, {

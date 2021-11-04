@@ -553,10 +553,10 @@ export default {
 			return arr
 		},
 		audit(){
-			return this.$store.state.audits.audit ? this.$store.state.audits.audit : false
+			return this.$store.state.audits.audit || false
 		},
 		project(){
-			return this.$store.state.projects.project ? this.$store.state.projects.project : false
+			return this.$store.state.projects.project || false
 		}
 	},
 	props: [],
@@ -928,7 +928,7 @@ export default {
 		if( this.$store.state.audits ){
 			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
 			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
-			this.$store.dispatch("admin/getAuditStates")
+			this.$store.dispatch("audits/getAuditStates")
 		}
 		let that = this
 		EventBus.$on('toolbarEmit', (payload)=>{
@@ -962,7 +962,7 @@ export default {
 			}
 			if( payload.action == 'audit-issue-status-change' ){
 				let found = that.issues.find( i=>i.id == that.selectedRows[0])
-				console.log(that.selectedRows, found, payload.data);
+				
 				found.status = payload.data
 				this.issue = found
 				this.saveIssue()
@@ -971,7 +971,6 @@ export default {
 		
 	},
 	mounted() {
-		this.$store.state.projects.tool.type = "audit"
 		this.$store.state.projects.tool.info = '<p>Here is a list of the various functionality you can expect on the audit issues table:</p>'+
 			'<ul class="list-disc text-left mb-3">'+
 			'	<li><strong>Horizontal scrolling:</strong> at any point while focused inside the table, using the left and right arrow keys will scroll the table to the left and right</li>'+

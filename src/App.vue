@@ -144,6 +144,19 @@ export default {
 				}
 			}
 		},
+		"$route.path": function(newVal){
+			if( newVal.includes("audits") ){
+				if( this.$route.params.id !== undefined ){
+					this.$store.state.projects.tool = {type:"audit", info:""}
+					return
+				}
+			}
+
+			this.$store.state.projects.tool = {
+				type: false,
+				info: ""
+			}
+		}
 	},
 	created() {
 	},

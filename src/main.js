@@ -125,16 +125,17 @@ function runBeforeEach(){
       next("/")
       return
     }
+
+    let account = store.state.auth.accounts.find(acc=>acc.id == store.state.auth.account)
     
-    if( to.meta.role != undefined && to.meta.permissions != undefined ){
-      //check for role and permissions
-      let hasRole = store.state.auth.accountsRoles[store.state.auth.account].includes(to.meta.role)
-      let hasPermission = store.state.auth.accountsPermissions[store.state.auth.account][to.meta.permissions.entity][to.meta.permissions.action] === 1
+    if( to.meta.role != undefined && to.meta.teamOnly != undefined ){
+      //check for role and teams
       
-      if( hasRole && hasPermission ){
+      if( account.pivot.role_id === to.meta.role && account.pivot.team_id === to.meta.teamOnly ){
         next()
         return
       }else{
+        store.state.auth.authMessage = "Incorrect role and team"
         next("/")
         return
       }
@@ -142,7 +143,8 @@ function runBeforeEach(){
     
     if( to.meta.role != undefined ){
       //check roles
-      if( store.state.auth.accountsRoles[store.state.auth.account].includes(to.meta.role) ){
+      
+      if( account.pivot.role_id === to.meta.role ){
         next()
         return
       }else{
@@ -152,14 +154,14 @@ function runBeforeEach(){
       }
     }
 
-    if(to.meta.permissions != undefined){
+    if( to.meta.teamOnly != undefined ){
       //check for permissions or redirect to login
-      let hasPermission = store.state.auth.accountsPermissions[store.state.auth.account][to.meta.permissions.entity][to.meta.permissions.action] === 1
-      if( hasPermission ){
+      
+      if( account.pivot.team_id === to.meta.teamOnly ){
         next()
         return
       }else{
-        store.state.auth.authMessage = store.state.auth.authMessages.incorrect_permissions
+        store.state.auth.authMessage = "Incorrect team"
         next("/")
         return
       }

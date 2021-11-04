@@ -198,8 +198,29 @@ export default {
       return !!state.token && !!state.user
     },
     isManager: (state, getters) => {
-      if( state.account && getters.isAuthenticated && getters.account ){
-        return getters.account.pivot.role_id == 1
+      //Manager =  true if member of executive team or role of manager on current team
+      //Get the current tool
+      //Get the current role
+      //get the current team
+      //User role/team info is now stored on the account
+      //Teams: 1 = Executive, 2 = Development, 3 = Design, 4 = Customer Service
+      
+      if( getters.isAuthenticated && getters.account ){
+        let current_team = getters.account.pivot.team_id
+        let tool_team = -1;
+        if( window.App.$route.path.includes("audits") ){
+          tool_team = 2
+        }
+
+        if( current_team === 1 ){
+          return true
+        }
+
+        //If user belongs to Executive team or The team 
+        if( current_team <= tool_team ){
+          return getters.account.pivot.role_id === 1
+        }
+        
       }
       return false
     },

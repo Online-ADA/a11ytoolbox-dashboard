@@ -2,6 +2,8 @@ import Vue from 'vue'
 
 const getDefaultState = () => {
 	return {
+		team_members: [],
+		all:[],
 		loading: false
 	}
 }
@@ -9,6 +11,8 @@ const getDefaultState = () => {
 export default {
 	namespaced:true,
 	state: {
+		team_members: [],
+		all:[],
 		loading: false
 	},
 	mutations: {
@@ -38,6 +42,30 @@ export default {
 			})
 			.catch( re=>console.log(re))
 			.then()
+		},
+		getAllAccountUsers({state, rootState}, args){
+			state.loading = true
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/users`)
+			.then( re=>{
+				state.all = Object.values(re.data.details)
+				args.vm.unassigned = state.all.filter( u => !args.vm.assigned.includes(u.id) ).map(u => u.id)
+			})
+			.catch( re=> console.log(re))
+			.then( ()=> state.loading = false)
+		},
+		getTeamMembers({state, rootState}, args){
+			state.loading = true
+			
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/users/members`, {params: {team: args.team}})
+			.then( re=>{
+				state.team_members = re.data.details
+			})
+			.catch( re=>{
+				console.log(re)
+			})
+			.then( ()=>{
+				state.loading = false
+			})
 		},
 	},
 	getters: { 
