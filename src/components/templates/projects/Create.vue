@@ -72,12 +72,10 @@ export default {
         account_id: "",
         client_id: "",
       },
-      selectedClient: "",
       complete: false
     }),
     computed: {
       users(){
-        console.log("IN USERS COMPUTED", this.$store.state.user.all);
         return this.$store.state.user.all
       },
       loading(){
@@ -110,9 +108,7 @@ export default {
         }
       },
       displayUser(id){
-        console.log("IN DISPLAYUSER", this.users);
         let user = this.users.find( u => u.id == id )
-        console.log(user);
         return user != undefined ? `${user.first_name} ${user.last_name}` : false
       },
       assign(id){
@@ -141,7 +137,7 @@ export default {
         if( !this.$store.state.projects.project ){
           this.getUsers()
         }else{
-          this.unassigned = this.$store.state.user.all
+          this.unassigned = this.$store.state.user.all.map(u=>u.id)
         }
       }
 

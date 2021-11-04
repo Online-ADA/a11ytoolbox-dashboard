@@ -34,11 +34,7 @@ import Loader from '../../components/Loader'
 import A from '../../components/Link'
 import Card from '../../components/Card'
 export default {
-    data: () => ({
-      assigned: [],
-      unassigned: [],
-      users: [],
-    }),
+    data: () => ({}),
     computed: {
       project() {
         return this.$store.state.projects.project
@@ -47,28 +43,19 @@ export default {
         return this.$store.state.audits.all
       },
       domains(){
-        return this.$store.state.domains.all
+        return this.project.domains
       },
-      // clients(){
-      //   return this.$store.state.projects.project.clients
-      // },
       loading(){
         return this.$store.state.domains.loading || this.$store.state.projects.loading || this.$store.state.audits.loading
       },
     },
     props: [],
     watch: {
-      "$store.state.projects.project": function(newVal){
-        if(newVal){
-          this.$store.dispatch("domains/getDomains", {project_id: this.$route.params.id, vm: this})
-        }
-      }
     },
     methods: {
     },
     created() {
       this.$store.dispatch("projects/getProject", {id: this.$route.params.id})
-      
     },
     mounted() {
     },

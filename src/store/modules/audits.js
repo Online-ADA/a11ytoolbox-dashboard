@@ -46,7 +46,9 @@ export default {
 				Vue.set(state,payload.key,payload.value)
 			},
 			resetState (state) {
+				let all = state.all
 				Object.assign(state, getDefaultState())
+				Object.assign(state.all, all)
 			},
 		},
 		actions: {

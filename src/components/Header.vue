@@ -26,6 +26,8 @@
 
         <div class="border mx-3 divider"></div>
         <div class="text-white capitalize">{{$store.state.projects.project.name}}</div>
+        <!-- REMOVE BEFORE PUBLISHING -->
+        <div>{{$store.state.user.all.length}}</div>
 
         <div role="button" tabindex="0" @click.prevent="expandDropdown('manage')" :aria-expanded="[ dropdownsExpanded.includes('manage') ? 'true' : 'false' ]" v-if="$store.getters['auth/isManager']" :class="{expanded: dropdownsExpanded.includes('manage')}" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="manage" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
