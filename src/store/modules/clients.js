@@ -78,6 +78,9 @@ export default {
 							state.loading = false
 							state.client = response.data.details
 							Cookies.set('toolboxClient', state.client.id, 365)
+							if( args.callback ){
+								args.callback()
+							}
 						}
 					},
 					onError: {
@@ -99,36 +102,24 @@ export default {
 		},
 		createClient({state, rootState}, args){
 			state.loading = true;
-			Request.post(`${rootState.auth.API}/${args.client.account_id}/clients`, {
-				params: {
+			Request.postPromise(`${rootState.auth.API}/${args.client.account_id}/clients`, {
+				params:{
 					client: args.client
-				},
-				onSuccess: {
-					title:'Success',
-					text:'Client created. Redirecting to homepage...',
-					callback: function(response){
-						state.loading = false
-						state.client = response.data.created
-						state.all = response.data.details
-						setTimeout(()=>{
-							args.router.push({path: "/"})
-						}, 2000)
-					}
-				},
-				onError: {
-					title:'Error',
-					text:'Creating this client caused an error',
-					callback: function(){
-						state.loading = false
-					}
-				},
-				onWarn: {
-					title: "Warning",
-					text: "There was a problem creating the client",
-					callback: function(response){
-						state.loading = false
-					}
 				}
+			})
+			.then(re=>{
+				state.loading = false
+				state.client = re.data.created
+				state.all = re.data.details
+				if( args.callback ){
+					args.callback()
+				}
+			})
+			.catch(re=>{
+				console.log(re);
+			})
+			.finally(()=>{
+				state.loading = false
 			})
 		},
 		getClients({state, rootState}){

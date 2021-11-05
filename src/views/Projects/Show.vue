@@ -37,7 +37,11 @@ export default {
     data: () => ({}),
     computed: {
       project() {
-        return this.$store.state.projects.project
+        let that = this
+        if( this.$store.state.projects.all.length ){
+          return this.$store.state.projects.all.find(p=>p.id == that.$route.params.id)
+        }
+        return false
       },
       audits(){
         return this.$store.state.audits.all
@@ -55,9 +59,18 @@ export default {
     methods: {
     },
     created() {
-      this.$store.dispatch("projects/getProject", {id: this.$route.params.id})
+      
+      // this.$store.dispatch("projects/getProject", {id: this.$route.params.id})
     },
     mounted() {
+      let that = this
+      // if( this.$store.state.projects.project ){
+
+      // }
+  
+      if( this.$store.state.projects.project.id !== this.$route.params.id ){
+        this.$store.state.projects.project = this.$store.state.projects.all.find(p=>p.id == that.$route.params.id)
+      }
     },
     components: {
       Loader,

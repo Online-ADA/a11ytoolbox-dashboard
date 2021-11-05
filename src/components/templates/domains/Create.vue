@@ -102,7 +102,6 @@ import Select from '../../../components/Select'
 import Form from '../../../components/Form'
 import Button from '../../../components/Button'
 import A from '../../../components/Link'
-import domains from '../../../store/modules/domains'
 
 export default {
 	props: {
@@ -165,9 +164,9 @@ export default {
 		project(){
 			let self = this
 			
-			return this.projects.filter( p=>{
+			return this.projects.find( p=>{
 				return parseInt(p.id) === parseInt(self.sheetData.sheet0.project)
-			})[0]
+			})
 		},
 		fullUrl(){
 			let url = this.url.replace(/(?:^https?(:?\/\/?)?)+|(?:\/+|\s$)+/ig, "")
@@ -208,15 +207,8 @@ export default {
 			}
 		}
 	},
-	created() {
-		if( this.$store.state.domains === undefined ){
-			this.$store.registerModule('domains', domains)
-		}
-	},
+	created() {},
 	mounted() {
-		// if( this.independent ){
-		// 	this.$store.dispatch("domains/getProjects", {client_id: this.$store.state.clients.client.id})
-		// }
 	},
 	components: {
 		Loader,

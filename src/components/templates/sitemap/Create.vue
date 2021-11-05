@@ -179,33 +179,25 @@ export default {
 			return this.$parent.$parent.sheetData
 		},
 		projects(){ //Only used if inside a sheet
-			if( !this.independent ){
-				if( this.$store.getters["auth/isManager"] ){
-					return this.$store.state.admin.projects
-				}
-
-				return this.$store.state.projects.all
-			}
-			else{
-				return this.$store.state.domains.projects
-			}
+			return this.$store.state.projects.all
 		},
 		project(){
 			if( !this.independent && this.projects.length ){
-				return this.projects.filter( p=> p.id == this.sheetData.sheet0.project)[0]
-			}else{
-				return false
+				return this.projects.find( p=> p.id == this.sheetData.sheet0.project)
 			}
+			if( this.independent && this.projects.length ){
+				return this.$store.state.projects.project
+			}
+
+			return false
 		},
 		domains(){
-			if( this.project ){
-				return this.project.domains ? this.project.domains : this.$store.state.domains.all
-			}
-			return this.$store.state.domains.all
+			return this.project.domains
 		},
 	},
 	watch: {
 		"$store.state.domains.domain": function(newVal){
+			console.log("This should not be firing");
 			if( newVal ){
 				this.data = newVal
 				this.domain = newVal
@@ -213,8 +205,10 @@ export default {
 			}
 		},
 		"sheetData.sheet1.domain": function(newVal){
+			console.log("Inside sheetData sheet1 domain Watcher");
+			console.log(newVal);
 			if( newVal ){
-				this.domain = this.domains.filter( d=>d.id == newVal )[0]
+				this.domain = this.domains.find( d=>d.id == newVal )
 				this.data = this.domain
 				this.page.domain_id = this.domain.id
 			}
