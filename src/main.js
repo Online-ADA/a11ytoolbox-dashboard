@@ -127,11 +127,13 @@ function runBeforeEach(){
     }
 
     let account = store.state.auth.accounts.find(acc=>acc.id == store.state.auth.account)
+    let teamCheck = account.pivot.team_id === to.meta.teamOnly || account.pivot.team_id === 1
+    let roleCheck = account.pivot.role_id <= to.meta.role
     
     if( to.meta.role != undefined && to.meta.teamOnly != undefined ){
       //check for role and teams
       
-      if( account.pivot.role_id === to.meta.role && account.pivot.team_id === to.meta.teamOnly ){
+      if( roleCheck && teamCheck ){
         next()
         return
       }else{
@@ -143,8 +145,7 @@ function runBeforeEach(){
     
     if( to.meta.role != undefined ){
       //check roles
-      
-      if( account.pivot.role_id === to.meta.role ){
+      if( roleCheck ){
         next()
         return
       }else{
@@ -157,7 +158,7 @@ function runBeforeEach(){
     if( to.meta.teamOnly != undefined ){
       //check for permissions or redirect to login
       
-      if( account.pivot.team_id === to.meta.teamOnly ){
+      if( teamCheck ){
         next()
         return
       }else{

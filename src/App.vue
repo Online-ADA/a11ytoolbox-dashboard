@@ -24,6 +24,10 @@
 						id="main-content"
 						>
 							<router-view></router-view>
+							<CreateClientModal :open="showClientCreationModal"></CreateClientModal>
+							<CreateProjectModal :open="showProjectCreationModal"></CreateProjectModal>
+							<DeployToolModal :open="showToolDeployModal"></DeployToolModal>
+							<CreateWCAGAuditModal :open="showDeployWCAGAuditModal"></CreateWCAGAuditModal>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
 							<span v-html="tool.info"></span>
@@ -33,7 +37,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- <Modal class="z-50" :open="showLoginPrompt">
 		<div class="bg-white px-4 pt-5 pb-4 p-6 text-center">
 			<Btn aria-label="Close refresh session modal" @click.native.prevent="showLoginPrompt = false" class="absolute top-4 right-4" hover="true" color="white">X</Btn>
@@ -64,12 +68,22 @@ import SecondarySidebar from '@/components/SecondarySidebar.vue'
 import Modal from './components/Modal'
 import Btn from './components/Button'
 import Cookies from 'js-cookie'
+import { EventBus } from "./services/eventBus"
+import CreateClientModal from "./components/Modals/CreateClientModal"
+import CreateProjectModal from "./components/Modals/CreateProjectModal"
+import CreateWCAGAuditModal from "./components/Modals/CreateWCAGAuditModal"
+import DeployToolModal from "./components/Modals/DeployToolModal"
 
 export default {
   data(){
 		return {
 			sidebarExpanded: true,
-			infoSidebarExpanded: false
+			infoSidebarExpanded: false,
+			showClientCreationModal: false,
+			showProjectCreationModal: false,
+			showToolDeployModal: false,
+			showDeployWCAGAuditModal: false,
+			EventBus: EventBus
 		}
 	},
 	methods:{
@@ -129,7 +143,7 @@ export default {
 	},
 	watch: {
 		"$store.state.clients.client": function(newVal){
-			this.$store.state.projects.audits = []
+			this.$store.state.audits.all = []
 			this.$store.state.projects.project = false
 			if( newVal !== false && newVal !== undefined && newVal !== null ){
 				Cookies.set('toolboxClient', parseInt(this.$store.state.clients.client.id))
@@ -139,6 +153,12 @@ export default {
 		"$store.state.projects.all":function(newVal){
 			//This function triggers when the projects list changes, primarily when switching clients or on initial login
 			if( newVal.length ){
+				if( this.$route.name === "ProjectShow" ){
+					let that = this
+					this.$store.state.projects.project = newVal.find(p=>p.id == that.$route.params.id)
+					return
+				}
+
 				if( !this.$store.state.projects.project && this.$route.path !== "/projects/create" ){
 					this.$store.state.projects.project = this.$store.state.projects.all[0]
 				}
@@ -167,6 +187,21 @@ export default {
 		if( this.$route.path == "/projects/create" ){
 			this.$store.state.projects.project = false
 		}
+
+		let that = this
+		//Payload is true or false
+		EventBus.$on("createClientModal", (payload)=>{
+			that.showClientCreationModal = payload
+		})
+		EventBus.$on("createProjectModal", (payload)=>{
+			that.showProjectCreationModal = payload
+		})
+		EventBus.$on("deployToolModal", (payload)=>{
+			that.showToolDeployModal = payload
+		})
+		EventBus.$on("deployWCAGAuditModal", (payload)=>{
+			that.showDeployWCAGAuditModal = payload
+		})
 	},
 
 	components:{
@@ -177,7 +212,11 @@ export default {
 		Sidebar,
 		SecondarySidebar,
 		Modal,
-		Btn
+		Btn,
+		CreateClientModal,
+		CreateProjectModal,
+		CreateWCAGAuditModal,
+		DeployToolModal
 	}
 }
 </script>

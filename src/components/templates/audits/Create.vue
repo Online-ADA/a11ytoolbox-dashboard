@@ -273,11 +273,9 @@ export default {
 		software_used_src(){
 			return this.$store.state.audits.software_used.map( o=>o.content ) || []
 		},
-		userID(){
-			return this.$store.state.auth.user.id
-		},
+		
 		team_members(){
-			return this.$store.state.audits.team_members
+			return this.$store.state.user.team_members
 		},
 		isManager(){
 			return this.$store.getters["auth/isManager"]

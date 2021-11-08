@@ -12,6 +12,9 @@
                     <i class="fas fa-caret-down pl-1 text-white"></i>
                 </div>
                 <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
+                    <li>
+                        <button @click.prevent="launchCreateClientModal">Create Client</button>
+                    </li>
                     <li class="hover:bg-pallette-grey-light" v-for="(child, index) in getClients" :key="index">
                         <template v-if="child.type == 'router-link'">
                             <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
@@ -25,7 +28,7 @@
         </div>
 
         <div class="border mx-3 divider"></div>
-        <div class="text-white capitalize">{{$store.state.projects.project.name}}</div>
+        <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
 
         <div role="button" tabindex="0" @click.prevent="expandDropdown('manage')" :aria-expanded="[ dropdownsExpanded.includes('manage') ? 'true' : 'false' ]" v-if="$store.getters['auth/isManager']" :class="{expanded: dropdownsExpanded.includes('manage')}" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="manage" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
@@ -71,6 +74,7 @@
 <script>
 import Dropdown from './Dropdown'
 import A from './Link'
+import { EventBus } from "../services/eventBus"
 
 export default {
     props:{},
@@ -134,11 +138,11 @@ export default {
         },
         getClients() {
             let clients = [];
-            clients.push({
-                type: "router-link", 
-                label:"Create Client", 
-                to:"/clients/create"
-            })
+            // clients.push({
+            //     type: "router-link", 
+            //     label:"Create Client", 
+            //     to:"/clients/create"
+            // })
             for ( let i = 0; i < this.$store.state.clients.all.length; i++ )
             {
                 clients.push({ type: 'client', label: this.$store.state.clients.all[i].name, to: this.$store.state.clients.all[i].id })
@@ -168,6 +172,9 @@ export default {
         }
     },
     methods: {
+        launchCreateClientModal(){
+            EventBus.$emit('createClientModal', true)
+        },
         expandDropdown(value){
             if( this.dropdownsExpanded.includes(value) ){
                 let index = this.dropdownsExpanded.indexOf(value)
@@ -185,7 +192,10 @@ export default {
         },
         setClient(id){
             this.$store.state.projects.project = false
-            this.$store.dispatch("clients/getClient", {id: id})
+            let that = this
+            this.$store.dispatch("clients/getClient", {id: id, callback: (()=>{
+                that.$router.push({path: `/clients/${id}`})
+            })})
         }
     },
     components:{

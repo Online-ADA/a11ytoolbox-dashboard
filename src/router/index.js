@@ -74,17 +74,18 @@ const routes = [
         //   }
         // },
       },
-      // {
-      //   path:":id",
-      //   name:"ClientShow",
-      //   component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue'),
-      //   // meta: {
-      //   //   permissions: {
-      //   //     entity: "clients",
-      //   //     action: "view"
-      //   //   }
-      //   // },
-      // },
+      {
+        path:":id",
+        name:"ClientShow",
+        component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue'),
+        meta: {
+          role: 2
+          // permissions: {
+          //   entity: "clients",
+          //   action: "view"
+          // }
+        },
+      },
       {
         path:":id/edit",
         name:"ClientEdit",
@@ -122,12 +123,12 @@ const routes = [
       {
         path: "create",
         name: "ProjectCreate",
-        meta: {
-          permissions: {
-            entity: "projects",
-            action: "write"
-          }
-        },
+        // meta: {
+        //   permissions: {
+        //     entity: "projects",
+        //     action: "write"
+        //   }
+        // },
         component: () => import(/* webpackChunkName: "projects" */ '../views/Projects/Create.vue')
       },
       {
@@ -155,12 +156,12 @@ const routes = [
       {
         path: "create/:id?",
         name: "AuditCreate",
-        meta: {
-          permissions: {
-            entity: "audits",
-            action: "write"
-          }
-        },
+        // meta: {
+        //   permissions: {
+        //     entity: "audits",
+        //     action: "write"
+        //   }
+        // },
         component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/Create.vue')
       },
       {
@@ -174,6 +175,11 @@ const routes = [
         component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/Show.vue')
       },
       {
+        path: ":id/overview",
+        name: "AuditOverview",
+        component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/Overview.vue')
+      },
+      {
         path: ":id/import",
         name: "AuditImport",
         component: () => import(/* webpackChunkName: "audits" */ '../views/Audits/Import.vue')
@@ -184,7 +190,7 @@ const routes = [
     path: '/manage',
     name: 'Manage',
     meta: {
-      role: "manager"
+      role: 2
     },
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -196,11 +202,11 @@ const routes = [
         name: "ManageProjects",
         component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Projects/List.vue'),
         meta: {
-          role: "manager",
-          permissions: {
-            entity: "projects",
-            action: "read"
-          }
+          role: 2,
+          // permissions: {
+          //   entity: "projects",
+          //   action: "read"
+          // }
         }
       },
       {
@@ -208,11 +214,11 @@ const routes = [
         name: "ManageUsers",
         component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Users/List.vue'),
         meta: {
-          role: "manager",
-          permission: {
-            entity: "users",
-            action: "read"
-          }
+          role: 2,
+          // permission: {
+          //   entity: "users",
+          //   action: "read"
+          // }
         }
       },
       {
@@ -220,11 +226,11 @@ const routes = [
         name: "ManageUserEdit",
         component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Users/Edit.vue'),
         meta: {
-          role: "manager",
-          permission: {
-            entity: "users",
-            action: "write"
-          }
+          role: 2,
+          // permission: {
+          //   entity: "users",
+          //   action: "write"
+          // }
         }
       },
 
@@ -233,11 +239,11 @@ const routes = [
         name: "ManageAudits",
         component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Audits/List.vue'),
         meta: {
-          role: "manager",
-          permissions: {
-            entity: "audits",
-            action: "read"
-          }
+          role: 2,
+          // permissions: {
+          //   entity: "audits",
+          //   action: "read"
+          // }
         }
       },
       {
@@ -245,7 +251,7 @@ const routes = [
         name: "ManageDomains",
         component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Domains/List.vue'),
         meta: {
-          role: "manager",
+          role: 2,
         }
       },
       {
@@ -253,7 +259,7 @@ const routes = [
         name: "ManageArticles",
         component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Articles/Dashboard.vue'),
         meta: {
-          role: "manager",
+          role: 2,
         }
       },
     ]

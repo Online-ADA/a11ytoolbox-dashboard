@@ -224,9 +224,17 @@ export default {
       }
       return false
     },
-    account: state=> {
+    account: (state)=> {
       let account = state.accounts.find( acc => acc.id == state.account)
-      return account ? account : false
+      if( account !== undefined ){
+        return account
+      }
+      if( !account && state.accounts.length ){
+        Cookies.set('toolboxAccount', state.accounts[0])
+        state.account = state.accounts[0]
+        return state.accounts[0]
+      }
+      return false
     }
   },
 }
