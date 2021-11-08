@@ -184,7 +184,7 @@ export default {
 			getScansForProject({state, rootState}, args){
 				state.loading = true
 
-				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}/scans`)
+				Request.getPromise(`${rootState.auth.API}/scans/project/${args.project_id}`)
 				.then( re=>state.scans = re.data.details)
 				.catch( re=>console.log(re))
 				.then( ()=>state.loading = false)
