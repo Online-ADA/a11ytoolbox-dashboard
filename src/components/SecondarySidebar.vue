@@ -17,9 +17,9 @@
                         </span>
                         <div class="block">
                             <ul>
-                                <li>
+                                <!-- <li>
                                     <router-link class="text-sm py-2 text-black" :to="{path: '/audits/create'}">Create New Audit</router-link>
-                                </li>
+                                </li> -->
                                 <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.audits.all" :key="item.id">
                                     <button class="text-black" @click="updateAudit(item)">{{getTitle(item)}}</button>
                                 </li>
@@ -76,12 +76,12 @@ export default {
             }
 
             if( newVal === false ){
-                this.$store.state.projects.audits = []
+                this.$store.state.audits.all = []
                 return
             }
 
-            if( oldVal === false && newVal !== false ){
-                this.$store.state.projects.audits = []
+            if( (oldVal === false || oldVal === undefined) && newVal !== false ){
+                this.$store.state.audits.all = []
                 this.$store.dispatch("audits/getAudits", {project_id: this.$store.state.projects.project.id})
                 return
             }

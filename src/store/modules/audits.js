@@ -6,6 +6,7 @@ const getDefaultState = () => {
 		audit: false,
 		team_members: [],
 		loading: false,
+		audit_states: [],
 		structured_sample: false,
 		sitemap: false,
 		assistive_tech: [],
@@ -33,6 +34,7 @@ export default {
 			audit: false,
 			team_members: [],
 			loading: false,
+			audit_states: [],
 			structured_sample: false,
 			sitemap: false,
 			assistive_tech: [],
@@ -196,10 +198,15 @@ export default {
 					if( !Request.muted() ){
 						Vue.notify({
 							title:"Success",
-							text: "Audit was create successfully. Redirecting to the audit...",
+							text: "Audit was create successfully",
 							type: "success",
 							position: 'bottom right'
 						})
+					}
+
+					rootState.audits.all.push(re.data.details)
+					if( args.vm ){
+						args.vm.complete = true
 					}
 					// setTimeout(()=>{
 					// 	// if( rootGetters["auth/isManager"] ){

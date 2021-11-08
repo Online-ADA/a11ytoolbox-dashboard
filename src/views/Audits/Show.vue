@@ -451,7 +451,7 @@ export default {
 			return this.audit ? this.audit.issues : []
 		},
 		audit_states(){
-			return this.$store.state.admin.audit_states.map( as => as.content)
+			return this.$store.state.audits.audit_states.map( as => as.content)
 		},
 		issue_numbers(){
 			return this.audit.issues.map( i => i.issue_number)
@@ -564,7 +564,7 @@ export default {
 		"$route.params.id": function(){
 			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
 			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
-			this.$store.dispatch("admin/getAuditStates")
+			this.$store.dispatch("audits/getAuditStates")
 		},
 		"$store.state.audits.audit": function(newVal){
 			this.selectedSoftware = newVal.software_used[0]

@@ -143,7 +143,7 @@ export default {
 	},
 	watch: {
 		"$store.state.clients.client": function(newVal){
-			this.$store.state.projects.audits = []
+			this.$store.state.audits.all = []
 			this.$store.state.projects.project = false
 			if( newVal !== false && newVal !== undefined && newVal !== null ){
 				Cookies.set('toolboxClient', parseInt(this.$store.state.clients.client.id))
