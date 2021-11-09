@@ -5,7 +5,7 @@
 		<template v-if="audit">
 			<!-- <h2 class="mb-1 text-xl">{{audit.title}}</h2> -->
 			
-			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues.length" :rowsData="issues" :headersData="headers"></Table>
+			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
@@ -50,13 +50,24 @@
 						<div class="mx-2 flex-1">
 							<Label class="text-lg leading-6 w-full" :stacked="false" for="pages">Pages</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('pages') }" id="pages-validation">The pages field is required</small>
-							<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
-								<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in audit.pages" :key="'page-'+index">
-									<template v-if="page.title">{{page.title}}</template>
-									<template v-if="page.title && page.url"> - </template>
-									<template v-if="page.url">{{page.url}}</template>
-								</option>
-							</select>
+							<template v-if="audit.pages && audit.pages.length">
+								<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
+									<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in audit.pages" :key="'page-'+index">
+										<template v-if="page.title">{{page.title}}</template>
+										<template v-if="page.title && page.url"> - </template>
+										<template v-if="page.url">{{page.url}}</template>
+									</option>
+								</select>
+							</template>
+							<template v-else-if="audit.domain && audit.domain.pages && audit.domain.pages.length">
+								<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
+									<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in audit.domain.pages" :key="'page-'+index">
+										<template v-if="page.url">{{page.url}}</template>
+									</option>
+								</select>
+							</template>
+							<template v-else>Sitemap is empty. <button role="link" @click="$router.push({path: `/domains/${audit.domain.id}/edit`})" class="standard">Create</button> one</template>
+							
 						</div>
 						<div class="mx-2 flex-1">
 							<Label class="text-lg leading-6 w-full" for="audit_status">States</Label>
@@ -299,7 +310,7 @@
 				<h2 class="text-center">Are you sure you want to delete {{ selectedRows.length === 1 ? 'this issue' : 'these issues' }}?</h2>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="confirmDeleteModalOpen = false" class="standard">
+				<button @click="confirmDeleteModalOpen = false" class="standard mr-3">
 					Cancel
 				</button>
 				<button @click="deleteSelectedIssues" v-if="selectedRows.length" class="standard alert">
@@ -567,7 +578,6 @@ export default {
 			this.$store.dispatch("audits/getAuditStates")
 		},
 		"$store.state.audits.audit": function(newVal){
-			console.log("is this firing??");
 			this.selectedSoftware = newVal.software_used[0]
 			this.$store.dispatch("projects/getProject", {id: newVal.project_id})
 		},
@@ -852,11 +862,11 @@ export default {
 			let toValidate = [
 				"target",
 				"articles",
-				"pages",
+				// "pages",
 				"status",
 				"descriptions",
 				"recommendations",
-				"audit_states",
+				// "audit_states",
 				"effort",
 				"priority"
 			]
@@ -898,7 +908,7 @@ export default {
 				
 				this.$store.dispatch("audits/createIssue", {issue: this.issue})
 				
-				this.closeModal(()=>{console.log(this.issueModalOpen);this.issueModalOpen = false})
+				this.closeModal(()=>{this.issueModalOpen = false})
 				this.issue = this.getDefault()
 				this.descriptionsQuill.root.innerHTML = ""
 				this.recommendationsQuill.root.innerHTML = ""

@@ -323,7 +323,9 @@
 		created(){},
 		watch:{
 			team_members(newVal){
-				this.unassigned = newVal.map( o=>o.id)
+				if( this.open && newVal.length ){
+					this.unassigned = newVal.map( o=>o.id)
+				}
 			},
 			open: function(newVal){
 				if( newVal ){
