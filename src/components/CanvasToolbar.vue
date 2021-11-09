@@ -205,16 +205,20 @@ export default {
                 if( this.searchBarOpen ){
                     return this.auditFilteredRows
                 }
-                return this.audit.issues.length
+                if( this.audit.issues && this.audit.issues.length ){
+                    return this.audit.issues.length
+                }
+                return 0
             }
+        },
+        isAuditEditPage(){
+            return this.$route.path.includes('audits') && this.$route.path.includes('edit')
         }
     },
     methods: {
-        isAuditEditPage(){
-            return $route.path.includes('audits') && !$route.path.includes('edit')
-        },
+        
         showToolbar(){
-            return tool.type === 'audit' && audit
+            return this.tool.type === 'audit' && this.audit
         },
         toolbarEmit(action){
             let data = null

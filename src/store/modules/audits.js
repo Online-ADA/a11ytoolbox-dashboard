@@ -299,11 +299,7 @@ export default {
 						text: "Audit updated",
 						callback: function(){
 							state.loading = false
-							if( rootGetters["auth/isManager"] ){
-								args.router.push({path: "/manage/audits"})
-								return
-							}
-							args.router.push({path: "/audits/list"})
+							args.router.push({path: `/audits/${args.id}`})
 						},
 						position: 'bottom right'
 					},

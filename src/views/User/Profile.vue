@@ -32,7 +32,7 @@
 						<li class="border border-black p-2 my-3" v-for="(account, index) in accounts" :key="'account-index-'+index">
 							<div class="text-sm">Account Name: <span class="bold">{{account.name}}</span></div>
 							<div class="text-sm">Account Status: {{account.status}}</div>
-							<div class="text-sm">Role: <span class="capitalize">{{$store.state.auth.accountsRoles[account.id][0]}}</span></div>
+							<div class="text-sm">Role: <span class="capitalize">{{textRole(account.pivot.role_id)}}</span></div>
 						</li>
 					</ul>
 					
@@ -69,6 +69,18 @@ export default {
 			if( this.avatar ){
 				this.$store.dispatch("user/uploadAvatar", {file: this.avatar})
 			}
+		},
+		textRole(id){
+			switch(id){
+				case 1:
+					return "Owner/Manager"
+				case 2:
+					return "Manager"
+				case 3:
+					return "Standard"
+				case 4:
+					return "Limited"
+			}
 		}
 	},
 	computed:{
@@ -77,6 +89,9 @@ export default {
 		},
 		accounts(){
 			return this.$store.state.auth.accounts
+		},
+		account(){
+			return this.$store.getters["auth/account"]
 		}
 	},
 	components:{

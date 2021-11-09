@@ -150,7 +150,7 @@
 					<Button v-if="!loading && structuredSample" class="mt-1 mb-3 mx-2" hover="true" @click.native.prevent="generateWorkingSample">{{audit.pages.length ? 'Regenerate Sample' : 'Generate Sample'}}</Button>
 				</div>
 
-				<template v-if="audit.domain.pages.length">
+				<template v-if="audit.domain && audit.domain.pages && audit.domain.pages.length">
 					<template v-if="audit.pages.length">
 						<Card class="w-full p-4 mb-34 mx-2 flex-wrap items-center flex-col">
 							<div class="flex flex-wrap w-full justify-center items-end">
@@ -196,7 +196,7 @@
 					There is no sitemap yet for this domain. <button @click="$router.push({path: '/'})" class="standard mx-3">Click here</button> to create one
 				</template>
 			</div>
-			<button class="standard" @click.prevent="saveAudit">Save</button>
+			<button class="standard my-5 mx-auto" @click.prevent="saveAudit">Save</button>
 			
 		</div>
 	</div>
@@ -283,7 +283,7 @@ export default {
 			}
 		},
 		"$store.state.user.team_members":function(newVal){
-			if( newVal ){
+			if( newVal && newVal.length ){
 				let self = this
 				this.unassigned = JSON.parse(JSON.stringify(newVal.filter( o=>!self.assigned.includes(o.id)).map( o=>o.id )))
 			}
