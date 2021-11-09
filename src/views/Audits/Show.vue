@@ -567,6 +567,7 @@ export default {
 			this.$store.dispatch("audits/getAuditStates")
 		},
 		"$store.state.audits.audit": function(newVal){
+			console.log("is this firing??");
 			this.selectedSoftware = newVal.software_used[0]
 			this.$store.dispatch("projects/getProject", {id: newVal.project_id})
 		},

@@ -69,7 +69,6 @@
 						</div>
 						<div class="mt-3">
 							<button class="standard mr-2" @click.prevent="createDomain">Create</button>
-							<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployWCAGAuditModal', false)})" class="standard">Cancel</button>
 						</div>
 					</form>
 				</template>
@@ -133,6 +132,7 @@
 					<button class="standard mr-2" @click.prevent="deployTool">Deploy</button>
 				</template>
 			</div>
+			<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployWCAGAuditModal', false)})" class="standard">Cancel</button>
 		</template>
 		
 	</Modal>

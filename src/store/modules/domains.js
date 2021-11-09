@@ -64,37 +64,7 @@ export default {
 					state.loading = false;
 				})
 			},
-			// getProjects({state, dispatch, rootState, rootGetters}, args = {}){
-			// 	state.loading = true
-			// 	let client_id = rootState.clients.client.id
-			// 	if( !client_id ){
-			// 		client_id = Cookies.get("toolboxClient")
-			// 	}
-			// 	Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/projects`, {
-			// 		params: {
-			// 			user_id: rootState.auth.user.id, 
-			// 			clientID: client_id,
-			// 			isManager: rootGetters["auth/isManager"]
-			// 		} 
-			// 	})
-			// 	.then( re => {
-			// 		state.projects = re.data.details
-			// 		// if( args.project_id ){
-			// 		// 	dispatch("getProjectDomains", {project_id: args.project_id, client_id: rootState.clients.client.id})
-			// 		// }
-			// 		// else{
-			// 		// 	dispatch("getProjectDomains", {project_id: state.projects[0].id, client_id: rootState.clients.client.id})
-			// 		// }
-					
-			// 	})
-			// 	.catch( error => {
-			// 		state.loading = false
-			// 		console.log(error);
-			// 	})
-			// 	.finally(()=>{
-			// 		state.loading = false
-			// 	})
-			// },
+			
 			getDomains({state, rootState}, args){
 				state.loading = true
 				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/`, {
@@ -108,60 +78,7 @@ export default {
 				.catch( re=> console.log(re))
 				.finally( ()=>state.loading = false)
 			},
-			// getProjectDomains({state, rootState}, args){
-			// 	state.loading = true
-			// 	Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.project_id}/projectDomains`)
-			// 	.then( re => {
-			// 		if( args.project ){
-			// 			args.project.domains = re.data.details
-			// 		}
-			// 		state.all = re.data.details
-			// 	})
-			// 	.catch( error => {
-			// 		state.loading = false
-			// 		console.log(error);
-			// 	})
-			// 	.then( ()=>{
-			// 		state.loading = false
-			// 	})
-			// },
-			// updateProject({state, rootState, rootGetters}, args){
-			// 	state.loading = true
-			// 	let requestArgs = {
-			// 		params: {
-			// 			project_id: args.id,
-			// 			data: args.project
-			// 		},
-			// 		onSuccess: {
-			// 			title: "Success",
-			// 			text: "Project updated",
-			// 			callback: function(){
-			// 				state.loading = false
-			// 				if( rootGetters["auth/isManager"] ){
-			// 					args.router.push({path: "/manage/projects"})
-			// 					return
-			// 				}
-			// 				args.router.push({path: "/projects/list"})
-			// 			},
-			// 			position: 'bottom right'
-			// 		},
-			// 		onWarn:{
-			// 			callback: function(){
-			// 				state.loading = false
-			// 			},
-			// 			position: 'bottom right'
-			// 		},
-			// 		onError: {
-			// 			title: "Error",
-			// 			text: "Failed updating project",
-			// 			callback: function(){
-			// 				state.loading = false
-			// 			},
-			// 			position: 'bottom right'
-			// 		}
-			// 	};
-			// 	Request.post(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.id}`, requestArgs)
-			// },
+			
 			updateStructuredSampleItem({state, rootState}, args){
 				state.loading = true
 				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})

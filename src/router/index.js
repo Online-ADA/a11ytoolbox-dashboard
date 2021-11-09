@@ -34,11 +34,10 @@ const routes = [
   },
   {
     path: "/domains",
-    name: "Domains",
     component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/Index.vue'),
     children:[
       {
-        path: "list",
+        path: "/",
         name: "DomainsList",
         component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/List.vue')
       },
