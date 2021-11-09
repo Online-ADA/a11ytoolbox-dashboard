@@ -122,7 +122,7 @@ export default {
         },
         audits(){
             if( this.$store.state.projects ){
-                return [ ...this.$store.state.projects.audits, ...this.tempAudits ]
+                return [ ...this.$store.state.audits.all, ...this.tempAudits ]
             }
 
             return this.tempAudits
@@ -386,10 +386,10 @@ export default {
                 let self = this
                 
                 if( !this.updatedFirstIndex ){
-                    let ids = self.$store.state.projects.audits.map( a=>a.id)
+                    let ids = self.$store.state.audits.all.map( a=>a.id)
                     let firstIndex = ids.indexOf( parseInt(self.$route.params.id) )
-                    let firstItem = self.$store.state.projects.audits.splice(firstIndex, 1)[0]
-                    self.$store.state.projects.audits.splice( 0, 0, firstItem)
+                    let firstItem = self.$store.state.audits.all.splice(firstIndex, 1)[0]
+                    self.$store.state.audits.all.splice( 0, 0, firstItem)
                     this.updatedFirstIndex = true
                 }
             }

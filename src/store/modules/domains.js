@@ -4,8 +4,6 @@ import Cookies from 'js-cookie'
 const getDefaultState = () => {
 	return {
 		all: [],
-		audits: [],
-		projects: [],
 		domain: false,
 		loading: false
 	}
@@ -15,8 +13,6 @@ export default {
 		namespaced:true,
 		state: {
 			all: [],
-			audits: [],
-			projects: [],
 			domain: false,
 			loading: false
 		},
@@ -32,31 +28,33 @@ export default {
 			resetState({commit}) {
 				commit('resetState')
 			},
-			getProject({state, rootState}, args){
-				state.loading = true
+			// getProject({state, rootState}, args){
+			// 	state.loading = true
 				
-				Request.getPromise(`${rootState.auth.userAPI}/${args.account_id}/projects/${args.id}`)
-				.then( re => {
-					state.project = re.data.project[0]
-				})
-				.catch( re=> {
-					console.log(re);
-				})
-				.then( ()=>{
-					state.loading = false
-				})
-			},
+			// 	Request.getPromise(`${rootState.auth.API}/${args.account_id}/projects/${args.id}`)
+			// 	.then( re => {
+			// 		state.project = re.data.project[0]
+			// 	})
+			// 	.catch( re=> {
+			// 		console.log(re);
+			// 	})
+			// 	.then( ()=>{
+			// 		state.loading = false
+			// 	})
+			// },
 			createDomain({state, rootState}, args){
 				state.loading = true;
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains`, {
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains`, {
 					params: {
 						domain: args.domain
 					}
 				})
 				.then( re=>{
-					if( args.vm ){
-						args.vm.domain = re.data.details
-						args.vm.complete = true
+					//Add the new domain to the selected project, NOT THE GLOBAL PROJECT
+					rootState.projects.all.find(p=>p.id == args.domain.project_id).domains.push(re.data.details)
+					
+					if( args.callback ){
+						args.callback(re.data.details)
 					}
 				})
 				.catch( re=>{
@@ -66,94 +64,24 @@ export default {
 					state.loading = false;
 				})
 			},
-			getProjects({state, dispatch, rootState, rootGetters}, args = {}){
+			
+			getDomains({state, rootState}, args){
 				state.loading = true
-				let client_id = rootState.clients.client.id
-				if( !client_id ){
-					client_id = Cookies.get("toolboxClient")
-				}
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/`, {
 					params: {
-						user_id: rootState.auth.user.id, 
-						clientID: client_id,
-						isManager: rootGetters["auth/isManager"]
-					} 
-				})
-				.then( re => {
-					state.projects = re.data.details
-					// if( args.project_id ){
-					// 	dispatch("getProjectDomains", {project_id: args.project_id, client_id: rootState.clients.client.id})
-					// }
-					// else{
-					// 	dispatch("getProjectDomains", {project_id: state.projects[0].id, client_id: rootState.clients.client.id})
-					// }
-					
-				})
-				.catch( error => {
-					state.loading = false
-					console.log(error);
-				})
-				.finally(()=>{
-					state.loading = false
-				})
-			},
-			getProjectDomains({state, rootState}, args){
-				state.loading = true
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.project_id}/projectDomains`)
-				.then( re => {
-					if( args.project ){
-						args.project.domains = re.data.details
+						project_id: args.project_id
 					}
+				})
+				.then( re=>{
 					state.all = re.data.details
 				})
-				.catch( error => {
-					state.loading = false
-					console.log(error);
-				})
-				.then( ()=>{
-					state.loading = false
-				})
+				.catch( re=> console.log(re))
+				.finally( ()=>state.loading = false)
 			},
-			updateProject({state, rootState, rootGetters}, args){
-				state.loading = true
-				let requestArgs = {
-					params: {
-						project_id: args.id,
-						data: args.project
-					},
-					onSuccess: {
-						title: "Success",
-						text: "Project updated",
-						callback: function(){
-							state.loading = false
-							if( rootGetters["auth/isManager"] ){
-								args.router.push({path: "/manage/projects"})
-								return
-							}
-							args.router.push({path: "/projects/list"})
-						},
-						position: 'bottom right'
-					},
-					onWarn:{
-						callback: function(){
-							state.loading = false
-						},
-						position: 'bottom right'
-					},
-					onError: {
-						title: "Error",
-						text: "Failed updating project",
-						callback: function(){
-							state.loading = false
-						},
-						position: 'bottom right'
-					}
-				};
-				Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.id}`, requestArgs)
-			},
+			
 			updateStructuredSampleItem({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})
 				.then( re=>{
 					if( !Request.muted() ){
 						Vue.notify({
@@ -206,7 +134,7 @@ export default {
 						position: 'bottom right'
 					}
 				};
-				Request.get(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}`, requestArgs)
+				Request.get(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}`, requestArgs)
 			},
 			addPageToSitemap({state, rootState}, args){
 				state.loading = true
@@ -215,7 +143,7 @@ export default {
 						page: args.page
 					}
 				}
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.page.domain_id}/page`, requestArgs)
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.page.domain_id}/page`, requestArgs)
 				.then( (response) => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -245,7 +173,7 @@ export default {
 			},
 			removeItemFromSample({state, rootState}, args){
 				state.loading = true
-				Request.destroyPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.domain_id}/item/${args.item_id}`)
+				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}/item/${args.item_id}`)
 				.then( (response) => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -273,7 +201,7 @@ export default {
 			},
 			removePageFromSitemap({state, rootState}, args){
 				state.loading = true
-				Request.destroyPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.domain_id}/page/${args.page_id}`)
+				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}/page/${args.page_id}`)
 				.then( (response) => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -318,7 +246,7 @@ export default {
 					}
 				}
 
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sample`, requestArgs)
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sample`, requestArgs)
 				.then( re=>{
 					state.domain = re.data.details
 				})
@@ -363,11 +291,11 @@ export default {
 						position: 'bottom right'
 					}
 				};
-				Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sitemap`, requestArgs)
+				Request.post(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sitemap`, requestArgs)
 			},
 			emptySitemap({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sitemapEmpty`)
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sitemapEmpty`)
 				.then( response => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -395,7 +323,7 @@ export default {
 			},
 			emptySample({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
 				.then( response => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -423,7 +351,7 @@ export default {
 			},
 			saveDomain({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}`, {params: {domain: args.domain}})
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}`, {params: {domain: args.domain}})
 				.then( re=>{
 					state.domain = re.data.details
 					if( !Request.muted() ){
@@ -450,34 +378,34 @@ export default {
 					state.loading = false
 				})
 			},
-			getAudits({state, rootState}, args){
-				state.loading = true
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
-				.then( response => {
-					if( !Request.muted() ){
-						Vue.notify({
-							title: "Success",
-							text: "Structured sample deleted",
-							type: "success",
-							position: 'bottom right'
-						})
-					}
-					state.domain = response.data.details
-				})
-				.catch( response => {
-					if( !Request.muted() ){
-						Vue.notify({
-							title: "Error",
-							text: response.error,
-							type: "error",
-							position: 'bottom right'
-						})
-					}
-				})
-				.then( () => {
-					state.loading = false
-				})
-			},
+			// getAudits({state, rootState}, args){
+			// 	state.loading = true
+			// 	Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
+			// 	.then( response => {
+			// 		if( !Request.muted() ){
+			// 			Vue.notify({
+			// 				title: "Success",
+			// 				text: "Structured sample deleted",
+			// 				type: "success",
+			// 				position: 'bottom right'
+			// 			})
+			// 		}
+			// 		state.domain = response.data.details
+			// 	})
+			// 	.catch( response => {
+			// 		if( !Request.muted() ){
+			// 			Vue.notify({
+			// 				title: "Error",
+			// 				text: response.error,
+			// 				type: "error",
+			// 				position: 'bottom right'
+			// 			})
+			// 		}
+			// 	})
+			// 	.then( () => {
+			// 		state.loading = false
+			// 	})
+			// },
 		},
 		getters: { 
 			

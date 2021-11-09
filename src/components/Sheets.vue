@@ -59,9 +59,6 @@
                     this.showing = sheet.next
                 }
                 
-                // if( this.showing == 1 ){
-                //     this.$refs["component1"][0].setFirstDomain()
-                // }
                 if( sheet.next && directTo === false ){
                     this.$refs["sheet"+ sheet.next][0].initShow()
                 }

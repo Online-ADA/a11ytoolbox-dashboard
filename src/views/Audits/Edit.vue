@@ -25,7 +25,7 @@
 			<div class="w-full flex justify-center">
 				<div class="px-2">
 					<Label for="status">Status</Label>
-					<select v-model="audit.status" id="status" class="mx-auto " name="status">
+					<select v-model="audit.status" id="status" class="mx-auto p-1" name="status">
 						<option :value="status.value" v-for="(status, index) in statusSrc" :key="`status-${index}`">{{status.name}}</option>
 					</select>
 				</div>
@@ -122,7 +122,7 @@
 			<template v-if="$store.getters['auth/isManager']">
 				<div class="flex my-3 w-full">
 					<Card class="w-1/2">
-					<h3>Auditors</h3>
+					<h3>Users</h3>
 					<ul v-if="unassigned.length">
 						<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
 						<span>{{displayUser(id)}}</span><Button aria-label="Assign user to audit" hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
@@ -150,49 +150,53 @@
 					<Button v-if="!loading && structuredSample" class="mt-1 mb-3 mx-2" hover="true" @click.native.prevent="generateWorkingSample">{{audit.pages.length ? 'Regenerate Sample' : 'Generate Sample'}}</Button>
 				</div>
 
-				<template v-if="audit.pages.length">
-					<Card class="w-full p-4 mb-34 mx-2 flex-wrap items-center flex-col">
-						<div class="flex flex-wrap w-full justify-center items-end">
-							<h3 class="w-full">Add new sample item</h3>
-							<Label class="flex-1 pr-3">
-								<span>Title</span>
-								<TextInput v-model="newSampleItem.title"></TextInput>
-							</Label>
-							<Label class="flex-1">
-								<span>Url</span>
-								<TextInput v-model="newSampleItem.url"></TextInput>
-							</Label>
-							<Button style="margin-bottom:13px" class="ml-3" color="red" hover="true" @click.native.prevent="addNewSampleItem">Add Item</Button>
-						</div>
-						
-						<h4 class="my-3">Items</h4>
-						<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
-							<table class="w-full border border-black table-fixed">
-								<thead>
-									<tr>
-										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-title">Title</span></th>
-										<th class="text-center border border-black" width="40%" scope="col"><span id="sample-url">Url</span></th>
-										<th class="text-center border border-black" width="10%" scope="col">Delete</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr v-for="(sample, index) in audit.pages" :key="'sample-'+index">
-										<td class="p-1.5 overflow-y-auto border border-black">
-											<TextInput class="w-full" v-model="sample.title" aria-labelledby="sample-title"></TextInput>
-										</td>
-										<td class="p-1.5 overflow-y-auto border border-black"><TextInput class="w-full" v-model="sample.url" aria-labelledby="sample-url"></TextInput></td>
-										<td class="p-1.5 overflow-y-auto border border-black"><Button @click.native.prevent="deleteItem(index)" color="delete">X</Button></td>
-									</tr>
-								</tbody>
-							</table>
+				<template v-if="audit.domain && audit.domain.pages && audit.domain.pages.length">
+					<template v-if="audit.pages.length">
+						<Card class="w-full p-4 mb-34 mx-2 flex-wrap items-center flex-col">
+							<div class="flex flex-wrap w-full justify-center items-end">
+								<h3 class="w-full">Add new sample item</h3>
+								<Label class="flex-1 pr-3">
+									<span>Title</span>
+									<TextInput v-model="newSampleItem.title"></TextInput>
+								</Label>
+								<Label class="flex-1">
+									<span>Url</span>
+									<TextInput v-model="newSampleItem.url"></TextInput>
+								</Label>
+								<Button style="margin-bottom:13px" class="ml-3" color="red" hover="true" @click.native.prevent="addNewSampleItem">Add Item</Button>
+							</div>
+							
+							<h4 class="my-3">Items</h4>
+							<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
+								<table class="w-full border border-black table-fixed">
+									<thead>
+										<tr>
+											<th class="text-center border border-black" width="40%" scope="col"><span id="sample-title">Title</span></th>
+											<th class="text-center border border-black" width="40%" scope="col"><span id="sample-url">Url</span></th>
+											<th class="text-center border border-black" width="10%" scope="col">Delete</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="(sample, index) in audit.pages" :key="'sample-'+index">
+											<td class="p-1.5 overflow-y-auto border border-black">
+												<TextInput class="w-full" v-model="sample.title" aria-labelledby="sample-title"></TextInput>
+											</td>
+											<td class="p-1.5 overflow-y-auto border border-black"><TextInput class="w-full" v-model="sample.url" aria-labelledby="sample-url"></TextInput></td>
+											<td class="p-1.5 overflow-y-auto border border-black"><Button @click.native.prevent="deleteItem(index)" color="delete">X</Button></td>
+										</tr>
+									</tbody>
+								</table>
+							</Card>
+							<Button @click.native.prevent="emptySample" color="red" hover="true" class="mr-3">Remove all</Button>
+							<Button @click.native.prevent="resetSample" color="red" hover="true">Reset</Button>
 						</Card>
-						<Button @click.native.prevent="emptySample" color="red" hover="true" class="mr-3">Remove all</Button>
-						<Button @click.native.prevent="resetSample" color="red" hover="true">Reset</Button>
-					</Card>
-					<Button class="mx-auto block my-3 hover:bg-pallette-red hover:text-white" @click.native.prevent="saveAudit">Save</Button>
+					</template>
+				</template>
+				<template v-else>
+					There is no sitemap yet for this domain. <button @click="$router.push({path: '/'})" class="standard mx-3">Click here</button> to create one
 				</template>
 			</div>
-
+			<button class="standard my-5 mx-auto" @click.prevent="saveAudit">Save</button>
 			
 		</div>
 	</div>
@@ -242,15 +246,15 @@ export default {
 	computed: {
 		loading(){
 			if( this.$store.state.audits ){
-				return this.$store.state.audits.loading || this.$store.state.audits.auditorsLoading
+				return this.$store.state.audits.loading || this.$store.state.user.loading
 			}
 			return false
 		},
 		projects(){
-			return this.$store.state.audits.projects || []
+			return this.$store.state.projects.all || []
 		},
-		auditors(){
-			return this.$store.state.audits.auditors || []
+		team_members(){
+			return this.$store.state.user.team_members || []
 		},
 		structuredSample(){
 			return this.$store.state.audits.structured_sample || []
@@ -273,13 +277,13 @@ export default {
 				this.assigned = JSON.parse(JSON.stringify(newVal.assignees.map(  o=>o.id )))
 				this.$store.dispatch("audits/getAssistiveTech")
 				this.$store.dispatch("audits/getSoftwareUsed")
-				this.$store.dispatch("audits/getAuditors")
+				this.$store.dispatch("user/getTeamMembers", {team: 2})
 				this.$store.dispatch("audits/getSitemap")
 				this.$store.dispatch("audits/getStructuredSample")
 			}
 		},
-		"$store.state.audits.auditors":function(newVal){
-			if( newVal ){
+		"$store.state.user.team_members":function(newVal){
+			if( newVal && newVal.length ){
 				let self = this
 				this.unassigned = JSON.parse(JSON.stringify(newVal.filter( o=>!self.assigned.includes(o.id)).map( o=>o.id )))
 			}
@@ -438,7 +442,7 @@ export default {
 			this.audit.pages = []
 		},
 		displayUser(id){
-			let user = this.auditors.find( u => u.id == id )
+			let user = this.team_members.find( u => u.id == id )
 			return user != undefined ? `${user.first_name} ${user.last_name}` : false
 		},
 		assign(id){

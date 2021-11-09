@@ -4,11 +4,9 @@ const getDefaultState = () => {
 	return {
 		all: [],
 		audit: false,
-		auditors: [],
-		project: false,
-		projects: [],
+		team_members: [],
 		loading: false,
-		auditorsLoading: false,
+		audit_states: [],
 		structured_sample: false,
 		sitemap: false,
 		assistive_tech: [],
@@ -34,11 +32,9 @@ export default {
 		state: {
 			all: [],
 			audit: false,
-			auditors: [],
-			project: false,
-			projects: [],
+			team_members: [],
 			loading: false,
-			auditorsLoading: false,
+			audit_states: [],
 			structured_sample: false,
 			sitemap: false,
 			assistive_tech: [],
@@ -52,7 +48,9 @@ export default {
 				Vue.set(state,payload.key,payload.value)
 			},
 			resetState (state) {
+				let all = state.all
 				Object.assign(state, getDefaultState())
+				Object.assign(state.all, all)
 			},
 		},
 		actions: {
@@ -63,7 +61,7 @@ export default {
 				let form_data = new FormData()
 				form_data.append('upload', args.file)
 				let myHeaders = {...Vue.prototype.$http.defaults.headers.common, 'Content-Type': 'multipart/form-data'}
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/uploadCSV`, {params: form_data, headers: myHeaders})
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/uploadCSV`, {params: form_data, headers: myHeaders})
 				.then( re=>{
 					Vue.notify({
 						title: "Success",
@@ -83,7 +81,7 @@ export default {
 				.then()
 			},
 			completeAudit({state, rootState}, args){
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.audit_id}/complete`)
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}/complete`)
 				.then( re=>{
 					Vue.notify({
 						title: "Success",
@@ -98,7 +96,7 @@ export default {
 				.then()
 			},
 			createNextAudit({rootState}, args){
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.audit_id}/next`)
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}/next`)
 				.then( re=>{
 					Vue.notify({
 						title: "Audit created",
@@ -111,73 +109,73 @@ export default {
 				.catch()
 				.then()
 			},
-			getProject({state, rootState}, args){
-				state.loading = true
-				Request.get(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.project_id}`, {
-					onSuccess: {
-						title:'Success',
-						text:'Project retrieved',
-						callback: function(response){
-							state.loading = false
-							state.project = response.data.details
-						},
-						position: 'bottom right'
-					},
-					onError: {
-						title:'Error',
-						text:'Retrieving this project caused an error',
-						callback: function(){
-							state.loading = false
-						},
-						position: 'bottom right'
-					},
-					onWarn: {
-						title: "Warning",
-						text: "There was a problem retrieving the project",
-						callback: function(){
-							state.loading = false
-						},
-						position: 'bottom right'
-					}
-				})
-			},
-			getProjects({state, rootGetters, rootState}){
-				state.loading = true
-				let url = `${rootState.auth.userAPI}/${rootState.auth.account}/projects`
-				if( rootGetters["auth/isManager"] ){
-					url = `${rootState.auth.adminAPI}/${rootState.auth.account}/projects`
-				}
-				Request.get(url, {
-					onSuccess: {
-						silent:true,
-						callback: function(response){
-							state.loading = false
-							state.projects = response.data.details
-						},
-						position: 'bottom right'
-					},
-					onError: {
-						title:'Error',
-						text:'Retrieving this projects caused an error',
-						callback: function(){
-							state.loading = false
-						},
-						position: 'bottom right'
-					},
-					onWarn: {
-						title: "Warning",
-						text: "There was a problem retrieving the projects",
-						callback: function(){
-							state.loading = false
-						},
-						position: 'bottom right'
-					}
-				})
-			},
+			// getProject({state, rootState}, args){
+			// 	state.loading = true
+			// 	Request.get(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}`, {
+			// 		onSuccess: {
+			// 			title:'Success',
+			// 			text:'Project retrieved',
+			// 			callback: function(response){
+			// 				state.loading = false
+			// 				state.project = response.data.details
+			// 			},
+			// 			position: 'bottom right'
+			// 		},
+			// 		onError: {
+			// 			title:'Error',
+			// 			text:'Retrieving this project caused an error',
+			// 			callback: function(){
+			// 				state.loading = false
+			// 			},
+			// 			position: 'bottom right'
+			// 		},
+			// 		onWarn: {
+			// 			title: "Warning",
+			// 			text: "There was a problem retrieving the project",
+			// 			callback: function(){
+			// 				state.loading = false
+			// 			},
+			// 			position: 'bottom right'
+			// 		}
+			// 	})
+			// },
+			// getProjects({state, rootGetters, rootState}){
+			// 	state.loading = true
+			// 	let url = `${rootState.auth.API}/${rootState.auth.account}/projects`
+			// 	if( rootGetters["auth/isManager"] ){
+			// 		url = `${rootState.auth.API}/${rootState.auth.account}/projects`
+			// 	}
+			// 	Request.get(url, {
+			// 		onSuccess: {
+			// 			silent:true,
+			// 			callback: function(response){
+			// 				state.loading = false
+			// 				state.projects = response.data.details
+			// 			},
+			// 			position: 'bottom right'
+			// 		},
+			// 		onError: {
+			// 			title:'Error',
+			// 			text:'Retrieving this projects caused an error',
+			// 			callback: function(){
+			// 				state.loading = false
+			// 			},
+			// 			position: 'bottom right'
+			// 		},
+			// 		onWarn: {
+			// 			title: "Warning",
+			// 			text: "There was a problem retrieving the projects",
+			// 			callback: function(){
+			// 				state.loading = false
+			// 			},
+			// 			position: 'bottom right'
+			// 		}
+			// 	})
+			// },
 			getAudit({state, rootState}, args = {withIssues: false}){
 				state.loading = true
 				
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.id}`, {params: {withIssues: args.withIssues}})
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.id}`, {params: {withIssues: args.withIssues}})
 				.then( re=>{
 					state.audit = re.data.details
 					if( args.vm ){
@@ -195,23 +193,28 @@ export default {
 			},
 			createAudit({state, rootState}, args){
 				state.loading = true;
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits`, { params: { audit: args.audit, createScan: args.createScan } })
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/audits`, { params: { audit: args.audit, createScan: args.createScan } })
 				.then( re=>{
 					if( !Request.muted() ){
 						Vue.notify({
 							title:"Success",
-							text: "Audit was create successfully. Redirecting to the audit...",
+							text: "Audit was create successfully",
 							type: "success",
 							position: 'bottom right'
 						})
 					}
-					setTimeout(()=>{
-						// if( rootGetters["auth/isManager"] ){
-						// 	args.router.push({path: "/manage/audits"})
-						// 	return
-						// }
-						args.router.push({path: `/audits/${re.data.details}`})
-					}, 2000)
+
+					rootState.audits.all.push(re.data.details)
+					if( args.vm ){
+						args.vm.complete = true
+					}
+					// setTimeout(()=>{
+					// 	// if( rootGetters["auth/isManager"] ){
+					// 	// 	args.router.push({path: "/manage/audits"})
+					// 	// 	return
+					// 	// }
+					// 	args.router.push({path: `/audits/${re.data.details}`})
+					// }, 2000)
 				})
 				.catch(re=>{
 					console.log(re)
@@ -228,9 +231,35 @@ export default {
 					state.loading = false
 				})
 			},
-			getAudits({state, rootState}){
+			getAuditStates({state, rootState}){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits`)
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/states`)
+				.then( res => {
+					state.audit_states = res.data.details
+				})
+				.catch(res => {
+					console.log(res.error)
+					if( !Request.muted() ){
+						Vue.notify({
+							title: 'Error',
+							text: res.error,
+							type: 'error'
+						})
+					}
+					
+					state.loading = false
+				})
+			},
+			getAudits({state, rootState}, args, withIssues=false){
+				state.loading = true
+				
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits`, {
+					params: {
+						clientID: rootState.clients.client.id,
+						projectID: args.project_id,
+						withIssues: withIssues
+					}
+				})
 				.then( re => {
 					state.all = re.data.details
 					if( !Request.muted() ){
@@ -257,20 +286,6 @@ export default {
 					state.loading = false
 				})
 			},
-			getAuditors({state, rootState}){
-				state.auditorsLoading = true
-				
-				Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/auditors`)
-				.then( re=>{
-					state.auditors = re.data.details
-				})
-				.catch( re=>{
-					console.log(re)
-				})
-				.then( ()=>{
-					state.auditorsLoading = false
-				})
-			},
 			updateAudit({state, rootState, rootGetters}, args){
 				state.loading = true
 
@@ -284,11 +299,7 @@ export default {
 						text: "Audit updated",
 						callback: function(){
 							state.loading = false
-							if( rootGetters["auth/isManager"] ){
-								args.router.push({path: "/manage/audits"})
-								return
-							}
-							args.router.push({path: "/audits/list"})
+							args.router.push({path: `/audits/${args.id}`})
 						},
 						position: 'bottom right'
 					},
@@ -307,12 +318,12 @@ export default {
 						position: 'bottom right'
 					}
 				};
-				Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.id}`, requestArgs)
+				Request.post(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.id}`, requestArgs)
 			},
 			getStructuredSample({state, rootState}){
 				state.loading = true
 
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${state.audit.domain_id}/structuredSample`)
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${state.audit.domain_id}/structuredSample`)
 				.then( re=>state.structured_sample = re.data.details)
 				.catch( re=>console.log(re))
 				.then( ()=>state.loading = false)
@@ -320,13 +331,13 @@ export default {
 			getSitemap({state, rootState}){
 				state.loading = true
 
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${state.audit.domain_id}/sitemap`)
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${state.audit.domain_id}/sitemap`)
 				.then( re=>state.sitemap = re.data.details)
 				.catch( re=>console.log(re))
 				.then( ()=>state.loading = false)
 			},
 			getArticlesTechniquesRecommendations({state, rootState}){
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/extras`)
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/extras`)
 				.then( re=>{
 					state.techniques = re.data.details.techniques
 					state.recommendations = re.data.details.recommendations
@@ -336,7 +347,7 @@ export default {
 			},
 			createIssue({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.issue.audit_id}/issues/store`, {params: args.issue})
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.issue.audit_id}/issues/store`, {params: args.issue})
 				.then( re=>{
 					state.audit.issues = re.data.details
 				})
@@ -349,7 +360,7 @@ export default {
 			},
 			deleteIssues({state, rootState}, args){
 				state.loading = true
-				Request.patchPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.audit_id}/issues`, {params: { issues: args.issues }})
+				Request.patchPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}/issues`, {params: { issues: args.issues }})
 				.then( re=>{
 					state.audit.issues = re.data.details
 				})
@@ -362,7 +373,7 @@ export default {
 			},
 			updateIssue({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.audit_id}/issues/${args.issue.id}`, { params: args.issue })
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}/issues/${args.issue.id}`, { params: args.issue })
 				.then( re=>{
 					state.audit.issues = re.data.details
 				})
@@ -375,7 +386,7 @@ export default {
 			},
 			importIssues({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/audits/${args.audit_id}/import`, {params: { issues: args.issues }})
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}/import`, {params: { issues: args.issues }})
 				.then( ()=>{
 					args.router.push({name: 'AuditShow', params: {id: args.audit_id}})
 				})
@@ -386,7 +397,7 @@ export default {
 			},
 			getAssistiveTech({state, rootState}){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/technologies`)
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/technologies`)
 				.then( re => {
 					state.assistive_tech = re.data.details
 				})
@@ -407,7 +418,7 @@ export default {
 			},
 			getSoftwareUsed({state, rootState}){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/software`)
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/software`)
 				.then( re => {
 					state.software_used = re.data.details
 				})

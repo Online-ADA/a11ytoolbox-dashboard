@@ -3,7 +3,6 @@ import Vue from 'vue'
 const getDefaultState = () => {
 	return {
 		all: [],
-		audits: [],
 		scans: [],
 		project: false,
 		loading: false,
@@ -20,7 +19,6 @@ export default {
 		namespaced:true,
 		state: {
 			all: [],
-			audits: [],
 			scans: [],
 			project: false,
 			loading: false,
@@ -43,19 +41,9 @@ export default {
 			resetState({commit}) {
 				commit('resetState')
 			},
-			getAssignable({state, rootState}, args){
-				state.usersLoading = true
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/assignable`)
-				.then( re=>{
-					args.vm.users = Object.values(re.data.details)
-					args.vm.unassigned = args.vm.users.filter( u => !args.vm.assigned.includes(u.id) ).map(u => u.id)
-				})
-				.catch( re=> console.log(re))
-				.then( ()=> state.usersLoading = false)
-			},
 			getProject({state, rootState}, args){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.id}`)
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.id}`)
 				.then( re => {
 					state.project = re.data.details
 					
@@ -82,7 +70,7 @@ export default {
 			},
 			createProject({state, rootState, dispatch}, args){
 				state.loading = true;
-				Request.postPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/projects`, {
 					params: {
 						project: args.project
 					}
@@ -95,6 +83,15 @@ export default {
 						position: 'bottom right'
 					})
 					if( !args.vm.independent ){
+						args.vm.assigned = []
+						args.vm.unassigned = rootState.user.all
+						args.vm.project = {
+							name: "",
+							status: "active",
+							created_by: rootState.auth.user.id,
+							account_id: rootState.auth.account,
+							client_id: rootState.clients.client.id,
+						}
 						args.vm.complete = true
 					}
 
@@ -111,11 +108,7 @@ export default {
 						rootState.clients.clientID = rootState.clients.client.id
 					}
 					
-					//Redirect to the homepage with the new project/client selected
-					if(args.vm.independent){
-						state.project = re.data.details
-						args.router.push({path: "/"})
-					}
+					state.project = re.data.details
 				})
 				.catch( re=>{
 					console.log(re);
@@ -124,14 +117,12 @@ export default {
 					state.loading = false;
 				})
 			},
-			getProjects({state, rootState, rootGetters}, notify=true){
+			getProjects({state, rootState}, notify=true){
 				state.loading = true
 				
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects`, {
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/projects`, {
 					params: {
-						user_id: rootState.auth.user.id, 
-						clientID: rootState.clients.client.id,
-						isManager: rootGetters["auth/isManager"]
+						clientID: rootState.clients.client.id
 					} 
 				})
 				.then( re => {
@@ -159,63 +150,56 @@ export default {
 			},
 			updateProject({state, rootState}, args){
 				state.loading = true
-				let requestArgs = {
+				// let requestArgs = {
+				// 	params: {
+				// 		project_id: args.id,
+				// 		data: args.project
+				// 	},
+				// 	onSuccess: {
+				// 		title: "Success",
+				// 		text: "Project updated",
+				// 		callback: function(re){
+				// 			state.loading = false
+				// 			if( rootState.clients.client.id !== re.data.details.client_id ){
+				// 				rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
+				// 				rootState.clients.clientID = rootState.clients.client.id
+				// 			}
+				// 		}
+				// 	},
+				// 	onWarn:{
+				// 		callback: function(){
+				// 			state.loading = false
+				// 		}
+				// 	},
+				// 	onError: {
+				// 		title: "Error",
+				// 		text: "Failed updating project",
+				// 		callback: function(){
+				// 			state.loading = false
+				// 		}
+				// 	}
+				// };
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.id}`, {
 					params: {
 						project_id: args.id,
 						data: args.project
-					},
-					onSuccess: {
-						title: "Success",
-						text: "Project updated",
-						callback: function(re){
-							state.loading = false
-							if( rootState.clients.client.id !== re.data.details.client_id ){
-								rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
-								rootState.clients.clientID = rootState.clients.client.id
-							}
-						}
-					},
-					onWarn:{
-						callback: function(){
-							state.loading = false
-						}
-					},
-					onError: {
-						title: "Error",
-						text: "Failed updating project",
-						callback: function(){
-							state.loading = false
-						}
-					}
-				};
-				Request.post(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.id}`, requestArgs)
-			},
-			getProjectDomains({state, rootState}, args){
-				state.domainsLoading = true
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.id}/domains`)
-				.then( re=>args.vm.domains = re.data.details)
-				.catch( re=> console.log(re))
-				.then( ()=>state.domainsLoading = false)
-			},
-			getAuditsForProject({state, rootState, rootGetters}, args, withIssues=false){
-				state.loading = true
-
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.project_id}/audits`, {
-					params: {
-						user_id: rootState.auth.user.id, 
-						clientID: rootState.clients.client.id,
-						isManager: rootGetters["auth/isManager"],
-						withIssues: withIssues
 					}
 				})
-				.then( re=>state.audits = re.data.details)
-				.catch( re=>console.log(re))
-				.then( ()=>state.loading = false)
+				.then( re=>{
+					if( rootState.clients.client.id !== re.data.details.client_id ){
+						rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
+						rootState.clients.clientID = rootState.clients.client.id
+					}
+				})
+				.catch( re => {
+					console.log(re)
+				})
+				.finally( ()=>{ state.loading = false })
 			},
 			getScansForProject({state, rootState}, args){
 				state.loading = true
 
-				Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/projects/${args.project_id}/scans`)
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}/scans`)
 				.then( re=>state.scans = re.data.details)
 				.catch( re=>console.log(re))
 				.then( ()=>state.loading = false)

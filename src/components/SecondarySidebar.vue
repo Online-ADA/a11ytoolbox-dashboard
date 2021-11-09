@@ -2,22 +2,25 @@
     <div class="flex shadow-lg transition-all sub-sidebar secondary relative">
         <div class="fixed">
             <div class="flex sub-nav-container" >
-                <ul class="pt-1.5 flex-1 px-5">
+                <button @click.prevent="EventBus.openModal(()=>{ EventBus.$emit('deployToolModal', true) })" aria-label="Deploy New Tool" class="absolute deploy-tool">
+                    <i class="far fa-plus-octagon"></i>
+                </button>
+                <ul class="pt-2.5 flex-1 px-5">
                     <!-- Tools Level -->
                     <li class="py-1 tool-container" :class="[expanded.includes('audit') ? 'expanded' : '']">
                         <span class="flex items-center">
                             <button @click.prevent="expand('audit')" class="">
-                            <i v-if="!expanded.includes('audit')" class="fas fa-caret-right"></i>
-                            <i v-else class="fas fa-caret-down"></i>
-                            <span class="ml-2">Audits</span>
+                                <i v-if="!expanded.includes('audit')" class="fas fa-caret-right"></i>
+                                <i v-else class="fas fa-caret-down"></i>
+                                <span class="ml-2">WCAG Audits</span>
                             </button>
                         </span>
                         <div class="block">
                             <ul>
-                                <li>
+                                <!-- <li>
                                     <router-link class="text-sm py-2 text-black" :to="{path: '/audits/create'}">Create New Audit</router-link>
-                                </li>
-                                <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.projects.audits" :key="item.id">
+                                </li> -->
+                                <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.audits.all" :key="item.id">
                                     <button class="text-black" @click="updateAudit(item)">{{getTitle(item)}}</button>
                                 </li>
                             </ul>
@@ -31,6 +34,7 @@
 
 
 <script>
+import { EventBus } from "../services/eventBus"
 
 export default {
     props:{
@@ -38,7 +42,8 @@ export default {
     },
     data() {
         return {
-            expanded: []
+            expanded: [],
+            EventBus: EventBus
         }
     },
     name: 'secondary-sidebar',
@@ -66,16 +71,18 @@ export default {
     },
     watch: {
         "$store.state.projects.project": function(newVal, oldVal){
-            console.log(newVal, oldVal);
-            if( newVal === false ){
-                this.$store.state.projects.audits = []
+            if( newVal === undefined ){
                 return
             }
 
-            if( oldVal === false && newVal !== false ){
-                console.log("OLDVAL WAS FALSE BUT NEWVAL WAS NOT FALSE");
-                this.$store.state.projects.audits = []
-                this.$store.dispatch("projects/getAuditsForProject", {project_id: this.$store.state.projects.project.id})
+            if( newVal === false ){
+                this.$store.state.audits.all = []
+                return
+            }
+
+            if( (oldVal === false || oldVal === undefined) && newVal !== false ){
+                this.$store.state.audits.all = []
+                this.$store.dispatch("audits/getAudits", {project_id: this.$store.state.projects.project.id})
                 return
             }
 
@@ -84,17 +91,18 @@ export default {
                 if( this.$route.name == "AuditImport" ){
                     withIssues = true
                 }
-                console.log("OLDVAL HAD AN ID AND IT WAS DIFFERENT FROM NEWVAL's ID");
-                this.$store.dispatch("projects/getAuditsForProject", {project_id: this.$store.state.projects.project.id}, withIssues)
+                this.$store.dispatch("audits/getAudits", {project_id: this.$store.state.projects.project.id}, withIssues)
             }
         },
         "$store.state.projects.tool.type":function(newVal){
-            this.expanded.push(newVal)
+            if( newVal ){
+                this.expanded.push(newVal)
+            }
         }
     },
     computed: {},
     mounted() {
-        if( this.$store.state.projects.tool.type == 'audit' ){
+        if( this.$store.state.projects.tool.type === 'audit' ){
             this.expanded.push('audit')
         }
     }
@@ -103,7 +111,11 @@ export default {
 </script>
 
 <style scoped>
-
+button.deploy-tool{
+    top:5px;
+    right:10px;
+    font-size:16px;
+}
 .tool-container button{
     width:100%;
     text-align:left;

@@ -61,14 +61,12 @@ function run(){
   store.state.auth.site = site
   store.state.auth.accapi = accountHost
   store.state.auth.toolboxapi = apiHost
-  store.state.auth.userAPI = `${apiHost}/api/user`
-  store.state.auth.adminAPI = `${apiHost}/api/admin`
+  store.state.auth.API = `${apiHost}/api`
   
-  Request.getPromise(store.state.auth.toolboxapi+'/api/state/init')
+  Request.getPromise(store.state.auth.API+'/state/init')
     .then( response => {
+      console.log("MAIN.JS INIT CHECK HAS RETURNED", response.data.details);
       store.state.auth.user = response.data.details.user
-      store.state.auth.accountsRoles = response.data.details.roles.accounts
-      store.state.auth.accountsPermissions = response.data.details.permissions.accounts
       store.state.auth.accounts = response.data.details.accounts
 
       if( Cookies.get("toolboxAccount") === undefined ){
@@ -81,8 +79,9 @@ function run(){
       
       let accountID = Cookies.get("toolboxAccount")
       if( accountID ){
-        Request.getPromise(store.state.auth.toolboxapi+`/api/user/${accountID}/clients`)
+        Request.getPromise(store.state.auth.API+`/${accountID}/clients`)
         .then( response => {
+          console.log("MAIN.JS GET CLIENTS HAS RETURNED");
           store.state.clients.all = response.data.details
           let clientID = parseInt(Cookies.get("toolboxClient"))
           
@@ -110,6 +109,7 @@ function run(){
     .catch(re => {
       if( !params.get('oada_auth') ){
         if( Cookies.get("loggingIn") === "false" && re.response.data.message == "Unauthenticated." ){
+          
           store.dispatch("auth/login")
         }
       }
@@ -125,16 +125,19 @@ function runBeforeEach(){
       next("/")
       return
     }
+
+    let account = store.state.auth.accounts.find(acc=>acc.id == store.state.auth.account)
+    let teamCheck = account.pivot.team_id === to.meta.teamOnly || account.pivot.team_id === 1
+    let roleCheck = account.pivot.role_id <= to.meta.role
     
-    if( to.meta.role != undefined && to.meta.permissions != undefined ){
-      //check for role and permissions
-      let hasRole = store.state.auth.accountsRoles[store.state.auth.account].includes(to.meta.role)
-      let hasPermission = store.state.auth.accountsPermissions[store.state.auth.account][to.meta.permissions.entity][to.meta.permissions.action] === 1
+    if( to.meta.role != undefined && to.meta.teamOnly != undefined ){
+      //check for role and teams
       
-      if( hasRole && hasPermission ){
+      if( roleCheck && teamCheck ){
         next()
         return
       }else{
+        store.state.auth.authMessage = "Incorrect role and team"
         next("/")
         return
       }
@@ -142,7 +145,7 @@ function runBeforeEach(){
     
     if( to.meta.role != undefined ){
       //check roles
-      if( store.state.auth.accountsRoles[store.state.auth.account].includes(to.meta.role) ){
+      if( roleCheck ){
         next()
         return
       }else{
@@ -152,14 +155,14 @@ function runBeforeEach(){
       }
     }
 
-    if(to.meta.permissions != undefined){
+    if( to.meta.teamOnly != undefined ){
       //check for permissions or redirect to login
-      let hasPermission = store.state.auth.accountsPermissions[store.state.auth.account][to.meta.permissions.entity][to.meta.permissions.action] === 1
-      if( hasPermission ){
+      
+      if( teamCheck ){
         next()
         return
       }else{
-        store.state.auth.authMessage = store.state.auth.authMessages.incorrect_permissions
+        store.state.auth.authMessage = "Incorrect team"
         next("/")
         return
       }

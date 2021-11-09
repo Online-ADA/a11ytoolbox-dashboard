@@ -4,7 +4,7 @@
         <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
         <div class="mb-auto mt-auto">
-            <div role="button" tabindex="0" aria-expanded="false" class="dropdown-container dropdown-nolabel client-dropdown relative flex flex-col pl-8">
+            <div role="button" tabindex="0" :aria-expanded="[ dropdownsExpanded.includes('client') ? 'true' : 'false' ]" @click.prevent="expandDropdown('client')" :class="{expanded: dropdownsExpanded.includes('client')}" class="dropdown-container dropdown-nolabel client-dropdown relative flex flex-col pl-8">
                 <div v-if="$store.state.auth.user" class="flex items-center dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
                     <span @click.prevent class="block whitespace-no-wrap no-underline text-white" >
                         {{selectedClient}}
@@ -12,6 +12,9 @@
                     <i class="fas fa-caret-down pl-1 text-white"></i>
                 </div>
                 <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
+                    <li>
+                        <button @click.prevent="launchCreateClientModal">Create Client</button>
+                    </li>
                     <li class="hover:bg-pallette-grey-light" v-for="(child, index) in getClients" :key="index">
                         <template v-if="child.type == 'router-link'">
                             <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
@@ -25,25 +28,35 @@
         </div>
 
         <div class="border mx-3 divider"></div>
-        <div class="text-white capitalize">{{$store.state.projects.project.name}}</div>
+        <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
 
-        <div role="button" tabindex="0" aria-expanded="false" v-if="$store.getters['auth/isManager']" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
+        <div role="button" tabindex="0" @click.prevent="expandDropdown('manage')" :aria-expanded="[ dropdownsExpanded.includes('manage') ? 'true' : 'false' ]" v-if="isManager" :class="{expanded: dropdownsExpanded.includes('manage')}" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="manage" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
                 <span aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     <i class="fas fa-tools"></i>
                 </span>
             </div>
             <ul class="text-left mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
-                <li class="hover:bg-pallette-grey-light" v-for="(child, index) in manageDropdown" :key="index">
-                    <template v-if="child.type == 'router-link'">
-                        <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
-                    </template>
+                <template v-if="isManager">
+                    <li class="hover:bg-pallette-grey-light">
+                        <router-link class="hover:text-gray-500 block" :to="'/manage/articles'">
+                            <span>Success Criteria</span>
+                        </router-link>
+                    </li>
+                    <li class="hover:bg-pallette-grey-light">
+                        <router-link class="hover:text-gray-500 block" :to="'/manage/users'">
+                            <span>Users</span>
+                        </router-link>
+                    </li>
+                </template>
+                <li>
+                    <router-link :to="'/domains'" class="hover:text-gray-500 block"><span>Domains</span></router-link>
                 </li>
             </ul>
-            <span id="management-label" class="sub-label text-white uppercase"><div>Manager</div>Settings</span>
+            <span id="management-label" class="sub-label text-white uppercase">Settings</span>
         </div>
 
-        <div role="button" tabindex="0" aria-expanded="false" :class="[!$store.getters['auth/isManager'] ? 'ml-auto' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
+        <div role="button" tabindex="0" @click.prevent="expandDropdown('user')" :aria-expanded="[ dropdownsExpanded.includes('user') ? 'true' : 'false' ]" :class="[!isManager ? 'ml-auto' : '', dropdownsExpanded.includes('user') ? 'expanded' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
             <div id="login" v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
                 <span @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     {{$store.state.auth.user.first_name}}
@@ -71,6 +84,7 @@
 <script>
 import Dropdown from './Dropdown'
 import A from './Link'
+import { EventBus } from "../services/eventBus"
 
 export default {
     props:{},
@@ -88,34 +102,8 @@ export default {
                     to: '/account'
                 }
             ],
-            manageDropdown: [
-                {
-                    type: 'router-link',
-                    label: 'Users',
-                    to: '/manage/users'
-                },
-                {
-                    type: 'router-link',
-                    label: 'Projects',
-                    to: '/manage/projects'
-                },
-                {
-                    type: 'router-link',
-                    label: 'Domains',
-                    to: '/manage/domains'
-                },
-                {
-                    type: 'router-link',
-                    label: 'Audits',
-                    to: '/manage/audits'
-                },
-                {
-                    type: 'router-link',
-                    label: 'Success Criteria',
-                    to: '/manage/articles'
-                },
-            ],
             menuOpen: true,
+            dropdownsExpanded: []
         }
     },
     name: 'ada-header',
@@ -123,21 +111,6 @@ export default {
         if( this.$store.state.auth.accounts !== false && this.$store.state.auth.accounts.length ){
             this.updateAccountName()
         }
-        let allDropdowns = document.querySelectorAll(".dropdown-container")
-        document.body.addEventListener("keyup", (e)=>{
-            setTimeout(()=>{
-                if (e.code == 'Tab') {
-                    for (let index = 0; index < allDropdowns.length; index++) {
-                        const element = allDropdowns[index];
-                        if(  element == document.activeElement ){
-                            element.setAttribute("aria-expanded", true)
-                        }else{
-                            element.setAttribute("aria-expanded", false)
-                        }
-                    }
-                }
-            }, 1)
-        })
     },
     computed: {
         account(){
@@ -148,11 +121,7 @@ export default {
         },
         getClients() {
             let clients = [];
-            clients.push({
-                type: "router-link", 
-                label:"Create Client", 
-                to:"/clients/create"
-            })
+            
             for ( let i = 0; i < this.$store.state.clients.all.length; i++ )
             {
                 clients.push({ type: 'client', label: this.$store.state.clients.all[i].name, to: this.$store.state.clients.all[i].id })
@@ -172,6 +141,9 @@ export default {
             }
             
             return require('../assets/user.gif')
+        },
+        isManager(){
+            return this.$store.getters['auth/isManager']
         }
     },
     watch: {
@@ -182,6 +154,17 @@ export default {
         }
     },
     methods: {
+        launchCreateClientModal(){
+            EventBus.$emit('createClientModal', true)
+        },
+        expandDropdown(value){
+            if( this.dropdownsExpanded.includes(value) ){
+                let index = this.dropdownsExpanded.indexOf(value)
+                this.dropdownsExpanded.splice(index, 1)
+            }else{
+                this.dropdownsExpanded.push(value)
+            }
+        },
         updateAccountName(){
             this.userDropdown[0].label = this.$store.state.auth.accounts.find(acc=>acc.id == this.$store.state.auth.account).name
         },
@@ -191,7 +174,10 @@ export default {
         },
         setClient(id){
             this.$store.state.projects.project = false
-            this.$store.dispatch("clients/getClient", {id: id})
+            let that = this
+            this.$store.dispatch("clients/getClient", {id: id, callback: (()=>{
+                that.$router.push({path: `/clients/${id}`})
+            })})
         }
     },
     components:{
@@ -257,11 +243,16 @@ img.avatar{
     transition-duration: 150ms;
 }
 
-.dropdown-container:focus ul,
-.dropdown-container:hover ul{
+.dropdown-container.expanded ul{
     display:block;
     animation-name: showDropdown;
 }
+
+/* .dropdown-container:focus ul,
+.dropdown-container:hover ul{
+    display:block;
+    animation-name: showDropdown;
+} */
 
 .dropdown-container .dropdown ul ul{
     left:95%;
@@ -277,7 +268,7 @@ img.avatar{
     z-index:99;
 }
 .dropdown-container.manager-dropdown ul{
-    top:121%;
+    top:140%;
 }
 .dropdown-container:after{
     content: " ";

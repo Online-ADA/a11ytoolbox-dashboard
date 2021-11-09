@@ -20,7 +20,7 @@ export default {
       this.$store.dispatch("audits/resetState")
     },
     mounted() {
-      this.$store.state.projects.tool.type = 'audit'
+      
     },
     components: {
     },

@@ -1,48 +1,44 @@
 <template>
-  <div class="text-center mt-32">
-    <Loader v-if="loading"></Loader>
-    <template v-if="client">
-      <A class="pr-3" type='router-link' :to="{path: `/manage/clients/${$route.params.id}/edit`}">Edit Client</A>
-      <h2 class="mb-1">{{client.name}}</h2>
-      <div class="mb-3">{{client.email}}</div>
-      
-      <div class="w-full flex">
-        <div class="border border-pallette-grey h-auto p-4 rounded w-1/2 text-center mx-1.5">
-          <h3>Audits</h3>
-          <ul v-if="client.audits.length">
-            <li v-for="audit in client.audits" :key="audit.id">
-              <A type='router-link' :to="{path: `/audits/${audit.id}`}">{{audit.title}}</A>
-            </li>
-          </ul>
-          <span v-else>There are no audits belonging to this client</span>
-        </div>
-        <div class="border border-pallette-grey h-auto p-4 rounded w-1/2 text-center mx-1.5">
-          <h3>Projects</h3>
-          <ul v-if="client.projects.length">
-            <li v-for="project in client.projects" :key="project.id">
-              <A type='router-link' :to="{path: `/projects/${project.id}`}">{{project.name}}</A>
-            </li>
-          </ul>
-          <span v-else>There are no projects belonging to this client</span>
-        </div>
-      </div>
+  <div class="p-5">
+    <h1 class="mb-5">Client Overview</h1>
+    <div class="flex">
+      <div class="w-1/2 flex flex-col mr-5">
+        <Card class="mb-5" :center="false" :gutters="false">
+          <h2 class="uppercase">Stats</h2>
+          <div class="text-lg">8 Projects</div>
+          <div class="text-lg">16 WCAG Audits</div>
+          <div class="text-lg">4 Domains</div>
+        </Card>
 
-    </template>
+        <Card :center="false" :gutters="false">
+          <h2 class="uppercase">Alerts</h2>
+          <div class="text-lg">I'm not entirely sure what is supposed to go here</div>
+        </Card>
+      </div>
+      <div class="w-1/2 flex flex-col">
+        <Card :center="false" :gutters="false">
+          <h2 class="uppercase">Recommendations</h2>
+          <div class="mt-2"><button @click.prevent class="standard">Create</button> a new project</div>
+        </Card>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Loader from '../../components/Loader'
 import A from '../../components/Link'
+import Card from '../../components/Card'
 export default {
     data: () => ({
     }),
     computed: {
       client() {
-        return this.$store.state.clients.client
-      },
-      loading(){
-        return this.$store.state.clients.loading
+        let that = this
+        if( this.$store.state.clients.all.length ){
+          return this.$store.state.clients.all.find(c=>c.id == that.$route.params.id )
+        }
+        return false
       },
     },
     props: [],
@@ -51,13 +47,17 @@ export default {
     methods: {
     },
     created() {
-      this.$store.dispatch("clients/getClient", {id: this.$route.params.id, account_id: this.$store.state.auth.account})
     },
     mounted() {
+      if( this.$store.state.clients.client.id != this.$route.params.id ){
+        this.$store.state.clients.client = this.$store.state.clients.all.find(c=>c.id == this.$route.params.id)
+        this.$store.state.clients.clientID = this.$route.params.id
+      }
     },
     components: {
       Loader,
-      A
+      A,
+      Card
     },
 }
 </script>

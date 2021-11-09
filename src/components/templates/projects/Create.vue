@@ -49,8 +49,6 @@ import Label from '../../../components/Label'
 import Select from '../../../components/Select'
 import Button from '../../../components/Button'
 import Card from '../../../components/Card'
-// import projects from '../../../store/modules/project'
-// import clients from '../../../store/modules/clients'
 
 export default {
     name: 'ProjectCreate',
@@ -65,7 +63,6 @@ export default {
         {name: 'Active', value:'active'},
         {name:'Inactive', value:'inactive'},
       ],
-      users: [],
       unassigned: [],
       assigned: [],
       project: {
@@ -75,29 +72,27 @@ export default {
         account_id: "",
         client_id: "",
       },
-      selectedClient: "",
       complete: false
     }),
     computed: {
-        loading(){
-          if( this.$store.state.projects ){
-            return this.$store.state.projects.loading
-          }
-          return false
-        },
-        isManager(){
-          return this.$store.getters["auth/isManager"]
-        },
+      users(){
+        return this.$store.state.user.all
+      },
+      loading(){
+        if( this.$store.state.projects ){
+          return this.$store.state.projects.loading
+        }
+        return false
+      },
+      isManager(){
+        return this.$store.getters["auth/isManager"]
+      },
     },
     watch: {
       complete(newVal){
         if( newVal ){
-          this.$emit("complete", {sheet: 'sheet0', key: 'project', data: this.project.id, sheetIndex: this.$parent.index})
-        }
-      },
-      isManager(newVal){
-        if( this.independent && newVal ){
-          this.getUsers()
+          this.$emit("complete", {sheet: 'sheet0', key: 'project', data: this.$store.state.projects.project.id, sheetIndex: this.$parent.index})
+          this.project.complete = false
         }
       },
       "$store.state.clients.client": function(newVal){
@@ -109,7 +104,7 @@ export default {
     methods: {
       getUsers(){
         if( !this.users.length ){
-          this.$store.dispatch("projects/getAssignable", {vm: this})
+          this.$store.dispatch("user/getAllAccountUsers", {vm: this})
         }
       },
       displayUser(id){
@@ -130,7 +125,6 @@ export default {
       },
       createProject(){
         this.project.assigned = this.assigned;
-        
         this.$store.dispatch("projects/createProject", {project: this.project, router: this.$router, vm: this})
       }
     },
@@ -139,20 +133,17 @@ export default {
       this.project.created_by = this.$store.state.auth.user.id
       this.project.account_id = this.$store.state.auth.account
       this.project.client_id = this.$store.state.clients.client.id
-
-      this.$store.state.projects.project = false
-      
-      if( this.independent && this.isManager ){
-        this.getUsers()
+      if( !this.assigned.length ){
+        if( !this.$store.state.projects.project ){
+          this.getUsers()
+        }else{
+          this.unassigned = this.$store.state.user.all.map(u=>u.id)
+        }
       }
 
       if( !this.independent ){
         this.$emit("initialized", {key: "ProjectCreate", instance: this})
       }
-      
-      // if( !this.$store.state.clients.all.length ){
-      //   this.$store.dispatch("clients/getClients")
-      // }
     },
     components: {
       Loader,

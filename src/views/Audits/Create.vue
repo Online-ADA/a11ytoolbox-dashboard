@@ -2,31 +2,20 @@
     <div class="container mx-auto flex justify-center items-center flex-col">
         {{sheetMessage}}
         <template v-if="projects.length">
-            <template v-if="canCreateProjects">
-                <!-- there are projects to choose from -->
-                <h1 class="mt-32 mb-3">Let's start by either creating a new project</h1>
-                <button @click.prevent="showSheet(0)" class="standard">Create a Project</button>
-                <h2 class="my-3">or selecting from an existing one</h2>
-            </template>
-            <template v-else>
-                <h1 class="mt-32 mb-3">Choose a project to get started</h1>
-            </template>
+            
+            <!-- there are projects to choose from -->
+            <h1 class="mt-32 mb-3">Let's start by either creating a new project</h1>
+            <button @click.prevent="showSheet(0)" class="standard">Create a Project</button>
+            <h2 class="my-3">or selecting from an existing one</h2>
+            
             <select aria-label="Select an existing project" v-model="sheetData['sheet0'].project" class="mb-3" name="project">
                 <option :value="project.id" v-for="(project) in projects" :key="'project-' + project.id">{{project.name}}</option>
             </select>
             <button class="standard" @click.prevent="showSheet(1)" >Continue</button>
         </template>
         <template v-else>
-            <!-- there are no projects -->
-            <template v-if="canCreateProjects">
-                <!-- you can create projects -->
-                <h1 class="mt-32 mb-3">It looks like you don't have any projects yet. Lets start by making one</h1>
-                <button @click.prevent="showSheet(0)" class="standard">Create a Project</button>
-            </template>
-            <template v-else>
-                <!-- you cannot create projects -->
-                You have not been assigned to any projects, and you are not currently permitted to create them. Please see an account manager
-            </template>
+            <h1 class="mt-32 mb-3">It looks like you don't have any projects yet. Lets start by making one</h1>
+            <button @click.prevent="showSheet(0)" class="standard">Create a Project</button>
         </template>
         
         <Sheets @initialized="setInitialData" @message="displayMessage" @sheetComplete="handleSheetComplete" ref="sheets" :sheets="sheets" :sheetData="sheetData"></Sheets>
@@ -98,14 +87,14 @@
             },
             "$store.state.projects.all": function(newVal){
                 if( newVal ){
-                    if( !this.sheetData["sheet0"].project  && newVal.length){
+                    if( !this.sheetData["sheet0"].project && newVal.length){
                         this.sheetData["sheet0"].project = newVal[0].id
                     }
                 }
             },
-            isManager(){
-                this.getProjects()
-            }
+            // isManager(){
+            //     this.getProjects()
+            // }
         },
         computed:{
             projects(){
@@ -114,24 +103,17 @@
             isManager(){
                 return this.$store.getters["auth/isManager"]
             },
-            canCreateProjects(){
-                if( Object.values(this.$store.state.auth.accountsPermissions).length ){
-                    return this.$store.state.auth.accountsPermissions[this.$store.state.auth.account].projects.write || this.isManager
-                }
-                return false
-            },
         },
         mounted(){
-            if( this.$route.params.id ){
-                this.sheetData["sheet0"].project = this.$route.params.id
-                this.showSheet(1)
-            }
+            this.sheetData["sheet0"].project = this.$store.state.projects.project.id
         },
         created(){
         },
         methods: {
             setInitialData(data){
-                this.$store.dispatch("projects/getAssignable", {vm: data.instance})
+                if( !this.$store.state.user.all.length ){
+                    this.$store.dispatch("user/getAllAccountUsers", {vm: data.instance})
+                }
             },
             displayMessage(message){
                 this.sheetMessage = message
@@ -141,9 +123,9 @@
                 this.$refs.sheets.goForward(this.sheets[sheet], sheet)
             },
             handleSheetComplete(sheet){
-                if( sheet == "sheet0" ){
-                    this.$store.dispatch("projects/getProjects")
-                }
+                // if( sheet == "sheet0" ){
+                //     this.$store.dispatch("projects/getProjects")
+                // }
             }
         },
         components: {
@@ -156,7 +138,7 @@
         margin-left:200px;
         width:calc(100vw - 200px);
     }
-    #sidebar.sidebarOpen.subSidebarOpen ~ #content .sheet-holder .sheet{
+    #sidebar.sidebarOpen.subSidebarExpanded ~ #content .sheet-holder .sheet{
         margin-left:400px;
         width:calc(100vw - 400px);
     }

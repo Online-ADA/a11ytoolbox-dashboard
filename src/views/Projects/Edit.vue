@@ -1,6 +1,6 @@
 <template>
   <div class="text-center mt-3">
-    <Loader v-if="loading || usersLoading"></Loader>
+    <Loader v-if="loading"></Loader>
     <h1>{{project.name}}</h1>
       <Form @submit.native.prevent>
         <Label for="name">Name</Label>
@@ -50,7 +50,6 @@ import Label from '../../components/Label'
 import Select from '../../components/Select'
 import Form from '../../components/Form'
 import Button from '../../components/Button'
-import clients from '../../store/modules/clients'
 
 export default {
     data: () => ({
@@ -58,7 +57,6 @@ export default {
         {name: 'Active', value:'active'},
         {name:'Inactive', value:'inactive'},
       ],
-      users: [],
       unassigned: [],
       assigned: [],
       project: {
@@ -70,15 +68,18 @@ export default {
       }
     }),
     computed: {
-        loading(){
-          return (this.$store.state.projects && this.$store.state.projects.loading) || false
+        users(){
+          return this.$store.state.user.all
         },
-        usersLoading(){
-          return (this.$store.state.projects && this.$store.state.projects.usersLoading) || false
+        loading(){
+          if( this.$store.state.projects ){
+            return this.$store.state.projects.loading
+          }
+          return false
         },
         assignees(){
           if( this.$store.state.project.assignees ){
-            return this.$store.state.project.assignees
+            return this.$store.state.project.assignees.map(u=>u.id)
           }
           return []
         },
@@ -94,11 +95,24 @@ export default {
     },
     props: [],
     watch: {
-      "$store.state.projects.project":function(){
-        this.$store.dispatch("projects/getAssignable", {vm: this})
+      "$store.state.projects.all":function (newVal) {
+        if( newVal && newVal.length ){
+          this.setProject()
+        }
       }
     },
     methods: {
+      setProject(){
+        let that = this
+        this.project = this.$store.state.projects.all.find(p=>p.id == that.$route.params.id)
+        this.assigned = this.project.assignees.map(u=>u.id)
+        this.unassigned = this.users.filter(u=> !that.assigned.includes(u.id)).map(u=>u.id)
+      },
+      getUsers(){
+        if( !this.users.length ){
+          this.$store.dispatch("user/getAllAccountUsers", {vm: this})
+        }
+      },
       displayUser(id){
         let user = this.users.find( u => u.id == id )
         return user != undefined ? `${user.first_name} ${user.last_name}` : false
@@ -120,15 +134,25 @@ export default {
         this.$store.dispatch("projects/updateProject", {project: this.project, id: this.$route.params.id})
       }
     },
-    created() {
-      if(this.$store.state.clients === undefined){
-        this.$store.registerModule('clients', clients)
-      }
-    },
+    created() {},
     mounted() {
       this.project.created_by = this.$store.state.auth.user.id
-      this.$store.dispatch("projects/getProject", {id: this.$route.params.id, vm: this})
-      this.$store.dispatch("clients/getClients", false)
+      this.project.account_id = this.$store.state.auth.account
+      this.project.client_id = this.$store.state.clients.client.id
+
+      
+      if( !this.$store.state.user.all.length ){
+        this.getUsers()
+      }else{
+        this.unassigned = this.$store.state.user.all.map(u=>u.id)
+      }
+      
+
+      if( this.$store.state.projects.all.length ){
+        this.setProject()
+      }
+      // this.$store.dispatch("projects/getProject", {id: this.$route.params.id, vm: this})
+      // this.$store.dispatch("clients/getClients", false)
     },
     components: {
       Loader,

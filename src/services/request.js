@@ -248,12 +248,12 @@ class Request {
 
     checkForRedirect(response){
         if( response.response != undefined && response.response.data.message == "Unauthenticated." ){
-            // window.App.$store.dispatch("auth/logout", window.App.$router)
-            if( window.App.$router.currentRoute.path != "/" ){
-                this.mute = true
-                window.App.$store.state.auth.authMessage = "You've been logged out. Please log in again"
-                window.App.$router.push({path: "/"})
-            }
+            // window.App.$store.dispatch("auth/logout")
+            // if( window.App.$router.currentRoute.path != "/" ){
+            //     this.mute = true
+            //     window.App.$store.state.auth.authMessage = "You've been logged out. Please log in again"
+            //     window.App.$router.push({path: "/"})
+            // }
 
             return
         }
@@ -261,12 +261,12 @@ class Request {
             window.location = window.App.$store.state.auth.accapi+"/signin/?oada_redirect=/"
         }
         if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
-            // window.App.$store.dispatch("auth/logout", window.App.$router)
-            if( window.App.$router.currentRoute.path != "/" ){
-                this.mute = true
-                window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
-                window.App.$router.push({path: "/"})
-            }
+            // window.App.$store.dispatch("auth/logout")
+            // if( window.App.$router.currentRoute.path != "/" ){
+            //     this.mute = true
+            //     window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
+            //     window.App.$router.push({path: "/"})
+            // }
             
             return
         }

@@ -102,7 +102,6 @@ import Select from '../../../components/Select'
 import Form from '../../../components/Form'
 import Button from '../../../components/Button'
 import A from '../../../components/Link'
-import domains from '../../../store/modules/domains'
 
 export default {
 	props: {
@@ -128,25 +127,14 @@ export default {
 					if( this.domains.map(d=>d.id).includes(this.domain.id) ){
 						this.$emit("complete", {sheet: 'sheet1', key: 'domain', data: this.domain.id, sheetIndex: this.$parent.index})
 						this.reset()
-					}else{
-						this.$store.dispatch("domains/getProjectDomains", {project_id: this.project.id, project: this.project})
 					}
 				}
 			}
-			
-			if(this.independent && newVal){
-				if( this.$store.getters["auth/isManager"] ){
-					this.$router.push({path: '/manage/domains'})
-				}
-				else{
-					this.$router.push({path: '/domains/list'})
-				}
-			}
 		},
-		"sheetData.sheet0.project":function(newVal){
-			this.$store.dispatch("domains/getProjectDomains", {project_id: newVal})
-			this.domain.project_id = newVal
-		},
+		// "sheetData.sheet0.project":function(newVal){
+		// 	this.$store.dispatch("domains/getProjectDomains", {project_id: newVal})
+		// 	this.domain.project_id = newVal
+		// },
 		domains: function(newVal){
 			if( !this.independent ){
 				if( !this.complete && newVal.length ){
@@ -162,33 +150,23 @@ export default {
 	computed: {
 		domains(){
 			if( this.project ){
-				return this.project.domains ? this.project.domains : this.$store.state.domains.all
+				return this.project.domains
 			}
-			return this.$store.state.domains.all
+
+			return []
 		},
 		loading(){
 			return this.$store.state.domains.loading
 		},
 		projects(){
-			if( !this.independent ){
-				return this.$store.state.projects.all
-			}
-			else{
-				return this.$store.state.domains.projects
-			}
+			return this.$store.state.projects.all
 		},
 		project(){
-			if(!this.independent){
-				let self = this
-				console.log(self.sheetData.sheet0.project);
-				return this.projects.filter( p=>{
-					return parseInt(p.id) === parseInt(self.sheetData.sheet0.project)
-				})[0]
-			}else{
-				return this.$store.state.domains.projects.filter( p=>{
-					return p.i == this.project_id
-				})[0]
-			}
+			let self = this
+			
+			return this.projects.find( p=>{
+				return parseInt(p.id) === parseInt(self.sheetData.sheet0.project)
+			})
 		},
 		fullUrl(){
 			let url = this.url.replace(/(?:^https?(:?\/\/?)?)+|(?:\/+|\s$)+/ig, "")
@@ -229,15 +207,8 @@ export default {
 			}
 		}
 	},
-	created() {
-		if( this.$store.state.domains === undefined ){
-			this.$store.registerModule('domains', domains)
-		}
-	},
+	created() {},
 	mounted() {
-		if( this.independent ){
-			this.$store.dispatch("domains/getProjects", {client_id: this.$store.state.clients.client.id})
-		}
 	},
 	components: {
 		Loader,

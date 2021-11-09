@@ -68,7 +68,7 @@ export default {
 		getClient({state, rootState}, args){
 			state.loading.clients = true
 			
-			Request.get(`${rootState.auth.adminAPI}/${rootState.auth.account}/clients/${args.id}`, {
+			Request.get(`${rootState.auth.API}/${rootState.auth.account}/clients/${args.id}`, {
 				onSuccess: {
 					title:'Success',
 					text:'Client retrieved',
@@ -93,28 +93,10 @@ export default {
 				}
 			})
 		},
-		getAuditStates({state, rootState}){
-			state.loading.articles = true
-			Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/states`)
-			.then( res => {
-				state.audit_states = res.data.details
-			})
-			.catch(res => {
-				console.log(res.error)
-				if( !Request.muted() ){
-					Vue.notify({
-						title: 'Error',
-						text: res.error,
-						type: 'error'
-					})
-				}
-				
-				state.loading.articles = false
-			})
-		},
+		
 		getAsstTechnologies({state, rootState}){
 			state.loading.articles = true
-			Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/technologies`)
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/technologies`)
 			.then( res => {
 				state.assistive_techs = res.data.details
 			})
@@ -133,7 +115,7 @@ export default {
 		},
 		getSoftwareUsed({state, rootState}){
 			state.loading.articles = true
-			Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/software`)
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/software`)
 			.then( res => {
 				state.software_used = res.data.details
 			})
@@ -152,7 +134,7 @@ export default {
 		},
 		getArticles({state, dispatch, rootState}){
 			state.loading.articles = true
-			Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/articles`)
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/articles`)
 			.then( res => {
 				state.articles = res.data.details
 				dispatch("getTechniques")
@@ -172,7 +154,7 @@ export default {
 			})
 		},
 		getTechniques({state, rootState}){
-			Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/techniques`)
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/techniques`)
 			.then( res => {
 				state.techniques = res.data.details
 			})
@@ -189,7 +171,7 @@ export default {
 			})
 		},
 		getRecommendations({state, rootState}){
-			Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/recommendations`)
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/recommendations`)
 			.then( res => {
 				state.recommendations = res.data.details
 				state.loading.articles = false
@@ -253,11 +235,17 @@ export default {
 					text = "Assistive Technology"
 					break;
 			}
-			Request.postPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/${path}`, {
+			Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/${path}`, {
 				params: args.object
 			})
 			.then( re=> {
-				state[`${obj}`] = re.data.details
+				if( args.object.identifier == "audit_state" ){
+					rootState.audits.audit_states = re.data.details
+				}
+				else{
+					state[`${obj}`] = re.data.details
+				}
+				
 				if( !Request.muted() ){
 					Vue.notify({
 						title: "Success",
@@ -321,11 +309,16 @@ export default {
 					break;
 			}
 
-			Request.postPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/${path}/${args.object.id}`, {
+			Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/${path}/${args.object.id}`, {
 				params: args.object
 			})
 			.then( re=> {
-				state[`${obj}`] = re.data.details
+				if( args.object.identifier == "audit_state" ){
+					rootState.audits.audit_states = re.data.details
+				}else{
+					state[`${obj}`] = re.data.details
+				}
+				
 				if( !Request.muted() ){
 					Vue.notify({
 						title: "Success",
@@ -350,9 +343,9 @@ export default {
 		},
 		deleteAuditState({state, rootState}, args){
 			state.loading.articles = false
-			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/states/${args.id}`)
+			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/states/${args.id}`)
 			.then( re => {
-				state.audit_states = re.data.details
+				rootState.audits.audit_states = re.data.details
 				if( !Request.muted() ){
 					Vue.notify({
 						title: "Success",
@@ -375,7 +368,7 @@ export default {
 		},
 		deleteSoftwareUsed({state, rootState}, args){
 			state.loading.articles = false
-			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/software/${args.id}`)
+			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/software/${args.id}`)
 			.then( re => {
 				state.software_used = re.data.details
 				if( !Request.muted() ){
@@ -400,7 +393,7 @@ export default {
 		},
 		deleteTechnology({state, rootState}, args){
 			state.loading.articles = false
-			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/technologies/${args.id}`)
+			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/technologies/${args.id}`)
 			.then( re => {
 				state.assistive_techs = re.data.details
 				if( !Request.muted() ){
@@ -425,7 +418,7 @@ export default {
 		},
 		deleteArticle({state, rootState}, args){
 			state.loading.articles = false
-			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/articles/${args.id}`)
+			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/articles/${args.id}`)
 			.then( re => {
 				state.loading.articles = false
 				state.articles = re.data.details
@@ -451,7 +444,7 @@ export default {
 		},
 		deleteTechnique({state, rootState}, args){
 			state.loading.articles = false
-			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/techniques/${args.id}`)
+			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/techniques/${args.id}`)
 			.then( re => {
 				state.loading.articles = false
 				state.techniques = re.data.details
@@ -477,7 +470,7 @@ export default {
 		},
 		deleteRecommendation({state, rootState}, args){
 			state.loading.articles = false
-			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/recommendations/${args.id}`)
+			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/recommendations/${args.id}`)
 			.then( re => {
 				state.loading.articles = false
 				state.recommendations = re.data.details
@@ -503,7 +496,7 @@ export default {
 		},
 		deleteProject({state, rootState}, args){
 			state.loading.projects = true
-			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/projects/${args.project_id}`)
+			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}`)
 			.then( re => {
 				state.loading.projects = false
 				state.projects = re.data.details
@@ -529,7 +522,7 @@ export default {
 		},
 		deleteAudit({state, rootState}, args){
 			state.loading.audits = true
-			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/audits/${args.audit_id}`)
+			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}`)
 			.then( re => {
 				state.loading.audits = false
 				state.audits = re.data.details
@@ -555,7 +548,7 @@ export default {
 		},
 		deleteDomain({state, rootState}, args){
 			state.loading.domains = true
-			Request.destroyPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/domains/${args.domain_id}`)
+			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}`)
 			.then( re => {
 				state.loading.domains = false
 				state.domains = re.data.details
@@ -581,7 +574,7 @@ export default {
 		},
 		modifyRole({state, rootState}, args){
 			state.loading.users = true
-			Request.post(`${rootState.auth.adminAPI}/${rootState.auth.account}/users/setRole`, {
+			Request.post(`${rootState.auth.API}/${rootState.auth.account}/users/setRole`, {
 				params: {
 					"user_id": args.user_id,
 					"role" : args.role
@@ -604,7 +597,7 @@ export default {
 			})
 		},
 		saveUserPermissions({state, rootState}, args){
-			Request.post(`${rootState.auth.adminAPI}/${rootState.auth.account}/users/setPermissions`, {
+			Request.post(`${rootState.auth.API}/${rootState.auth.account}/users/setPermissions`, {
 				params: {
 					'permissions': args.permissions,
 					'user_id': args.user_id
@@ -626,7 +619,7 @@ export default {
 		},
 		getUsers({state, rootState}){
 			state.loading.users = true
-			Request.get(`${rootState.auth.adminAPI}/${rootState.auth.account}/users`, {
+			Request.get(`${rootState.auth.API}/${rootState.auth.account}/users`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -647,7 +640,7 @@ export default {
 		},
 		getUser({state, rootState}, args){
 			state.loading.users = true
-			Request.get(`${rootState.auth.adminAPI}/${rootState.auth.account}/users/${args.user_id}`, {
+			Request.get(`${rootState.auth.API}/${rootState.auth.account}/users/${args.user_id}`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -670,7 +663,7 @@ export default {
 		},
 		getProjects({state, rootState}){
 			state.loading.projects = true
-			Request.getPromise(`${rootState.auth.adminAPI}/${rootState.auth.account}/projects`, {
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/projects`, {
 				params: {
 					client_id: rootState.clients.client.id,
 				} 
@@ -693,7 +686,7 @@ export default {
 			})
 			.finally(()=>{state.loading.projects = false})
 
-			// Request.get( `${rootState.auth.adminAPI}/${rootState.auth.account}/projects`, {
+			// Request.get( `${rootState.auth.API}/${rootState.auth.account}/projects`, {
 			// 	onSuccess: {
 			// 		silent: true,
 			// 		callback: function(response){
@@ -714,7 +707,7 @@ export default {
 		},
 		getAudits({state, rootState}){
 			state.loading.projects = true
-			Request.get( `${rootState.auth.adminAPI}/${rootState.auth.account}/audits`, {
+			Request.get( `${rootState.auth.API}/${rootState.auth.account}/audits`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -735,7 +728,7 @@ export default {
 		},
 		getClients({state, rootState}){
 			state.loading.clients = true
-			Request.get(`${rootState.auth.adminAPI}/${rootState.auth.account}/clients`, {
+			Request.get(`${rootState.auth.API}/${rootState.auth.account}/clients`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -756,7 +749,7 @@ export default {
 		},
 		getAllDomains({state, rootState}){
 			state.loading.domains = true
-			Request.get(`${rootState.auth.adminAPI}/${rootState.auth.account}/domains`, {
+			Request.get(`${rootState.auth.API}/${rootState.auth.account}/domains`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -777,7 +770,7 @@ export default {
 		},
 		createClient({state, rootState}, args){
 			state.loading.clients = true;
-			Request.post(`${rootState.auth.adminAPI}/${args.client.account_id}/clients`, {
+			Request.post(`${rootState.auth.API}/${args.client.account_id}/clients`, {
 				params: {
 					client: args.client
 				},
@@ -811,7 +804,7 @@ export default {
 		},
 		updateClient({state, rootState}, args){
 			state.loading.clients = true;
-			Request.post(`${rootState.auth.adminAPI}/${args.client.account_id}/clients/${args.client.id}`, {
+			Request.post(`${rootState.auth.API}/${args.client.account_id}/clients/${args.client.id}`, {
 				params: {
 					client: args.client
 				},
