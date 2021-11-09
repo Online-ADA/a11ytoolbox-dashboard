@@ -272,52 +272,28 @@ export default {
     }),
     computed: {
         loading(){
-            if( this.$store.state.admin ){
-                return this.$store.state.admin.loading.articles
-            }
-            return false
+            return this.$store.state.admin.loading.articles
         },
         articles() {
-            if( this.$store.state.admin ){
-                return this.$store.state.admin.articles
-            }
-            return []
+            return this.$store.state.admin.articles
         },
         failures() {
-            if( this.$store.state.admin ){
-                return this.$store.state.admin.failures
-            }
-            return []
+            return this.$store.state.admin.failures
         },
         states() {
-            if( this.$store.state.admin ){
-                return this.$store.state.admin.audit_states
-            }
-            return []
+            return this.$store.state.audits.audit_states
         },
         assistiveTechnologies(){
-            if( this.$store.state.admin ){
-                return this.$store.state.admin.assistive_techs
-            }
-            return []
+            return this.$store.state.admin.assistive_techs
         },
         softwareUsed(){
-            if( this.$store.state.admin ){
-                return this.$store.state.admin.software_used
-            }
-            return []
+            return this.$store.state.admin.software_used
         },
         techniques() {
-            if( this.$store.state.admin ){
-                return this.$store.state.admin.techniques
-            }
-            return []
+            return this.$store.state.admin.techniques
         },
         recommendations() {
-            if( this.$store.state.admin ){
-                return this.$store.state.admin.recommendations
-            }
-            return []
+            return this.$store.state.admin.recommendations
         },
     },
     props: [],
@@ -325,7 +301,7 @@ export default {
         "$store.state.auth.user": function(newVal){
             if( newVal ){
                 this.$store.dispatch("admin/getArticles")
-                this.$store.dispatch("admin/getAuditStates")
+                this.$store.dispatch("audits/getAuditStates")
                 this.$store.dispatch("admin/getAsstTechnologies")
                 this.$store.dispatch("admin/getSoftwareUsed")
             }
@@ -408,7 +384,7 @@ export default {
     created() {
         if( this.$store.state.auth.user ){
             this.$store.dispatch("admin/getArticles")
-            this.$store.dispatch("admin/getAuditStates")
+            this.$store.dispatch("audits/getAuditStates")
             this.$store.dispatch("admin/getAsstTechnologies")
             this.$store.dispatch("admin/getSoftwareUsed")
         }

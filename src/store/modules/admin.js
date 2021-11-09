@@ -134,7 +134,7 @@ export default {
 		},
 		getArticles({state, dispatch, rootState}){
 			state.loading.articles = true
-			Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/articles`)
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/articles`)
 			.then( res => {
 				state.articles = res.data.details
 				dispatch("getTechniques")
@@ -154,7 +154,7 @@ export default {
 			})
 		},
 		getTechniques({state, rootState}){
-			Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/techniques`)
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/techniques`)
 			.then( res => {
 				state.techniques = res.data.details
 			})
@@ -171,7 +171,7 @@ export default {
 			})
 		},
 		getRecommendations({state, rootState}){
-			Request.getPromise(`${rootState.auth.userAPI}/${rootState.auth.account}/recommendations`)
+			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/recommendations`)
 			.then( res => {
 				state.recommendations = res.data.details
 				state.loading.articles = false
@@ -239,7 +239,13 @@ export default {
 				params: args.object
 			})
 			.then( re=> {
-				state[`${obj}`] = re.data.details
+				if( args.object.identifier == "audit_state" ){
+					rootState.audits.audit_states = re.data.details
+				}
+				else{
+					state[`${obj}`] = re.data.details
+				}
+				
 				if( !Request.muted() ){
 					Vue.notify({
 						title: "Success",
@@ -307,7 +313,12 @@ export default {
 				params: args.object
 			})
 			.then( re=> {
-				state[`${obj}`] = re.data.details
+				if( args.object.identifier == "audit_state" ){
+					rootState.audits.audit_states = re.data.details
+				}else{
+					state[`${obj}`] = re.data.details
+				}
+				
 				if( !Request.muted() ){
 					Vue.notify({
 						title: "Success",
@@ -334,7 +345,7 @@ export default {
 			state.loading.articles = false
 			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/states/${args.id}`)
 			.then( re => {
-				state.audit_states = re.data.details
+				rootState.audits.audit_states = re.data.details
 				if( !Request.muted() ){
 					Vue.notify({
 						title: "Success",

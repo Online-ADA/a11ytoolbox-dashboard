@@ -2,47 +2,49 @@
     <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full h-12" v-if="showToolbar">
         <div id="toolbar" class="w-full p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
-            <div class="justify-between flex items-center">
-                <div class="flex items-center text-13">
+            <div :class="[!isAuditEditPage ? 'justify-between' : 'justify-end']" class="flex items-center">
+                <div v-if="!isAuditEditPage" class="flex items-center text-13">
                     <span v-if="audit.domain">{{audit.domain.title}}</span>
                     <div class="border border-black mx-3.5 divider"></div>
                     <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
                     <span>Total Issues: {{totalRows}}</span>
                 </div>
                 <span class="w-auto mr-2 flex items-center">
-                    <!-- Issue Tools -->
-                    <select title="Change Selected Issue's Status" class="text-13 border-l-0 border-r-0 border-t-0 border-black shadow-none rounded-none" v-model="issueStatus" v-if="auditRowsSelected === 1 && !audit.locked" >
-                        <option :value="status" v-for="(status, index) in issueStatuses" :key="'toolbarStatus-'+index">{{status}}</option>
-                    </select>
-                    
-                    <!-- Edit Issue -->
-                    <button v-if="auditRowsSelected === 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-edit-issue')">
-                        <span title="Edit Issue" ><i class="far fa-file-edit"></i></span>
-                    </button>
-                    <!-- Copy Issue -->
-                    <button v-if="auditRowsSelected === 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-copy-issue')">
-                        <span title="Copy Issue" ><i class="far fa-copy"></i></span>
-                    </button>
-                    <!-- Delete Selected Issue -->
-                    <button v-if="auditRowsSelected > 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-delete-many')">
-                        <span title="Delete All Selected Issues" ><i class="far fa-minus-hexagon"></i></span>
-                    </button>
-                    <!-- Add Issue -->
-                    <button v-if="auditRowsSelected < 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-add-issue')">
-                        <span title="Add Issue" ><i class="far fa-plus-square"></i></span>
-                    </button>
-                    <!-- Locked Icon -->
-                    <span title="This Audit is Locked and Cannot be Modified" v-if="audit.locked"><i class="fas fa-lock" aria-hidden="true"></i></span>
-                    <!-- Condense Table -->
-                    <button class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-condense')">
-                        <span title="Compress Table" v-if="!toggled.includes('audit-condense')"><i class="far fa-compress-alt"></i></span>
-                        <span title="Decompress Table" v-else><i class="fas fa-expand-alt"></i></span>
-                    </button>
-                    <!-- Search Audit -->
-                    <button class="ml-3.5 bg-transparent" @click.prevent="searchBarOpen = !searchBarOpen">
-                        <span title="Search Audit" ><i class="far fa-search"></i></span>
-                    </button>
-                    <div class="border border-black mx-3.5 divider"></div>
+                    <template v-if="!isAuditEditPage">
+                        <!-- Issue Tools -->
+                        <select title="Change Selected Issue's Status" class="text-13 border-l-0 border-r-0 border-t-0 border-black shadow-none rounded-none" v-model="issueStatus" v-if="auditRowsSelected === 1 && !audit.locked" >
+                            <option :value="status" v-for="(status, index) in issueStatuses" :key="'toolbarStatus-'+index">{{status}}</option>
+                        </select>
+                        
+                        <!-- Edit Issue -->
+                        <button v-if="auditRowsSelected === 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-edit-issue')">
+                            <span title="Edit Issue" ><i class="far fa-file-edit"></i></span>
+                        </button>
+                        <!-- Copy Issue -->
+                        <button v-if="auditRowsSelected === 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-copy-issue')">
+                            <span title="Copy Issue" ><i class="far fa-copy"></i></span>
+                        </button>
+                        <!-- Delete Selected Issue -->
+                        <button v-if="auditRowsSelected > 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-delete-many')">
+                            <span title="Delete All Selected Issues" ><i class="far fa-minus-hexagon"></i></span>
+                        </button>
+                        <!-- Add Issue -->
+                        <button v-if="auditRowsSelected < 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-add-issue')">
+                            <span title="Add Issue" ><i class="far fa-plus-square"></i></span>
+                        </button>
+                        <!-- Locked Icon -->
+                        <span title="This Audit is Locked and Cannot be Modified" v-if="audit.locked"><i class="fas fa-lock" aria-hidden="true"></i></span>
+                        <!-- Condense Table -->
+                        <button class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-condense')">
+                            <span title="Compress Table" v-if="!toggled.includes('audit-condense')"><i class="far fa-compress-alt"></i></span>
+                            <span title="Decompress Table" v-else><i class="fas fa-expand-alt"></i></span>
+                        </button>
+                        <!-- Search Audit -->
+                        <button class="ml-3.5 bg-transparent" @click.prevent="searchBarOpen = !searchBarOpen">
+                            <span title="Search Audit" ><i class="far fa-search"></i></span>
+                        </button>
+                        <div class="border border-black mx-3.5 divider"></div>
+                    </template>
                     <!-- Audit Tools -->
                     <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Edit Audit"><i class="far fa-edit"></i></router-link>
                     <button class="ml-3.5 bg-transparent" @click="toolbarEmit('audit-issues-download')" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
@@ -208,6 +210,9 @@ export default {
         }
     },
     methods: {
+        isAuditEditPage(){
+            return $route.path.includes('audits') && !$route.path.includes('edit')
+        },
         showToolbar(){
             return tool.type === 'audit' && audit
         },

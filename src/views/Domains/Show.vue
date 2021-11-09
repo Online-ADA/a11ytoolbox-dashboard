@@ -3,7 +3,7 @@
 		<Loader v-if="loading"></Loader>
 		
 		<A class="pr-3" type='router-link' :to="{path: `/domains/${$route.params.id}/edit`}">Edit Domain</A>
-		<A class="pr-3" type='router-link' :to="{path: `/projects/${domain.project_id}`}">View Project</A>
+		<!-- <A class="pr-3" type='router-link' :to="{path: `/projects/${domain.project_id}`}">View Project</A> -->
 		<A type='router-link' :to="{name: `NewScan`, params: {type:'domain', id: $route.params.id} }">Initiate Scan</A>
 		<h2 class="mb-1">{{domain.title}}</h2>
 		<h3 class="mb-3">{{domain.url}}</h3>
@@ -16,7 +16,6 @@
 						<ul class="mb-4 w-full">
 							<li v-for="page in domain.pages" :key="page.id">
 								{{page.url}}
-								<!-- <A type='router-link' :to="{path: `/pages/${page.id}`}">{{page.url || page.description}}</A> -->
 							</li>
 						</ul>
 					</template>
@@ -31,8 +30,11 @@
 					<template v-if="domain && domain.sample.length">
 						<ul class="mb-4 w-full">
 							<li v-for="item in domain.sample" :key="item.id">
-								{{item.title}}<span v-if="item.url"> - <A :href="item.url" :newTab="true" >{{item.url}}</A></span>
-								<!-- <A type='router-link' :to="{path: `/pages/${page.id}`}">{{page.url || page.description}}</A> -->
+								<span>
+									<template v-if="item.title">{{item.title}}</template>
+									<template v-if="item.url && item.title"> - </template>
+									<template v-if="item.url">{{item.url}}</template>
+								</span>
 							</li>
 						</ul>
 					</template>
