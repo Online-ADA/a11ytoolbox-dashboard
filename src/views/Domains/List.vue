@@ -3,7 +3,7 @@
         <Loader v-if="loading"></Loader>
         
         <template v-if="project">
-            <h2>All Domains for {{project.name}}:</h2>
+            <h2>All Domains for {{project.name}}</h2>
             <ul class="flex flex-col items-center" v-if="domains.length">
                 <li class="flex items-center" v-for="(domain, id) in domains" :key="id">
                     <span class="mr-3">{{domain.title}} - {{domain.url}}</span>

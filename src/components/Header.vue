@@ -268,7 +268,7 @@ img.avatar{
     z-index:99;
 }
 .dropdown-container.manager-dropdown ul{
-    top:121%;
+    top:140%;
 }
 .dropdown-container:after{
     content: " ";
