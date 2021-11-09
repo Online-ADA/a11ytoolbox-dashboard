@@ -1,5 +1,5 @@
 <template>
-	<Modal class="z-50" :open="open">
+	<Modal style="z-index:999" :valign="'top'" :size="'wide'" :open="open">
 		<div v-if="!complete" class="text-center">
 			<Loader v-if="loading"></Loader>
 			<h1>Create new Client</h1>

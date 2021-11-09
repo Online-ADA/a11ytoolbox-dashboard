@@ -1,5 +1,5 @@
 <template>
-	<Modal class="z-50" :open="open">
+	<Modal :valign="'top'" style="z-index:999" :size="'wide'" :open="open">
 		<template v-if="!complete">
 			<Loader v-if="loading"></Loader>
 				<h1>Create new Project</h1>

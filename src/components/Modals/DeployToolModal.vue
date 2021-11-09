@@ -1,5 +1,5 @@
 <template>
-	<Modal class="z-50" :open="open">
+	<Modal :valign="'top'" style="z-index:999" :size="'wide'" :open="open">
 		<h1 class="mb-2">Select a Tool to Deploy</h1>
 		
 		<div>

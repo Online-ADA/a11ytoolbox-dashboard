@@ -1,5 +1,5 @@
 <template>
-	<Modal class="z-50" :open="open">
+	<Modal :valign="'top'" style="z-index:999" :size="'wide'" :open="open">
 		<Loader v-if="loading"></Loader>
 		<template v-if="complete">
 			<h1>Go to Audit?</h1>
@@ -46,18 +46,18 @@
 						<button @click.prevent="step = 2" class="standard mt-3">Continue</button>
 					</template>
 					<template v-if="domains.length">
-						<h2 class="py-4 font-bold">Or create a new one</h2>
+						<h2 class="py-4 font-bold">or Add a New Domain</h2>
 					</template>
 					<template v-if="!domains.length">
 						<h2 class="py-4 font-bold">Create a New Domain</h2>
 					</template>
 
 					<form action="#" class="flex flex-wrap" @submit.prevent>
-						<div class="px-2">
+						<div class="px-2 w-full">
 							<Label for="domain-title">Title</Label>
 							<TextInput class="w-full" id="domain-title" v-model="domain.title" />
 						</div>
-						<div class="px-2">
+						<div class="px-2 w-full">
 							<Label for="domain-existing-url">Url</Label>
 							<div class="flex">
 								<select class="mx-auto block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="protocol" name="domain-protocol">
@@ -67,7 +67,7 @@
 							</div>
 							{{fullUrl}}
 						</div>
-						<div class="mt-3">
+						<div class="my-3 w-full">
 							<button class="standard mr-2" @click.prevent="createDomain">Create</button>
 						</div>
 					</form>

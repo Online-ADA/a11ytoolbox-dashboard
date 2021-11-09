@@ -35,7 +35,7 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="capitalize text-sm text-gray-900">
-              {{role(row.data.role_id)}}
+              {{role(row.data.roleInfo.role_id)}}
             </div>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
@@ -98,31 +98,41 @@ export default {
     }),
     computed: {
       loading(){
-        return this.$store.state.admin.users.loading
+        return this.$store.state.user.loading
       },
       users() {
-          return this.$store.state.admin.users
+        return this.$store.state.user.all.length ? this.$store.state.user.all : this.$store.state.user.team_members
+      },
+      account(){
+        return this.$store.getters["auth/account"]
       },
     },
     props: [],
     watch: {
-      users(){
-        var x=0,l=this.users.length
-        while (x < l) {
-          this.users[x].role = this.role(this.users[x].role_id)
-          ++x;
-        }
-      }
+      
     },
     methods: {
       role(id){
-        return this.$store.state.admin.roles[id].charAt(0).toUpperCase() + this.$store.state.admin.roles[id].slice(1)
+        switch(id){
+          case 1:
+            return "Owner/Manager"
+          case 2:
+            return "Manager"
+          case 3:
+            return "Standard"
+          case 4:
+            return "Limited"
+        }
       }
     },
-    created() {
-      this.$store.dispatch("admin/getUsers", this.$router)
-    },
+    created() {},
     mounted() {
+      if( this.account && this.account.pivot.team_id === 1 ){
+        this.$store.dispatch("user/getAllAccountUsers")
+      }
+      else{
+        this.$store.dispatch("user/getTeamMembers")
+      }
     },
     components: {
       DT

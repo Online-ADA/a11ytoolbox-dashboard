@@ -4,6 +4,7 @@ const getDefaultState = () => {
 	return {
 		team_members: [],
 		all:[],
+		user: false,
 		loading: false
 	}
 }
@@ -13,6 +14,7 @@ export default {
 	state: {
 		team_members: [],
 		all:[],
+		user: false,
 		loading: false
 	},
 	mutations: {
@@ -43,17 +45,20 @@ export default {
 			.catch( re=>console.log(re))
 			.then()
 		},
-		getAllAccountUsers({state, rootState}, args){
+		getAllAccountUsers({state, rootState}, args = {}){
 			state.loading = true
 			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/users`)
 			.then( re=>{
 				state.all = Object.values(re.data.details)
-				args.vm.unassigned = state.all.filter( u => !args.vm.assigned.includes(u.id) ).map(u => u.id)
+				if( args.vm ){
+					args.vm.unassigned = state.all.filter( u => !args.vm.assigned.includes(u.id) ).map(u => u.id)
+				}
+				
 			})
 			.catch( re=> console.log(re))
 			.then( ()=> state.loading = false)
 		},
-		getTeamMembers({state, rootState}, args){
+		getTeamMembers({state, rootState}, args = {}){
 			state.loading = true
 			
 			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/users/members`, {params: {team: args.team}})
@@ -65,6 +70,27 @@ export default {
 			})
 			.then( ()=>{
 				state.loading = false
+			})
+		},
+		getUser({state, rootState}, args){
+			state.loading = true
+			Request.get(`${rootState.auth.API}/${rootState.auth.account}/manage/users/${args.user_id}`, {
+				onSuccess: {
+					silent: true,
+					callback: function(response){
+						state.loading = false
+						state.user = response.data.details
+					}
+				},
+				onWarns: {
+					silent: true,
+				},
+				onError: {
+					silent: true,
+					callback: function(){
+						state.loading = false
+					}
+				}
 			})
 		},
 	},

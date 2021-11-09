@@ -5,29 +5,31 @@
 		<template v-if="user">
 			<h2>User: {{user.first_name}} {{user.last_name}}</h2>
 	
-			<div class="w-2/4 mx-auto">
-				<Label class="text-xl" for="role">Role</Label>
-				<ul class="border border-pallette-grey py-2 rounded">
-					<li :class="{'bg-pallette-orange text-white': role == r}" class="capitalize" v-for="(r, id) in $store.state.admin.roles" :key="id">
-						<A @click.native.prevent="modifyRole(id)">{{r}}</A>
-					</li>
-				</ul>
-			</div>
-		
-			<div v-if="userData.permissions" class="w-full flex flex-wrap p-3 justify-center">
-				<h3 class="mt-4 w-full">Permissions</h3>
-				
-				<div class="rounded border border-pallette-grey shadow w-1/5 m-2" v-for="(actions, entity) in userData.permissions" :key="entity">
-					<div class="capitalize font-bold text-xl">{{entity}}</div>
-					<ul class="p-4">
-						<li class="flex items-center" v-for="(permission, label) in actions" :key="entity + '-action-'+label">
-							<Label class="pr-2" :for="`${entity}-${label}`">{{label}}:</Label>
-							<Checkbox v-model="userData.permissions[entity][label]" :id="`${entity}-${label}`" />
-						</li>
-					</ul>
+			<div>
+				<div class="w-2/4 mx-auto">
+					<Label class="text-xl" for="role">Role</Label>
+					<select v-model="selectedRole" class="p-1 mx-auto" @change="modifyRole" id="role" name="role">
+						<option value="2">Manager</option>
+						<option value="3">Standard</option>
+						<option value="4">Limited</option>
+					</select>
 				</div>
-				<div class="w-full flex justify-center">
-					<Button hover="true" color="red" @click.native.prevent="savePermissions" >Save permissions</Button>
+			</div>
+			<div v-if="iAmExecutive">
+				<div class="w-2/4 mx-auto">
+					<Label class="text-xl" for="team">Team</Label>
+					<select v-model="selectedTeam" class="p-1 mx-auto" @change="modifyTeam" id="team" name="team">
+						<option value="1">Executive</option>
+						<option value="2">Development</option>
+						<option value="3">Design</option>
+						<option value="4">Customer Service</option>
+					</select>
+				</div>
+			</div>
+			<div v-else>
+				<div class="w-2/4 mx-auto">
+					<Label class="text-xl" for="team">Team</Label>
+					<span class="text-lg">{{team(selectedTeam)}}</span>
 				</div>
 			</div>
 		</template>
@@ -43,57 +45,68 @@ import Loader from '../../../components/Loader'
 export default {
 	data(){
 		return {
-			checkbox1: null,
-			userData: {
-				permissions: []
-			}
+			selectedTeam: false,
+			selectedRole: false
 		}
 	},
 	computed: {
 		user() {
-			if( this.$store.state.admin.user ){
-				return this.$store.state.admin.user
-			}
-			return false
+			return this.$store.state.user.user
 		},
 		role(){
-			return this.$store.state.admin.user.role
+			switch(this.user.roleInfo.role_id){
+				case 1:
+					return "Owner/Manager"
+				case 2:
+					return "Manager"
+				case 3:
+					return "Standard"
+				case 4:
+					return "Limited"
+			}
+		},
+		team(){
+			switch(this.user.roleInfo.team_id){
+				case 1:
+					return "Executive"
+				case 2:
+					return "Development"
+				case 3:
+					return "Design"
+				case 4:
+					return "Customer Service"
+			}
 		},
 		loading() {
-			return this.$store.state.admin.loading.users
+			return this.$store.state.user.loading
 		},
+		account(){
+			return this.$store.getters["auth/account"]
+		},
+		iAmExecutive(){
+			return this.account.pivot.team_id === 1
+		}
 	},
 	props: [],
 	watch: {
-		"user": function(){
-			this.userData.permissions = this.$store.state.admin.user.permissions
+		"$store.state.user.user":function(newVal){
+			this.selectedTeam = newVal.roleInfo.team_id
+			this.selectedRole = newVal.roleInfo.role_id
 		}
 	},
 	methods: {
-		savePermissions(){
-			let that = this
-			this.$store.dispatch("admin/saveUserPermissions", {
-				permissions: that.userData.permissions,
-				user_id: that.$route.params.id,
-				vm: that
-			})
+		modifyRole(ev){
+			this.$store.dispatch("admin/modifyRole", { role: ev.target.value })
 		},
-		modifyRole(r){
-			let that = this
-			this.$store.dispatch("admin/modifyRole", {
-				role: r, 
-				user_id: that.$route.params.id,
-				vm: that
-			})
+		modifyTeam(ev){
+			this.$store.dispatch("admin/modifyTeam", { team: ev.target.value })
 		}
 	},
 	created() {
-		if( this.user ){
-			this.userData.permissions = this.user.permissions
-		}
-		this.$store.dispatch("admin/getUser", {user_id: this.$route.params.id, router: this.$router})
+		
 	},
 	mounted() {
+		this.$store.dispatch("user/getUser", {user_id: this.$route.params.id})
 	},
 	components: {
 		A,
