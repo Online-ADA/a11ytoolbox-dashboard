@@ -15,7 +15,7 @@
 
           <Card :center="false" :gutters="false">
             <h2 class="uppercase">Alerts</h2>
-            <div class="text-lg">I'm not entirely sure what is supposed to go here</div>
+            <div class="text-lg">There are no alerts at this time</div>
           </Card>
         </div>
         <div class="w-1/2 flex flex-col">
