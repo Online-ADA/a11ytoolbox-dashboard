@@ -35,7 +35,12 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="capitalize text-sm text-gray-900">
-              {{role(row.data.roleInfo.role_id)}}
+              {{row.data.role}}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="capitalize text-sm text-gray-900">
+              {{row.data.team}}
             </div>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
@@ -84,9 +89,14 @@ export default {
           link: "role",
           sort: true
         },
+        {
+          display: "Team",
+          link: "team",
+          sort: true
+        },
         "Edit"
       ],
-      searchableProps: [ "role", "first_name", "last_name", "email", "phone" ],
+      searchableProps: [ "role", "team", "first_name", "last_name", "email", "phone" ],
       searchOverride: {
         // role_id: function(context, term, prop, caseSensitive){
         //   if( !caseSensitive ){
@@ -109,7 +119,16 @@ export default {
     },
     props: [],
     watch: {
-      
+      users:function(newVal){
+        if( newVal && newVal.length ){
+          for (let x = 0; x < newVal.length; x++) {
+            let user = newVal[x];
+            
+            user.role = this.role(user.roleInfo.role_id)
+            user.team = this.team(user.roleInfo.team_id)
+          }
+        }
+      }
     },
     methods: {
       role(id){
@@ -122,6 +141,18 @@ export default {
             return "Standard"
           case 4:
             return "Limited"
+        }
+      },
+      team(id){
+        switch(id){
+          case 1:
+            return "Executive"
+          case 2:
+            return "Development"
+          case 3:
+            return "Design"
+          case 4:
+            return "Customer Service"
         }
       }
     },
