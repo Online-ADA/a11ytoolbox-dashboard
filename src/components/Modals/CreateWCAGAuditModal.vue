@@ -2,13 +2,13 @@
 	<Modal :valign="'top'" style="z-index:999" :size="'wide'" :open="open">
 		<Loader v-if="loading"></Loader>
 		<template v-if="complete">
-			<h1>Go to Audit?</h1>
+			<h1 class="headline">Go to Audit?</h1>
 			<button @click.prevent="EventBus.closeModal( ()=>{ chooseYes() })" class="standard mr-3">Yes</button>
 			<button @click.prevent="EventBus.closeModal( ()=>{ chooseNo() })" class="standard">No</button>
 		</template>
 
 		<template v-else>
-			<h1>Create New WCAG Audit</h1>
+			<h1 class="headline">Create New WCAG Audit</h1>
 		
 			<div v-if="open" class="w-full flex flex-col items-start">
 				<small v-if="client">Client: {{client.name}}</small>
@@ -16,7 +16,7 @@
 				<small v-if="propertyType == 'website' && step === 2">Domain: {{currentDomain.url}}</small>
 
 				<fieldset role="radiogroup" class="w-full mt-3">
-					<legend class="font-semibold">Choose a Property</legend>
+					<legend class="subheadline">Choose a Property</legend>
 					<div class="flex items-center">
 						<Label class="pr-3" :stacked="false" for="property-type-website">
 							Website
@@ -38,7 +38,7 @@
 				
 				<template v-if="propertyType == 'website' && step == 1">
 					<template v-if="domains.length">
-						<h2 class="py-4 font-bold">Choose a domain for {{project.name}}</h2>
+						<h2 class="py-4 headline-2">Choose a domain for {{project.name}}</h2>
 						<Label for="choose_select">Select Domain</Label>
 						<select class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" name="choose_domain" id="choose_select">
 							<option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">{{domain.url}}</option>
@@ -46,10 +46,10 @@
 						<button @click.prevent="step = 2" class="standard mt-3">Continue</button>
 					</template>
 					<template v-if="domains.length">
-						<h2 class="py-4 font-bold">or Add a New Domain</h2>
+						<h2 class="py-4 headline-2">or Add a New Domain</h2>
 					</template>
 					<template v-if="!domains.length">
-						<h2 class="py-4 font-bold">Create a New Domain</h2>
+						<h2 class="py-4 headline-2">Create a New Domain</h2>
 					</template>
 
 					<form action="#" class="flex flex-wrap" @submit.prevent>
@@ -67,7 +67,7 @@
 							</div>
 							{{fullUrl}}
 						</div>
-						<div class="my-3 w-full">
+						<div class="mt-3 w-full">
 							<button class="standard mr-2" @click.prevent="createDomain">Create</button>
 						</div>
 					</form>
@@ -90,10 +90,10 @@
 					
 
 					<template v-if="isManager">
-						<h2 class="text-base font-semibold my-3">Assign Users</h2>
+						<h2 class="headline-2 my-3">Assign Users</h2>
 						<div class="flex w-full">
 							<Card class="w-1/2">
-								<h3 class="text-lg">Team Members</h3>
+								<h3 class="subheadline">Team Members</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="unassigned.length">
 									<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
 										<span>{{displayUser(id)}}</span><Button aria-label="assign this user to the audit" hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
@@ -101,7 +101,7 @@
 								</ul>
 							</Card>
 							<Card class="w-1/2">
-								<h3 class="text-lg">Assignees</h3>
+								<h3 class="subheadline">Assignees</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="assigned.length">
 									<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
 										<Button aria-label="unassign this user to the audit" hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
@@ -114,7 +114,7 @@
 
 					<template v-if="propertyType == 'website'">
 						<fieldset class="w-full mt-3">
-							<legend class="font-semibold">Sitemap Settings</legend>
+							<legend class="headline-2">Sitemap Settings</legend>
 							<div class="flex items-center">
 								<Label class="pr-3" :stacked="false" for="sitemap-full">
 									Use Full Sitemap
@@ -132,7 +132,7 @@
 					<button class="standard mr-2" @click.prevent="deployTool">Deploy</button>
 				</template>
 			</div>
-			<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployWCAGAuditModal', false)})" class="standard">Cancel</button>
+			<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployWCAGAuditModal', false)})" class="standard mt-3">Cancel</button>
 		</template>
 		
 	</Modal>

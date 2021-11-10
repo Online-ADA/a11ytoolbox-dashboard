@@ -1,6 +1,6 @@
 <template>
 	<Modal :valign="'top'" style="z-index:999" :size="'wide'" :open="open">
-		<h1 class="mb-2">Select a Tool to Deploy</h1>
+		<h1 class="mb-2 headline">Select a Tool to Deploy</h1>
 		
 		<div>
 			<Button @click.native.prevent="EventBus.openModal( ()=>{ EventBus.$emit('deployToolModal', false); EventBus.$emit('deployWCAGAuditModal', true); })" class="mr-2 text-center">

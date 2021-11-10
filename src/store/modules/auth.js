@@ -10,6 +10,7 @@ export default {
     accapi: "",
     toolboxapi: "",
     user: false,
+    API: "",
     // accountsRoles: [],
     // accountsPermissions: [],
     token: Cookies.get('oada_UID') || false,

@@ -5,15 +5,15 @@ module.exports = {
   theme: {
     boxShadow: {
       custom: '0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)',
-        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-       '3xl': '0 35px 60px -15px rgba(0, 0, 0, 0.3)',
-        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
-        none: 'none',
+      sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+      DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+      md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+      '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+      '3xl': '0 35px 60px -15px rgba(0, 0, 0, 0.3)',
+      inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+      none: 'none',
     },
     outline: {
       none: ['2px solid transparent', '2px'],
@@ -23,7 +23,11 @@ module.exports = {
     extend: {
       fontFamily: {
         button: ['Montserrat', 'sans-serif'],
-        body: ['Open Sans', 'sans-serif']
+        body: ['Open Sans', 'sans-serif'],
+        'headline':['Open Sans', 'sans-serif'],
+        'headline-2':['Open Sans', 'sans-serif'],
+        'subheadline':['Open Sans', 'sans-serif'],
+        'navigation':['Montserrat', 'sans-serif'],
       },
       colors: {
         pallette: {
@@ -67,6 +71,13 @@ module.exports = {
           }
         },
       },
+      fontSize:{
+        'headline': ['44px', { lineHeight: '1' }],
+        'headline-2': ['20px', { lineHeight: '1' }],
+        'subheadline': ['20px', { lineHeight: '1' }],
+        body: ["14px", { lineHeight: '1' }],
+        'navigation':['16px', { lineHeight: '1' }],
+      }
     },
   },
 }

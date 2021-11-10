@@ -51,6 +51,11 @@ if( window.location.hostname == "toolboxdashboardd.ngrok.io" ){
   site = "toolboxdashboardd.ngrok.io"
 }
 
+store.state.auth.site = site
+store.state.auth.accapi = accountHost
+store.state.auth.toolboxapi = apiHost
+store.state.auth.API = `${apiHost}/api`
+
 window.App = new Vue({
   router,
   store,
@@ -58,11 +63,6 @@ window.App = new Vue({
 }).$mount('#app')
 
 function run(){
-  store.state.auth.site = site
-  store.state.auth.accapi = accountHost
-  store.state.auth.toolboxapi = apiHost
-  store.state.auth.API = `${apiHost}/api`
-  
   Request.getPromise(store.state.auth.API+'/state/init')
     .then( response => {
       console.log("MAIN.JS INIT CHECK HAS RETURNED", response.data.details);

@@ -84,7 +84,9 @@ export default {
 			return this.$store.getters["auth/account"]
 		},
 		iAmExecutive(){
-			return this.account.pivot.team_id === 1
+			if( this.account ){
+				return this.account.pivot.team_id === 1
+			}
 		}
 	},
 	props: [],
