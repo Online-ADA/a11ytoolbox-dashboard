@@ -197,58 +197,17 @@ const routes = [
     component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Dashboard.vue'),
     children:[
       {
-        path: "projects",
-        name: "ManageProjects",
-        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Projects/List.vue'),
-        meta: {
-          role: 2,
-          // permissions: {
-          //   entity: "projects",
-          //   action: "read"
-          // }
-        }
-      },
-      {
         path: "users",
         name: "ManageUsers",
         component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Users/List.vue'),
         meta: {
           role: 2,
-          // permission: {
-          //   entity: "users",
-          //   action: "read"
-          // }
         }
       },
       {
         path: "user/:id",
         name: "ManageUserEdit",
         component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Users/Edit.vue'),
-        meta: {
-          role: 2,
-          // permission: {
-          //   entity: "users",
-          //   action: "write"
-          // }
-        }
-      },
-
-      {
-        path: "audits",
-        name: "ManageAudits",
-        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Audits/List.vue'),
-        meta: {
-          role: 2,
-          // permissions: {
-          //   entity: "audits",
-          //   action: "read"
-          // }
-        }
-      },
-      {
-        path: "domains",
-        name: "ManageDomains",
-        component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Domains/List.vue'),
         meta: {
           role: 2,
         }
@@ -261,6 +220,42 @@ const routes = [
           role: 2,
         }
       },
+      // {
+      //   path: "projects",
+      //   name: "ManageProjects",
+      //   component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Projects/List.vue'),
+      //   meta: {
+      //     role: 2,
+      //     // permissions: {
+      //     //   entity: "projects",
+      //     //   action: "read"
+      //     // }
+      //   }
+      // },
+      
+      
+
+      // {
+      //   path: "audits",
+      //   name: "ManageAudits",
+      //   component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Audits/List.vue'),
+      //   meta: {
+      //     role: 2,
+      //     // permissions: {
+      //     //   entity: "audits",
+      //     //   action: "read"
+      //     // }
+      //   }
+      // },
+      // {
+      //   path: "domains",
+      //   name: "ManageDomains",
+      //   component: () => import(/* webpackChunkName: "manage" */ '../views/Management/Domains/List.vue'),
+      //   meta: {
+      //     role: 2,
+      //   }
+      // },
+      
     ]
   },
   {

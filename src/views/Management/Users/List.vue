@@ -111,7 +111,10 @@ export default {
         return this.$store.state.user.loading
       },
       users() {
-        return this.$store.state.user.all.length ? this.$store.state.user.all : this.$store.state.user.team_members
+        if( this.account.pivot.team_id === 1 ){
+          return this.$store.state.user.all
+        }
+        return this.$store.state.user.team_members
       },
       account(){
         return this.$store.getters["auth/account"]
@@ -158,11 +161,12 @@ export default {
     },
     created() {},
     mounted() {
+      console.log("MOUNTED", this.account);
       if( this.account && this.account.pivot.team_id === 1 ){
         this.$store.dispatch("user/getAllAccountUsers")
       }
       else{
-        this.$store.dispatch("user/getTeamMembers")
+        this.$store.dispatch("user/getTeamMembers", {team: this.account.pivot.team_id})
       }
     },
     components: {

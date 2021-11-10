@@ -1,5 +1,5 @@
 <template>
-	<Modal :valign="'top'" style="z-index:999" :size="'wide'" :open="open">
+	<Modal :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
 		<Loader v-if="loading"></Loader>
 		<template v-if="complete">
 			<h1 class="headline">Go to Audit?</h1>
@@ -11,12 +11,14 @@
 			<h1 class="headline">Create New WCAG Audit</h1>
 		
 			<div v-if="open" class="w-full flex flex-col items-start">
-				<small v-if="client">Client: {{client.name}}</small>
-				<small v-if="project">Project: {{project.name}}</small>
-				<small v-if="propertyType == 'website' && step === 2">Domain: {{currentDomain.url}}</small>
+				<div class="flex">
+					<small class="mr-2" v-if="client">Client: {{client.name}}</small>
+					<small class="mr-2" v-if="project">Project: {{project.name}}</small>
+					<small v-if="propertyType == 'website'">Domain: {{currentDomain.url}}</small>
+				</div>
 
 				<fieldset role="radiogroup" class="w-full mt-3">
-					<legend class="subheadline">Choose a Property</legend>
+					<legend class="headline-2">Choose a Property</legend>
 					<div class="flex items-center">
 						<Label class="pr-3" :stacked="false" for="property-type-website">
 							Website
@@ -36,14 +38,12 @@
 				</fieldset>
 				
 				
-				<template v-if="propertyType == 'website' && step == 1">
+				<template v-if="propertyType == 'website'">
 					<template v-if="domains.length">
-						<h2 class="py-4 headline-2">Choose a domain for {{project.name}}</h2>
-						<Label for="choose_select">Select Domain</Label>
-						<select class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" name="choose_domain" id="choose_select">
+						<h2 id="choose_select_heading" class="py-4 headline-2">Select a Domain</h2>
+						<select aria-labelledby="choose_select_heading" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" name="choose_domain" id="choose_select">
 							<option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">{{domain.url}}</option>
 						</select>
-						<button @click.prevent="step = 2" class="standard mt-3">Continue</button>
 					</template>
 					<template v-if="domains.length">
 						<h2 class="py-4 headline-2">or Add a New Domain</h2>
@@ -51,8 +51,12 @@
 					<template v-if="!domains.length">
 						<h2 class="py-4 headline-2">Create a New Domain</h2>
 					</template>
+					<button 
+					@click="createDomainSectionOpen = !createDomainSectionOpen" 
+					:aria-expanded="createDomainSectionOpen ? 'true' : 'false'" 
+					class="text-base">Add a New Domain</button>
 
-					<form action="#" class="flex flex-wrap" @submit.prevent>
+					<form v-show="createDomainSectionOpen" action="#" class="flex flex-wrap" @submit.prevent>
 						<div class="px-2 w-full">
 							<Label for="domain-title">Title</Label>
 							<TextInput class="w-full" id="domain-title" v-model="domain.title" />
@@ -60,12 +64,11 @@
 						<div class="px-2 w-full">
 							<Label for="domain-existing-url">Url</Label>
 							<div class="flex">
-								<select class="mx-auto block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="protocol" name="domain-protocol">
+								<select class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="protocol" name="domain-protocol">
 									<option :value="protocol" v-for="(protocol, index) in ['https://', 'http://']" :key="'domain-protocol-' + index">{{protocol}}</option>
 								</select>
 								<TextInput placeholder="example.com" class="w-9/12 ml-1" id="domain-existing-url" v-model="url" />
 							</div>
-							{{fullUrl}}
 						</div>
 						<div class="mt-3 w-full">
 							<button class="standard mr-2" @click.prevent="createDomain">Create</button>
@@ -73,7 +76,7 @@
 					</form>
 				</template>
 				
-				<template v-if="(propertyType == 'website' && step == 2) || propertyType != 'website'">
+				<template>
 					<Label for="audit-title">Title</Label>
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('title') }" id="title-validation">{{validationMessages["title"]}}</small>
 					<TextInput :data-validation-failed="failedValidation.includes('title') ? 'invalid-3' : false" required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
@@ -158,13 +161,13 @@
 			propertyType: "website",
 			EventBus: EventBus,
 			selectedDomain: false,
+			createDomainSectionOpen: false,
 			url: "",
 			protocol: "https://",
 			domain: {
 				title: "",
 				project_id: ""
 			},
-			step: 1,
 			failedValidation: [],
 			showValidationAlert: false,
 			validationMessages: {
