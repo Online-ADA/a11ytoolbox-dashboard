@@ -26,7 +26,9 @@
         <Card :center="false" :gutters="false">
           <h2 class="headline-2">Recommendations</h2>
           <template v-if="domainRecommendations.length">
-            <div class="text-lg">{{domainRecommendations.length}} of your domains <template v-if="domainRecommendations.length !== 1">do</template><template v-else>does</template> not have a sitemap yet</div>
+            <div class="text-lg">
+              {{domainRecommendations.length}} of your domains <template v-if="domainRecommendations.length !== 1">do</template><template v-else>does</template> not have a sitemap yet
+            </div>
             <div v-for="domain in domainRecommendations" :key="`domain-rec-${domain.id}`" class="mt-2">
               <button role="link" @click="$router.push({path: `/domains/${domain.id}/edit`})" class="standard">Create</button> sitemap for {{domain.title}}
             </div>
