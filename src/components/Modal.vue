@@ -1,7 +1,7 @@
 <template>
-	<div :id="`a${id}`" :class="containerClasses" class="inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+	<div ref="rootModal" :id="`a${id}`" :class="containerClasses" class="inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
 		<div :class="alignClass" class="flex justify-center min-h-screen pt-4 px-4 pb-20 text-center p-0">
-			<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+			<div class="modal-overlay fixed inset-0 transition-opacity" aria-hidden="true"></div>
 
 			<!-- This element is to trick the browser into centering the modal contents. -->
 			<span class="inline-block align-middle h-screen" aria-hidden="true">&#8203;</span>
@@ -145,6 +145,7 @@ export default {
 	},
 	mounted(){
 		this.id = this.generateUniqueID() + this.generateUniqueID()
+		this.$emit("initialized", this.$refs["rootModal"])
 	}
 }
 </script>
@@ -152,5 +153,8 @@ export default {
 <style scoped>
 	.creation-max-w{
 		max-width: 690px;
+	}
+	.modal-overlay{
+		background-color:rgba(23,23,23,.8);
 	}
 </style>

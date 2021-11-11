@@ -1,5 +1,5 @@
 <template>
-	<Modal :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
+	<Modal @initialized="getRootModal" :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
 		<Loader v-if="loading"></Loader>
 		<template v-if="complete">
 			<h1 class="headline">Go to Audit?</h1>
@@ -14,11 +14,10 @@
 				<div class="flex">
 					<small class="mr-2" v-if="client">Client: {{client.name}}</small>
 					<small class="mr-2" v-if="project">Project: {{project.name}}</small>
-					<small v-if="propertyType == 'website'">Domain: {{currentDomain.url}}</small>
 				</div>
 
-				<fieldset role="radiogroup" class="w-full mt-3">
-					<legend class="headline-2">Choose a Property</legend>
+				<fieldset role="radiogroup" class="w-full">
+					<legend class="pt-6 headline-2">Choose a Property</legend>
 					<div class="flex items-center">
 						<Label class="pr-3" :stacked="false" for="property-type-website">
 							Website
@@ -37,30 +36,26 @@
 					</div>
 				</fieldset>
 				
-				
 				<template v-if="propertyType == 'website'">
 					<template v-if="domains.length">
-						<h2 id="choose_select_heading" class="py-4 headline-2">Select a Domain</h2>
+						<h2 id="choose_select_heading" class="pt-4 pb-3 headline-2">Select a Domain</h2>
 						<select aria-labelledby="choose_select_heading" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" name="choose_domain" id="choose_select">
 							<option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">{{domain.url}}</option>
 						</select>
 					</template>
-					<template v-if="domains.length">
-						<h2 class="py-4 headline-2">or Add a New Domain</h2>
-					</template>
-					<template v-if="!domains.length">
-						<h2 class="py-4 headline-2">Create a New Domain</h2>
-					</template>
 					<button 
 					@click="createDomainSectionOpen = !createDomainSectionOpen" 
 					:aria-expanded="createDomainSectionOpen ? 'true' : 'false'" 
-					class="text-base">Add a New Domain</button>
+					class="text-base mt-3">
+						<template v-if="domains.length">
+							Or Add a New Domain
+						</template>
+						<template v-if="!domains.length">
+							Create a New Domain
+						</template>
+					</button>
 
 					<form v-show="createDomainSectionOpen" action="#" class="flex flex-wrap" @submit.prevent>
-						<div class="px-2 w-full">
-							<Label for="domain-title">Title</Label>
-							<TextInput class="w-full" id="domain-title" v-model="domain.title" />
-						</div>
 						<div class="px-2 w-full">
 							<Label for="domain-existing-url">Url</Label>
 							<div class="flex">
@@ -76,12 +71,12 @@
 					</form>
 				</template>
 				
-				<template>
-					<Label for="audit-title">Title</Label>
+				<div class="w-full" v-show="currentDomain">
+					<Label for="audit-title">Title of WCAG Audit</Label>
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('title') }" id="title-validation">{{validationMessages["title"]}}</small>
 					<TextInput :data-validation-failed="failedValidation.includes('title') ? 'invalid-3' : false" required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
 
-					<Label for="audit-scope">Scope</Label>
+					<Label for="audit-scope">Scope of WCAG Audit</Label>
 					
 					<select v-model="audit.scope" class="p-1" id="audit-scope" name="scope">
 						<option :value="option" v-for="option in scope_options" :key="'scope-option-'+option">{{option}}</option>
@@ -93,7 +88,7 @@
 					
 
 					<template v-if="isManager">
-						<h2 class="headline-2 my-3">Assign Users</h2>
+						<h2 class="headline-2 pt-6 pb-3">Assign Users</h2>
 						<div class="flex w-full">
 							<Card class="w-1/2">
 								<h3 class="subheadline">Team Members</h3>
@@ -116,8 +111,8 @@
 					</template>
 
 					<template v-if="propertyType == 'website'">
-						<fieldset class="w-full mt-3">
-							<legend class="headline-2">Sitemap Settings</legend>
+						<fieldset class="w-full">
+							<legend class="headline-2 pt-6 pb-3">Sitemap Settings</legend>
 							<div class="flex items-center">
 								<Label class="pr-3" :stacked="false" for="sitemap-full">
 									Use Full Sitemap
@@ -125,16 +120,15 @@
 								</Label>
 								
 								<Label :stacked="false" for="sitemap-generate">
-									Generate
+									Use Working Sample
 									<input v-model="audit.sitemap" type="radio" id="sitemap-generate" name="sitemap-choice" value="generate" class="mt-3" />
 								</Label>
 							</div>
 						</fieldset>
 					</template>
-
-					<button class="standard mr-2" @click.prevent="deployTool">Deploy</button>
-				</template>
+				</div>
 			</div>
+			<button v-show="currentDomain" class="standard mr-2" @click.prevent="deployTool">Deploy</button>
 			<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployWCAGAuditModal', false)})" class="standard mt-3">Cancel</button>
 		</template>
 		
@@ -162,11 +156,11 @@
 			EventBus: EventBus,
 			selectedDomain: false,
 			createDomainSectionOpen: false,
-			url: "",
 			protocol: "https://",
+			url: "",
 			domain: {
-				title: "",
-				project_id: ""
+				project_id: "",
+				url: ""
 			},
 			failedValidation: [],
 			showValidationAlert: false,
@@ -190,10 +184,14 @@
 			scope_other_description:"",
 			assigned: [],
 			unassigned: [],
-			complete: false
+			complete: false,
+			rootModal: ""
 		}),
 		name: 'CreateWCAGAuditModal',
 		methods:{
+			getRootModal(root){
+				this.rootModal = root
+			},
 			chooseNo(){
 				this.reset()
 				EventBus.$emit('deployWCAGAuditModal', false)
@@ -220,6 +218,8 @@
 					}
 
 					this.$store.dispatch("audits/createAudit", {audit: this.audit, vm: this, createScan: this.createScan})
+					this.reset()
+					this.rootModal.scrollTop = 0
 				}else{
 					let self = this
 					this.$nextTick( ()=>{
@@ -265,8 +265,8 @@
 				
 				this.$store.dispatch("domains/createDomain", {domain: this.domain, callback: ((domain)=>{
 					that.selectedDomain = domain.id
-					that.step = 2
-					that.reset()
+					that.domain.url = ""
+					that.url = ""
 				})})
 			},
 			assign(id){
@@ -332,8 +332,8 @@
 			},
 			open: function(newVal){
 				if( newVal ){
-					if( this.domains.length ){
-						this.selectedDomain = this.domains[0].id
+					if( !this.project.domains.length ){
+						this.createDomainSectionOpen = true
 					}
 
 					if( this.isManager ){ //Get the team members each time modal is opened

@@ -1,7 +1,7 @@
 <template>
     <Card class="w-1/2">
 
-      <h1>Audit Overview page for {{audit.title}}</h1>
+      <h1 v-if="audit">Audit Overview page for {{audit.title}}</h1>
       
     </Card>
 </template>

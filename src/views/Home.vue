@@ -69,13 +69,18 @@ export default {
   methods:{
   },
   mounted(){
-    this.$store.state.projects.project = false
-    this.$store.dispatch("user/getAllAccountUsers")
+    // this.$store.state.projects.project = false
+    // if( this.account ){
+    //   this.$store.dispatch("user/getAllAccountUsers")
+    // }
   },
   computed: {
     // total(){
     //   return this.$store.state.auth.token_total_minutes_remaining
     // },
+    account(){
+      return this.$store.getters["auth/account"]
+    },
     domainRecommendations(){
       let domainsWithoutSitemap = []
       for (let x = 0; x < this.$store.state.projects.all.length; x++) {
@@ -110,6 +115,9 @@ export default {
     },
   },
   watch:{
+    account:function(){
+      this.$store.dispatch("user/getAllAccountUsers")
+    },
     "$store.state.user.all":function(newVal){
       if( newVal && newVal.length ){
         for (let x = 0; x < newVal.length; x++) {
