@@ -11,10 +11,7 @@
 							<Select id="choose_product" class="mx-auto mb-3" :options="projects" v-model="domain.project_id" :valueProp="'id'" :displayProp="'name'"></Select>
 						</div>
 						<div class="w-1/12"></div>
-						<div class="w-5/12 px-2">
-							<Label for="title">Title</Label>
-							<TextInput class="w-full" id="title" v-model="domain.title" />
-						</div>
+						
 						<div class="w-5/12 px-2">
 							<Label for="create-url">Url</Label>
 							<div class="flex">
@@ -45,10 +42,7 @@
 					<h2 class="my-3">Or create a new one</h2>
 					<Form class="flex flex-wrap" @submit.native.prevent>
 						<div class="w-1/12"></div>
-						<div class="w-5/12 px-2">
-							<Label for="title">Title</Label>
-							<TextInput class="w-full" id="title" v-model="domain.title" />
-						</div>
+						
 						<div class="w-5/12 px-2">
 							<Label for="existing-url">Url</Label>
 							<div class="flex">
@@ -71,10 +65,7 @@
 					<h2 class="my-3">Project {{project.name}} doesn't have any domains. Lets create one</h2>
 					<Form class="flex flex-wrap" @submit.native.prevent>
 						<div class="w-1/12"></div>
-						<div class="w-5/12 px-2">
-							<Label for="title">Title</Label>
-							<TextInput class="w-full" id="title" v-model="domain.title" />
-						</div>
+						
 						<div class="w-5/12 px-2">
 							<Label for="alternate-url">Url</Label>
 							<div class="flex">

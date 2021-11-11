@@ -16,6 +16,21 @@
 					<small class="mr-2" v-if="project">Project: {{project.name}}</small>
 				</div>
 
+				<div class="w-full">
+					<Label for="audit-title">Title of WCAG Audit</Label>
+					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('title') }" id="title-validation">{{validationMessages["title"]}}</small>
+					<TextInput :data-validation-failed="failedValidation.includes('title') ? 'invalid-3' : false" required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
+
+					<Label for="audit-scope">Scope of WCAG Audit</Label>
+					<select v-model="audit.scope" class="p-1" id="audit-scope" name="scope">
+						<option :value="option" v-for="option in scope_options" :key="'scope-option-'+option">{{option}}</option>
+					</select>
+					<template v-if="audit.scope == 'Other'">
+						<Label for="audit-scope-other">Define Other</Label>
+						<TextInput v-model="scope_other_description" id="audit-scope-other" required></TextInput>
+					</template>
+				</div>
+
 				<fieldset role="radiogroup" class="w-full">
 					<legend class="pt-7 headline-2">Choose a Property</legend>
 					<div class="flex items-center">
@@ -39,7 +54,14 @@
 				<template v-if="propertyType == 'website'">
 					<template v-if="domains.length">
 						<h2 id="choose_select_heading" class="pt-4 pb-3 headline-2">Select a Domain</h2>
-						<select aria-labelledby="choose_select_heading" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" name="choose_domain" id="choose_select">
+						<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('domain') }" id="domain-validation">{{validationMessages["domain"]}}</small>
+						<select 
+						:data-validation-failed="failedValidation.includes('domain') ? 'invalid-3' : false" 
+						required 
+						:aria-describedby="failedValidation.includes('domain') ? 'domain-validation' : false" 
+						aria-labelledby="choose_select_heading" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" 
+						name="choose_domain" 
+						id="choose_select">
 							<option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">{{domain.url}}</option>
 						</select>
 					</template>
@@ -55,37 +77,34 @@
 						</template>
 					</button>
 
-					<form v-show="createDomainSectionOpen" action="#" class="flex flex-wrap" @submit.prevent>
+					<form v-if="createDomainSectionOpen" action="#" class="flex flex-wrap" @submit.prevent>
 						<div class="px-2 w-full">
 							<Label for="domain-existing-url">Url</Label>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('domainURL') }" id="domainURL-validation">{{validationMessages["domainURL"]}}</small>
 							<div class="flex">
-								<select class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="protocol" name="domain-protocol">
+								<select
+								class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" 
+								v-model="protocol" 
+								name="domain-protocol">
 									<option :value="protocol" v-for="(protocol, index) in ['https://', 'http://']" :key="'domain-protocol-' + index">{{protocol}}</option>
 								</select>
-								<TextInput placeholder="example.com" class="w-9/12 ml-1" id="domain-existing-url" v-model="url" />
+								<TextInput
+								:data-validation-failed="failedValidation.includes('domainURL') ? 'invalid-3' : false" 
+								:aria-describedby="failedValidation.includes('domainURL') ? 'domainURL-validation' : false"
+								required 
+								placeholder="example.com" 
+								class="w-9/12 ml-1" 
+								id="domain-existing-url" 
+								v-model="url" />
 							</div>
 						</div>
 						<div class="mt-3 w-full">
-							<button class="standard mr-2" @click.prevent="createDomain">Create</button>
+							<button class="standard mr-2" @click.prevent="createDomain">Add Domain</button>
 						</div>
 					</form>
 				</template>
 				
-				<div class="w-full" v-show="currentDomain">
-					<Label for="audit-title">Title of WCAG Audit</Label>
-					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('title') }" id="title-validation">{{validationMessages["title"]}}</small>
-					<TextInput :data-validation-failed="failedValidation.includes('title') ? 'invalid-3' : false" required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
-
-					<Label for="audit-scope">Scope of WCAG Audit</Label>
-					
-					<select v-model="audit.scope" class="p-1" id="audit-scope" name="scope">
-						<option :value="option" v-for="option in scope_options" :key="'scope-option-'+option">{{option}}</option>
-					</select>
-					<template v-if="audit.scope == 'Other'">
-						<Label for="audit-scope-other">Define Other</Label>
-						<TextInput v-model="scope_other_description" id="audit-scope-other" required></TextInput>
-					</template>
-					
+				<div class="w-full">
 
 					<template v-if="isManager">
 						<h2 class="headline-2 pt-7 pb-3">Assign Users</h2>
@@ -128,7 +147,7 @@
 					</template>
 				</div>
 			</div>
-			<button v-show="currentDomain" class="standard mr-2" @click.prevent="deployTool">Deploy</button>
+			<button class="standard mr-2" @click.prevent="deployTool">Deploy</button>
 			<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployWCAGAuditModal', false)})" class="standard mt-3">Cancel</button>
 		</template>
 		
@@ -166,6 +185,8 @@
 			showValidationAlert: false,
 			validationMessages: {
 				"title": "The title field is required",
+				"domainURL": "The domain url is required",
+				"domain": "A domain is required"
 			},
 			scope_options:[
 				"The whole website/app",
@@ -184,8 +205,8 @@
 			scope_other_description:"",
 			assigned: [],
 			unassigned: [],
-			complete: false,
-			rootModal: ""
+			rootModal: "",
+			complete: false
 		}),
 		name: 'CreateWCAGAuditModal',
 		methods:{
@@ -255,6 +276,7 @@
 				}
 				this.scope_other_description = ""
 				this.complete = false
+				this.selectedDomain = false
 				this.assigned = []
 				this.unassigned = []
 			},
@@ -284,25 +306,29 @@
 			validate(){
 				let toValidate = [
 					"title",
-					// "status",
-					// "essential_functionality",
-					// "scope",
-					// "conformance_target",
-					// "software_used",
-					// "assistive_tech",
-					// "tech_requirements",
-					// "number",
-					// "start_date",
-					// "working_sample",
+					"domain",
+					"domainURL"
 				]
 				this.failedValidation = []
 				var pass
 
 				for( let prop of toValidate ){
-					if( Array.isArray( this.audit[prop] ) ){
-						pass = this.audit[prop].length
-					}else{
-						pass = this.audit[prop]
+					switch(prop){
+						case "title":
+							pass = this.audit.title
+							break
+						case "domain":
+							pass = this.selectedDomain
+							break
+						case "domainURL":
+							if( this.propertyType == 'website' ){
+								pass = (this.createDomainSectionOpen && this.domain.url) || 
+										!this.createDomainSectionOpen
+							}
+							else{
+								pass = true
+							}
+							break
 					}
 
 					if( !pass ){
@@ -311,6 +337,7 @@
 						}
 					}
 				}
+				
 
 				if( this.failedValidation.length !== 0 ){
 					this.showValidationAlert = true
@@ -318,7 +345,7 @@
 						this.showValidationAlert = false
 					}, 500)
 				}
-
+				
 				return this.failedValidation.length === 0
 			},
 		},

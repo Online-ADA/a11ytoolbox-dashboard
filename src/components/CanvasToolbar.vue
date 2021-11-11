@@ -4,7 +4,7 @@
             <!-- Audit Toolbar -->
             <div :class="[!isAuditEditPage ? 'justify-between' : 'justify-end']" class="flex items-center">
                 <div v-if="!isAuditEditPage" class="flex items-center text-13">
-                    <span v-if="audit.domain">{{audit.domain.title}}</span>
+                    <span v-if="audit.domain">{{audit.domain.url}}</span>
                     <div class="border border-black mx-3.5 divider"></div>
                     <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
                     <span>Total Issues: {{totalRows}}</span>
