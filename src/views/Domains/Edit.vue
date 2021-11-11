@@ -120,6 +120,7 @@
 				<FileInput @input="handleSitemapFile" class="block w-auto mx-auto pb-3" accept=".csv, .xml"></FileInput>
 				<small class="text-xs">Note: If the domain on an entry in the uploaded file does not match this domain, it will not be added to the sitemap.</small>
 				<Button color="red" @click.native.prevent="uploadSitemap">Upload sitemap</Button>
+				<Button color="red" @click.native.prevent="generateSitemap">Generate sitemap</Button>
 			</Card>
 			
 		</div>
@@ -229,6 +230,9 @@ export default {
 			if( this.sitemapFile ){
 				this.$store.dispatch("domains/saveSitemap", {id: this.domain.id, file: this.sitemapFile, domain: this.domain.url})
 			}
+		},
+		generateSitemap() {
+			this.$store.dispatch("domains/generateSitemap", {id: this.domain.id, file: this.sitemapFile, domain: this.domain.url})
 		},
 		emptySample(){
 			this.$store.dispatch("domains/emptySample", {id: this.domain.id})

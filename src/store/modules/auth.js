@@ -191,7 +191,7 @@ export default {
       dispatch("projects/resetState", null, {root: true})
       dispatch("scan/resetState", null, {root: true})
 
-      window.location = "https://dashboard.onlineada.com"
+      window.location = "https://oadadashboardd.ngrok.io"
     },
   },
   getters: {
