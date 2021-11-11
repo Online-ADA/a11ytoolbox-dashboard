@@ -35,7 +35,12 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="capitalize text-sm text-gray-900">
-              {{role(row.data.role_id)}}
+              {{row.data.role}}
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="capitalize text-sm text-gray-900">
+              {{row.data.team}}
             </div>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
@@ -84,9 +89,14 @@ export default {
           link: "role",
           sort: true
         },
+        {
+          display: "Team",
+          link: "team",
+          sort: true
+        },
         "Edit"
       ],
-      searchableProps: [ "role", "first_name", "last_name", "email", "phone" ],
+      searchableProps: [ "role", "team", "first_name", "last_name", "email", "phone" ],
       searchOverride: {
         // role_id: function(context, term, prop, caseSensitive){
         //   if( !caseSensitive ){
@@ -98,31 +108,66 @@ export default {
     }),
     computed: {
       loading(){
-        return this.$store.state.admin.users.loading
+        return this.$store.state.user.loading
       },
       users() {
-          return this.$store.state.admin.users
+        if( this.account.pivot.team_id === 1 ){
+          return this.$store.state.user.all
+        }
+        return this.$store.state.user.team_members
+      },
+      account(){
+        return this.$store.getters["auth/account"]
       },
     },
     props: [],
     watch: {
-      users(){
-        var x=0,l=this.users.length
-        while (x < l) {
-          this.users[x].role = this.role(this.users[x].role_id)
-          ++x;
+      users:function(newVal){
+        if( newVal && newVal.length ){
+          for (let x = 0; x < newVal.length; x++) {
+            let user = newVal[x];
+            
+            user.role = this.role(user.roleInfo.role_id)
+            user.team = this.team(user.roleInfo.team_id)
+          }
         }
       }
     },
     methods: {
       role(id){
-        return this.$store.state.admin.roles[id].charAt(0).toUpperCase() + this.$store.state.admin.roles[id].slice(1)
+        switch(id){
+          case 1:
+            return "Owner/Manager"
+          case 2:
+            return "Manager"
+          case 3:
+            return "Standard"
+          case 4:
+            return "Limited"
+        }
+      },
+      team(id){
+        switch(id){
+          case 1:
+            return "Executive"
+          case 2:
+            return "Development"
+          case 3:
+            return "Design"
+          case 4:
+            return "Customer Service"
+        }
       }
     },
-    created() {
-      this.$store.dispatch("admin/getUsers", this.$router)
-    },
+    created() {},
     mounted() {
+      console.log("MOUNTED", this.account);
+      if( this.account && this.account.pivot.team_id === 1 ){
+        this.$store.dispatch("user/getAllAccountUsers")
+      }
+      else{
+        this.$store.dispatch("user/getTeamMembers", {team: this.account.pivot.team_id})
+      }
     },
     components: {
       DT

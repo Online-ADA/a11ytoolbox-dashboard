@@ -10,6 +10,7 @@ export default {
     accapi: "",
     toolboxapi: "",
     user: false,
+    API: "",
     // accountsRoles: [],
     // accountsPermissions: [],
     token: Cookies.get('oada_UID') || false,
@@ -198,28 +199,18 @@ export default {
       return !!state.token && !!state.user
     },
     isManager: (state, getters) => {
-      //Manager =  true if member of executive team or role of manager on current team
-      //Get the current tool
-      //Get the current role
-      //get the current team
+      //Manager =  true if member of executive team or role of owner or manager (1 or 2) on current team
+      
       //User role/team info is now stored on the account
       //Teams: 1 = Executive, 2 = Development, 3 = Design, 4 = Customer Service
+      //The auth.account getter houses the current users's team and role
       
       if( getters.isAuthenticated && getters.account ){
-        let current_team = getters.account.pivot.team_id
-        let tool_team = -1;
-        if( window.App.$route.path.includes("audits") ){
-          tool_team = 2
-        }
-
-        if( current_team === 1 ){
+        if( getters.account.pivot.team_id === 1 ){
           return true
         }
-
-        //If user belongs to Executive team or The team 
-        if( current_team <= tool_team ){
-          return getters.account.pivot.role_id === 1
-        }
+        
+        return getters.account.pivot.role_id === 1 || getters.account.pivot.role_id === 2
         
       }
       return false

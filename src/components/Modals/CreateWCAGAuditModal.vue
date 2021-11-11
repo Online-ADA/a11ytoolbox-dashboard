@@ -1,22 +1,23 @@
 <template>
-	<Modal class="z-50" :open="open">
+	<Modal @initialized="getRootModal" :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
 		<Loader v-if="loading"></Loader>
 		<template v-if="complete">
-			<h1>Go to Audit?</h1>
+			<h1 class="headline">Go to Audit?</h1>
 			<button @click.prevent="EventBus.closeModal( ()=>{ chooseYes() })" class="standard mr-3">Yes</button>
 			<button @click.prevent="EventBus.closeModal( ()=>{ chooseNo() })" class="standard">No</button>
 		</template>
 
 		<template v-else>
-			<h1>Create New WCAG Audit</h1>
+			<h1 class="headline">Create New WCAG Audit</h1>
 		
 			<div v-if="open" class="w-full flex flex-col items-start">
-				<small v-if="client">Client: {{client.name}}</small>
-				<small v-if="project">Project: {{project.name}}</small>
-				<small v-if="propertyType == 'website' && step === 2">Domain: {{currentDomain.url}}</small>
+				<div class="flex">
+					<small class="mr-2" v-if="client">Client: {{client.name}}</small>
+					<small class="mr-2" v-if="project">Project: {{project.name}}</small>
+				</div>
 
-				<fieldset role="radiogroup" class="w-full mt-3">
-					<legend class="font-semibold">Choose a Property</legend>
+				<fieldset role="radiogroup" class="w-full">
+					<legend class="pt-7 headline-2">Choose a Property</legend>
 					<div class="flex items-center">
 						<Label class="pr-3" :stacked="false" for="property-type-website">
 							Website
@@ -35,50 +36,47 @@
 					</div>
 				</fieldset>
 				
-				
-				<template v-if="propertyType == 'website' && step == 1">
+				<template v-if="propertyType == 'website'">
 					<template v-if="domains.length">
-						<h2 class="py-4 font-bold">Choose a domain for {{project.name}}</h2>
-						<Label for="choose_select">Select Domain</Label>
-						<select class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" name="choose_domain" id="choose_select">
+						<h2 id="choose_select_heading" class="pt-4 pb-3 headline-2">Select a Domain</h2>
+						<select aria-labelledby="choose_select_heading" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" name="choose_domain" id="choose_select">
 							<option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">{{domain.url}}</option>
 						</select>
-						<button @click.prevent="step = 2" class="standard mt-3">Continue</button>
 					</template>
-					<template v-if="domains.length">
-						<h2 class="py-4 font-bold">Or create a new one</h2>
-					</template>
-					<template v-if="!domains.length">
-						<h2 class="py-4 font-bold">Create a New Domain</h2>
-					</template>
+					<button 
+					@click="createDomainSectionOpen = !createDomainSectionOpen" 
+					:aria-expanded="createDomainSectionOpen ? 'true' : 'false'" 
+					class="text-base mt-3">
+						<template v-if="domains.length">
+							Or Add a New Domain
+						</template>
+						<template v-if="!domains.length">
+							Create a New Domain
+						</template>
+					</button>
 
-					<form action="#" class="flex flex-wrap" @submit.prevent>
-						<div class="px-2">
-							<Label for="domain-title">Title</Label>
-							<TextInput class="w-full" id="domain-title" v-model="domain.title" />
-						</div>
-						<div class="px-2">
+					<form v-show="createDomainSectionOpen" action="#" class="flex flex-wrap" @submit.prevent>
+						<div class="px-2 w-full">
 							<Label for="domain-existing-url">Url</Label>
 							<div class="flex">
-								<select class="mx-auto block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="protocol" name="domain-protocol">
+								<select class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="protocol" name="domain-protocol">
 									<option :value="protocol" v-for="(protocol, index) in ['https://', 'http://']" :key="'domain-protocol-' + index">{{protocol}}</option>
 								</select>
 								<TextInput placeholder="example.com" class="w-9/12 ml-1" id="domain-existing-url" v-model="url" />
 							</div>
-							{{fullUrl}}
 						</div>
-						<div class="mt-3">
+						<div class="mt-3 w-full">
 							<button class="standard mr-2" @click.prevent="createDomain">Create</button>
 						</div>
 					</form>
 				</template>
 				
-				<template v-if="(propertyType == 'website' && step == 2) || propertyType != 'website'">
-					<Label for="audit-title">Title</Label>
+				<div class="w-full" v-show="currentDomain">
+					<Label for="audit-title">Title of WCAG Audit</Label>
 					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('title') }" id="title-validation">{{validationMessages["title"]}}</small>
 					<TextInput :data-validation-failed="failedValidation.includes('title') ? 'invalid-3' : false" required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
 
-					<Label for="audit-scope">Scope</Label>
+					<Label for="audit-scope">Scope of WCAG Audit</Label>
 					
 					<select v-model="audit.scope" class="p-1" id="audit-scope" name="scope">
 						<option :value="option" v-for="option in scope_options" :key="'scope-option-'+option">{{option}}</option>
@@ -90,18 +88,18 @@
 					
 
 					<template v-if="isManager">
-						<h2 class="text-base font-semibold my-3">Assign Users</h2>
+						<h2 class="headline-2 pt-7 pb-3">Assign Users</h2>
 						<div class="flex w-full">
-							<Card class="w-1/2">
-								<h3 class="text-lg">Team Members</h3>
+							<Card :gutters="false" class="w-1/2 mr-5">
+								<h3 class="subheadline">Team Members</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="unassigned.length">
 									<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
 										<span>{{displayUser(id)}}</span><Button aria-label="assign this user to the audit" hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
 									</li>
 								</ul>
 							</Card>
-							<Card class="w-1/2">
-								<h3 class="text-lg">Assignees</h3>
+							<Card :gutters="false" class="w-1/2">
+								<h3 class="subheadline">Assignees</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="assigned.length">
 									<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
 										<Button aria-label="unassign this user to the audit" hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
@@ -113,26 +111,25 @@
 					</template>
 
 					<template v-if="propertyType == 'website'">
-						<fieldset class="w-full mt-3">
-							<legend class="font-semibold">Sitemap Settings</legend>
+						<fieldset class="w-full">
+							<legend class="headline-2 pt-7">Sitemap Settings</legend>
 							<div class="flex items-center">
-								<Label class="pr-3" :stacked="false" for="sitemap-full">
+								<label class="block font-semibold pr-3" :stacked="false" for="sitemap-full">
 									Use Full Sitemap
 									<input v-model="audit.sitemap" type="radio" id="sitemap-full" name="sitemap-choice" value="full" class="mt-3" />
-								</Label>
+								</label>
 								
-								<Label :stacked="false" for="sitemap-generate">
-									Generate
+								<label class="block font-semibold" :stacked="false" for="sitemap-generate">
+									Use Working Sample
 									<input v-model="audit.sitemap" type="radio" id="sitemap-generate" name="sitemap-choice" value="generate" class="mt-3" />
-								</Label>
+								</label>
 							</div>
 						</fieldset>
 					</template>
-
-					<button class="standard mr-2" @click.prevent="deployTool">Deploy</button>
-				</template>
+				</div>
 			</div>
-			<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployWCAGAuditModal', false)})" class="standard">Cancel</button>
+			<button v-show="currentDomain" class="standard mr-2" @click.prevent="deployTool">Deploy</button>
+			<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployWCAGAuditModal', false)})" class="standard mt-3">Cancel</button>
 		</template>
 		
 	</Modal>
@@ -158,13 +155,13 @@
 			propertyType: "website",
 			EventBus: EventBus,
 			selectedDomain: false,
-			url: "",
+			createDomainSectionOpen: false,
 			protocol: "https://",
+			url: "",
 			domain: {
-				title: "",
-				project_id: ""
+				project_id: "",
+				url: ""
 			},
-			step: 1,
 			failedValidation: [],
 			showValidationAlert: false,
 			validationMessages: {
@@ -187,10 +184,14 @@
 			scope_other_description:"",
 			assigned: [],
 			unassigned: [],
-			complete: false
+			complete: false,
+			rootModal: ""
 		}),
 		name: 'CreateWCAGAuditModal',
 		methods:{
+			getRootModal(root){
+				this.rootModal = root
+			},
 			chooseNo(){
 				this.reset()
 				EventBus.$emit('deployWCAGAuditModal', false)
@@ -217,6 +218,8 @@
 					}
 
 					this.$store.dispatch("audits/createAudit", {audit: this.audit, vm: this, createScan: this.createScan})
+					this.reset()
+					this.rootModal.scrollTop = 0
 				}else{
 					let self = this
 					this.$nextTick( ()=>{
@@ -262,8 +265,8 @@
 				
 				this.$store.dispatch("domains/createDomain", {domain: this.domain, callback: ((domain)=>{
 					that.selectedDomain = domain.id
-					that.step = 2
-					that.reset()
+					that.domain.url = ""
+					that.url = ""
 				})})
 			},
 			assign(id){
@@ -329,8 +332,8 @@
 			},
 			open: function(newVal){
 				if( newVal ){
-					if( this.domains.length ){
-						this.selectedDomain = this.domains[0].id
+					if( !this.project.domains.length ){
+						this.createDomainSectionOpen = true
 					}
 
 					if( this.isManager ){ //Get the team members each time modal is opened

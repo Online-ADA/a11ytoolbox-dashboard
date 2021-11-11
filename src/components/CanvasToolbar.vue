@@ -1,6 +1,6 @@
 <template>
     <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full h-12" v-if="showToolbar">
-        <div id="toolbar" class="w-full p-2 shadow-custom bg-white">
+        <div id="toolbar" class="w-full pl-4 p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
             <div :class="[!isAuditEditPage ? 'justify-between' : 'justify-end']" class="flex items-center">
                 <div v-if="!isAuditEditPage" class="flex items-center text-13">
@@ -10,7 +10,7 @@
                     <span>Total Issues: {{totalRows}}</span>
                 </div>
                 <span class="w-auto mr-2 flex items-center">
-                    <template v-if="!isAuditEditPage">
+                    <template v-if="isAuditShowPage">
                         <!-- Issue Tools -->
                         <select title="Change Selected Issue's Status" class="text-13 border-l-0 border-r-0 border-t-0 border-black shadow-none rounded-none" v-model="issueStatus" v-if="auditRowsSelected === 1 && !audit.locked" >
                             <option :value="status" v-for="(status, index) in issueStatuses" :key="'toolbarStatus-'+index">{{status}}</option>
@@ -212,7 +212,10 @@ export default {
             }
         },
         isAuditEditPage(){
-            return this.$route.path.includes('audits') && this.$route.path.includes('edit')
+            return this.$route.name === "AuditEdit"
+        },
+        isAuditShowPage(){
+            return this.$route.name === "AuditShow"
         }
     },
     methods: {

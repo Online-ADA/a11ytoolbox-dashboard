@@ -30,7 +30,7 @@
         <div class="border mx-3 divider"></div>
         <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
 
-        <div role="button" tabindex="0" @click.prevent="expandDropdown('manage')" :aria-expanded="[ dropdownsExpanded.includes('manage') ? 'true' : 'false' ]" v-if="isManager" :class="{expanded: dropdownsExpanded.includes('manage')}" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
+        <div role="button" tabindex="0" @click.prevent="expandDropdown('manage')" :aria-expanded="[ dropdownsExpanded.includes('manage') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('manage')}" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="manage" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
                 <span aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     <i class="fas fa-tools"></i>
@@ -56,7 +56,7 @@
             <span id="management-label" class="sub-label text-white uppercase">Settings</span>
         </div>
 
-        <div role="button" tabindex="0" @click.prevent="expandDropdown('user')" :aria-expanded="[ dropdownsExpanded.includes('user') ? 'true' : 'false' ]" :class="[!isManager ? 'ml-auto' : '', dropdownsExpanded.includes('user') ? 'expanded' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
+        <div role="button" tabindex="0" @click.prevent="expandDropdown('user')" :aria-expanded="[ dropdownsExpanded.includes('user') ? 'true' : 'false' ]" :class="[dropdownsExpanded.includes('user') ? 'expanded' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
             <div id="login" v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
                 <span @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     {{$store.state.auth.user.first_name}}

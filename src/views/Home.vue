@@ -3,31 +3,37 @@
     <Loader v-if="$store.state.clients.loading || !$store.getters['auth/isAuthenticated']"></Loader>
 
     <div v-if="message" class="text-red-600">{{message}}</div>
-    <h1 class="mb-5">Account Overview</h1>
+    <h1 class="mb-5 headline">Account Overview</h1>
     <div class="flex">
       <div class="w-1/2 flex flex-col mr-5">
         <Card class="mb-5" :center="false" :gutters="false">
-          <h2 class="uppercase">Stats</h2>
-          <div class="text-lg">7 Clients</div>
-          <div class="text-lg">8 Projects</div>
-          <div class="text-lg">16 WCAG Audits</div>
-          <div class="text-lg">12 Developer Team Members</div>
-          <div class="text-lg">7 Design Team Members</div>
-          <div class="text-lg">3 Customer Service Team Members</div>
+          <h2 class="headline-2">Stats</h2>
+          <div class="text-lg">{{totalClients}} Client<template v-if="totalClients !== 1">s</template></div>
+          <div class="text-lg">{{totalProjects}} Project<template v-if="totalProjects !== 1">s</template></div>
+          <div class="text-lg">{{totalWCAGAudits}} WCAG Audit<template v-if="totalWCAGAudits !== 1">s</template></div>
+          <div class="text-lg">{{usersData.executive.length}} Executive Team Member<template v-if="usersData.executive.length !== 1">s</template></div>
+          <div class="text-lg">{{usersData.development.length}} Developer Team Member<template v-if="usersData.development.length !== 1">s</template></div>
+          <div class="text-lg">{{usersData.design.length}} Design Team Member<template v-if="usersData.design.length !== 1">s</template></div>
+          <div class="text-lg">{{usersData.customer_service.length}} Customer Service Team Member<template v-if="usersData.customer_service.length !== 1">s</template></div>
         </Card>
 
         <Card :center="false" :gutters="false">
-          <h2 class="uppercase">Alerts</h2>
-          <div class="text-lg">I'm not entirely sure what is supposed to go here</div>
+          <h2 class="headline-2">Alerts</h2>
+          <div class="text-lg">There are no alerts at this time</div>
         </Card>
       </div>
       <div class="w-1/2 flex flex-col">
         <Card :center="false" :gutters="false">
-          <h2 class="uppercase">Recommendations</h2>
-          <div class="text-lg">3 of your domains do not have a sitemap yet</div>
-          <div class="mt-2"><button @click.prevent class="standard">Create</button> sitemap for Online ADA</div>
-          <div class="mt-2"><button @click.prevent class="standard">Create</button> sitemap for MaxAccess</div>
-          <div class="mt-2"><button @click.prevent class="standard">Create</button> sitemap for https://example.com</div>
+          <h2 class="headline-2">Recommendations</h2>
+          <template v-if="domainRecommendations.length">
+            <div class="text-lg">
+              {{domainRecommendations.length}} of your domains <template v-if="domainRecommendations.length !== 1">do</template><template v-else>does</template> not have a sitemap yet
+            </div>
+            <div v-for="domain in domainRecommendations" :key="`domain-rec-${domain.id}`" class="mt-2">
+              <button role="link" @click="$router.push({path: `/domains/${domain.id}/edit`})" class="standard">Create</button> sitemap for {{domain.title}}
+            </div>
+          </template>
+          <template v-else>There are no recommendations at this time</template>
         </Card>
       </div>
     </div>
@@ -46,6 +52,12 @@ export default {
   data(){
     return {
       message: "",
+      usersData: {
+        "executive": [],
+        "development": [],
+        "design":[],
+        "customer_service":[]
+      }
     }
   },
   components: {
@@ -57,17 +69,76 @@ export default {
   methods:{
   },
   mounted(){
-    this.$store.state.projects.project = false
+    // this.$store.state.projects.project = false
+    // if( this.account ){
+    //   this.$store.dispatch("user/getAllAccountUsers")
+    // }
   },
   computed: {
-    total(){
-      return this.$store.state.auth.token_total_minutes_remaining
+    // total(){
+    //   return this.$store.state.auth.token_total_minutes_remaining
+    // },
+    account(){
+      return this.$store.getters["auth/account"]
+    },
+    domainRecommendations(){
+      let domainsWithoutSitemap = []
+      for (let x = 0; x < this.$store.state.projects.all.length; x++) {
+        let project = this.$store.state.projects.all[x];
+        
+        for (let y = 0; y < project.domains.length; y++) {
+          let domain = project.domains[y];
+          if( domain.pages.length < 1 ){
+            domainsWithoutSitemap.push(domain)
+          }
+        }
+      }
+
+      return domainsWithoutSitemap
     },
     getClients() {
-      return this.$store.state.clients.all || [];
-    }
+      return this.$store.state.clients.all.length || [];
+    },
+    totalClients(){
+      return this.$store.state.clients.all.length
+    },
+    totalProjects(){
+      return this.$store.state.projects.all.length
+    },
+    totalWCAGAudits(){
+      let total = 0
+      for (let x = 0; x < this.$store.state.projects.all.length; x++) {
+        let project = this.$store.state.projects.all[x];
+        total += project.audits.length
+      }
+      return total
+    },
   },
   watch:{
+    account:function(){
+      this.$store.dispatch("user/getAllAccountUsers")
+    },
+    "$store.state.user.all":function(newVal){
+      if( newVal && newVal.length ){
+        for (let x = 0; x < newVal.length; x++) {
+          let user = newVal[x];
+          switch(user.roleInfo.team_id){
+            case 1:
+              this.usersData.executive.push(user)
+              break
+            case 2:
+              this.usersData.development.push(user)
+              break
+            case 3:
+              this.usersData.design.push(user)
+              break
+            case 4:
+              this.usersData.customer_service.push(user)
+              break
+          }
+        }
+      }
+    },
     "$store.state.auth.authMessage": {
       handler: function(newVal){
         if( newVal ){
