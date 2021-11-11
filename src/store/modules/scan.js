@@ -28,7 +28,7 @@ export default {
             commit('resetState')
         },
         initiateScan({rootState}, args){
-            Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/scan/init`, {params: { scan_options: args.config, id: args.id}})
+            Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/scan/init`, {params: { scan_options: args.config, id: args.id, appends: args.appends}})
 				.then( re=>{
 					Vue.notify({
 						title: "Success",

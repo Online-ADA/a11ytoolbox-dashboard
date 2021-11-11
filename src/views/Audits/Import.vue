@@ -38,14 +38,13 @@
             </div>
         </div>
         <!-- ############################################### -->
-        <div 
+        <div
+        class="scan-window" 
         v-for="(scan, index) in filteredScans" 
         :key="'scan-'+index" 
-        :class="[scanFullscreen === scan.id ? 'fixed inset-0 h-screen z-50 w-full' : 'w-1/2 my-3']" >
-            <div 
-            :style="[ scanFullscreen === scan.id ? '' : 'max-height:685px' ]" 
-            :class="[scanFullscreen === scan.id ? 'fixed left-0 right-0 shadow-lg top-1.5' : '']" 
-            class="scan-window bg-white border border-pallette-grey h-auto p-4 text-center mx-1.5">
+        :class="[scanFullscreen === scan.id ? 'fullscreen' : 'w-1/2 my-3']" >
+            <div
+            class="bg-white border border-pallette-grey h-auto p-4 text-center mx-1.5">
                 <div class="flex pr-2 items-center justify-center">
                     <h2 class="text-medium font-bold flex-1">{{scan.title}}</h2>
                     <Btn v-if="scanFullscreen !== scan.id" aria-label="Expand this scan to full screen" @click.native.prevent="setFullscreen(scan.id, 'scan')" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
@@ -132,7 +131,16 @@ export default {
             return this.$store.state.audits ? this.$store.state.audits.audit : false
         },
         audits(){
-            return [ ...this.$store.state.audits.all, ...this.tempAudits ]
+            if( !this.$store.state.audits.all.length ){
+                return this.tempAudits
+            }
+
+            let auditsList = this._.cloneDeep(this.$store.state.audits.all)
+            let ids = auditsList.map( a=>a.id)
+            let firstIndex = ids.indexOf( parseInt(this.$route.params.id) )
+            let firstItem = auditsList.splice(firstIndex, 1)[0]
+            auditsList.splice( 0, 0, firstItem)
+            return [ ...auditsList, ...this.tempAudits ]
         },
         scans(){
             return [ ...this.$store.state.projects.scans, ...this.tempScans ]
@@ -384,19 +392,6 @@ export default {
                 this.$store.dispatch("projects/getScansForProject", {project_id: newVal.project_id})
             }
         },
-        audits(newVal){
-            if( newVal.length ){
-                let self = this
-                
-                if( !this.updatedFirstIndex ){
-                    let ids = self.$store.state.audits.all.map( a=>a.id)
-                    let firstIndex = ids.indexOf( parseInt(self.$route.params.id) )
-                    let firstItem = self.$store.state.audits.all.splice(firstIndex, 1)[0]
-                    self.$store.state.audits.all.splice( 0, 0, firstItem)
-                    this.updatedFirstIndex = true
-                }
-            }
-        }
     },
     methods: {
         handleUploadFile(e){

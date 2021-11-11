@@ -2,12 +2,14 @@
     <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full h-12" v-if="showToolbar">
         <div id="toolbar" class="w-full pl-4 p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
-            <div :class="[!isAuditEditPage ? 'justify-between' : 'justify-end']" class="flex items-center">
-                <div v-if="!isAuditEditPage" class="flex items-center text-13">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center text-13">
                     <span v-if="audit.domain">{{audit.domain.url}}</span>
-                    <div class="border border-black mx-3.5 divider"></div>
-                    <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
-                    <span>Total Issues: {{totalRows}}</span>
+                    <template v-if="isAuditShowPage">
+                        <div class="border border-black mx-3.5 divider"></div>
+                        <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
+                        <span>Total Issues: {{totalRows}}</span>
+                    </template>
                 </div>
                 <span class="w-auto mr-2 flex items-center">
                     <template v-if="isAuditShowPage">
