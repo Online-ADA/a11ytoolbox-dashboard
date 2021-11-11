@@ -98,10 +98,38 @@
 								v-model="url" />
 							</div>
 						</div>
+
+						<div class="flex flex-col items-start">
+							<label class="block font-semibold pr-3" :stacked="false" for="generate-sitemap">
+								<input v-model="domain.sitemap_option" type="radio" id="generate-sitemap" name="domain-sitemap" value="generate" class="mt-3" />
+								Generate sitemap
+							</label>
+							
+							<label class="block font-semibold" :stacked="false" for="sitemap-manual">
+								<input  v-model="domain.sitemap_option" type="radio" id="sitemap-manual" name="domain-sitemap" value="manual" class="mt-3" />
+								Manually enter/upload sitemap OR use working sample
+							</label>
+						</div>
+
 						<div class="mt-3 w-full">
 							<button class="standard mr-2" @click.prevent="createDomain">Add Domain</button>
 						</div>
 					</form>
+
+					<fieldset class="w-full">
+						<legend class="headline-2 pt-7">Sitemap Settings</legend>
+						<div class="flex flex-col items-start">
+							<label class="block font-semibold pr-3" :stacked="false" for="sitemap-full">
+								<input v-model="audit.sitemap" type="radio" id="sitemap-full" name="sitemap-choice" value="full" class="mt-3" />
+								Use Full Sitemap
+							</label>
+							
+							<label class="block font-semibold" :stacked="false" for="sitemap-generate">
+								<input v-model="audit.sitemap" type="radio" id="sitemap-generate" name="sitemap-choice" value="generate" class="mt-3" />
+								Use Working Sample
+							</label>
+						</div>
+					</fieldset>
 				</template>
 				
 				<div class="w-full">
@@ -127,23 +155,6 @@
 							</Card>
 						</div>
 						
-					</template>
-
-					<template v-if="propertyType == 'website'">
-						<fieldset class="w-full">
-							<legend class="headline-2 pt-7">Sitemap Settings</legend>
-							<div class="flex items-center">
-								<label class="block font-semibold pr-3" :stacked="false" for="sitemap-full">
-									Use Full Sitemap
-									<input v-model="audit.sitemap" type="radio" id="sitemap-full" name="sitemap-choice" value="full" class="mt-3" />
-								</label>
-								
-								<label class="block font-semibold" :stacked="false" for="sitemap-generate">
-									Use Working Sample
-									<input v-model="audit.sitemap" type="radio" id="sitemap-generate" name="sitemap-choice" value="generate" class="mt-3" />
-								</label>
-							</div>
-						</fieldset>
 					</template>
 				</div>
 			</div>
@@ -179,7 +190,8 @@
 			url: "",
 			domain: {
 				project_id: "",
-				url: ""
+				url: "",
+				sitemap_option: "generate",
 			},
 			failedValidation: [],
 			showValidationAlert: false,
