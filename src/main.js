@@ -51,6 +51,11 @@ if( window.location.hostname == "toolboxdashboardd.ngrok.io" ){
   site = "toolboxdashboardd.ngrok.io"
 }
 
+store.state.auth.site = site
+store.state.auth.accapi = accountHost
+store.state.auth.toolboxapi = apiHost
+store.state.auth.API = `${apiHost}/api`
+
 window.App = new Vue({
   router,
   store,
@@ -58,11 +63,6 @@ window.App = new Vue({
 }).$mount('#app')
 
 function run(){
-  store.state.auth.site = site
-  store.state.auth.accapi = accountHost
-  store.state.auth.toolboxapi = apiHost
-  store.state.auth.API = `${apiHost}/api`
-  
   Request.getPromise(store.state.auth.API+'/state/init')
     .then( response => {
       console.log("MAIN.JS INIT CHECK HAS RETURNED", response.data.details);
@@ -119,18 +119,17 @@ run()
 
 function runBeforeEach(){
   router.beforeEach( (to, from, next) => {
-    
     //Route Heirarchy:check account has been selected, check roles and permissions, then check roles, then check permissions, then check logged in
-    if( !store.state.auth.account && to.path != "/" ){
+    if( !store.getters["auth/account"] && to.path != "/" ){
       next("/")
       return
     }
 
-    let account = store.state.auth.accounts.find(acc=>acc.id == store.state.auth.account)
-    let teamCheck = account.pivot.team_id === to.meta.teamOnly || account.pivot.team_id === 1
-    let roleCheck = account.pivot.role_id <= to.meta.role
+    // let account = store.state.auth.accounts.find(acc=>acc.id == store.state.auth.account)
+    let teamCheck = store.getters["auth/account"].pivot.team_id === to.meta.team || store.getters["auth/account"].pivot.team_id === 1
+    let roleCheck = store.getters["auth/account"].pivot.role_id <= to.meta.role
     
-    if( to.meta.role != undefined && to.meta.teamOnly != undefined ){
+    if( to.meta.role != undefined && to.meta.team != undefined ){
       //check for role and teams
       
       if( roleCheck && teamCheck ){
@@ -144,6 +143,7 @@ function runBeforeEach(){
     }
     
     if( to.meta.role != undefined ){
+      console.log("This should be checking for role");
       //check roles
       if( roleCheck ){
         next()
@@ -155,7 +155,7 @@ function runBeforeEach(){
       }
     }
 
-    if( to.meta.teamOnly != undefined ){
+    if( to.meta.team != undefined ){
       //check for permissions or redirect to login
       
       if( teamCheck ){

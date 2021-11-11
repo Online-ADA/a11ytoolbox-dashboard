@@ -3,10 +3,19 @@
 @tailwind utilities;
 
 @layer base {
-   h1 {
-   	@apply text-4xl;
-   }
-   h2 {
+	h1 {
+		@apply text-4xl;
+	}
+	.headline {
+		@apply text-headline font-headline;
+	}
+	.subheadline {
+		@apply text-subheadline font-subheadline;
+	}
+	.headline-2 {
+		@apply text-headline-2 font-semibold font-headline-2 uppercase;
+	}
+	h2 {
     	@apply text-3xl;
 	}
 	h3{

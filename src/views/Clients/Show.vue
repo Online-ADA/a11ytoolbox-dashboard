@@ -1,24 +1,24 @@
 <template>
   <div class="p-5">
-    <h1 class="mb-5">Client Overview</h1>
+    <h1 class="mb-5 headline">Client Overview</h1>
     <div class="flex">
       <div class="w-1/2 flex flex-col mr-5">
         <Card class="mb-5" :center="false" :gutters="false">
-          <h2 class="uppercase">Stats</h2>
-          <div class="text-lg">8 Projects</div>
-          <div class="text-lg">16 WCAG Audits</div>
-          <div class="text-lg">4 Domains</div>
+          <h2 class="headline-2">Stats</h2>
+          <div class="text-lg">{{totalProjects}} Project<template v-if="totalProjects !== 1">s</template></div>
+          <div class="text-lg">{{totalWCAGAudits}} WCAG Audit<template v-if="totalWCAGAudits !== 1">s</template></div>
+          <div class="text-lg">{{totalDomains}} Domain<template v-if="totalDomains !== 1">s</template></div>
         </Card>
 
         <Card :center="false" :gutters="false">
-          <h2 class="uppercase">Alerts</h2>
-          <div class="text-lg">I'm not entirely sure what is supposed to go here</div>
+          <h2 class="headline-2">Alerts</h2>
+          <div class="text-lg">There are no alerts at this time</div>
         </Card>
       </div>
       <div class="w-1/2 flex flex-col">
         <Card :center="false" :gutters="false">
-          <h2 class="uppercase">Recommendations</h2>
-          <div class="mt-2"><button @click.prevent class="standard">Create</button> a new project</div>
+          <h2 class="headline-2">Recommendations</h2>
+          <div class="mt-2"><button role="link" @click="EventBus.openModal(()=>{ EventBus.$emit('createProjectModal', true) })" @click.prevent class="standard">Create</button> a new project</div>
         </Card>
       </div>
     </div>
@@ -29,8 +29,11 @@
 import Loader from '../../components/Loader'
 import A from '../../components/Link'
 import Card from '../../components/Card'
+import { EventBus } from "../../services/eventBus"
+
 export default {
     data: () => ({
+      EventBus: EventBus
     }),
     computed: {
       client() {
@@ -39,6 +42,21 @@ export default {
           return this.$store.state.clients.all.find(c=>c.id == that.$route.params.id )
         }
         return false
+      },
+      totalProjects(){
+        return this.$store.state.projects.all.length
+      },
+      totalDomains(){
+        let total = 0
+        for (let x = 0; x < this.$store.state.projects.all.length; x++) {
+          let project = this.$store.state.projects.all[x]
+          total += project.domains.length
+        }
+
+        return total
+      },
+      totalWCAGAudits(){
+        return this.$store.state.audits.all.length || 0
       },
     },
     props: [],

@@ -1,8 +1,8 @@
 <template>
-	<Modal class="z-50" :open="open">
+	<Modal style="z-index:999" :valign="'top'" :size="'creation'" :open="open">
 		<div v-if="!complete" class="text-center">
 			<Loader v-if="loading"></Loader>
-			<h1>Create new Client</h1>
+			<h1 class="headline">Create New Client</h1>
 			<Form @submit.native.prevent>
 				<Label for="client-name">Client Name</Label>
 				<TextInput id="client-name" name="client-name" v-model="client.name" />
@@ -12,7 +12,7 @@
 
 				<Label for="client-status">Status</Label>
 				
-				<select name="client-status" id="client-status" aria-label="Select client status" class="m-2 mx-auto" v-model="client.status">
+				<select name="client-status" id="client-status" aria-label="Select client status" class="m-2 mx-auto p-1" v-model="client.status">
 					<option :value="option.value" v-for="(option, index) in statusSrc" :key="'client-status-'+index">{{option.name}}</option>
 				</select>
 

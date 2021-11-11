@@ -1,8 +1,8 @@
 <template>
-	<Modal class="z-50" :open="open">
+	<Modal :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
 		<template v-if="!complete">
 			<Loader v-if="loading"></Loader>
-				<h1>Create new Project</h1>
+				<h1 class="headline">Create New Project</h1>
 				
 				<Label for="project-name">Name</Label>
 				<TextInput id="project-name" name="project-name" v-model="project.name" />
@@ -15,8 +15,8 @@
 
 				<template v-if="isManager">
 					<div class="flex my-3">
-						<Card class="w-1/2">
-							<h3 class="pb-3">Users</h3>
+						<Card :gutters="false" class="w-1/2 mr-5">
+							<h2 class="pb-3 headline-2">Users</h2>
 							<ul style="max-height:310px;" class="overflow-y-auto" v-if="unassigned.length">
 							<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
 								<span>{{displayUser(id)}}</span>
@@ -24,8 +24,8 @@
 							</li>
 							</ul>
 						</Card>
-						<Card class="w-1/2">
-							<h3 class="pb-3">Assignees</h3>
+						<Card :gutters="false" class="w-1/2">
+							<h2 class="pb-3 headline-2">Assignees</h2>
 							<ul style="max-height:310px;" class="overflow-y-auto" v-if="assigned.length">
 							<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
 								<Button hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>

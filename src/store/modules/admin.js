@@ -574,9 +574,9 @@ export default {
 		},
 		modifyRole({state, rootState}, args){
 			state.loading.users = true
-			Request.post(`${rootState.auth.API}/${rootState.auth.account}/users/setRole`, {
+			Request.post(`${rootState.auth.API}/${rootState.auth.account}/manage/users/setRole`, {
 				params: {
-					"user_id": args.user_id,
+					"user_id": rootState.user.user.id,
 					"role" : args.role
 				},
 				onSuccess: {
@@ -584,9 +584,12 @@ export default {
 					title: "Success",
 					callback: function(response){
 						state.loading.users = false
-						state.user = response.data.details.user
-						state.user.role = response.data.details.role
-						state.user.permissions = response.data.details.permissions
+						state.user = response.data.details
+						Vue.notify({
+							title: "Success",
+							text: "User role updated",
+							type: "success"
+						})
 					}
 				},
 				onError: {
@@ -596,21 +599,27 @@ export default {
 				}
 			})
 		},
-		saveUserPermissions({state, rootState}, args){
-			Request.post(`${rootState.auth.API}/${rootState.auth.account}/users/setPermissions`, {
+		modifyTeam({state, rootState}, args){
+			state.loading.users = true
+			Request.post(`${rootState.auth.API}/${rootState.auth.account}/manage/users/setTeam`, {
 				params: {
-					'permissions': args.permissions,
-					'user_id': args.user_id
+					"user_id": rootState.user.user.id,
+					"team" : args.team
 				},
 				onSuccess: {
-					text: "Permissions updated",
+					text: "Team updated",
+					title: "Success",
 					callback: function(response){
 						state.loading.users = false
-						state.user = response.data.details.user
+						state.user = response.data.details
+						Vue.notify({
+							title: "Success",
+							text: "User team updated",
+							type: "success"
+						})
 					}
 				},
 				onError: {
-					text: "Permissions update caused an error",
 					callback: function(){
 						state.loading.users = false
 					}
@@ -625,29 +634,6 @@ export default {
 					callback: function(response){
 						state.loading.users = false
 						state.users = response.data.details
-					}
-				},
-				onWarns: {
-					silent: true,
-				},
-				onError: {
-					silent: true,
-					callback: function(){
-						state.loading.users = false
-					}
-				}
-			})
-		},
-		getUser({state, rootState}, args){
-			state.loading.users = true
-			Request.get(`${rootState.auth.API}/${rootState.auth.account}/users/${args.user_id}`, {
-				onSuccess: {
-					silent: true,
-					callback: function(response){
-						state.loading.users = false
-						state.user = response.data.details.user
-						state.user["role"] = response.data.details.role
-						state.user["permissions"] = response.data.details.permissions
 					}
 				},
 				onWarns: {

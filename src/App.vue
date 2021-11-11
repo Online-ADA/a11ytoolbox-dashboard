@@ -24,10 +24,10 @@
 						id="main-content"
 						>
 							<router-view></router-view>
-							<CreateClientModal :open="showClientCreationModal"></CreateClientModal>
-							<CreateProjectModal :open="showProjectCreationModal"></CreateProjectModal>
-							<DeployToolModal :open="showToolDeployModal"></DeployToolModal>
-							<CreateWCAGAuditModal :open="showDeployWCAGAuditModal"></CreateWCAGAuditModal>
+							<CreateClientModal style="z-index:999" :open="showClientCreationModal"></CreateClientModal>
+							<CreateProjectModal style="z-index:999" :open="showProjectCreationModal"></CreateProjectModal>
+							<DeployToolModal style="z-index:999" :open="showToolDeployModal"></DeployToolModal>
+							<CreateWCAGAuditModal style="z-index:999" :open="showDeployWCAGAuditModal"></CreateWCAGAuditModal>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
 							<span v-html="tool.info"></span>

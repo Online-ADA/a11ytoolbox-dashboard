@@ -1,12 +1,12 @@
 <template>
-	<div :id="`a${id}`" :class="{'fixed':open, 'hidden': !open}" class="inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-		<div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center p-0">
-			<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+	<div ref="rootModal" :id="`a${id}`" :class="containerClasses" class="inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+		<div :class="alignClass" class="flex justify-center min-h-screen pt-4 px-4 pb-20 text-center p-0">
+			<div class="modal-overlay fixed inset-0 transition-opacity" aria-hidden="true"></div>
 
 			<!-- This element is to trick the browser into centering the modal contents. -->
 			<span class="inline-block align-middle h-screen" aria-hidden="true">&#8203;</span>
 			
-			<div :class="{'max-w-lg': size == 'compact', 'max-w-4xl': size == 'wide', 'max-w-full': size == 'full'}" class="modal-main relative inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform align-middle p-4 w-full">
+			<div :class="{'max-w-lg': size == 'compact', 'max-w-4xl': size == 'wide', 'max-w-full': size == 'full', 'creation-max-w': size == 'creation'}" class="modal-main relative inline-block bg-white text-left overflow-hidden shadow-xl transform align-middle p-4 w-full">
 				<div v-if="sizeButtons" class="flex ml-3 mt-2 absolute">
 					<button @click="changeSize('compact')" aria-label="Change the size of this modal to be compact" class="standard px-2">
 						Compact
@@ -53,7 +53,11 @@ export default {
 		size: {
 			type: String,
 			default: "compact"
-		}
+		},
+		valign:{
+			type: String,
+			default: ""
+		},
 	},
 	methods: {
 		changeSize(size){
@@ -95,6 +99,36 @@ export default {
 			});
 		}
 	},
+	computed:{
+		containerClasses(){
+			let classes = []
+			
+
+			if( this.open ){
+				classes.push('fixed')
+			}
+			if( !this.open ){
+				classes.push('hidden')
+			}
+			return classes
+		},
+		alignClass(){
+			let classes = []
+			if( this.valign == "top" ){
+				classes.push("items-start")
+			}
+
+			if( this.valign == "" || this.valign == "center" ){
+				classes.push("items-center")
+			}
+
+			if( this.valign == "bottom" ){
+				classes.push("items-end")
+			}
+
+			return classes
+		}
+	},
 	watch:{
 		open(newVal){
 			if( newVal ){
@@ -111,6 +145,16 @@ export default {
 	},
 	mounted(){
 		this.id = this.generateUniqueID() + this.generateUniqueID()
+		this.$emit("initialized", this.$refs["rootModal"])
 	}
 }
 </script>
+
+<style scoped>
+	.creation-max-w{
+		max-width: 690px;
+	}
+	.modal-overlay{
+		background-color:rgba(23,23,23,.8);
+	}
+</style>
