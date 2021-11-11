@@ -17,7 +17,7 @@
 				</div>
 
 				<fieldset role="radiogroup" class="w-full">
-					<legend class="pt-6 headline-2">Choose a Property</legend>
+					<legend class="pt-7 headline-2">Choose a Property</legend>
 					<div class="flex items-center">
 						<Label class="pr-3" :stacked="false" for="property-type-website">
 							Website
@@ -88,9 +88,9 @@
 					
 
 					<template v-if="isManager">
-						<h2 class="headline-2 pt-6 pb-3">Assign Users</h2>
+						<h2 class="headline-2 pt-7 pb-3">Assign Users</h2>
 						<div class="flex w-full">
-							<Card class="w-1/2">
+							<Card :gutters="false" class="w-1/2 mr-5">
 								<h3 class="subheadline">Team Members</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="unassigned.length">
 									<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
@@ -98,7 +98,7 @@
 									</li>
 								</ul>
 							</Card>
-							<Card class="w-1/2">
+							<Card :gutters="false" class="w-1/2">
 								<h3 class="subheadline">Assignees</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="assigned.length">
 									<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
@@ -112,17 +112,17 @@
 
 					<template v-if="propertyType == 'website'">
 						<fieldset class="w-full">
-							<legend class="headline-2 pt-6 pb-3">Sitemap Settings</legend>
+							<legend class="headline-2 pt-7">Sitemap Settings</legend>
 							<div class="flex items-center">
-								<Label class="pr-3" :stacked="false" for="sitemap-full">
+								<label class="block font-semibold pr-3" :stacked="false" for="sitemap-full">
 									Use Full Sitemap
 									<input v-model="audit.sitemap" type="radio" id="sitemap-full" name="sitemap-choice" value="full" class="mt-3" />
-								</Label>
+								</label>
 								
-								<Label :stacked="false" for="sitemap-generate">
+								<label class="block font-semibold" :stacked="false" for="sitemap-generate">
 									Use Working Sample
 									<input v-model="audit.sitemap" type="radio" id="sitemap-generate" name="sitemap-choice" value="generate" class="mt-3" />
-								</Label>
+								</label>
 							</div>
 						</fieldset>
 					</template>
