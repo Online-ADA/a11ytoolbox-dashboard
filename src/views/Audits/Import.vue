@@ -20,8 +20,13 @@
     </div>
 
     <div class="w-full flex flex-wrap justify-center items-center mb-14">
-        <div v-for="(audit, index) in filteredAudits" :key="'audit-'+index" class="bg-white" :class="[auditFullscreen === audit.id ? 'fixed inset-0 h-screen z-50 w-full' : 'w-1/2 my-3']" >
-            <div :class="[auditFullscreen === audit.id ? 'fixed left-0 right-0 shadow-lg top-1.5' : '']" class="border border-pallette-grey h-auto p-4 rounded text-center mx-1.5">
+        <div
+        class="audit-window"
+        v-for="(audit, index) in filteredAudits" 
+        :key="'audit-'+index" 
+        :class="[auditFullscreen === audit.id ? 'fullscreen' : 'w-1/2 my-3']" >
+            <div 
+            class="bg-white border border-pallette-grey h-auto p-4 text-center mx-1.5">
                 <div class="flex pr-2 items-center justify-center">
                     <h2 class="text-medium font-bold flex-1">{{audit.title}}</h2>
                     <Btn v-if="auditFullscreen !== audit.id" aria-label="Expand this audit to full screen" @click.native.prevent="setFullscreen(audit.id, 'audit')" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
@@ -33,8 +38,13 @@
             </div>
         </div>
         <!-- ############################################### -->
-        <div v-for="(scan, index) in filteredScans" :key="'scan-'+index" class="bg-white" :class="[scanFullscreen === scan.id ? 'fixed inset-0 h-screen z-50 w-full' : 'w-1/2 my-3']" >
-            <div :class="[scanFullscreen === scan.id ? 'fixed left-0 right-0 shadow-lg top-1.5' : '']" class="border border-pallette-grey h-auto p-4 rounded text-center mx-1.5">
+        <div
+        class="scan-window" 
+        v-for="(scan, index) in filteredScans" 
+        :key="'scan-'+index" 
+        :class="[scanFullscreen === scan.id ? 'fullscreen' : 'w-1/2 my-3']" >
+            <div
+            class="bg-white border border-pallette-grey h-auto p-4 text-center mx-1.5">
                 <div class="flex pr-2 items-center justify-center">
                     <h2 class="text-medium font-bold flex-1">{{scan.title}}</h2>
                     <Btn v-if="scanFullscreen !== scan.id" aria-label="Expand this scan to full screen" @click.native.prevent="setFullscreen(scan.id, 'scan')" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
@@ -121,18 +131,19 @@ export default {
             return this.$store.state.audits ? this.$store.state.audits.audit : false
         },
         audits(){
-            if( this.$store.state.projects ){
-                return [ ...this.$store.state.audits.all, ...this.tempAudits ]
+            if( !this.$store.state.audits.all.length ){
+                return this.tempAudits
             }
 
-            return this.tempAudits
+            let auditsList = this._.cloneDeep(this.$store.state.audits.all)
+            let ids = auditsList.map( a=>a.id)
+            let firstIndex = ids.indexOf( parseInt(this.$route.params.id) )
+            let firstItem = auditsList.splice(firstIndex, 1)[0]
+            auditsList.splice( 0, 0, firstItem)
+            return [ ...auditsList, ...this.tempAudits ]
         },
         scans(){
-            if( this.$store.state.projects ){
-                return [ ...this.$store.state.projects.scans, ...this.tempScans ]
-            }
-
-            return this.tempScans
+            return [ ...this.$store.state.projects.scans, ...this.tempScans ]
         },
         filteredAudits(){
             let self = this
@@ -377,23 +388,10 @@ export default {
     watch: {
         primaryAudit(newVal){
             if( newVal ){
-                // this.$store.dispatch("projects/getAuditsForProject", {project_id: newVal.project_id}, true)
+                this.$store.dispatch("audits/getAudits", {project_id: newVal.project_id, withIssues: true})
                 this.$store.dispatch("projects/getScansForProject", {project_id: newVal.project_id})
             }
         },
-        audits(newVal){
-            if( newVal.length ){
-                let self = this
-                
-                if( !this.updatedFirstIndex ){
-                    let ids = self.$store.state.audits.all.map( a=>a.id)
-                    let firstIndex = ids.indexOf( parseInt(self.$route.params.id) )
-                    let firstItem = self.$store.state.audits.all.splice(firstIndex, 1)[0]
-                    self.$store.state.audits.all.splice( 0, 0, firstItem)
-                    this.updatedFirstIndex = true
-                }
-            }
-        }
     },
     methods: {
         handleUploadFile(e){
@@ -505,5 +503,44 @@ export default {
 }
 .max-height-615{
     height:615px;
+}
+.audit-window:not(.fullscreen){
+    max-height:685px;
+    width:50%;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+.audit-window.fullscreen{
+    position:fixed;
+    z-index:50;
+    width:100%;
+    height: calc(100vh - 54px);
+    top:65px;
+}
+.sidebarOpen.subSidebarExpanded ~ #content .audit-window.fullscreen{
+    width:calc(100% - 420px);
+}
+.sidebarOpen ~ #content .audit-window.fullscreen{
+    width:calc(100% - 220px);
+}
+
+.scan-window:not(.fullscreen){
+    max-height:685px;
+    width:50%;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+.scan-window.fullscreen{
+    position:fixed;
+    z-index:50;
+    width:100%;
+    height: calc(100vh - 54px);
+    top:65px;
+}
+.sidebarOpen.subSidebarExpanded ~ #content .scan-window.fullscreen{
+    width:calc(100% - 420px);
+}
+.sidebarOpen ~ #content .scan-window.fullscreen{
+    width:calc(100% - 220px);
 }
 </style>

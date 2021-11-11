@@ -250,9 +250,12 @@ export default {
 					state.loading = false
 				})
 			},
-			getAudits({state, rootState}, args, withIssues=false){
+			getAudits({state, rootState}, args){
 				state.loading = true
-				
+				let withIssues = false
+				if( args.withIssues ){
+					withIssues = args.withIssues
+				}
 				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits`, {
 					params: {
 						clientID: rootState.clients.client.id,
@@ -263,12 +266,12 @@ export default {
 				.then( re => {
 					state.all = re.data.details
 					if( !Request.muted() ){
-						Vue.notify({
-							title: "Success",
-							text: "Audits retrieved",
-							type: "success",
-							position: 'bottom right'
-						})
+						// Vue.notify({
+						// 	title: "Success",
+						// 	text: "Audits retrieved",
+						// 	type: "success",
+						// 	position: 'bottom right'
+						// })
 					}
 				})
 				.catch( re => {

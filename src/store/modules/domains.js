@@ -257,6 +257,42 @@ export default {
 					state.loading = false
 				})
 			},
+			generateSitemap({rootState,state},args) {
+				state.loading = true 
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sitemapGenerate`)
+				.then( (response) => {
+					if( !Request.muted() ){
+						if(response.data.success == '1') {
+							Vue.notify({
+								title: "Success",
+								text: "Sitemap generation queued",
+								type: "success",
+								position: 'bottom right'
+							})
+						}else {
+							Vue.notify({
+								title: "Error",
+								text: response.data.details,
+								type: "error",
+								position: 'bottom right'
+							})
+						}
+					}
+				})
+				.catch( response => {
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: response.error,
+							type: "error",
+							position: 'bottom right'
+						})
+					}
+				})
+				.then( () => {
+					state.loading = false
+				})
+			},
 			saveSitemap({state, rootState}, args){
 				state.loading = true
 				let form_data = new FormData()
