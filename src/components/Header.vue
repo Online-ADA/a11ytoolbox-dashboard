@@ -4,7 +4,7 @@
         <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
         <div class="mb-auto mt-auto">
-            <div role="button" tabindex="0" :aria-expanded="[ dropdownsExpanded.includes('client') ? 'true' : 'false' ]" @click.prevent="expandDropdown('client')" :class="{expanded: dropdownsExpanded.includes('client')}" class="dropdown-container dropdown-nolabel client-dropdown relative flex flex-col pl-8">
+            <div ref="clientDropdown" role="button" tabindex="0" :aria-expanded="[ dropdownsExpanded.includes('clientDropdown') ? 'true' : 'false' ]" @click.prevent="expandDropdown('clientDropdown')" :class="{expanded: dropdownsExpanded.includes('clientDropdown')}" class="dropdown-container dropdown-nolabel client-dropdown relative flex flex-col pl-8">
                 <div v-if="$store.state.auth.user" class="flex items-center dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
                     <span @click.prevent class="block whitespace-no-wrap no-underline text-white" >
                         {{selectedClient}}
@@ -30,8 +30,8 @@
         <div class="border mx-3 divider"></div>
         <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
 
-        <div role="button" tabindex="0" @click.prevent="expandDropdown('manage')" :aria-expanded="[ dropdownsExpanded.includes('manage') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('manage')}" class="text-center manager-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
-            <div id="manage" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
+        <div ref="settingsDropdown" role="button" tabindex="0" @click.prevent="expandDropdown('settingsDropdown')" :aria-expanded="[ dropdownsExpanded.includes('settingsDropdown') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('settingsDropdown')}" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
+            <div id="settings" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
                 <span aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     <i class="fas fa-tools"></i>
                 </span>
@@ -56,7 +56,7 @@
             <span id="management-label" class="sub-label text-white uppercase">Settings</span>
         </div>
 
-        <div role="button" tabindex="0" @click.prevent="expandDropdown('user')" :aria-expanded="[ dropdownsExpanded.includes('user') ? 'true' : 'false' ]" :class="[dropdownsExpanded.includes('user') ? 'expanded' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
+        <div ref="userDropdown" role="button" tabindex="0" @click.prevent="expandDropdown('userDropdown')" :aria-expanded="[ dropdownsExpanded.includes('userDropdown') ? 'true' : 'false' ]" :class="[dropdownsExpanded.includes('userDropdown') ? 'expanded' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
             <div id="login" v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
                 <span @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     {{$store.state.auth.user.first_name}}
@@ -76,7 +76,7 @@
             <span class="sub-label text-white">{{account}}</span>
         </div>
 
-        <router-link to="/user/profile"><img :src="user_avatar" class="avatar" /></router-link>
+        <router-link aria-label="Go to user profile" to="/user/profile"><img alt="User Avatar" :src="user_avatar" class="avatar" /></router-link>
     </div>
 </template>
 
@@ -157,12 +157,17 @@ export default {
         launchCreateClientModal(){
             EventBus.$emit('createClientModal', true)
         },
+        closeDropdown(value){
+            let index = this.dropdownsExpanded.indexOf(value)
+            this.dropdownsExpanded.splice(index, 1)
+        },
         expandDropdown(value){
             if( this.dropdownsExpanded.includes(value) ){
-                let index = this.dropdownsExpanded.indexOf(value)
-                this.dropdownsExpanded.splice(index, 1)
+                this.closeDropdown(value)
+                return
             }else{
                 this.dropdownsExpanded.push(value)
+                EventBus.$emit("dropdown-expanded", {dropdown: value, ref: this.$refs[value]})
             }
         },
         updateAccountName(){
@@ -179,6 +184,11 @@ export default {
                 that.$router.push({path: `/clients/${id}`})
             })})
         }
+    },
+    mounted(){
+        EventBus.$on("close-dropdown", (payload)=>{
+            this.closeDropdown(payload.dropdown)
+        })
     },
     components:{
         Dropdown,
@@ -208,7 +218,7 @@ export default {
     margin-left:60px;
     width:40px;
 }
-#header-container .manager-dropdown .sub-label{
+#header-container .settings-dropdown .sub-label{
     font-size: 8px;
     line-height:1.2;
     letter-spacing: 0.5px;
@@ -267,7 +277,7 @@ img.avatar{
     animation-direction: forwards;
     z-index:99;
 }
-.dropdown-container.manager-dropdown ul{
+.dropdown-container.settings-dropdown ul{
     top:140%;
 }
 .dropdown-container:after{
@@ -280,10 +290,10 @@ img.avatar{
     height: 30px;
     top: 22px;
 }
-.dropdown-container.dropdown-w-label:not(.manager-dropdown ) ul  {
+.dropdown-container.dropdown-w-label:not(.settings-dropdown ) ul  {
     top:145%;
 }
-.dropdown-container.dropdown-nolabel:not(.manager-dropdown ) ul {
+.dropdown-container.dropdown-nolabel:not(.settings-dropdown ) ul {
     top:175%;
 }
 .dropdown-container ul li {

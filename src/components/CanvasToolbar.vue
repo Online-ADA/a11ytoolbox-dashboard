@@ -47,7 +47,7 @@
                         <div class="border border-black mx-3.5 divider"></div>
                     </template>
                     <!-- Audit Tools -->
-                    <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Edit Audit"><i class="far fa-edit"></i></router-link>
+                    <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
                     <button class="ml-3.5 bg-transparent" @click="toolbarEmit('audit-issues-download')" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
                     <router-link class="ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues to This Audit"><i class="far fa-file-import"></i></router-link>
                     <router-link class="ml-3.5" :to="{path: `/scan/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>

@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center mt-3">
+  <div class="text-center">
     <Loader v-if="loading"></Loader>
     <h1>{{project.name}}</h1>
       <Form @submit.native.prevent>

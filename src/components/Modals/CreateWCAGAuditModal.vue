@@ -138,7 +138,8 @@
 						<h2 class="headline-2 pt-7 pb-3">Assign Users</h2>
 						<div class="flex w-full">
 							<Card :gutters="false" class="w-1/2 mr-5">
-								<h3 class="subheadline">Team Members</h3>
+								<h3 v-if="isExecutive" class="subheadline">Assign Account Users</h3>
+								<h3 v-if="!isExecutive" class="subheadline">Assign Team Members</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="unassigned.length">
 									<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
 										<span>{{displayUser(id)}}</span><Button aria-label="assign this user to the audit" hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
@@ -236,7 +237,7 @@
 				this.$router.push({path: `/audits/${this.$store.state.audits.all[this.$store.state.audits.all.length - 1].id}`})
 			},
 			displayUser(id){
-				let user = this.team_members.find( u => u.id == id )
+				let user = this.users.find( u => u.id == id )
 				return user != undefined ? `${user.first_name} ${user.last_name}` : false
 			},
 			deployTool(){
@@ -369,7 +370,7 @@
 					this.createDomainSectionOpen = false
 				}
 			},
-			team_members(newVal){
+			users(newVal){
 				if( this.open && newVal.length ){
 					this.unassigned = newVal.map( o=>o.id)
 				}
@@ -380,8 +381,13 @@
 						this.createDomainSectionOpen = true
 					}
 
-					if( this.isManager ){ //Get the team members each time modal is opened
-						this.$store.dispatch("user/getTeamMembers", {team: 2})
+					if( this.account && this.account.pivot.team_id === 1 ){
+						this.$store.dispatch("user/getAllAccountUsers")
+						return
+					}
+					else if(this.account && this.account.pivot.role_id < 3){
+						this.$store.dispatch("user/getTeamMembers", {team: this.account.pivot.team_id})
+						return
 					}
 				}
 			},
@@ -395,8 +401,17 @@
 			isManager(){
 				return this.$store.getters["auth/isManager"]
 			},
-			team_members(){
+			isExecutive(){
+				return this.account && this.account.pivot.team_id === 1
+			},
+			users() {
+				if( this.account && this.account.pivot.team_id === 1 ){
+					return this.$store.state.user.all
+				}
 				return this.$store.state.user.team_members
+			},
+			account(){
+				return this.$store.getters["auth/account"]
 			},
 			currentDomain(){
 				return this.domains.find(d=>d.id == this.selectedDomain)

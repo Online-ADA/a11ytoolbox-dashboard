@@ -1,9 +1,7 @@
 <template>
   <div class="container mx-auto">
-    <h1>This is the Users management page</h1>
-
     <div class="w-full flex flex-col justify-center items-center" v-if="users.length">
-      <h2>Users on this account:</h2>
+      <h1>Users on this account:</h1>
       <DT 
       :searchOverride="searchOverride" 
       :searchableProps="searchableProps"
@@ -161,7 +159,6 @@ export default {
     },
     created() {},
     mounted() {
-      console.log("MOUNTED", this.account);
       if( this.account && this.account.pivot.team_id === 1 ){
         this.$store.dispatch("user/getAllAccountUsers")
       }

@@ -1,5 +1,5 @@
 <template>
-    <div class="text-center mt-32 container mx-auto">
+    <div class="text-center container mx-auto">
         <Loader v-if="loading"></Loader>
         <div class="w-full flex flex-col justify-center items-center" v-if="projects.length">
             <h2>Your Projects:</h2>

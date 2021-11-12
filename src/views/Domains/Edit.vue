@@ -1,5 +1,5 @@
 <template>
-	<div class="text-center mt-20 pb-24 container mx-auto">
+	<div class="text-center pb-24 container mx-auto">
 		<Loader v-if="loading"></Loader>
 		
 		<A class="pr-3" type='router-link' :to="{path: `/domains/${$route.params.id}`}">View Domain</A>
