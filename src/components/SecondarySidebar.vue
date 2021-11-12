@@ -17,10 +17,23 @@
                         </span>
                         <div class="block">
                             <ul>
-                                <!-- <li>
-                                    <router-link class="text-sm py-2 text-black" :to="{path: '/audits/create'}">Create New Audit</router-link>
-                                </li> -->
                                 <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.audits.all" :key="item.id">
+                                    <button class="text-black" @click="updateAudit(item)">{{getTitle(item)}}</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="py-1 tool-container" :class="[expanded.includes('media_audit') ? 'expanded' : '']">
+                        <span class="flex items-center">
+                            <button @click.prevent="expand('media_audit')" class="">
+                                <i v-if="!expanded.includes('media_audit')" class="fas fa-caret-right"></i>
+                                <i v-else class="fas fa-caret-down"></i>
+                                <span class="ml-2">Media Audits</span>
+                            </button>
+                        </span>
+                        <div class="block">
+                            <ul>
+                                <li :class="[(mediaAudits.audit && mediaAudits.audit.id === item.id) ? 'selected' : '']" class="text-sm py-2" v-for="item in mediaAudits.all" :key="item.id">
                                     <button class="text-black" @click="updateAudit(item)">{{getTitle(item)}}</button>
                                 </li>
                             </ul>
@@ -48,8 +61,12 @@ export default {
     },
     name: 'secondary-sidebar',
     computed: {
+        mediaAudits() {
+            return this.$store.state.mediaAudits;
+        },
     },
-    components:{},
+    components:{
+    },
     methods: {
         updateAudit(item){
             this.$router.push({path: this.getRoute(item)})
@@ -83,6 +100,7 @@ export default {
             if( (oldVal === false || oldVal === undefined) && newVal !== false ){
                 this.$store.state.audits.all = []
                 this.$store.dispatch("audits/getAudits", {project_id: this.$store.state.projects.project.id})
+                this.$store.dispatch("mediaAudits/getAudits", {project_id: this.$store.state.projects.project.id})
                 return
             }
 
@@ -92,6 +110,7 @@ export default {
                     withIssues = true
                 }
                 this.$store.dispatch("audits/getAudits", {project_id: this.$store.state.projects.project.id}, withIssues)
+                this.$store.dispatch("mediaAudits/getAudits", {project_id: this.$store.state.projects.project.id}, withIssues)
             }
         },
         "$store.state.projects.tool.type":function(newVal){
@@ -100,7 +119,6 @@ export default {
             }
         }
     },
-    computed: {},
     mounted() {
         if( this.$store.state.projects.tool.type === 'audit' ){
             this.expanded.push('audit')

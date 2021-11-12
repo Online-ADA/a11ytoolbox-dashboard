@@ -8,6 +8,7 @@ import projectsModule from './modules/project.js'
 import domainsModule from './modules/domains.js'
 import scanModule from './modules/scan.js'
 import userModule from './modules/user.js'
+import mediaAuditsModule from './modules/mediaAudits.js'
 
 Vue.use(Vuex)
 
@@ -16,6 +17,7 @@ export default new Vuex.Store({
         auth: authModule,
         clients: clientsModule,
         audits: auditsModule,
+        mediaAudits: mediaAuditsModule,
         projects: projectsModule,
         domains: domainsModule,
         scan: scanModule,

@@ -104,6 +104,7 @@
 						</div>
 					</div>
 				</div>
+				<Button color="red" @click.native.prevent="generateSitemap">Generate sitemap</Button>
 				<template v-if="domain && domain.pages.length">
 					<h4 class="mb-3">Pages</h4>
 					<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
@@ -114,7 +115,6 @@
 							</li>
 						</ul>
 					</Card>
-					<Button color="red" @click.native.prevent="generateSitemap">Generate sitemap</Button>
 					<Button @click.native.prevent="emptySitemap" color="delete">Remove all<span class="sr-only"> sample items</span></Button>
 				</template>
 

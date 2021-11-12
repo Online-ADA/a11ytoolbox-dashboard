@@ -319,7 +319,7 @@
 				let toValidate = [
 					"title",
 					"domain",
-					"domainURL"
+					// "domainURL"
 				]
 				this.failedValidation = []
 				var pass
@@ -364,6 +364,11 @@
 		mounted(){},
 		created(){},
 		watch:{
+			selectedDomain(val) {
+				if(val) {
+					this.createDomainSectionOpen = false
+				}
+			},
 			team_members(newVal){
 				if( this.open && newVal.length ){
 					this.unassigned = newVal.map( o=>o.id)
