@@ -2,8 +2,11 @@
     <div class="flex shadow-lg transition-all sub-sidebar secondary relative">
         <div class="fixed">
             <div class="flex sub-nav-container" >
-                <button @click.prevent="EventBus.openModal(()=>{ EventBus.$emit('deployToolModal', true) })" aria-label="Deploy New Tool" class="text-white text-2xl absolute deploy-tool">
-                    <i class="far fa-plus-octagon"></i>
+                <button @click.prevent="EventBus.openModal(()=>{ EventBus.$emit('deployToolModal', true) })" aria-label="Deploy New Tool" class="deploy-tool text-white text-2xl absolute">
+                    <div>
+                        <i class="far fa-plus-octagon"></i>
+                    </div>
+                    
                 </button>
                 <ul class="pt-2.5 flex-1 px-5">
                     <!-- Tools Level -->
@@ -114,10 +117,12 @@ export default {
 button.deploy-tool{
     top:5px;
     right:-10px;
-    background-color: #004458;
-    clip-path: circle(50% at 50% 50%);
     width: 34px;
     height: 34px;
+}
+button.deploy-tool > div{
+    background-color: #004458;
+    clip-path: circle(50% at 50% 50%);
 }
 .tool-container button{
     width:100%;
