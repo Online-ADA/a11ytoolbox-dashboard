@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center container mx-auto">
+  <div class="">
     <router-view/>
   </div>
 </template>

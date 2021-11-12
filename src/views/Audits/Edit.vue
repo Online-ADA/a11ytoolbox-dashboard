@@ -1,5 +1,5 @@
 <template>
-	<div class="text-center mt-32 container mx-auto">
+	<div class="text-center container mx-auto">
 		<Loader v-if="loading"></Loader>
 		<h1>Edit Audit {{audit.title}}</h1>
 		<div class="flex flex-wrap">
