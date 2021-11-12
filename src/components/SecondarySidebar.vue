@@ -34,7 +34,7 @@
                         <div class="block">
                             <ul>
                                 <li :class="[(mediaAudits.audit && mediaAudits.audit.id === item.id) ? 'selected' : '']" class="text-sm py-2" v-for="item in mediaAudits.all" :key="item.id">
-                                    <button class="text-black" @click="updateAudit(item)">{{getTitle(item)}}</button>
+                                    <button class="text-black" @click="updateMediaAudit(item)">{{getTitle(item)}}</button>
                                 </li>
                             </ul>
                         </div>
@@ -68,6 +68,9 @@ export default {
     components:{
     },
     methods: {
+        updateMediaAudit(item) {
+            this.$router.push({path: `/media-audits/${item.id}`})
+        },
         updateAudit(item){
             this.$router.push({path: this.getRoute(item)})
         },

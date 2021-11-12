@@ -116,7 +116,7 @@
 						</div>
 					</form>
 
-					<fieldset class="w-full">
+					<!--<fieldset class="w-full">
 						<legend class="headline-2 pt-7">Sitemap Settings</legend>
 						<div class="flex flex-col items-start">
 							<label class="block font-semibold pr-3" :stacked="false" for="sitemap-full">
@@ -129,7 +129,7 @@
 								Use Working Sample
 							</label>
 						</div>
-					</fieldset>
+					</fieldset>-->
 				</template>
 				
 				<div class="w-full">

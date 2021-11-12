@@ -177,12 +177,12 @@
 			chooseNo(){
 				this.reset()
 				EventBus.$emit('deployMediaAuditModal', false)
-				// this.$router.push({path: `/audits/${this.$store.state.audits.all[this.$store.state.audits.all.length - 1].id}/overview`})
+				this.$router.push({path: `/media-audits/${this.$store.state.mediaAudits.all[this.$store.state.mediaAudits.all.length - 1].id}/overview`})
 			},
 			chooseYes(){
 				this.reset()
 				EventBus.$emit('deployMediaAuditModal', false)
-				// this.$router.push({path: `/audits/${this.$store.state.audits.all[this.$store.state.audits.all.length - 1].id}`})
+				this.$router.push({path: `/media-audits/${this.$store.state.mediaAudits.all[this.$store.state.mediaAudits.all.length - 1].id}`})
 			},
 			displayUser(id){
 				let user = this.team_members.find( u => u.id == id )
@@ -193,7 +193,6 @@
 					this.audit.assigned = this.assigned
 					this.audit.project_id = this.$store.state.projects.project.id
 					this.audit.domain_id = this.selectedDomain
-
 					this.$store.dispatch("mediaAudits/createAudit", {audit: this.audit, vm: this})
 					this.reset()
 					this.rootModal.scrollTop = 0
@@ -218,7 +217,6 @@
 			reset(){
 				this.complete = false
 				this.assigned = []
-				this.unassigned = []
 			},
 			assign(id){
 				let index = this.unassigned.findIndex( v => v == id )
