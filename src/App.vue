@@ -19,7 +19,7 @@
 					<div class="max-w-full flex flex-1">
 						<CanvasToolbar @showInfoSidebar="showInfoSidebar" v-if="tool.type" :tool="tool"></CanvasToolbar>
 						<div
-						class="flex-1"
+						class="flex-1 px-5"
 						:class="{'info-sidebar-expanded':infoSidebarExpanded}"
 						id="main-content"
 						>

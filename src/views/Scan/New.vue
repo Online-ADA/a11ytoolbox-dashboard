@@ -92,8 +92,8 @@
             </template>
 
             <div class="w-full my-2 flex flex-wrap justify-center">
-                <h3 class="w-full text-center">Context</h3>
-                <p class="text-base w-full text-center">If you would like to automate only a section of the page, enter the CSS selector here. *NOTE: This context will be applied to every page</p>
+                <h3 class="w-full text-center">Section Specific Audit</h3>
+                <p class="text-base w-full text-center">If you would like to audit only a section of the page, enter the CSS selector here. *NOTE: This context will be applied to every page</p>
                 <Label for="context">
                     Enter a CSS selector or leave blank to scan the whole page
                     <input class="border border-black rounded p-3" placeholder="#main" v-model="options.context" autocomplete="new-password" />

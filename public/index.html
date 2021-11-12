@@ -65,6 +65,15 @@
         outline: 2px dashed #f9a51a;
         outline-offset: 1px;
       }
+
+      .sidebarOpen.subSidebarExpanded ~ #content .adjust-with-sidebars{
+        max-width:calc(100% - 400px);
+        margin-left:auto;
+      }
+      .sidebarOpen ~ #content .adjust-with-sidebars{
+        max-width:calc(100% - 200px);
+        margin-left:auto;
+      }
       
     </style>
   </head>

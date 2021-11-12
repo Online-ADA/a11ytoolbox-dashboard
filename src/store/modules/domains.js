@@ -42,6 +42,33 @@ export default {
 			// 		state.loading = false
 			// 	})
 			// },
+			deleteDomain({state, rootState}, args){
+				state.loading = true
+				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}`)
+				.then( re => {
+					state.loading = false
+					state.all = re.data.details
+					rootState.projects.project.domains = re.data.details
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Success",
+							text: "Domain deleted",
+							type: "success"
+						})
+					}
+				})
+				.catch( re => {
+					console.log( re );
+					state.loading = false
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: re.error,
+							type: "error"
+						})
+					}
+				} )
+			},
 			createDomain({state, rootState}, args){
 				state.loading = true;
 				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains`, {
