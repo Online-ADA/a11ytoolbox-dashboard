@@ -1,5 +1,5 @@
 <template>
-	<div id="app" class="bg-pallette-grey-bg h-full">
+	<div @click="checkCloseDropdowns" id="app" class="bg-pallette-grey-bg h-full">
 		<notifications/>
 		<ada-header class="fixed"></ada-header>
 		<a class="skip-link" href="#main-content">Skip Sidebar Navigation</a>
@@ -83,12 +83,29 @@ export default {
 			showProjectCreationModal: false,
 			showToolDeployModal: false,
 			showDeployWCAGAuditModal: false,
-			EventBus: EventBus
+			EventBus: EventBus,
+			openDropdowns:[],
+			semaphore: false
 		}
 	},
 	methods:{
 		showInfoSidebar(){
 			this.infoSidebarExpanded = !this.infoSidebarExpanded
+		},
+		checkCloseDropdowns($ev){
+			if( this.semaphore ){
+				this.semaphore = false
+				return
+			}
+
+			let dropdownsToClose = this._.cloneDeep(this.openDropdowns)
+			this.openDropdowns = []
+			
+			for (let z = 0; z < dropdownsToClose.length; z++) {
+				const dropdown = dropdownsToClose[z];
+				EventBus.$emit("close-dropdown", dropdown)
+			}
+			
 		}
 		// refreshSession(){
 		// 	this.$store.dispatch('auth/resetToken', this.$router.history.current.path)
@@ -202,6 +219,10 @@ export default {
 		})
 		EventBus.$on("deployWCAGAuditModal", (payload)=>{
 			that.showDeployWCAGAuditModal = payload
+		})
+		EventBus.$on("dropdown-expanded", (payload)=>{
+			this.semaphore = true
+			this.openDropdowns.push(payload)
 		})
 	},
 
