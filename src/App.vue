@@ -165,6 +165,7 @@ export default {
 			}
 		},
 		"$route.path": function(newVal){
+			console.log(newVal)
 			if( newVal.includes("audits") ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"audit", info:""}
