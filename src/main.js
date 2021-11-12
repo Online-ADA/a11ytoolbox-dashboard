@@ -8,10 +8,11 @@ import Notifications from 'vue-notification'
 import request from './services/request'
 import VueLodash from 'vue-lodash'
 import orderBy from 'lodash/orderBy'
+import cloneDeep from 'lodash/cloneDeep'
 import VueDragscroll from 'vue-dragscroll'
 
 Vue.use(VueDragscroll)
-Vue.use(VueLodash, { lodash: { orderBy } })
+Vue.use(VueLodash, { lodash: { orderBy, cloneDeep } })
 
 Vue.use(Notifications)
 window.Request = request

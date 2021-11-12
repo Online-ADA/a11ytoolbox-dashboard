@@ -10,18 +10,6 @@
 				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
 		</template>
-		<!-- <div id="bottom-bar" class="bg-white w-full border-t border-black p-4 flex justify-between fixed bottom-0" style="z-index:25;">
-			<div class="flex w-1/3 items-center">
-			</div>
-			<div class="w-1/3 flex flex-wrap items-center justify-center">
-				<span aria-live="polite" aria-atomic="true">Issues Selected: {{selectedRows.length}}</span>
-				<div class="w-full mt-2">Total Issues: {{issues.length}}</div>
-			</div>
-			<div class="flex w-1/3 justify-end items-center">
-				<Button v-if="audit.locked && audit.number > 0 < 3" @click.native.prevent="createNextAudit" class="mx-2" color="red" hover="true">Create next audit</Button>
-			</div>
-		</div> -->
-		
 		
 		<Modal style="z-index:71;" size="full" :open="issueModalOpen">
 			<div role="alert" :class="{ 'hidden': !showValidationAlert}" class="sr-only">
@@ -666,7 +654,7 @@ export default {
 		},
 		getIssuesCSV(){
 			this.$store.state.audits.loading = true
-			Request.postPromise(`${this.$store.state.auth.userAPI}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/meta`, {params: {key: "sort", value: this.$refs.issuesTable.columnData.map( o=> o.id)}})
+			Request.postPromise(`${this.$store.state.auth.API}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/meta`, {params: {key: "sort", value: this.$refs.issuesTable.columnData.map( o=> o.id)}})
 			.then( ()=> {
 				this.$store.state.audits.loading = false
 				window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.account}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues`

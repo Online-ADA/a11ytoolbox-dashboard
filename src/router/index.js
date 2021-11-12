@@ -26,7 +26,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "scan" */ '../views/Scan/List.vue')
       },
       {
-        path: "new",
+        path: ":id/new",
         name: "NewScan",
         component: () => import(/* webpackChunkName: "scan" */ '../views/Scan/New.vue')
       },

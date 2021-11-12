@@ -2,12 +2,14 @@
     <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full h-12" v-if="showToolbar">
         <div id="toolbar" class="w-full pl-4 p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
-            <div :class="[!isAuditEditPage ? 'justify-between' : 'justify-end']" class="flex items-center">
-                <div v-if="!isAuditEditPage" class="flex items-center text-13">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center text-13">
                     <span v-if="audit.domain">{{audit.domain.url}}</span>
-                    <div class="border border-black mx-3.5 divider"></div>
-                    <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
-                    <span>Total Issues: {{totalRows}}</span>
+                    <template v-if="isAuditShowPage">
+                        <div class="border border-black mx-3.5 divider"></div>
+                        <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
+                        <span>Total Issues: {{totalRows}}</span>
+                    </template>
                 </div>
                 <span class="w-auto mr-2 flex items-center">
                     <template v-if="isAuditShowPage">
@@ -49,7 +51,7 @@
                     <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Edit Audit"><i class="far fa-edit"></i></router-link>
                     <button class="ml-3.5 bg-transparent" @click="toolbarEmit('audit-issues-download')" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
                     <router-link class="ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues to This Audit"><i class="far fa-file-import"></i></router-link>
-                    <router-link class="ml-3.5" :to="{name: `NewScan`, params: {type:'audit', id: audit.id} }" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
+                    <router-link class="ml-3.5" :to="{path: `/scan/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
 
                     <button title="Mark Audit Complete" v-if="!audit.locked" class="ml-3.5" @click="toolbarEmit('audit-complete')"><i class="fas fa-lock-open-alt"></i></button>
                     <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3" class="ml-3.5" @click="toolbarEmit('audit-next')"><i class="far fa-hand-point-right"></i></button>
