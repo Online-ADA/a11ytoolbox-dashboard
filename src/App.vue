@@ -85,7 +85,6 @@ export default {
 			showToolDeployModal: false,
 			showDeployWCAGAuditModal: false,
 			showDeployMediaAuditModal: false,
-			EventBus: EventBus
 			EventBus: EventBus,
 			openDropdowns:[],
 			semaphore: false
