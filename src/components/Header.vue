@@ -76,7 +76,7 @@
             <span class="sub-label text-white">{{account}}</span>
         </div>
 
-        <router-link to="/user/profile"><img :src="user_avatar" class="avatar" /></router-link>
+        <router-link aria-label="Go to user profile" to="/user/profile"><img alt="User Avatar" :src="user_avatar" class="avatar" /></router-link>
     </div>
 </template>
 
