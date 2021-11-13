@@ -110,9 +110,19 @@ function run(){
     .catch(re => {
       if( !params.get('oada_auth') ){
         if( Cookies.get("loggingIn") === "false" && re.response.data.message == "Unauthenticated." ){
-          
           store.dispatch("auth/login")
         }
+      }
+      //TODO: Not sure this is needed.
+      else{
+        let the_redirect = params.get('oada_redirect')
+        if(!the_redirect || the_redirect == '' || the_redirect == '?') the_redirect = '/';
+        store.dispatch('auth/setToken',{
+          token: params.get('oada_auth'),
+          token_expire: params.get('oada_token_expire'),
+          redirect: the_redirect,
+          router: router,
+      })
       }
     })
 }

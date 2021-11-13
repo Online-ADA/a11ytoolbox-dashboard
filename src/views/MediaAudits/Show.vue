@@ -1,12 +1,12 @@
 <template>
-	<div class="text-center mx-auto">
+	<div class="media-audit text-center mx-auto">
 		<Loader v-if="loading"></Loader>
 		
 		<template v-if="audit">	
 			<template v-if="audit.status == 'in_progress'">
-				Audit is currently running
+				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>Audit is currently running and could take a couple of minutes. Data will be refreshed on audit completion.
 			</template>
-			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-else-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
+			<Table :issuesTable="true" :condense="shouldCondense" :locked="false" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-else-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently.
 			</template>
@@ -99,34 +99,46 @@ export default {
 			}
 			let widthMap = {
 				id: "150px",
-				title: "150px",
 				issue_number: "150px",
-				page: "250px",
+				title: "150px",
+				status: "150px",
+				media_audit_id: '150px',
+				pages: "250px",
 				media_type: "150px",
 				html: "300px",
-				status: "150px",
-				screenshots: "250px",
-				priority: "150px",
-				auditor_notes: "300px",
 				effort: "150px",
+				priority: "150px",
 				how_discovered: "150px",
+				screenshots: "250px",
+				notes: "300px",
+				created_by: "150px",
+				created_at: "150px",
+				updated_at: "150px",
 			}
 			let hideByDefault = [
 				"id",
-				"html",
+				"title",
+				"media_audit_id",
 				"how_discovered",
+				"effort",
+				"priority",
+				"notes",
+				"screenshots",
+				"created_by",
+				"created_at",
+				"updated_at",
 			]
 			for( let key of Object.keys(this.audit.issues[0]) ){
-				arr.push({
-					header: key == this.parseHeader(key),
+				let header_item = {
+					header: this.parseHeader(key),
 					show: !hideByDefault.includes(key),
 					sticky: key == "issue_number" || key == "id" ? true : false,
 					style: {},
 					width: widthMap[key],
 					hidePermanent: false,
-				})
+				}
+				arr.push(header_item)
 			}
-			
 			return arr
 		},
 		audit(){
@@ -186,9 +198,6 @@ export default {
 			return doc.documentElement.textContent;
 		},
 		parseHeader(string){
-			if( string == "articles" ){
-				return "success criteria"
-			}
 			return string.replace(/[-_.]/gm, " ");
 		},
 		generateUniqueID(){
@@ -230,6 +239,11 @@ export default {
 }
 
 </script>
+<style>
+.media-audit table.issues-table {
+	min-width: 0 !important; 
+}
+</style>
 <style scoped>
 	#no-issues-import:hover{
 		color:white !important;

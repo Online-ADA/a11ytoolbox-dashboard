@@ -202,7 +202,7 @@ const routes = [
       // },
       {
         path: ":id",
-        name: "AuditShow",
+        name: "MediaAuditShow",
         component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/Show.vue')
       },
       // {

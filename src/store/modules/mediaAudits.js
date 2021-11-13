@@ -1,9 +1,29 @@
 import Vue from 'vue'
+import { EventBus } from '../../services/eventBus'
+
+const CheckAuditState = (state,id,api,account) => {
+	Request.getPromise(`${api}/${account}/media-audits/${id}/status`)
+	.then( re=>{
+		if(re.data.success == '1') {
+			if(re.data.details == 'Complete') {
+				if(state.intervals[id]) clearInterval(state.intervals[id])
+				EventBus.$emit('MediaAudit/Complete', {data: id})
+			}
+		}else{
+			if(state.intervals[id]) clearInterval(state.intervals[id])
+		}
+	})
+	.catch(re=>{
+		console.log(re)
+		if(state.intervals[id]) clearInterval(state.intervals[id])
+	})
+}
 
 const getDefaultState = () => {
 	return {
 		all: [],
 		audit: false,
+		intervals: {},
 	}
 }
 
@@ -22,6 +42,7 @@ export default {
 		state: {
 			all: [],
 			audit: false,
+			intervals: {},
 		},
 		mutations: {
 			setState(state,payload) {
@@ -41,7 +62,9 @@ export default {
 				state.loading = true
 				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/media-audits/${args.id}`, {params: {withIssues: args.withIssues}})
 				.then( re=>{
-					state.audit = re.data.details
+					Vue.set(state,'audit',re.data.details)
+					// let audit_index = state.all.findIndex((item)=> {return item.id == args.id})
+					// if(audit_index > -1) Vue.set(state.all,audit_index,re.data.details)
 					if( args.vm ){
 						args.vm.audit = state.audit
 						args.vm.assigned = state.audit.assignees.map( o=>o.id)
@@ -73,6 +96,18 @@ export default {
 						}
 					}else{
 						state.all = re.data.details
+						for(let i in state.all) {
+							if(state.all[i].status == 'in_progress') {
+								state.intervals[state.all[i].id] = setInterval(
+									CheckAuditState,
+									5000,
+									state,
+									state.all[i].id,
+									rootState.auth.API,
+									rootState.auth.account
+								)
+							}
+						}
 						if( !Request.muted() ){
 							Vue.notify({
 								title: "Success",
@@ -111,6 +146,18 @@ export default {
 							})
 						}
 					}else{
+						//TODO: No good way to handle this globally seeing as the media audits store is reset 
+						// let audit = state.all.find((item)=> {return item.id == args.audit_id})
+						// if(audit) audit.status = 'in_progress'
+						if( state.audit )state.audit.status = 'in_progress'
+						state.intervals[args.audit_id] = setInterval(
+							CheckAuditState,
+							5000,
+							state,
+							args.audit_id,
+							rootState.auth.API,
+							rootState.auth.account
+						)
 						if( !Request.muted() ){
 							Vue.notify({
 								title:"Success",

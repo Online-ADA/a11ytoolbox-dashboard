@@ -254,7 +254,6 @@ class Request {
             //     window.App.$store.state.auth.authMessage = "You've been logged out. Please log in again"
             //     window.App.$router.push({path: "/"})
             // }
-
             return
         }
         if(response.response  != undefined && response.response.data.message == 'No Account Access') {
@@ -267,7 +266,6 @@ class Request {
             //     window.App.$store.state.auth.authMessage = window.App.$store.state.auth.authMessages[response.data.details]
             //     window.App.$router.push({path: "/"})
             // }
-            
             return
         }
     }

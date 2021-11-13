@@ -103,7 +103,7 @@
 													   (key != 'techinques' && key != 'articles')"
 							>
 								<span tabindex="-1" class="text-left block" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
-								<span class="block break-words" tabindex="-1" v-else-if="key == 'target'" >{{displayValue(key, value)}}</span>
+								<span class="block break-words" tabindex="-1" v-else-if="key == 'target' || key =='html'" >{{displayValue(key, value)}}</span>
 								<span class="block" tabindex="-1" :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
 							</span>
 						</td>
@@ -204,7 +204,9 @@
 					"third_audit_comments", 
 					"created_at", 
 					"updated_at", 
-					"created_by"
+					"created_by",
+					"media_type",
+					"html",
 				],
 				specialKeys : ["articles", "techniques"],
 				sortData: {
@@ -436,7 +438,6 @@
 					if( data && data.length ){
 						output = "<ul><li class='list-disc break-words'>"
 						if( key == "pages"){
-							
 							for (let index = 0; index < data.length; index++) {
 								let content = ""
 								const element = data[index];
@@ -454,6 +455,8 @@
 										url = domain + url
 									}
 									content += '<a target="_blank" href="'+url+'">' + url + '</a>'
+								}else{
+									content += '<a target="_blank" href="'+element+'">' + element + '</a>'
 								}
 								output += content
 								output += "</li>"
@@ -597,7 +600,6 @@
 				}else{
 					this.selected.includes(data.id) ? classes.push('selected') : ''
 				}
-				
 				classes.push( data.status.toLowerCase().replaceAll(/[ ]/g, "-") )
 				return classes.join(" ")
 			},

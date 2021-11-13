@@ -8,7 +8,7 @@
 				WCAG Audit
 			</Button>
 			<Button @click.native.prevent="EventBus.openModal( ()=>{ EventBus.$emit('deployToolModal', false); EventBus.$emit('deployMediaAuditModal', true); })" class="mr-2 text-center">
-				<div><i class="far fa-wrench"></i></div>
+				<div><i class="far fa-photo-video"></i></div>
 				Media Audit
 			</Button>
 		</div>
