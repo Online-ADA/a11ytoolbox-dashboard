@@ -184,9 +184,15 @@ export default {
 			}
 		},
 		"$route.path": function(newVal){
-			if( newVal.includes("audits") ){
+			if( this.$route.matched[0].path == '/audits' ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"audit", info:""}
+					return
+				}
+			}
+			if( this.$route.matched[0].path == '/media-audits' ){
+				if( this.$route.params.id !== undefined ){
+					this.$store.state.projects.tool = {type:"media-audit", info:""}
 					return
 				}
 			}

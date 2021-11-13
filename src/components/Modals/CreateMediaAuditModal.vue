@@ -161,11 +161,12 @@
 		name: 'CreateWCAGAuditModal',
 		methods:{
 			createDomain(){
-				this.domain.url = this.fullUrl
+				this.domain.url = this.protocol+this.url
 				this.domain.project_id = this.project.id
 				let that = this
 				
 				this.$store.dispatch("domains/createDomain", {domain: this.domain, callback: ((domain)=>{
+					
 					that.selectedDomain = domain.id
 					that.domain.url = ""
 					that.url = ""

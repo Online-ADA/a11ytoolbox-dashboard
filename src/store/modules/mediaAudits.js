@@ -97,6 +97,44 @@ export default {
 					state.loading = false
 				})
 			},
+			InitAudit({state,rootState},args) {
+				state.loading = true;
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/media-audits/${args.audit_id}/init`)
+				.then( re=>{
+					if(re.data.success != '1') {
+						if( !Request.muted() ){
+							Vue.notify({
+								title:"Error",
+								text: re.data.details,
+								type: "error",
+								position: 'bottom right'
+							})
+						}
+					}else{
+						if( !Request.muted() ){
+							Vue.notify({
+								title:"Success",
+								text: "Automated media audit was initiated",
+								type: "success",
+								position: 'bottom right'
+							})
+						}
+					}
+				})
+				.catch(re=>{
+					if( !Request.muted() ){
+						Vue.notify({
+							title: "Error",
+							text: "There was an error when trying to create the audit. Please see the dev console for more information",
+							type:"error",
+							position: 'bottom right'
+						})
+					}
+				})
+				.then( ()=>{
+					state.loading = false
+				})
+			},
 			createAudit({state, rootState}, args){
 				state.loading = true;
 				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/media-audits`, { params: { audit: args.audit } })
@@ -120,7 +158,7 @@ export default {
 							})
 						}
 	
-						state.audits.all.push(re.data.details)
+						state.all.push(re.data.details)
 						if( args.vm ){
 							args.vm.complete = true
 						}

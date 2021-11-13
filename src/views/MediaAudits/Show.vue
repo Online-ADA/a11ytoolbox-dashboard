@@ -2,8 +2,11 @@
 	<div class="text-center mx-auto">
 		<Loader v-if="loading"></Loader>
 		
-		<template v-if="audit">			
-			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
+		<template v-if="audit">	
+			<template v-if="audit.status == 'in_progress'">
+				Audit is currently running
+			</template>
+			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-else-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently.
 			</template>
