@@ -28,6 +28,7 @@
 							<CreateProjectModal style="z-index:999" :open="showProjectCreationModal"></CreateProjectModal>
 							<DeployToolModal style="z-index:999" :open="showToolDeployModal"></DeployToolModal>
 							<CreateWCAGAuditModal style="z-index:999" :open="showDeployWCAGAuditModal"></CreateWCAGAuditModal>
+							<CreateMediaAuditModal style="z-index:999" :open="showDeployMediaAuditModal"></CreateMediaAuditModal>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
 							<span v-html="tool.info"></span>
@@ -73,7 +74,7 @@ import CreateClientModal from "./components/Modals/CreateClientModal"
 import CreateProjectModal from "./components/Modals/CreateProjectModal"
 import CreateWCAGAuditModal from "./components/Modals/CreateWCAGAuditModal"
 import DeployToolModal from "./components/Modals/DeployToolModal"
-
+import CreateMediaAuditModal from './components/Modals/CreateMediaAuditModal'
 export default {
   data(){
 		return {
@@ -83,6 +84,7 @@ export default {
 			showProjectCreationModal: false,
 			showToolDeployModal: false,
 			showDeployWCAGAuditModal: false,
+			showDeployMediaAuditModal: false,
 			EventBus: EventBus,
 			openDropdowns:[],
 			semaphore: false
@@ -182,9 +184,15 @@ export default {
 			}
 		},
 		"$route.path": function(newVal){
-			if( newVal.includes("audits") ){
+			if( this.$route.matched[0].path == '/audits' ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"audit", info:""}
+					return
+				}
+			}
+			if( this.$route.matched[0].path == '/media-audits' ){
+				if( this.$route.params.id !== undefined ){
+					this.$store.state.projects.tool = {type:"media-audit", info:""}
 					return
 				}
 			}
@@ -219,6 +227,9 @@ export default {
 		EventBus.$on("deployWCAGAuditModal", (payload)=>{
 			that.showDeployWCAGAuditModal = payload
 		})
+		EventBus.$on("deployMediaAuditModal", (payload)=>{
+			that.showDeployMediaAuditModal = payload
+		});
 		EventBus.$on("dropdown-expanded", (payload)=>{
 			this.semaphore = true
 			this.openDropdowns.push(payload)
@@ -237,7 +248,8 @@ export default {
 		CreateClientModal,
 		CreateProjectModal,
 		CreateWCAGAuditModal,
-		DeployToolModal
+		DeployToolModal,
+		CreateMediaAuditModal
 	}
 }
 </script>

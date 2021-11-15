@@ -116,7 +116,7 @@
 						</div>
 					</form>
 
-					<fieldset class="w-full">
+					<!--<fieldset class="w-full">
 						<legend class="headline-2 pt-7">Sitemap Settings</legend>
 						<div class="flex flex-col items-start">
 							<label class="block font-semibold pr-3" :stacked="false" for="sitemap-full">
@@ -129,7 +129,7 @@
 								Use Working Sample
 							</label>
 						</div>
-					</fieldset>
+					</fieldset>-->
 				</template>
 				
 				<div class="w-full">
@@ -320,7 +320,7 @@
 				let toValidate = [
 					"title",
 					"domain",
-					"domainURL"
+					// "domainURL"
 				]
 				this.failedValidation = []
 				var pass
@@ -365,6 +365,11 @@
 		mounted(){},
 		created(){},
 		watch:{
+			selectedDomain(val) {
+				if(val) {
+					this.createDomainSectionOpen = false
+				}
+			},
 			users(newVal){
 				if( this.open && newVal.length ){
 					this.unassigned = newVal.map( o=>o.id)

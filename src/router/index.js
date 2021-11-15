@@ -186,6 +186,43 @@ const routes = [
     ]
   },
   {
+    path: "/media-audits", //Just this user's audits
+    name: "MediaAudits",
+    component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/Index.vue'),
+    children:[
+      {
+        path: "list",
+        name: "AuditList",
+        component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/List.vue')
+      },
+      // {
+      //   path: ":id/edit",
+      //   name: "AuditEdit",
+      //   component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/Edit.vue')
+      // },
+      {
+        path: ":id",
+        name: "MediaAuditShow",
+        component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/Show.vue')
+      },
+      // {
+      //   path: ":id/overview",
+      //   name: "AuditOverview",
+      //   component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/Overview.vue')
+      // },
+      // {
+      //   path: ":id/import",
+      //   name: "AuditImport",
+      //   component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/Import.vue')
+      // },
+      // {
+      //   path: "/:catchAll(.*)",
+      //   name: "MediaAuditNotFound",
+      //   component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/NotFound.vue')
+      // },
+    ]
+  },
+  {
     path: '/manage',
     name: 'Manage',
     meta: {

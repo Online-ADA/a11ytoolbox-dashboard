@@ -150,6 +150,7 @@ export default {
     //   })
     // },
     setToken({state, dispatch}, payload){
+      console.log(payload)
       Cookies.set('oada_UID', payload.token, { expires: 1 })
       Cookies.set('oada_UID_expire', payload.token_expire * 1000, { expires: 1 })
       state.token = payload.token
@@ -157,13 +158,11 @@ export default {
       // state.showLoginPrompt = false
       // state.checkForExpire(state)
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
-      
       if(payload.redirect) {
         payload.router.push({path: payload.redirect})
       }else{
         payload.router.push({path: state.redirect})
       }
-      
       dispatch("check")
     },
     logout({state, dispatch}, router, refresh = false){
