@@ -37,7 +37,7 @@
                         <div class="block">
                             <ul>
                                 <li :class="[(mediaAudits.audit && mediaAudits.audit.id === item.id) ? 'selected' : '']" class="text-sm py-2" v-for="item in mediaAudits.all" :key="item.id">
-                                    <!--<div v-if="item.status == 'in_progress'" class="mr-2">--><i class="fas fa-circle-notch fa-spin"></i></div><button class="text-black" @click="updateMediaAudit(item)">{{getTitle(item)}}</button>
+                                    <button class="text-black" @click="updateMediaAudit(item)">{{getTitle(item)}}</button>
                                 </li>
                             </ul>
                         </div>

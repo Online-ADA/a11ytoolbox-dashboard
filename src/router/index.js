@@ -215,11 +215,11 @@ const routes = [
       //   name: "AuditImport",
       //   component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/Import.vue')
       // },
-      {
-        path: "/:catchAll(.*)",
-        name: "MediaAuditNotFound",
-        component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/NotFound.vue')
-      },
+      // {
+      //   path: "/:catchAll(.*)",
+      //   name: "MediaAuditNotFound",
+      //   component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/NotFound.vue')
+      // },
     ]
   },
   {
