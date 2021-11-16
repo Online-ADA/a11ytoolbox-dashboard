@@ -456,7 +456,7 @@
 									}
 									content += '<a target="_blank" href="'+url+'">' + url + '</a>'
 								}else{
-									content += '<a target="_blank" href="'+element+'">' + element + '</a>'
+									content += '<a target="_blank" href="'+element.title+'">' + element.title + '</a>'
 								}
 								output += content
 								output += "</li>"
