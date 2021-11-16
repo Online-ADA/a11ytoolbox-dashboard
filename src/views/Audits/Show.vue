@@ -570,16 +570,16 @@ export default {
 			this.$store.dispatch("projects/getProject", {id: newVal.project_id})
 		},
 		"issue.articles": function(){
-			if( this.selectedRows.length ){
+			if( this.selectedRows.length > 1 ){
 				return
 			}
 
 			this.issue.levels = []
 			this.issue.techniques = []
-			
 			for( let i in this.issue.articles ){
-				if( !this.issue.levels.includes( this.articles[ this.issue.articles[i].id ].level ) ){
-					this.issue.levels.push( this.articles[ this.issue.articles[i].id ].level )
+				let article_id = this.issue.articles[i].id - 1
+				if( !this.issue.levels.includes( this.articles[ article_id ].level ) ){
+					this.issue.levels.push( this.articles[ article_id ].level )
 				}
 			}
 		},

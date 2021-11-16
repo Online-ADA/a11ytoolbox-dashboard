@@ -328,14 +328,58 @@
 					column = column.replaceAll(/[ ]/g, "_")
 					//String reference is necessary because sometimes our column becomes an anonymous function
 					let reference = column
+					if( column == "levels" ){
+						column = ((item)=>{
+							return item.levels.join(" ")
+						})
+					}
 					if( column == "success_criteria" ){
-						column = ((item)=>{return item.articles[0].display})
+						column = ((item)=>{
+							let output = ""
+							for (let x = 0; x < item.articles.length; x++) {
+								const article = item.articles[x];
+								output += " " + article.display
+							}
+							
+							return output
+						})
 					}
 					if( column == "techniques" ){
-						column = ((item)=>{return item.techniques[0].display})
+						column = ((item)=>{
+							let output = ""
+							for (let x = 0; x < item.techniques.length; x++) {
+								const technique = item.techniques[x];
+								output += technique.display
+							}
+							return output
+						})
 					}
 					if( column == "pages" ){
-						column = ((item)=>{return item.pages[0].title})
+						column = ((item)=>{
+							if( item.pages ){
+								let domain = this.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
+								let output = ""
+								for (let x = 0; x < item.pages.length; x++) {
+									let page = item.pages[x]
+									if( page.title ){
+										output += page.title
+									}
+									if( page.title && page.url ){
+										output += " - "
+									}
+									if( page.url ){
+										let url = page.url
+										if( url == "/" ){
+											url = ""
+										}
+										output += domain + "/" + url
+									}
+								}
+								console.log(output);
+								return output
+							}
+							return ""
+						})
 					}
 					let index = this.sortData.reference.indexOf(reference)
 					let indexOfID = this.sortData.reference.indexOf('id')
@@ -449,14 +493,15 @@
 									content += " - "
 								}
 								if( element.url ){
-									let domain = this.$store.state.audits.audit.domain.url
+									let domain = this.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
 									let url = element.url
+									if( url == "/" ){
+										url = ""
+									}
 									if( !url.includes(domain) ){
-										url = domain + url
+										url = domain + "/" + url
 									}
 									content += '<a target="_blank" href="'+url+'">' + url + '</a>'
-								}else{
-									content += '<a target="_blank" href="'+element+'">' + element + '</a>'
 								}
 								output += content
 								output += "</li>"

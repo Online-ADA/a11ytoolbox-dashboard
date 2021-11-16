@@ -192,7 +192,7 @@ const routes = [
     children:[
       {
         path: "list",
-        name: "AuditList",
+        name: "MediaAuditList",
         component: () => import(/* webpackChunkName: "mediaaudits" */ '../views/MediaAudits/List.vue')
       },
       // {
