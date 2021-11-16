@@ -641,6 +641,7 @@ export default {
 		},
 		selectAll(ids){
 			this.selectedRows = ids
+			EventBus.$emit('auditSelectedRowsUpdated', this.selectedRows.length)
 		},
 		deselectAll(){
 			this.selectedRows = []
