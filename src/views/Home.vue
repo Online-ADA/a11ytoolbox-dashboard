@@ -57,7 +57,8 @@ export default {
         "development": [],
         "design":[],
         "customer_service":[]
-      }
+      },
+      gettingUsers: false
     }
   },
   components: {
@@ -69,10 +70,10 @@ export default {
   methods:{
   },
   mounted(){
-    // this.$store.state.projects.project = false
-    // if( this.account ){
-    //   this.$store.dispatch("user/getAllAccountUsers")
-    // }
+    if( !this.gettingUsers && this.account ){
+      this.gettingUsers = true
+      this.$store.dispatch("user/getAllAccountUsers")
+    }
   },
   computed: {
     // total(){
@@ -116,7 +117,10 @@ export default {
   },
   watch:{
     account:function(){
-      this.$store.dispatch("user/getAllAccountUsers")
+      if( !this.gettingUsers ){
+        this.$store.dispatch("user/getAllAccountUsers")
+        this.gettingUsers = true
+      }
     },
     "$store.state.user.all":function(newVal){
       if( newVal && newVal.length ){
