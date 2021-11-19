@@ -55,7 +55,7 @@
 
                     <button title="Mark Audit Complete" v-if="!audit.locked" class="ml-3.5" @click="toolbarEmit('audit-complete')"><i class="fas fa-lock-open-alt"></i></button>
                     <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3" class="ml-3.5" @click="toolbarEmit('audit-next')"><i class="far fa-hand-point-right"></i></button>
-                    <button @click.prevent="confirmModalOpen = true" title="Delete Audit" class="ml-3.5" ><i class="fas fa-trash-alt"></i></button>
+                    <button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="ml-3.5" ><i class="fas fa-trash-alt"></i></button>
                     <button class="ml-3.5 bg-transparent" @click="$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
                 </span>
             </div>
@@ -256,7 +256,6 @@ export default {
     },
     methods: {
         deleteAudit(){
-            console.log("Deleting...");
             let project_id = this.$store.state.projects.project.id
             this.$store.dispatch("audits/deleteAudit", {audit_id: this.$route.params.id})
             this.$router.push({path: `/projects/${project_id}`})
