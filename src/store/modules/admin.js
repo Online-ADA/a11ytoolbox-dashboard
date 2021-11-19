@@ -520,32 +520,6 @@ export default {
 				}
 			} )
 		},
-		deleteAudit({state, rootState}, args){
-			state.loading.audits = true
-			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}`)
-			.then( re => {
-				state.loading.audits = false
-				state.audits = re.data.details
-				if( !Request.muted() ){
-					Vue.notify({
-						title: "Success",
-						text: "Audit deleted",
-						type: "success"
-					})
-				}
-			})
-			.catch( re => {
-				console.log( re );
-				state.loading.audits = false
-				if( !Request.muted() ){
-					Vue.notify({
-						title: "Error",
-						text: re.error,
-						type: "error"
-					})
-				}
-			} )
-		},
 		modifyRole({state, rootState}, args){
 			state.loading.users = true
 			Request.post(`${rootState.auth.API}/${rootState.auth.account}/manage/users/setRole`, {
