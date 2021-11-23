@@ -377,7 +377,7 @@
 			},
 			open: function(newVal){
 				if( newVal ){
-					if( !this.project.domains.length ){
+					if( !this.project.domains || !this.project.domains.length ){
 						this.createDomainSectionOpen = true
 					}
 
@@ -423,7 +423,7 @@
 				return this.$store.state.clients.client
 			},
 			domains(){
-				if( this.project ){
+				if( this.project && this.project.domains ){
 					return this.project.domains
 				}
 
