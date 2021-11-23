@@ -68,7 +68,7 @@ export default {
 	data(){
 		return {
 			current: 1,
-			perPage: 10,
+			perPage: 100,
 			filteredRows: [],
 			sortedRows: [],
 			filtering: false,
