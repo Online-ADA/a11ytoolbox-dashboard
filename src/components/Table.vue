@@ -136,7 +136,8 @@
 		:per-page="perPage" 
 		:total="total" 
 		@page-changed="changePage" 
-		v-show="rows.length && perPage < total"></Pagination>
+		v-show="showPagination">
+		</Pagination>
 		
 		<div class="mb-24 w-full"></div>
 		
@@ -216,7 +217,7 @@
 		data(){
 			return {
 				current: 1,
-				perPage: 5,
+				perPage: 100,
 				plainKeys : [
 					"id", 
 					"issue_number", 
@@ -263,6 +264,9 @@
 			}
 		},
 		computed: {
+			showPagination(){
+				return this.rows.length && this.perPage < this.total
+			},
 			total(){
 				return this.$store.state.audits.audit.issue_count
 			},
