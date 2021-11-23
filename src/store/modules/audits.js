@@ -57,6 +57,17 @@ export default {
 			resetState({commit}) {
 				commit('resetState')
 			},
+			getIssuesOffset({state, rootState}, args){
+				state.loading = true
+				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}/issues/page`, {params: {page: args.page}})
+				.then( re=>{
+					rootState.audits.audit.issues = re.data.details
+				})
+				.catch( re=>{
+					console.log(re);
+				})
+				.then( ()=> state.loading = false)
+			},
 			uploadIssuesCSV({rootState}, args){
 				let form_data = new FormData()
 				form_data.append('upload', args.file)

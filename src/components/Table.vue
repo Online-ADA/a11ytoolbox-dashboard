@@ -17,7 +17,7 @@
 				</button>
 			</div>
 		</div>
-		<div tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black mb-24 h-2/3">
+		<div tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black h-2/3">
 			<a v-if="rows.length" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
 			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense, 'issues-table':issuesTable}">
 				<thead>
@@ -131,6 +131,16 @@
 			<span v-show="!rows.length">No issues</span>
 		</div>
 		
+		<Pagination 
+		:current="current" 
+		:per-page="perPage" 
+		:total="total" 
+		@page-changed="changePage" 
+		v-show="showPagination">
+		</Pagination>
+		
+		<div class="mb-24 w-full"></div>
+		
 		<Modal style="z-index:71" :open="columnPickerOpen">
 			<div class="w-full p-3">
 				<button aria-label="Close column selector modal" @click.prevent="closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4 px-2 standard">X</button>
@@ -153,6 +163,7 @@
 	import Modal from "../components/Modal"
 	import Button from "../components/Button"
 	import Checkbox from "../components/Checkbox"
+	import Pagination from "../components/Pagination"
 	import Label from "../components/Label"
 	import TextInput from "../components/TextInput"
 	import { dragscroll } from 'vue-dragscroll'
@@ -210,6 +221,8 @@
 		},
 		data(){
 			return {
+				current: 1,
+				perPage: 100,
 				plainKeys : [
 					"id", 
 					"issue_number", 
@@ -252,6 +265,12 @@
 			}
 		},
 		computed: {
+			showPagination(){
+				return this.rows.length && this.perPage < this.total
+			},
+			total(){
+				return this.$store.state.audits.audit.issue_count
+			},
 			rows(){
 				if( this.filtering ){
 					return this.filteredRows
@@ -267,6 +286,10 @@
 			}
 		},
 		methods: {
+			changePage($event){
+				this.$store.dispatch("audits/getIssuesOffset", {audit_id: this.$route.params.id, page: $event})
+				this.current = $event
+			},
 			openModal( callback ){
 				let classList = document.body.classList
 				if( !classList.contains("modalOpen") ){
@@ -747,7 +770,8 @@
 			Button,
 			Checkbox,
 			TextInput,
-			Label
+			Label,
+			Pagination
 		}
 	}
 </script>

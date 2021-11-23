@@ -17,7 +17,7 @@
 			<div class="w-full h-full max-w-full">
 				<div class="flex h-full">
 					<div class="max-w-full flex flex-1">
-						<CanvasToolbar @showInfoSidebar="showInfoSidebar" v-if="tool.type" :tool="tool"></CanvasToolbar>
+						<CanvasToolbar v-if="tool.type" :tool="tool"></CanvasToolbar>
 						<div
 						class="flex-1 px-5"
 						:class="{'info-sidebar-expanded':infoSidebarExpanded}"
@@ -91,9 +91,6 @@ export default {
 		}
 	},
 	methods:{
-		showInfoSidebar(){
-			this.infoSidebarExpanded = !this.infoSidebarExpanded
-		},
 		checkCloseDropdowns($ev){
 			if( this.semaphore ){
 				this.semaphore = false
@@ -233,6 +230,9 @@ export default {
 		EventBus.$on("dropdown-expanded", (payload)=>{
 			this.semaphore = true
 			this.openDropdowns.push(payload)
+		})
+		EventBus.$on("showInfoSidebar", ()=>{
+			this.infoSidebarExpanded = !this.infoSidebarExpanded
 		})
 	},
 
