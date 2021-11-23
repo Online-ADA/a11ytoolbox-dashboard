@@ -102,9 +102,27 @@
 													   (key == 'techniques' && $store.state.audits.techniques.length) ||
 													   (key != 'techinques' && key != 'articles')"
 							>
-								<span tabindex="-1" class="text-left block" :class="{'break-words': plainKeys.includes(key)}" v-if="listKeys.includes(key)" v-html="displayValue(key, value)"></span>
-								<span class="block break-words" tabindex="-1" v-else-if="key == 'target' || key =='html'" >{{displayValue(key, value)}}</span>
-								<span class="block" tabindex="-1" :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}" v-else v-html="displayValue(key, value)"></span>
+								<template v-if="listKeys.includes(key)">
+									<span 
+									tabindex="-1" 
+									class="text-left block" 
+									:class="{'break-words': plainKeys.includes(key)}"
+									v-html="displayValue(key, value)"></span>
+								</template>
+
+								<template v-else-if="data.how_discovered == 'Automated Audit' && (key == 'descriptions' || key =='recommendations')">
+									
+									<span class="block break-words" tabindex="-1" >{{displayValue(key, value)}}</span>
+								</template>
+
+								<template v-else-if="key == 'target' || key =='html'">
+									<span class="block break-words" tabindex="-1" >{{displayValue(key, value)}}</span>
+								</template>
+
+								<template v-else>
+									<span class="block" tabindex="-1" :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}"  v-html="displayValue(key, value)"></span>
+								</template>
+								
 							</span>
 						</td>
 					</tr>
