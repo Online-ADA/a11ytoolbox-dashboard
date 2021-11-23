@@ -243,7 +243,7 @@ export default {
                     return this.auditFilteredRows
                 }
                 if( this.audit.issues && this.audit.issues.length ){
-                    return this.audit.issues.length
+                    return this.audit.issue_count
                 }
                 return 0
             }
