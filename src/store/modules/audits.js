@@ -1,4 +1,23 @@
 import Vue from 'vue'
+import { EventBus } from '../../services/eventBus'
+
+const CheckAuditState = (state,id,api,account) => {
+	Request.getPromise(`${api}/${account}/audits/${id}/status`)
+	.then( re=>{
+		if(re.data.success == '1') {
+			if(re.data.details != 'running_automation') {
+				if(state.intervals[id]) clearInterval(state.intervals[id])
+				EventBus.$emit('Audit/Automation/Complete', {data: id})
+			}
+		}else{
+			if(state.intervals[id]) clearInterval(state.intervals[id])
+		}
+	})
+	.catch(re=>{
+		console.log(re)
+		if(state.intervals[id]) clearInterval(state.intervals[id])
+	})
+}
 
 const getDefaultState = () => {
 	return {
@@ -13,7 +32,8 @@ const getDefaultState = () => {
 		software_used: [],
 		articles: [],
 		techniques: [],
-		recommendations: []
+		recommendations: [],
+		intervals: {},
 	}
 }
 
@@ -41,7 +61,8 @@ export default {
 			software_used: [],
 			articles: [],
 			techniques: [],
-			recommendations: []
+			recommendations: [],
+			intervals: {},
 		},
 		mutations: {
 			setState(state,payload) {
@@ -189,6 +210,16 @@ export default {
 				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.id}`, {params: {withIssues: args.withIssues}})
 				.then( re=>{
 					state.audit = re.data.details
+					if(!state.intervals[state.audit.id] && state.audit.status == 'running_automation') {
+						state.intervals[state.audit.id] = setInterval(
+							CheckAuditState,
+							5000,
+							state,
+							state.audit.id,
+							rootState.auth.API,
+							rootState.auth.account
+						)
+					}
 					if( args.vm ){
 						args.vm.audit = state.audit
 						args.vm.audit.tech_requirements = state.audit.tech_requirements.map( o=>{ return {name: o} } )
@@ -276,6 +307,18 @@ export default {
 				})
 				.then( re => {
 					state.all = re.data.details
+					for(let i in state.all) {
+						if(!state.intervals[state.all[i].id] && state.all[i].status == 'running_automation') {
+							state.intervals[state.all[i].id] = setInterval(
+								CheckAuditState,
+								5000,
+								state,
+								state.all[i].id,
+								rootState.auth.API,
+								rootState.auth.account
+							)
+						}
+					}
 					if( !Request.muted() ){
 						// Vue.notify({
 						// 	title: "Success",
