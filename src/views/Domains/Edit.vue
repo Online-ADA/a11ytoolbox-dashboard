@@ -61,6 +61,54 @@
 
 		<div class="w-full flex">
 			<Card class="flex-1 p-4 mx-2">
+				<h3 class="mt-3 mb-1">Sitemap</h3>
+
+				<div class="flex w-full justify-center">
+					<label class="py-2 font-semibold block" for="specifyRoot">Specify Root</label>
+					<Checkbox v-model="specifyRoot" id="specifyRoot"></Checkbox>
+				</div>
+				
+
+				<div v-if="specifyRoot" class="flex flex-1 flex-col mx-auto w-1/2 pb-5">
+					<Label class="flex-1" for="domainRoot">Root</Label>
+					<div class="flex w-full">
+						<TextInput class="flex-1" id="domainRoot" v-model="domainRoot" />
+						<Button class="ml-2" color="red" @click.native.prevent="saveRoot">Save</Button>
+					</div>
+				</div>
+
+				<h4 class="mb-3">Add url</h4>
+				<div class="w-full flex mb-4">
+					<div class="w-full px-2">
+						<Label :stacked="false" class="flex items-center justify-center w-full" for="url"><span class="pr-3">Url</span><small>(Without domain)</small></Label>
+						<div class="flex items-center flex-1">
+							<span class="flex-1">{{domain.url}}/<span class="break-word" v-if="domain.root">{{domain.root}}/</span>
+								</span>
+							<TextInput style="flex-basis:100%" aria-label="Enter a url path" placeholder="contact" class="w-full flex-1" id="url" v-model="page.url" />
+							<Button class="ml-2" color="red" @click.native.prevent="addPage">Add</Button>
+						</div>
+					</div>
+				</div>
+				<Button color="red" @click.native.prevent="generateSitemap">Generate sitemap</Button>
+				<template v-if="domain && domain.pages.length">
+					<h4 class="mb-3">Pages</h4>
+					<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
+						<ul class="mb-4">
+							<li v-for="page in domain.pages" :key="page.id">
+								{{page.url}}
+								<Button aria-label="delete this page" @click.native.prevent="deletePage(page.id)" color="delete" class="ml-4">X</Button>
+							</li>
+						</ul>
+					</Card>
+					<Button @click.native.prevent="emptySitemap" color="delete">Remove all<span class="sr-only"> sample items</span></Button>
+				</template>
+
+				<FileInput @input="handleSitemapFile" class="block w-auto mx-auto pb-3 mt-4" accept=".csv, .xml"></FileInput>
+				<small class="text-xs">Note: If the domain on an entry in the uploaded file does not match this domain, it will not be added to the sitemap.</small>
+				<Button color="red" @click.native.prevent="uploadSitemap">Upload sitemap</Button>
+			</Card>
+
+			<Card class="flex-1 p-4 mx-2">
 				<h3 class="mt-3 mb-1">Structured Sample</h3>
 				<Button class="" color="red" @click.native.prevent="structuredListModalOpen =true">Add</Button>
 				<template v-if="domain && domain.sample.length">
@@ -91,37 +139,6 @@
 				<FileInput @input="handleSampleFile" class="block w-auto mx-auto pb-3" accept=".csv"></FileInput>
 				<Button color="red" @click.native.prevent="uploadSample">Upload Sample</Button>
 			</Card>
-
-			<Card class="flex-1 p-4 mx-2">
-				<h3 class="mt-3 mb-1">Sitemap</h3>
-				<h4 class="mb-3">Add url</h4>
-				<div class="w-full flex mb-4">
-					<div class="w-full px-2">
-						<Label :stacked="false" class="flex items-center justify-center w-full" for="url"><span class="pr-3">Url</span><small>(Without domain)</small></Label>
-						<div class="flex items-center">
-							<span>{{domain.url}}/</span><TextInput aria-label="Enter a url path" placeholder="contact" class="w-full" id="url" v-model="page.url" />
-							<Button class="ml-2" color="red" @click.native.prevent="addPage">Add</Button>
-						</div>
-					</div>
-				</div>
-				<Button color="red" @click.native.prevent="generateSitemap">Generate sitemap</Button>
-				<template v-if="domain && domain.pages.length">
-					<h4 class="mb-3">Pages</h4>
-					<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
-						<ul class="mb-4">
-							<li v-for="page in domain.pages" :key="page.id">
-								{{page.url}}
-								<Button aria-label="delete this page" @click.native.prevent="deletePage(page.id)" color="delete" class="ml-4">X</Button>
-							</li>
-						</ul>
-					</Card>
-					<Button @click.native.prevent="emptySitemap" color="delete">Remove all<span class="sr-only"> sample items</span></Button>
-				</template>
-
-				<FileInput @input="handleSitemapFile" class="block w-auto mx-auto pb-3 mt-4" accept=".csv, .xml"></FileInput>
-				<small class="text-xs">Note: If the domain on an entry in the uploaded file does not match this domain, it will not be added to the sitemap.</small>
-				<Button color="red" @click.native.prevent="uploadSitemap">Upload sitemap</Button>
-			</Card>
 			
 		</div>
 	</div>
@@ -130,6 +147,7 @@
 <script>
 import Loader from '../../components/Loader'
 import TextInput from '../../components/TextInput'
+import Checkbox from '../../components/Checkbox'
 import Label from '../../components/Label'
 import Modal from '../../components/Modal'
 import A from '../../components/Link'
@@ -139,6 +157,8 @@ import Card from '../../components/Card'
 
 export default {
 	data: () => ({
+		domainRoot: "",
+		specifyRoot: false,
 		structuredListModalOpen: false,
 		editDomainOpen: false,
 		sitemapFile: false,
@@ -179,10 +199,15 @@ export default {
 				this.data = newVal
 				this.domain = newVal
 				this.page.domain_id = this.domain.id
+				this.specifyRoot = !!this.domain.root
+				this.domainRoot = this.domain.root || ""
 			}
 		},
 	},
 	methods: {
+		saveRoot(){
+			this.$store.dispatch("domains/saveRoot", {root: this.domainRoot, id: this.domain.id});
+		},
 		popStructuredItem(index){
 			this.structured_items.splice(index, 1)
 		},
@@ -255,7 +280,8 @@ export default {
 		Modal,
 		Button,
 		FileInput,
-		Card
+		Card,
+		Checkbox
 	},
 }
 </script>

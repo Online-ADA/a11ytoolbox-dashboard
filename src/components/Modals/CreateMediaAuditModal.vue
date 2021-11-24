@@ -32,7 +32,9 @@
                     aria-labelledby="choose_select_heading" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" 
                     name="choose_domain" 
                     id="choose_select">
-                        <option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">{{domain.url}}</option>
+                        <option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">
+									{{domain.url}}<template v-if="domain.root">/{{domain.root}}/</template>
+								</option>
                     </select>
                 </template>
                 <button 

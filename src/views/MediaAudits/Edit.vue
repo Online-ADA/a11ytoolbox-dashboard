@@ -141,7 +141,10 @@
 			</template>
 			<div class="flex flex-wrap w-full justify-center">
 				<h2 class="mt-2 mb-1 w-full">Working Sample</h2>
-				<h3 v-if="audit.domain" class="text-base">{{audit.domain.url}}</h3>
+				<h3 v-if="audit.domain" class="text-base">
+					{{audit.domain.url}}
+					<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
+				</h3>
 				<span class="text-base my-2">The working sample takes the structured list created with the domain and calculates 10% of the number of items in it. It will then grab that number of pages at random from the sitemap (if it was provided with the domain) and combine them to form the working sample.</span>
 				<span v-if="!loading && audit.pages.length" class="my-2 text-base"><span class="font-bold">Refresh Sample:</span> Pull in any changes made the the structured sample while retaining the original sitemap sample</span>
 				<span v-if="!loading && audit.pages.length" class="my-2 text-base"><span class="font-bold">Regenerate Sample:</span> Completely rebuild the working sample, including a new random sample from the sitemap, if provided.</span>

@@ -399,6 +399,10 @@
 						column = ((item)=>{
 							if( item.pages ){
 								let domain = this.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
+								
+								if( this.$store.state.audits.audit.domain.root ){
+									domain = domain + "/" + this.$store.state.audits.audit.domain.root.replace(/\/$/gm, "")
+								}
 								let output = ""
 								for (let x = 0; x < item.pages.length; x++) {
 									let page = item.pages[x]
@@ -473,15 +477,16 @@
 								toSearch = c[column].map( a=>a.display)
 							}
 							if( column == "pages" ){
-								toSearch = c[column].map( a=>a.title)
+								toSearch = c[column].map( a=>a.title )
 							}
 							if( !self.search.caseSensitive ){
 								return toSearch.join("").toLowerCase().includes(self.search.term)
 							}
 							return toSearch.join("").includes(self.search.term)
 						}else{
+							
 							if( !self.search.caseSensitive ){
-								return c[column].toLowerCase().includes(self.search.term)
+								return c[column].toLowerCase().includes(self.search.term.toLowerCase())
 							}
 							return c[column].includes(self.search.term)
 						}
@@ -535,12 +540,22 @@
 								}
 								if( element.url ){
 									let domain = this.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
+									
+									if( this.$store.state.audits.audit.domain.root ){
+										domain = domain + "/" + this.$store.state.audits.audit.domain.root.replace(/\/$/gm, "")
+									}
 									let url = element.url
 									if( url == "/" ){
 										url = ""
 									}
+									
 									if( !url.includes(domain) ){
-										url = domain + "/" + url
+										if( url[0] == "/" ){
+											url = domain + url
+										}
+										else{
+											url = domain + "/" + url
+										}
 									}
 									content += '<a target="_blank" href="'+url+'">' + url + '</a>'
 								}

@@ -91,6 +91,23 @@ export default {
 					state.loading = false;
 				})
 			},
+			saveRoot({state, rootState}, args){
+				state.loading = true;
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/root`, {
+					params: {
+						root: args.root
+					}
+				})
+				.then( re=>{
+					state.domain = re.data.details
+				})
+				.catch( re=>{
+					console.log(re);
+				})
+				.then( ()=>{
+					state.loading = false;
+				})
+			},
 			
 			getDomains({state, rootState}, args){
 				state.loading = true

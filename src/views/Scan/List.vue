@@ -19,7 +19,10 @@
                         <div class="text-sm text-gray-900">{{row.data.issues.length}}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="capitalize text-sm text-gray-900">{{row.data.domain.url}}</div>
+                        <div class="capitalize text-sm text-gray-900">
+                            {{row.data.domain.url}}
+                            <template v-if="row.data.domain.root">/{{row.data.domain.root}}</template>
+                        </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="capitalize text-sm text-gray-900">{{row.data.pages.length}}</div>

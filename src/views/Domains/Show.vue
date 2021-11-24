@@ -6,7 +6,9 @@
 		<!-- <A class="pr-3" type='router-link' :to="{path: `/projects/${domain.project_id}`}">View Project</A> -->
 		<A type='router-link' :to="{name: `NewScan`, params: {type:'domain', id: $route.params.id} }">Initiate Scan</A>
 		
-		<h3 class="mb-3">{{domain.url}}</h3>
+		<h3 class="mb-3">
+			{{domain.url}}<template v-if="domain.root">/{{domain.root}}</template>
+		</h3>
 		
 		<div class="flex">
 			<div class="flex-1 flex flex-col">

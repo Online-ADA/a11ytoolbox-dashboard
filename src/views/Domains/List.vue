@@ -6,12 +6,14 @@
             <h2>All Domains for {{project.name}}</h2>
             <ul class="flex flex-col items-center" v-if="domains.length">
                 <li class="flex items-center" v-for="(domain, id) in domains" :key="id">
-                    <span class="mr-3">{{domain.url}}</span>
+                    <span class="mr-3">
+                        {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template>
+                    </span>
                     <A class="block mr-3" type="router-link" :to="{path: `/domains/${domain.id}/edit`}">
-                        <span class="sr-only">Edit Domain {{domain.url}}</span>
+                        <span class="sr-only">Edit Domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span>
                         <i class="far fa-pencil"></i>
                     </A>
-                    <button @click.prevent="checkDeleteDomain(domain)"><i class="fas fa-trash-alt"></i><span class="sr-only">Delete domain {{domain.url}}</span></button>
+                    <button @click.prevent="checkDeleteDomain(domain)"><i class="fas fa-trash-alt"></i><span class="sr-only">Delete domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span></button>
                 </li>
             </ul>
         </template>

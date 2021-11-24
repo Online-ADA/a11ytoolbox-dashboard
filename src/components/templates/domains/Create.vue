@@ -36,7 +36,9 @@
 				<div class="w-full flex flex-col items-center">
 					<Label for="choose_select"><h1>Select a domain for {{project.name}}</h1></Label>
 					<select class="w-1/2 block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" name="choose_domain" id="choose_select">
-						<option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">{{domain.url}}</option>
+						<option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">
+							{{domain.url}}<template v-if="domain.root">/{{domain.root}}</template>
+						</option>
 					</select>
 					<Button class="mt-3" @click.native.prevent="setComplete" color="red" hover="true">Continue</Button>
 					<h2 class="my-3">Or create a new one</h2>

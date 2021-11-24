@@ -12,7 +12,9 @@
 		</template>
 		<h2 class="mb-1">{{domain.url}}</h2>
 		<div class="flex items-center justify-center mb-3">
-			<h3 class="pr-2">{{domain.url}}</h3>
+			<h3 class="pr-2">
+				{{domain.url}}<template v-if="domain.root">/{{domain.root}}</template>
+			</h3>
 			<Button @click.native.prevent="editDomainOpen = true" :hover="true"><i class="far fa-edit"></i></Button>
 		</div>
 		<Modal style="z-index:71;" :open="editDomainOpen">
