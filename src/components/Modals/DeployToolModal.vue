@@ -3,6 +3,10 @@
 		<h1 class="mb-2 headline">Select a Tool to Deploy</h1>
 		
 		<div v-if="myTeam == 1 || myTeam == 2">
+			<!-- <button class="mr-2 text-center text-pallette-button hover:text-pallette-button-hover" @click.prevent="EventBus.openModal( ()=>{ EventBus.$emit('deployToolModal', false); EventBus.$emit('deployWCAGAuditModal', true); })">
+				<div><i class="far fa-wrench"></i></div>
+				WCAG Audit
+			</button> -->
 			<Button @click.native.prevent="EventBus.openModal( ()=>{ EventBus.$emit('deployToolModal', false); EventBus.$emit('deployWCAGAuditModal', true); })" class="mr-2 text-center">
 				<div><i class="far fa-wrench"></i></div>
 				WCAG Audit

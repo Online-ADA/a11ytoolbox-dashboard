@@ -7,10 +7,10 @@
 		@apply text-4xl;
 	}
 	.headline {
-		@apply text-headline font-headline;
+		@apply text-headline font-headline font-bold uppercase;
 	}
 	.subheadline {
-		@apply text-subheadline font-subheadline;
+		@apply text-subheadline font-subheadline font-semibold uppercase;
 	}
 	.headline-2 {
 		@apply text-headline-2 font-semibold font-headline-2 uppercase;
@@ -40,7 +40,7 @@
 		@apply focus:outline-black;
 	}
 	button.standard{
-		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover text-base font-semibold transition-colors text-white px-2;
+		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover text-base font-button transition-colors text-white px-2;
 	}
 	button.standard.alert{
 		@apply bg-pallette-alert hover:bg-pallette-alert-hover;

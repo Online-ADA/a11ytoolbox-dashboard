@@ -94,7 +94,7 @@ export default {
 }
 #sidebar .primary li.selected {
     border-left-color: #C80A00;
-    background-color: rgba(97, 97, 97, 1);
+    background-color: #272727;
 }
 #nav{
     height: calc(100vh - 60px);

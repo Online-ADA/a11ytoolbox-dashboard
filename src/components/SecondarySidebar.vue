@@ -35,7 +35,7 @@
                         </span>
                         <div class="block">
                             <ul>
-                                <li :class="[(mediaAudits.audit && mediaAudits.audit.id === item.id) ? 'selected' : '']" class="text-sm py-2" v-for="item in mediaAudits.all" :key="item.id">
+                                <li :class="[(mediaAudits.audit && mediaAudits.audit.id === item.id) ? 'selected' : '']" class="text-sm py-2 text-white" v-for="item in mediaAudits.all" :key="item.id">
                                     <button class="text-black" @click="updateMediaAudit(item)">{{getTitle(item)}}</button>
                                 </li>
                             </ul>
@@ -179,7 +179,7 @@ button.deploy-tool > div{
     padding-left:12px;
 }
 .tool-container ul li.selected{
-    background-color: rgba(202, 202, 202, 0.8);
+    background-color: #717171;
     border-left-color:#C80A00;
 }
 .sub-sidebar{
