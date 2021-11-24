@@ -58,15 +58,15 @@ module.exports = {
             DEFAULT: "#0c793d",
           },
           blue: {
-            light: "#1f74ff",
-            DEFAULT: "#005E86",
+            light: "#005E86",
+            DEFAULT: "#004458",
             dark: "#004f70"
           },
           gold: {
             DEFAULT: "#F9A51A"
           },
           button:{
-            DEFAULT: "#004358",
+            DEFAULT: "#004458",
             hover: "#005e86"
           }
         },

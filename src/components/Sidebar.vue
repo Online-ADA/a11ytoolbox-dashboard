@@ -1,5 +1,5 @@
 <template>
-  <div class="primary flex shadow-lg bg-pallette-grey-dark text-white relative" >
+  <div class="primary flex shadow-lg text-white relative" >
         <div>
             <div class="flex" style="width:200px;overflow-y:auto;">
                 <ul v-if="$store.state.clients.client" id="nav" class="flex-1">
@@ -76,6 +76,7 @@ export default {
 
 #sidebar .primary{
     z-index:10;
+    background-color: #171717;
 }
 #nav{
     padding-top:5px;

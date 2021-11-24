@@ -1,5 +1,5 @@
 <template>
-    <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full fixed px-4 py-2 bg-pallette-grey shadow-custom overflow-visible">
+    <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full fixed px-4 py-2 shadow-custom overflow-visible">
         <router-link class="block" :to="{path:'/'}"><img alt="Ally Toolbox by Online ADA" src="../assets/logo-toolbox.png" /></router-link>
         <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
@@ -213,6 +213,7 @@ export default {
     transition-property: padding;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
+    background-color:#004458;
 }
 #header-container .menu-button{
     margin-left:60px;

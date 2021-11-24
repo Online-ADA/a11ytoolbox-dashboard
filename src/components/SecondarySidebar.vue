@@ -2,15 +2,14 @@
     <div class="flex shadow-lg transition-all sub-sidebar secondary relative">
         <div class="fixed">
             <div class="flex sub-nav-container" >
-                <button @click.prevent="EventBus.openModal(()=>{ EventBus.$emit('deployToolModal', true) })" aria-label="Deploy New Tool" class="deploy-tool text-white text-2xl absolute">
-                    <div>
-                        <i class="far fa-plus-octagon"></i>
+                <button @click.prevent="EventBus.openModal(()=>{ EventBus.$emit('deployToolModal', true) })" aria-label="Deploy New Tool" class="deploy-tool text-white absolute">
+                    <div class="bg-pallette-button hover:bg-pallette-button-hover oswald">
+                        +
                     </div>
-                    
                 </button>
                 <ul class="pt-2.5 flex-1 px-5">
                     <!-- Tools Level -->
-                    <li class="py-1 tool-container" :class="[expanded.includes('audit') ? 'expanded' : '']">
+                    <li class="py-1 tool-container text-white" :class="[expanded.includes('audit') ? 'expanded' : '']">
                         <span class="flex items-center">
                             <button @click.prevent="expand('audit')" class="">
                                 <i v-if="!expanded.includes('audit')" class="fas fa-caret-right"></i>
@@ -21,12 +20,12 @@
                         <div class="block">
                             <ul>
                                 <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.audits.all" :key="item.id">
-                                    <button class="text-black" @click="updateAudit(item)">{{getTitle(item)}}</button>
+                                    <button class="text-white" @click="updateAudit(item)">{{getTitle(item)}}</button>
                                 </li>
                             </ul>
                         </div>
                     </li>
-                    <li class="py-1 tool-container" :class="[expanded.includes('media_audit') ? 'expanded' : '']">
+                    <li class="py-1 tool-container text-white" :class="[expanded.includes('media_audit') ? 'expanded' : '']">
                         <span class="flex items-center">
                             <button @click.prevent="expand('media_audit')" class="">
                                 <i v-if="!expanded.includes('media_audit')" class="fas fa-caret-right"></i>
@@ -138,12 +137,14 @@ export default {
 button.deploy-tool{
     top:5px;
     right:-10px;
-    width: 34px;
-    height: 34px;
 }
 button.deploy-tool > div{
-    background-color: #004458;
     clip-path: circle(50% at 50% 50%);
+    font-size: 40px;
+    height: 34px;
+    width: 34px;
+    line-height: 0.8;
+    padding-top: 1px;
 }
 .tool-container button{
     width:100%;
@@ -187,7 +188,7 @@ button.deploy-tool > div{
     flex-grow:0;
     flex-shrink:0;
     z-index:9;
-    background-color: #E5E5E5;
+    background-color: #666666;
 }
 .sub-sidebar > div.fixed{
     display:none;
