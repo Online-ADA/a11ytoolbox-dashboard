@@ -4,10 +4,10 @@
 		
 		<template v-if="audit">
 			<!-- <h2 class="mb-1 text-xl">{{audit.title}}</h2> -->
-			<template v-if="audit.status == 'in_progress'">
-				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>Audit is currently running and could take a couple of minutes. Data will be refreshed on audit completion.
+			<template v-if="audit.status == 'running_automation'">
+				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>An automated audit is currently running and could take a couple of minutes. Data will be refreshed on completion.
 			</template>
-			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
+			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-else-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
