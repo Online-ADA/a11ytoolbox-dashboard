@@ -79,6 +79,7 @@ export default {
 				.then( re=>{
 					//Add the new domain to the selected project, NOT THE GLOBAL PROJECT
 					// rootState.projects.all.find(p=>p.id == args.domain.project_id).domains.push(re.data.details)
+					rootState.projects.project.domains = [];
 					rootState.projects.project.domains.push(re.data.details);
 					if( args.callback ){
 						args.callback(re.data.details)
