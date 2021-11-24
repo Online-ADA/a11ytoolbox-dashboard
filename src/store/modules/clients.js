@@ -173,11 +173,6 @@ export default {
 					text: "Client updated",
 					callback: function(){
 						state.loading = false
-						// if( rootGetters["auth/isManager"] ){
-						// 	args.router.push({path: "/manage/clients"})
-						// 	return
-						// }
-						args.router.push({path: "/"})
 					}
 				},
 				onWarn:{
