@@ -89,15 +89,60 @@
 					@mouseup="up(data, $event)" 
 					v-for="(data, index) in rows" 
 					:key="'row-'+index">
-						<td 
+
+
+						<td
+						tabindex="-1" 
+						class="p-2"
+						v-for="(header, subIndex) in headers"
+						:class="headers.hasOwnProperty(subIndex) ? getTDClasses(subIndex, translateHeader(header.header)) : false"
+						:style="headers.hasOwnProperty(subIndex) ? headers[subIndex].style : false"
+						v-show="headers.hasOwnProperty(subIndex) && columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent ? true : false"
+						:data-key="translateHeader(header.header)"
+						:key="`row-${index}-column-${subIndex}`"
+						>
+							<span tabindex="-1" v-if="(translateHeader(header.header) == 'articles' && $store.state.audits.articles.length) || 
+													   (translateHeader(header.header) == 'techniques' && $store.state.audits.techniques.length) ||
+													   (translateHeader(header.header) != 'techinques' && translateHeader(header.header) != 'articles')"
+							>
+								<template v-if="listKeys.includes(translateHeader(header.header))">
+									<span 
+									tabindex="-1" 
+									class="text-left block" 
+									:class="{'break-words': plainKeys.includes(translateHeader(header.header))}"
+									v-html="displayValue(translateHeader(header.header), data[translateHeader(header.header)])"></span>
+								</template>
+
+								<template v-else-if="data.how_discovered == 'Automated Audit' && (translateHeader(header.header) == 'descriptions' || translateHeader(header.header) =='recommendations')">
+									
+									<span class="block break-words" tabindex="-1" >{{displayValue(translateHeader(header.header), data[translateHeader(header.header)])}}</span>
+								</template>
+
+								<template v-else-if="translateHeader(header.header) == 'target' || translateHeader(header.header) =='html'">
+									<span class="block break-words" tabindex="-1" >{{displayValue(translateHeader(header.header), data[translateHeader(header.header)])}}</span>
+								</template>
+
+								<template v-else>
+									<span class="block" tabindex="-1" :class="{'text-left ql-editor': translateHeader(header.header) == 'descriptions' || translateHeader(header.header) == 'recommendations', 'break-words': plainKeys.includes(translateHeader(header.header))}"  v-html="displayValue(translateHeader(header.header), data[translateHeader(header.header)])"></span>
+								</template>
+								
+							</span>
+							
+						</td>
+
+
+
+
+						<!-- <td 
 						tabindex="-1" 
 						class="p-2" 
 						:ref="'columnData-'+ subIndex" 
 						:class="headers.hasOwnProperty(subIndex) ? getTDClasses(subIndex, key) : false" 
 						:style="headers.hasOwnProperty(subIndex) ? headers[subIndex].style : false" 
 						v-show="headers.hasOwnProperty(subIndex) && columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent ? true : false" 
-						:data-key="key" v-for="(value, key, subIndex) in data" 
-						:key="'key-'+subIndex">Value: {{value}}, Key: {{key}}, subIndex: {{subIndex}}
+						:data-key="key" 
+						v-for="(value, key, subIndex) in data" 
+						:key="'key-'+subIndex">
 							<span tabindex="-1" v-if="(key == 'articles' && $store.state.audits.articles.length) || 
 													   (key == 'techniques' && $store.state.audits.techniques.length) ||
 													   (key != 'techinques' && key != 'articles')"
@@ -124,7 +169,7 @@
 								</template>
 								
 							</span>
-						</td>
+						</td> -->
 					</tr>
 				</tbody>
 			</table>
@@ -275,7 +320,7 @@
 				if( this.filtering ){
 					return this.filteredRows
 				}
-
+				
 				return this.columnData
 			},
 			originalRows(){
@@ -286,6 +331,16 @@
 			}
 		},
 		methods: {
+			translateHeader(val){
+				if( val == "audit 1 recommendations" ){
+					return "recommendations"
+				}
+				if( val == "success criteria" ){
+					return "articles"
+				}
+
+				return val.replace(" ", "_")
+			},
 			changePage($event){
 				this.$store.dispatch("audits/getIssuesOffset", {audit_id: this.$route.params.id, page: $event})
 				this.current = $event
@@ -511,6 +566,8 @@
 						this.$set(this.headers[realIndex].style, "left", this.getLeftValue(realIndex))
 					}
 				}
+
+				this.$emit("showHideColumns", this.headers.map(h=>h.header))
 	
 				this.closeModal(()=>{this.columnPickerOpen = false})
 			},
@@ -630,7 +687,7 @@
 			getLeftValue(colIndex){
 				let left = 0
 				let nextColLeft = colIndex - 1
-				console.log(nextColLeft);
+				
 				while( nextColLeft >= 0 ){
 					if( this.headers[nextColLeft].sticky && this.headers[nextColLeft].show ){
 						left = parseInt(this.headers[nextColLeft].style.left.replace("px", "")) + parseInt(this.headers[nextColLeft].width.replace("px", ""))
@@ -769,15 +826,6 @@
 			headers(newVal){
 				this.search.column = newVal.filter( h=>h.show )[0].header
 				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
-				// for( let c in this.headers ){
-				// 	if( this.headers[c].sticky && c == "0" ){
-				// 		this.$set(this.headers[c].style, "left", 0)
-				// 	}
-				// 	if( this.headers[c].sticky && c != "0" && this.headers[c].show ){
-				// 		let col = this.$refs['header-' + (c-1)][0]
-				// 		this.$set(this.headers[c].style, "left", col.offsetWidth + 'px')
-				// 	}
-				// }
 			},
 		},
 		components: {

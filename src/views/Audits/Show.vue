@@ -8,7 +8,7 @@
 				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>An automated audit is currently running and could take a couple of minutes. Data will be refreshed on completion.
 			</template>
 			
-			<Table @moveColumn="(payload)=>{ metaEvent('audits', 'issues-columns-positions', payload) }" :defaultSortData="tableDefaultSortBy" @freezeColumn="(payload)=>{ metaEvent('audits', 'issues-columns-stickied', payload) }" :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
+			<Table @showHideColumns="(payload)=>{ metaEvent('audits', 'issues-columns-visible', payload) }" @moveColumn="(payload)=>{ metaEvent('audits', 'issues-columns-positions', payload) }" :defaultSortData="tableDefaultSortBy" @freezeColumn="(payload)=>{ metaEvent('audits', 'issues-columns-stickied', payload) }" :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
@@ -651,7 +651,7 @@ export default {
 
 			for( let key of headers ){
 				arr.push({
-					header: key == "recommendations" ? "Audit 1 Recommendations" : this.parseHeader(key),
+					header: this.parseHeader(key),
 					show: !hide.includes(key),
 					sticky: stickied.includes(key),
 					style: {},
@@ -904,6 +904,9 @@ export default {
 		parseHeader(string){
 			if( string == "articles" ){
 				return "success criteria"
+			}
+			if( string == "recommendations" ){
+				return "audit 1 recommendations"
 			}
 			return string.replace(/[-_.]/gm, " ");
 		},
