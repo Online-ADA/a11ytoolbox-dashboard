@@ -97,7 +97,7 @@
 						:style="headers.hasOwnProperty(subIndex) ? headers[subIndex].style : false" 
 						v-show="headers.hasOwnProperty(subIndex) && columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent ? true : false" 
 						:data-key="key" v-for="(value, key, subIndex) in data" 
-						:key="'key-'+subIndex">
+						:key="'key-'+subIndex">Value: {{value}}, Key: {{key}}, subIndex: {{subIndex}}
 							<span tabindex="-1" v-if="(key == 'articles' && $store.state.audits.articles.length) || 
 													   (key == 'techniques' && $store.state.audits.techniques.length) ||
 													   (key != 'techinques' && key != 'articles')"
@@ -212,6 +212,11 @@
 			locked: {
 				type: Boolean,
 				default: false
+			},
+			defaultSortData: {
+				columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
+				orders: [ "asc" ],
+				reference: ["id"]
 			}
 		},
 		data(){
@@ -240,11 +245,7 @@
 					"html",
 				],
 				specialKeys : ["articles", "techniques"],
-				sortData: {
-					columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
-					orders: [ "asc" ],
-					reference: ["id"]
-				},
+				sortData: {},
 				columnPickerOpen: false,
 				headers: [],
 				columnData: [],
@@ -629,6 +630,7 @@
 			getLeftValue(colIndex){
 				let left = 0
 				let nextColLeft = colIndex - 1
+				console.log(nextColLeft);
 				while( nextColLeft >= 0 ){
 					if( this.headers[nextColLeft].sticky && this.headers[nextColLeft].show ){
 						left = parseInt(this.headers[nextColLeft].style.left.replace("px", "")) + parseInt(this.headers[nextColLeft].width.replace("px", ""))
@@ -650,6 +652,10 @@
 				}else{
 					this.$set(header.style, "left", "initial")
 				}
+
+				//Emit all stickied headers
+				let allStickied = this.headers.filter(h=>h.sticky).map(h=>h.header)
+				this.$emit("freezeColumn", allStickied)
 			},
 			getStickyClasses(){
 				return "sticky z-10"
@@ -691,6 +697,8 @@
 						this.$set( this.columnData, row, arrangedProperties )
 					}
 				}
+
+				this.$emit("moveColumn", this.headers.map(h=>h.header))
 			},
 			rowClasses(data){
 				let classes = []
@@ -706,6 +714,12 @@
 			},
 		},
 		mounted(){
+			for (let x = 0; x < this.headers.length; x++) {
+				if( this.headers[x].sticky ){
+					this.$set(this.headers[x].style, "left", this.getLeftValue(x))
+				}
+			}
+
 			document.querySelector("table").addEventListener( "keydown", function(e){
 				setTimeout(()=>{
 					if( e.code == "Tab" ){
@@ -736,7 +750,7 @@
 			this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
 			this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
 			this.headers = JSON.parse(JSON.stringify(this.headersData))
-
+			this.sortData = this.defaultSortData
 		},
 		watch:{
 			rows(val){
@@ -755,15 +769,15 @@
 			headers(newVal){
 				this.search.column = newVal.filter( h=>h.show )[0].header
 				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
-				for( let c in this.headers ){
-					if( this.headers[c].sticky && c == "0" ){
-						this.$set(this.headers[c].style, "left", 0)
-					}
-					if( this.headers[c].sticky && c != "0" && this.headers[c].show ){
-						let col = this.$refs['header-' + (c-1)][0]
-						this.$set(this.headers[c].style, "left", col.offsetWidth + 'px')
-					}
-				}
+				// for( let c in this.headers ){
+				// 	if( this.headers[c].sticky && c == "0" ){
+				// 		this.$set(this.headers[c].style, "left", 0)
+				// 	}
+				// 	if( this.headers[c].sticky && c != "0" && this.headers[c].show ){
+				// 		let col = this.$refs['header-' + (c-1)][0]
+				// 		this.$set(this.headers[c].style, "left", col.offsetWidth + 'px')
+				// 	}
+				// }
 			},
 		},
 		components: {
