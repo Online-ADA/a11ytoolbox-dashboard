@@ -247,16 +247,13 @@ export default {
 					}
 
 					rootState.audits.all.push(re.data.details)
+					rootState.projects.project.audits.push(re.data.details)
+					rootState.overview.refresh.account.audits = true
+					
 					if( args.vm ){
 						args.vm.complete = true
 					}
-					// setTimeout(()=>{
-					// 	// if( rootGetters["auth/isManager"] ){
-					// 	// 	args.router.push({path: "/manage/audits"})
-					// 	// 	return
-					// 	// }
-					// 	args.router.push({path: `/audits/${re.data.details}`})
-					// }, 2000)
+					
 				})
 				.catch(re=>{
 					console.log(re)

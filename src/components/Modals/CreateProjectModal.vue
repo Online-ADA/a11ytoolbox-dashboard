@@ -40,7 +40,7 @@
 		</template>
 		<template v-if="complete">
 			<h1 class="pb-5">Do you want to deploy a tool?</h1>
-			<button @click.prevent="EventBus.openModal( ()=>{ EventBus.$emit('createProjectModal', false); EventBus.$emit('deployToolModal', true); })" class="standard mr-2">Yes</button>
+			<button @click.prevent="EventBus.openModal( ()=>{ EventBus.$emit('createProjectModal', false); EventBus.$emit('deployToolModal', true); reset(); })" class="standard mr-2">Yes</button>
 			<button @click.prevent="chooseNo" class="standard">No</button>
 		</template>
 	</Modal>

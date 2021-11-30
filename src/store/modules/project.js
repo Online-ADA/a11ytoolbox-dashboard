@@ -204,6 +204,37 @@ export default {
 				.catch( re=>console.log(re))
 				.then( ()=>state.loading = false)
 			},
+			deleteProject({state, rootState}, args){
+				state.loading = true
+				let index = state.all.findIndex(p=>p.id == args.project_id)
+				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}`)
+				.then( re => {
+					state.loading = false
+					state.all = re.data.details
+					
+					if( state.all.length && index > 0 ){
+						state.project = state.all[index]
+					}
+					// if( !Request.muted() ){
+					// 	Vue.notify({
+					// 		title: "Success",
+					// 		text: "Project deleted",
+					// 		type: "success"
+					// 	})
+					// }
+				})
+				.catch( re => {
+					console.log( re );
+					state.loading = false
+					// if( !Request.muted() ){
+					// 	Vue.notify({
+					// 		title: "Error",
+					// 		text: re.error,
+					// 		type: "error"
+					// 	})
+					// }
+				} )
+			},
 		},
 		getters: { 
 			

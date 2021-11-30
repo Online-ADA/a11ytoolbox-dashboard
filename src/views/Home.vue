@@ -52,12 +52,7 @@ export default {
   data(){
     return {
       message: "",
-      usersData: {
-        "executive": [],
-        "development": [],
-        "design":[],
-        "customer_service":[]
-      }
+      totalWCAGAudits: 0
     }
   },
   components: {
@@ -67,14 +62,45 @@ export default {
     A
   },
   methods:{
+    
   },
   mounted(){
-    // this.$store.state.projects.project = false
-    // if( this.account ){
-    //   this.$store.dispatch("user/getAllAccountUsers")
-    // }
+    this.$store.state.overview.refresh.account.audits = true
   },
   computed: {
+    usersData(){
+      let data = {
+        "executive": [],
+        "development": [],
+        "design":[],
+        "customer_service":[]
+      }
+
+      if( !this.$store.state.user.all.length ){
+        this.$store.dispatch("user/getAllAccountUsers")
+        return data
+      }
+
+      for (let x = 0; x < this.$store.state.user.all.length; x++) {
+        let user = this.$store.state.user.all[x];
+        switch(user.roleInfo.team_id){
+          case 1:
+            data.executive.push(user)
+            break
+          case 2:
+            data.development.push(user)
+            break
+          case 3:
+            data.design.push(user)
+            break
+          case 4:
+            data.customer_service.push(user)
+            break
+        }
+      }
+
+      return data
+    },
     // total(){
     //   return this.$store.state.auth.token_total_minutes_remaining
     // },
@@ -85,6 +111,9 @@ export default {
       let domainsWithoutSitemap = []
       for (let x = 0; x < this.$store.state.projects.all.length; x++) {
         let project = this.$store.state.projects.all[x];
+        if( project.domains == undefined ){
+          project.domains = []
+        }
         
         for (let y = 0; y < project.domains.length; y++) {
           let domain = project.domains[y];
@@ -105,38 +134,31 @@ export default {
     totalProjects(){
       return this.$store.state.projects.all.length
     },
-    totalWCAGAudits(){
-      let total = 0
-      for (let x = 0; x < this.$store.state.projects.all.length; x++) {
-        let project = this.$store.state.projects.all[x];
-        total += project.audits.length
-      }
-      return total
-    },
   },
   watch:{
     account:function(){
       this.$store.dispatch("user/getAllAccountUsers")
     },
-    "$store.state.user.all":function(newVal){
-      if( newVal && newVal.length ){
-        for (let x = 0; x < newVal.length; x++) {
-          let user = newVal[x];
-          switch(user.roleInfo.team_id){
-            case 1:
-              this.usersData.executive.push(user)
-              break
-            case 2:
-              this.usersData.development.push(user)
-              break
-            case 3:
-              this.usersData.design.push(user)
-              break
-            case 4:
-              this.usersData.customer_service.push(user)
-              break
+    "$store.state.projects.all":function(){
+      this.$store.state.overview.refresh.account.audits = true
+    },
+    "$store.state.overview.refresh.account.projects":function() {
+      console.log("firing", this.$store.state.projects.project.audits);
+    },
+    "$store.state.overview.refresh.account.audits":function(newVal) {
+      if( newVal ){
+        this.totalWCAGAudits = 0
+        for (let x = 0; x < this.$store.state.projects.all.length; x++) {
+          let project = this.$store.state.projects.all[x]
+          if( project.audits != undefined ){
+            this.totalWCAGAudits += project.audits.length
+          }else{
+            this.totalWCAGAudits += 0
           }
+          
         }
+
+        this.$store.state.overview.refresh.account.audits = false
       }
     },
     "$store.state.auth.authMessage": {
