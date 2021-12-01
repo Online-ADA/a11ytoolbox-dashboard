@@ -52,7 +52,7 @@
 				</fieldset>
 				
 				<template v-if="propertyType == 'website'">
-					<template v-if="domains.length">
+					<template v-if="$store.state.projects.project.domains != undefined && $store.state.projects.project.domains.length">
 						<h2 id="choose_select_heading" class="pt-4 pb-3 headline-2">Select a Domain</h2>
 						<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('domain') }" id="domain-validation">{{validationMessages["domain"]}}</small>
 						<select 
@@ -62,7 +62,7 @@
 						aria-labelledby="choose_select_heading" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" 
 						name="choose_domain" 
 						id="choose_select">
-							<option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">
+							<option :value="domain.id" v-for="(domain) in $store.state.projects.project.domains" :key="'domain-' + domain.id">
 								{{domain.url}}<template v-if="domain.root">/{{domain.root}}</template>
 							</option>
 						</select>
@@ -71,10 +71,10 @@
 					@click="createDomainSectionOpen = !createDomainSectionOpen" 
 					:aria-expanded="createDomainSectionOpen ? 'true' : 'false'" 
 					class="text-base mt-3">
-						<template v-if="domains.length">
+						<template v-if="$store.state.projects.project.domains != undefined && $store.state.projects.project.domains.length">
 							Or Add a New Domain
 						</template>
-						<template v-if="!domains.length">
+						<template v-if="$store.state.projects.project.domains == undefined || !$store.state.projects.project.domains.length">
 							Create a New Domain
 						</template>
 					</button>
@@ -221,7 +221,7 @@
 			assigned: [],
 			unassigned: [],
 			rootModal: "",
-			complete: false
+			complete: false,
 		}),
 		name: 'CreateWCAGAuditModal',
 		methods:{
@@ -304,6 +304,9 @@
 					that.selectedDomain = domain.id
 					that.domain.url = ""
 					that.url = ""
+					let domains = []
+					domains.push(domain)
+					that.$store.state.projects.project.domains = domains
 				})})
 			},
 			assign(id){
@@ -367,6 +370,9 @@
 		mounted(){},
 		created(){},
 		watch:{
+			"this.$store.state.projects.project":function(newVal){
+
+			},
 			selectedDomain(val) {
 				if(val) {
 					this.createDomainSectionOpen = false
@@ -424,13 +430,16 @@
 			client(){
 				return this.$store.state.clients.client
 			},
-			domains(){
-				if( this.project && this.project.domains ){
-					return this.project.domains
-				}
-
-				return []
-			},
+			// domains(){
+			// 	if( !this.$store.state.projects.project ){
+			// 		return []
+			// 	}
+			// 	if( this.$store.state.projects.project.domains == undefined ){
+			// 		return []
+			// 	}
+				
+			// 	return this.$store.state.projects.project.domains
+			// },
 			loading(){
 				return this.$store.state.audits.loading
 			},

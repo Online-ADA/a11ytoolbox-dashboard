@@ -494,32 +494,6 @@ export default {
 				}
 			} )
 		},
-		deleteProject({state, rootState}, args){
-			state.loading.projects = true
-			Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}`)
-			.then( re => {
-				state.loading.projects = false
-				state.projects = re.data.details
-				if( !Request.muted() ){
-					Vue.notify({
-						title: "Success",
-						text: "Project deleted",
-						type: "success"
-					})
-				}
-			})
-			.catch( re => {
-				console.log( re );
-				state.loading.projects = false
-				if( !Request.muted() ){
-					Vue.notify({
-						title: "Error",
-						text: re.error,
-						type: "error"
-					})
-				}
-			} )
-		},
 		modifyRole({state, rootState}, args){
 			state.loading.users = true
 			Request.post(`${rootState.auth.API}/${rootState.auth.account}/manage/users/setRole`, {

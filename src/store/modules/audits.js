@@ -247,16 +247,13 @@ export default {
 					}
 
 					rootState.audits.all.push(re.data.details)
+					rootState.projects.project.audits.push(re.data.details)
+					rootState.overview.refresh.account.audits = true
+					
 					if( args.vm ){
 						args.vm.complete = true
 					}
-					// setTimeout(()=>{
-					// 	// if( rootGetters["auth/isManager"] ){
-					// 	// 	args.router.push({path: "/manage/audits"})
-					// 	// 	return
-					// 	// }
-					// 	args.router.push({path: `/audits/${re.data.details}`})
-					// }, 2000)
+					
 				})
 				.catch(re=>{
 					console.log(re)
@@ -306,7 +303,12 @@ export default {
 					}
 				})
 				.then( re => {
-					state.all = re.data.details
+					if( !withIssues ){
+						state.all = re.data.details
+					}else{
+						rootState.projects.project.audits = re.data.details
+					}
+
 					for(let i in state.all) {
 						if(!state.intervals[state.all[i].id] && state.all[i].status == 'running_automation') {
 							state.intervals[state.all[i].id] = setInterval(
@@ -499,14 +501,8 @@ export default {
 				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}`)
 				.then( re => {
 					state.loading = false
-					state.all = re.data.details
-					// if( !Request.muted() ){
-					// 	Vue.notify({
-					// 		title: "Success",
-					// 		text: "Audit deleted",
-					// 		type: "success"
-					// 	})
-					// }
+					rootState.projects.project.audits = re.data.details
+					
 				})
 				.catch( re => {
 					console.log( re );

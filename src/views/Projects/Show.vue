@@ -45,7 +45,7 @@ export default {
         return false
       },
       audits(){
-        return this.$store.state.audits.all
+        return this.$store.state.projects.project.audits
       },
       loading(){
         return this.$store.state.domains.loading || this.$store.state.projects.loading || this.$store.state.audits.loading
