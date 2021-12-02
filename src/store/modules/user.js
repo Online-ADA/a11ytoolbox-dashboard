@@ -93,6 +93,23 @@ export default {
 				}
 			})
 		},
+		storeUserMeta({rootState}, args){
+			Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/user/meta`, {
+				params: {
+					meta: {
+						key: args.key,
+						value: args.value,
+						subKeys: args.subKeys
+					}
+				}
+			})
+			.then( re=>{
+				rootState.auth.user.meta = re.data.details
+			})
+			.catch( re=>{
+				console.log(re);
+			})
+		}
 	},
 	getters: { 
 		

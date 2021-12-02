@@ -89,14 +89,59 @@
 					@mouseup="up(data, $event)" 
 					v-for="(data, index) in rows" 
 					:key="'row-'+index">
-						<td 
+
+
+						<td
+						tabindex="-1" 
+						class="p-2"
+						v-for="(header, subIndex) in headers"
+						:class="headers.hasOwnProperty(subIndex) ? getTDClasses(subIndex, translateHeader(header.header)) : false"
+						:style="headers.hasOwnProperty(subIndex) ? headers[subIndex].style : false"
+						v-show="headers.hasOwnProperty(subIndex) && columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent ? true : false"
+						:data-key="translateHeader(header.header)"
+						:key="`row-${index}-column-${subIndex}`"
+						>
+							<span tabindex="-1" v-if="(translateHeader(header.header) == 'articles' && $store.state.audits.articles.length) || 
+													   (translateHeader(header.header) == 'techniques' && $store.state.audits.techniques.length) ||
+													   (translateHeader(header.header) != 'techinques' && translateHeader(header.header) != 'articles')"
+							>
+								<template v-if="listKeys.includes(translateHeader(header.header))">
+									<span 
+									tabindex="-1" 
+									class="text-left block" 
+									:class="{'break-words': plainKeys.includes(translateHeader(header.header))}"
+									v-html="displayValue(translateHeader(header.header), data[translateHeader(header.header)])"></span>
+								</template>
+
+								<template v-else-if="data.how_discovered == 'Automated Audit' && (translateHeader(header.header) == 'descriptions' || translateHeader(header.header) =='recommendations')">
+									
+									<span class="block break-words" tabindex="-1" >{{displayValue(translateHeader(header.header), data[translateHeader(header.header)])}}</span>
+								</template>
+
+								<template v-else-if="translateHeader(header.header) == 'target' || translateHeader(header.header) =='html'">
+									<span class="block break-words" tabindex="-1" >{{displayValue(translateHeader(header.header), data[translateHeader(header.header)])}}</span>
+								</template>
+
+								<template v-else>
+									<span class="block" tabindex="-1" :class="{'text-left ql-editor': translateHeader(header.header) == 'descriptions' || translateHeader(header.header) == 'recommendations', 'break-words': plainKeys.includes(translateHeader(header.header))}"  v-html="displayValue(translateHeader(header.header), data[translateHeader(header.header)])"></span>
+								</template>
+								
+							</span>
+							
+						</td>
+
+
+
+
+						<!-- <td 
 						tabindex="-1" 
 						class="p-2" 
 						:ref="'columnData-'+ subIndex" 
 						:class="headers.hasOwnProperty(subIndex) ? getTDClasses(subIndex, key) : false" 
 						:style="headers.hasOwnProperty(subIndex) ? headers[subIndex].style : false" 
 						v-show="headers.hasOwnProperty(subIndex) && columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent ? true : false" 
-						:data-key="key" v-for="(value, key, subIndex) in data" 
+						:data-key="key" 
+						v-for="(value, key, subIndex) in data" 
 						:key="'key-'+subIndex">
 							<span tabindex="-1" v-if="(key == 'articles' && $store.state.audits.articles.length) || 
 													   (key == 'techniques' && $store.state.audits.techniques.length) ||
@@ -124,7 +169,7 @@
 								</template>
 								
 							</span>
-						</td>
+						</td> -->
 					</tr>
 				</tbody>
 			</table>
@@ -212,6 +257,14 @@
 			locked: {
 				type: Boolean,
 				default: false
+			},
+			sortData: {
+				type: Object,
+				default:{
+					columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
+					orders: [ "asc" ],
+					reference: ["id"]
+				}
 			}
 		},
 		data(){
@@ -240,11 +293,9 @@
 					"html",
 				],
 				specialKeys : ["articles", "techniques"],
-				sortData: {
-					columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
-					orders: [ "asc" ],
-					reference: ["id"]
-				},
+				// sortData: {
+
+				// },
 				columnPickerOpen: false,
 				headers: [],
 				columnData: [],
@@ -274,7 +325,7 @@
 				if( this.filtering ){
 					return this.filteredRows
 				}
-
+				
 				return this.columnData
 			},
 			originalRows(){
@@ -282,9 +333,19 @@
 			},
 			importingRows(){
 				return this.rows.filter( r=>r.hasOwnProperty('unique') )
-			}
+			},
 		},
 		methods: {
+			translateHeader(val){
+				if( val == "audit 1 recommendations" ){
+					return "recommendations"
+				}
+				if( val == "success criteria" ){
+					return "articles"
+				}
+
+				return val.replace(" ", "_")
+			},
 			changePage($event){
 				this.$store.dispatch("audits/getIssuesOffset", {audit_id: this.$route.params.id, page: $event})
 				this.current = $event
@@ -364,7 +425,7 @@
 					}
 				}
 			},
-			sort( column ){
+			sort( column, quiet = false ){
 				if( column ){
 					column = column.replaceAll(/[ ]/g, "_")
 					//String reference is necessary because sometimes our column becomes an anonymous function
@@ -420,7 +481,7 @@
 										output += domain + "/" + url
 									}
 								}
-								console.log(output);
+								
 								return output
 							}
 							return ""
@@ -455,6 +516,10 @@
 				
 				this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
 				this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
+
+				if( !quiet ){
+					this.$emit("sort", this.sortData)
+				}
 			},
 			submitTableSearch(){
 				if( this.search.term ){
@@ -510,6 +575,18 @@
 						this.$set(this.headers[realIndex].style, "left", this.getLeftValue(realIndex))
 					}
 				}
+				let toEmit = this.headers.filter(h=>h.show && !h.hidePermanent).map(h=>{
+					
+					if( h.header == "audit 1 recommendations" ){
+						return "recommendations"
+					}
+					if( h.header == "success criteria" ){
+						return "articles"
+					}
+					return h.header.replaceAll(" ", "_")
+				})
+				
+				this.$emit("hideColumns", toEmit)
 	
 				this.closeModal(()=>{this.columnPickerOpen = false})
 			},
@@ -629,6 +706,7 @@
 			getLeftValue(colIndex){
 				let left = 0
 				let nextColLeft = colIndex - 1
+				
 				while( nextColLeft >= 0 ){
 					if( this.headers[nextColLeft].sticky && this.headers[nextColLeft].show ){
 						left = parseInt(this.headers[nextColLeft].style.left.replace("px", "")) + parseInt(this.headers[nextColLeft].width.replace("px", ""))
@@ -650,6 +728,10 @@
 				}else{
 					this.$set(header.style, "left", "initial")
 				}
+
+				//Emit all stickied headers
+				let allStickied = this.headers.filter(h=>h.sticky).map(h=>h.header)
+				this.$emit("freezeColumn", allStickied)
 			},
 			getStickyClasses(){
 				return "sticky z-10"
@@ -691,6 +773,8 @@
 						this.$set( this.columnData, row, arrangedProperties )
 					}
 				}
+
+				this.$emit("moveColumn", this.headers.map(h=>h.header))
 			},
 			rowClasses(data){
 				let classes = []
@@ -706,6 +790,12 @@
 			},
 		},
 		mounted(){
+			for (let x = 0; x < this.headers.length; x++) {
+				if( this.headers[x].sticky ){
+					this.$set(this.headers[x].style, "left", this.getLeftValue(x))
+				}
+			}
+
 			document.querySelector("table").addEventListener( "keydown", function(e){
 				setTimeout(()=>{
 					if( e.code == "Tab" ){
@@ -736,7 +826,6 @@
 			this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
 			this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
 			this.headers = JSON.parse(JSON.stringify(this.headersData))
-
 		},
 		watch:{
 			rows(val){
@@ -749,22 +838,17 @@
 				}
 			},
 			rowsData(newVal){
+				console.log("SORTDATA",this.sortData);
 				this.columnData = JSON.parse(JSON.stringify(newVal))
-				this.sort()
+				this.sort(false, true)
 			},
 			headers(newVal){
 				this.search.column = newVal.filter( h=>h.show )[0].header
 				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
-				for( let c in this.headers ){
-					if( this.headers[c].sticky && c == "0" ){
-						this.$set(this.headers[c].style, "left", 0)
-					}
-					if( this.headers[c].sticky && c != "0" && this.headers[c].show ){
-						let col = this.$refs['header-' + (c-1)][0]
-						this.$set(this.headers[c].style, "left", col.offsetWidth + 'px')
-					}
-				}
 			},
+			sortData(){
+				this.sort(false, true)
+			}
 		},
 		components: {
 			Modal,

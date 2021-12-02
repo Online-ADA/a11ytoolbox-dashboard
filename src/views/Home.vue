@@ -137,15 +137,19 @@ export default {
   },
   watch:{
     account:function(){
-      this.$store.dispatch("user/getAllAccountUsers")
+      if( !this.gettingUsers ){
+        this.$store.dispatch("user/getAllAccountUsers")
+        this.gettingUsers = true
+      }
     },
     "$store.state.projects.all":function(){
       this.$store.state.overview.refresh.account.audits = true
     },
-    "$store.state.overview.refresh.account.projects":function() {
-      console.log("firing", this.$store.state.projects.project.audits);
-    },
+    // "$store.state.overview.refresh.account.projects":function() {
+    //   console.log("firing", this.$store.state.projects.project.audits);
+    // },
     "$store.state.overview.refresh.account.audits":function(newVal) {
+      //Refreshes the number of audits on the account when the overview refresh property is triggered true
       if( newVal ){
         this.totalWCAGAudits = 0
         for (let x = 0; x < this.$store.state.projects.all.length; x++) {

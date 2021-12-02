@@ -7,7 +7,8 @@
 			<template v-if="audit.status == 'running_automation'">
 				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>An automated audit is currently running and could take a couple of minutes. Data will be refreshed on completion.
 			</template>
-			<Table :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-else-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
+			
+			<Table @sort="(payload)=>{ metaEvent('audits', 'issues-columns-sortedBy', payload) }" @hideColumns="(payload)=>{ metaEvent('audits', 'issues-columns-visible', payload) }" @moveColumn="(payload)=>{ metaEvent('audits', 'issues-columns-positions', payload) }" :sortData="tableDefaultSortBy" @freezeColumn="(payload)=>{ metaEvent('audits', 'issues-columns-stickied', payload) }" :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
@@ -442,7 +443,12 @@ export default {
 		},
 		showValidationAlert: false,
 		fixCSVIssues : { auditLoaded: false, articlesLoaded: false},
-		issuesFixed: false
+		issuesFixed: false,
+		tableDefaultSortBy: {
+			columns: [ "id" ],
+			orders: [ "asc" ],
+			reference: ["id"]
+		}
 	}),
 	computed: {
 		isManager(){
@@ -501,32 +507,10 @@ export default {
 			if( !this.issues.length ){
 				return arr
 			}
-			let widthMap = {
-				id: "150px",
-				pages: "250px",
-				status: "150px",
-				how_discovered: "150px",
-				audit_states: "150px",
-				target: "300px",
-				screenshots: "250px",
-				resources: "250px",
-				browser_combos: "300px",
-				essential_functionality: "300px",
-				articles: "150px",
-				techniques: "150px",
-				recommendations: "400px",
-				descriptions: "400px",
-				levels: "150px",
-				actrs: "250px",
-				created_by: "250px",
-				issue_number: "150px",
-				priority: "150px",
-				auditor_notes: "300px",
-				second_audit_comments: "300px",
-				third_audit_comments: "300px",
-				effort: "150px",
-			}
-			let hideByDefault = [
+
+			let headers = Object.keys(this.audit.issues[0])
+			
+			let hide = [
 				"id",
 				"screenshots",
 				"resources",
@@ -540,18 +524,31 @@ export default {
 				"created_by",
 				"how_discovered"
 			]
-			for( let key of Object.keys(this.audit.issues[0]) ){
-				arr.push({
-					header: key == "recommendations" ? "Audit 1 Recommendations" : this.parseHeader(key),
-					show: !hideByDefault.includes(key),
-					sticky: key == "issue_number" || key == "id" ? true : false,
-					style: {},
-					width: widthMap[key],
-					hidePermanent: this.isHeaderHidePermanent(key)
-				})
+
+			let stickied = [
+				"id",
+				"issue_number"
+			]
+
+			let columnPositions = []
+
+			let auditsMeta = this.$store.state.auth.user.meta.audits
+			if( auditsMeta ){
+				if( auditsMeta.issues.columns.stickied ){
+					stickied = auditsMeta.issues.columns.stickied.map(c=>c.replace(" ", "_"))
+				}
+				if( auditsMeta.issues.columns.visible ){
+					hide = headers.filter(h=>!auditsMeta.issues.columns.visible.includes(h))
+				}
+				if( auditsMeta.issues.columns.sortedBy ){
+					this.tableDefaultSortBy = auditsMeta.issues.columns.sortedBy
+				}
+				if( auditsMeta.issues.columns.positions ){
+					columnPositions = auditsMeta.issues.columns.positions
+				}
 			}
 			
-			return arr
+			return this.setHeaders(headers, hide, stickied, columnPositions)
 		},
 		audit(){
 			return this.$store.state.audits.audit || false
@@ -617,6 +614,61 @@ export default {
 		},
 	},
 	methods: {
+		setHeaders(headers, hide, stickied, columnPositions){
+			let widthMap = {
+				id: "150px",
+				pages: "250px",
+				status: "150px",
+				how_discovered: "150px",
+				audit_states: "150px",
+				target: "300px",
+				screenshots: "250px",
+				resources: "250px",
+				browser_combos: "300px",
+				essential_functionality: "300px",
+				articles: "150px",
+				techniques: "150px",
+				recommendations: "400px",
+				descriptions: "400px",
+				levels: "150px",
+				actrs: "250px",
+				created_by: "250px",
+				issue_number: "150px",
+				priority: "150px",
+				auditor_notes: "300px",
+				second_audit_comments: "300px",
+				third_audit_comments: "300px",
+				effort: "150px",
+			}
+
+			let arr = []
+
+			for( let key of headers ){
+				arr.push({
+					header: this.parseHeader(key),
+					show: !hide.includes(key),
+					sticky: stickied.includes(key),
+					style: {},
+					width: widthMap[key],
+					hidePermanent: this.isHeaderHidePermanent(key)
+				})
+			}
+
+			if( columnPositions.length ){
+				let finalOrder = []
+				for( let y = 0; y < columnPositions.length; y++ ){
+					let header = arr.find(h=>h.header == columnPositions[y])
+					finalOrder.push(header)
+				}
+				return finalOrder
+			}
+
+			return arr
+			
+		},
+		metaEvent(key, subKeys, value){
+			this.$store.dispatch("user/storeUserMeta", {key: key, subKeys: subKeys, value:value})
+		},
 		openModal( callback ){
 			let classList = document.body.classList
 			if( !classList.contains("modalOpen") ){
@@ -846,6 +898,9 @@ export default {
 		parseHeader(string){
 			if( string == "articles" ){
 				return "success criteria"
+			}
+			if( string == "recommendations" ){
+				return "audit 1 recommendations"
 			}
 			return string.replace(/[-_.]/gm, " ");
 		},

@@ -231,7 +231,6 @@
 			chooseNo(){
 				this.reset()
 				EventBus.$emit('deployWCAGAuditModal', false)
-				this.$router.push({path: `/audits/${this.$store.state.audits.all[this.$store.state.audits.all.length - 1].id}/overview`})
 			},
 			chooseYes(){
 				this.reset()

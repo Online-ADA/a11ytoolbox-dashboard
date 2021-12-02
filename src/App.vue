@@ -234,6 +234,11 @@ export default {
 		EventBus.$on("showInfoSidebar", ()=>{
 			this.infoSidebarExpanded = !this.infoSidebarExpanded
 		})
+
+		//Meta Events
+		EventBus.$on("metaEvent", (payload)=>{
+			this.$store.dispatch("user/storeUserMeta", {key: payload.key, subKeys: payload.path, value: payload.value})
+		})
 	},
 
 	components:{
