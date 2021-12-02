@@ -260,10 +260,12 @@
 			},
 			sortData: {
 				type: Object,
-				default:{
-					columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
-					orders: [ "asc" ],
-					reference: ["id"]
+				default:function(){
+					return {
+						columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
+						orders: [ "asc" ],
+						reference: ["id"]
+					}
 				}
 			}
 		},
@@ -293,9 +295,6 @@
 					"html",
 				],
 				specialKeys : ["articles", "techniques"],
-				// sortData: {
-
-				// },
 				columnPickerOpen: false,
 				headers: [],
 				columnData: [],
@@ -838,7 +837,6 @@
 				}
 			},
 			rowsData(newVal){
-				console.log("SORTDATA",this.sortData);
 				this.columnData = JSON.parse(JSON.stringify(newVal))
 				this.sort(false, true)
 			},
@@ -846,9 +844,6 @@
 				this.search.column = newVal.filter( h=>h.show )[0].header
 				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
 			},
-			sortData(){
-				this.sort(false, true)
-			}
 		},
 		components: {
 			Modal,
