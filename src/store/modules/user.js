@@ -103,6 +103,9 @@ export default {
 					}
 				}
 			})
+			.then( re=>{
+				rootState.auth.user.meta = re.data.details
+			})
 			.catch( re=>{
 				console.log(re);
 			})

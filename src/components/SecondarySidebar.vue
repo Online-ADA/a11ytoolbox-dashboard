@@ -91,6 +91,21 @@ export default {
             }else{
                 this.expanded.push(tool)
             }
+
+            EventBus.$emit( "metaEvent", {
+                key: "project",
+                path: this.$store.state.projects.project.id + "-tools-sidebar-open",
+                value: this.expanded
+            })
+        },
+        setProjectMeta(){
+            let meta = this.$store.state.auth.user.meta
+            let id = this.$store.state.projects.project.id
+            if( meta.project != undefined && meta.project[id] != undefined ){
+                if( meta.project[id].tools != undefined && meta.project[id].tools.sidebar != undefined && meta.project[id].tools.sidebar.open != undefined ){
+                    this.expanded = meta.project[id].tools.sidebar.open
+                }
+            }
         }
     },
     watch: {
@@ -103,6 +118,8 @@ export default {
                 this.$store.state.audits.all = []
                 return
             }
+            this.expanded = []
+            this.setProjectMeta()
 
             if( (oldVal === false || oldVal === undefined) && newVal !== false ){
                 this.$store.state.audits.all = []
@@ -124,7 +141,10 @@ export default {
             if( newVal ){
                 this.expanded.push(newVal)
             }
-        }
+        },
+        // "$store.state.auth.user.meta": function(newVal){
+            
+        // }
     },
     mounted() {
         if( this.$store.state.projects.tool.type === 'audit' ){

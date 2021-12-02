@@ -258,10 +258,13 @@
 				type: Boolean,
 				default: false
 			},
-			defaultSortData: {
-				columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
-				orders: [ "asc" ],
-				reference: ["id"]
+			sortData: {
+				type: Object,
+				default:{
+					columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
+					orders: [ "asc" ],
+					reference: ["id"]
+				}
 			}
 		},
 		data(){
@@ -290,7 +293,9 @@
 					"html",
 				],
 				specialKeys : ["articles", "techniques"],
-				sortData: {},
+				// sortData: {
+
+				// },
 				columnPickerOpen: false,
 				headers: [],
 				columnData: [],
@@ -328,7 +333,7 @@
 			},
 			importingRows(){
 				return this.rows.filter( r=>r.hasOwnProperty('unique') )
-			}
+			},
 		},
 		methods: {
 			translateHeader(val){
@@ -420,7 +425,7 @@
 					}
 				}
 			},
-			sort( column ){
+			sort( column, quiet = false ){
 				if( column ){
 					column = column.replaceAll(/[ ]/g, "_")
 					//String reference is necessary because sometimes our column becomes an anonymous function
@@ -476,7 +481,7 @@
 										output += domain + "/" + url
 									}
 								}
-								console.log(output);
+								
 								return output
 							}
 							return ""
@@ -511,6 +516,10 @@
 				
 				this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
 				this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
+
+				if( !quiet ){
+					this.$emit("sort", this.sortData)
+				}
 			},
 			submitTableSearch(){
 				if( this.search.term ){
@@ -566,8 +575,18 @@
 						this.$set(this.headers[realIndex].style, "left", this.getLeftValue(realIndex))
 					}
 				}
-
-				this.$emit("showHideColumns", this.headers.map(h=>h.header))
+				let toEmit = this.headers.filter(h=>h.show && !h.hidePermanent).map(h=>{
+					
+					if( h.header == "audit 1 recommendations" ){
+						return "recommendations"
+					}
+					if( h.header == "success criteria" ){
+						return "articles"
+					}
+					return h.header.replaceAll(" ", "_")
+				})
+				
+				this.$emit("hideColumns", toEmit)
 	
 				this.closeModal(()=>{this.columnPickerOpen = false})
 			},
@@ -807,7 +826,6 @@
 			this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
 			this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
 			this.headers = JSON.parse(JSON.stringify(this.headersData))
-			this.sortData = this.defaultSortData
 		},
 		watch:{
 			rows(val){
@@ -820,13 +838,17 @@
 				}
 			},
 			rowsData(newVal){
+				console.log("SORTDATA",this.sortData);
 				this.columnData = JSON.parse(JSON.stringify(newVal))
-				this.sort()
+				this.sort(false, true)
 			},
 			headers(newVal){
 				this.search.column = newVal.filter( h=>h.show )[0].header
 				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
 			},
+			sortData(){
+				this.sort(false, true)
+			}
 		},
 		components: {
 			Modal,

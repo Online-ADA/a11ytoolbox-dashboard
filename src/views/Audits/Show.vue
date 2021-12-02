@@ -8,7 +8,7 @@
 				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>An automated audit is currently running and could take a couple of minutes. Data will be refreshed on completion.
 			</template>
 			
-			<Table @showHideColumns="(payload)=>{ metaEvent('audits', 'issues-columns-visible', payload) }" @moveColumn="(payload)=>{ metaEvent('audits', 'issues-columns-positions', payload) }" :defaultSortData="tableDefaultSortBy" @freezeColumn="(payload)=>{ metaEvent('audits', 'issues-columns-stickied', payload) }" :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
+			<Table @sort="(payload)=>{ metaEvent('audits', 'issues-columns-sortedBy', payload) }" @hideColumns="(payload)=>{ metaEvent('audits', 'issues-columns-visible', payload) }" @moveColumn="(payload)=>{ metaEvent('audits', 'issues-columns-positions', payload) }" :sortData="tableDefaultSortBy" @freezeColumn="(payload)=>{ metaEvent('audits', 'issues-columns-stickied', payload) }" :issuesTable="true" :condense="shouldCondense" :locked="audit.locked" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
@@ -534,22 +534,16 @@ export default {
 
 			let auditsMeta = this.$store.state.auth.user.meta.audits
 			if( auditsMeta ){
-				console.log("Audits Meta was a thing");
 				if( auditsMeta.issues.columns.stickied ){
-					console.log("Stickied", auditsMeta.issues.columns.stickied);
 					stickied = auditsMeta.issues.columns.stickied.map(c=>c.replace(" ", "_"))
 				}
 				if( auditsMeta.issues.columns.visible ){
-					
-					hide = headers.map(h=>h.header).filter(h=>!auditsMeta.issues.columns.visible.includes(h))
-					console.log("Hide", auditsMeta.issues.columns.visible, hide);
+					hide = headers.filter(h=>!auditsMeta.issues.columns.visible.includes(h))
 				}
 				if( auditsMeta.issues.columns.sortedBy ){
-					console.log("SortedBy", auditsMeta.issues.columns.sortedBy);
 					this.tableDefaultSortBy = auditsMeta.issues.columns.sortedBy
 				}
 				if( auditsMeta.issues.columns.positions ){
-					console.log("Positions", auditsMeta.issues.columns.positions);
 					columnPositions = auditsMeta.issues.columns.positions
 				}
 			}
