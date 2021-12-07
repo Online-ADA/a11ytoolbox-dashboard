@@ -52,6 +52,9 @@
                 <li>
                     <router-link :to="'/domains'" class="hover:text-gray-500 block"><span>Domains</span></router-link>
                 </li>
+                <li>
+                    <router-link :to="'/automations/history'" class="hover:text-gray-500 block"><span>Automated Audits</span></router-link>
+                </li>
             </ul>
             <span id="management-label" class="sub-label text-white uppercase">Settings</span>
         </div>

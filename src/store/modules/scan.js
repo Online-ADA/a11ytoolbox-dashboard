@@ -41,8 +41,9 @@ export default {
 				.then()
         },
 		getProjectScans({state, rootState}, args){
-			state.loading = true;
-			Request.getPromise( `${rootState.auth.API}/${rootState.auth.account}/scan/project/${args.project_id}/scans` )
+			state.loading = true
+			
+			Request.getPromise( `${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}/scans` )
 			.then( re => state.all = re.data.details )
 			.catch( re => {
 				console.log(re)

@@ -1,12 +1,9 @@
 <template>
     <div class="container mx-auto">
         <Loader v-if="loading"></Loader>
-        <Label class="text-center" for="projects">Select a project</Label>
-        <select class="mx-auto block" v-model="project_id" id="projects" name="projects">
-            <option :value="project.id" v-for="project in projects" :key="project.id">{{project.name}}</option>
-        </select>
+        
         <div class="w-full flex flex-col justify-center items-center mt-10" v-if="scans && scans.length">
-            <h2>Scans run for this project:</h2>
+            <h2>Automated Audits Report</h2>
             <DT :searchableProps="['title', 'url']" :items="scans" :headers="headers">
                 <template v-slot:cells-main>
                     <div class="hidden"></div>
@@ -16,12 +13,11 @@
                         <div class="text-sm text-gray-900">{{row.data.title}}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{{row.data.issues.length}}</div>
+                        <div class="text-sm text-gray-900">{{row.data.issues_total}}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="capitalize text-sm text-gray-900">
-                            {{row.data.domain.url}}
-                            <template v-if="row.data.domain.root">/{{row.data.domain.root}}</template>
+                        <div class="text-sm text-gray-900">
+                            {{row.data.domain.url}}<template v-if="row.data.domain.root">/{{row.data.domain.root}}</template>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -73,7 +69,6 @@
 </template>
 
 <script>
-import projects from '../../store/modules/project'
 import Label from '../../components/Label.vue'
 import Loader from '../../components/Loader.vue'
 import Button from '../../components/Button.vue'
@@ -84,40 +79,23 @@ export default {
     data: () => ({
         modalOpen: false,
         deleteID: false,
-        project_id: false,
         headers: ["Title", "Number of issues", "Domain", "Number of pages", "Delete Scan"]
     }),
     computed: {
         loading(){
-            if( this.$store.state.scan ){
-                return this.$store.state.scan.loading
-            }
-            return false
+            return this.$store.state.scan.loading
         },
         scans() {
-            if( this.$store.state.scan ){
-                // if( this.$store.state.scan.project ){
-                //     return this.$store.state.scan.project.scans || []
-                // }
-                return this.$store.state.scan.all || []
-            }
-            return []
+            return this.$store.state.scan.all
         },
-        projects(){
-            return this.$store.state.projects.all || []
-        }
     },
     props: [],
     watch: {
-        "$store.state.projects.all": function(){
-            if( this.$store.state.projects.all.length ){
-                this.project_id = this.$store.state.projects.all[0].id
-                this.$store.dispatch("scan/getProjectScans", {project_id: this.project_id})
+        "$store.state.projects.project": function(newVal){
+            if( newVal ){
+                this.$store.dispatch("scan/getProjectScans", {project_id: newVal.id})
             }
         },
-        project_id(){
-            this.$store.dispatch("scan/getProjectScans", {project_id: this.project_id})
-        }
     },
     methods: {
         openModal(id){
@@ -133,11 +111,6 @@ export default {
         }
     },
     created() {
-        if(this.$store.state.projects === undefined){
-            this.$store.registerModule('projects', projects)
-        }
-        
-        this.$store.dispatch("projects/getProjects")
     },
     mounted() {
     },

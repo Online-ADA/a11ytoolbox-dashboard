@@ -16,7 +16,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "user" */ '../views/User/Profile.vue')
   },
   {
-    path:'/scan',
+    path:'/automations',
     name: "Scan",
     component: () => import(/* webpackChunkName: "scan" */ '../views/Scan/Index.vue'),
     children: [

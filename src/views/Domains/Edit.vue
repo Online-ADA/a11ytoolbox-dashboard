@@ -21,9 +21,6 @@
 							Edit
 						</h3>
 						<div class="mt-2 w-full">
-							<Label for="edit-title">Edit Title</Label>
-							<TextInput class="w-full" v-model="data.title" id="edit-title"></TextInput>
-
 							<Label class="mt-2" for="edit-url">Edit Url</Label>
 							<TextInput class="w-full" v-model="data.url" id="edit-url"></TextInput>
 						</div>

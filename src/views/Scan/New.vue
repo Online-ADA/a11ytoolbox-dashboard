@@ -6,7 +6,8 @@
             <template v-if="showSuccess">
                 <p class="text-base w-full text-center">Your audit has been queued. An email will be sent to the address on your account when it has finished.</p>
             </template>
-            <template v-if="!showSuccess">
+            <!-- <template v-if="!showSuccess"> -->
+            <template>
                 <div class="w-full text-center">
                     <h3 class="text-base">Automated Audit Options</h3>
                 </div>
