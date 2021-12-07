@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col relative px-5">
-		<div style="padding-right:1px;" class="flex w-full relative justify-end items-center">
+		<!-- <div style="padding-right:1px;" class="flex w-full relative justify-end items-center">
 			<div v-if="!locked">
 				<button title="Select All Rows" class="text-lg leading-none" @click.prevent="selectAll" >
 					<i class="fas fa-grip-horizontal"></i>
@@ -16,7 +16,7 @@
 					<i class="far fa-thumbtack"></i>
 				</button>
 			</div>
-		</div>
+		</div> -->
 		<div tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black h-2/3">
 			<a v-if="rows.length" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
 			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense, 'issues-table':issuesTable}">
@@ -197,7 +197,6 @@
 						</li>
 					</template>
 				</ul>
-				<!-- <Button @keyup.enter="showHideColumns" @keyup.space="showHideColumns" @click="showHideColumns">Submit</Button> -->
 				<button @keyup.enter="showHideColumns" @keyup.space="showHideColumns" @click="showHideColumns" class="px-2 standard">Submit</button>
 			</div>
 		</Modal>
@@ -817,6 +816,15 @@
 				if( payload.action == 'audit-search-close' ){
 					that.filtering = false
 					that.filteredRows = []
+				}
+				if( payload.action == 'selectAll' ){
+					that.selectAll()
+				}
+				if( payload.action == 'deselectAll' ){
+					that.deselectAll()
+				}
+				if( payload.action == 'columnPicker' ){
+					that.openModal(()=>{ that.columnPickerOpen = true })
 				}
 			})
 		},
