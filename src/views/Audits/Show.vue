@@ -678,7 +678,8 @@ export default {
 
 			for( let key of headers ){
 				arr.push({
-					header: this.parseHeader(key),
+					key: key,
+					display: this.parseHeader(key),
 					show: !hide.includes(key) && !this.isHeaderHidePermanent(key),
 					sticky: stickied.includes(key),
 					style: {},
@@ -934,6 +935,10 @@ export default {
 			}
 			if( string == "recommendations" ){
 				return "audit 1 recommendations"
+			}
+
+			if( string == "created_by" ){
+				return "last saved by"
 			}
 			return string.replace(/[-_.]/gm, " ");
 		},

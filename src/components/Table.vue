@@ -8,7 +8,7 @@
 					<tr>
 						<th 
 						class="capitalize pt-5" 
-						v-show="columnsToShow.includes(header.header) && !header.hidePermanent" 
+						v-show="columnsToShow.includes(header.key) && !header.hidePermanent" 
 						:ref="'header-' + index" 
 						:style="header.style" 
 						:width="header.width || false" 
@@ -31,23 +31,23 @@
 									</button>
 
 									<button 
-										@click="sort(header.header)" 
-										v-if="!sortData.reference.includes(header.header.replaceAll(/[ ]/g, '_'))" 
-										:aria-label="`Currently unsorted. Click to sort column ${header.header} by ascending`" 
+										@click="sort(header.key)" 
+										v-if="!sortData.reference.includes(header.key)" 
+										:aria-label="`Currently unsorted. Click to sort column ${header.display} by ascending`" 
 										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 										<i class="fas fa-sort"></i>
 									</button>
 									<button 
-										@click="sort(header.header)" 
-										v-if="sortData.reference.includes(header.header.replaceAll(/[ ]/g, '_')) && sortData.orders[ sortData.reference.indexOf(header.header.replaceAll(/[ ]/g, '_')) ] == 'asc'"
-										:aria-label="`Currently sorted by ascending. Click to sort column ${header.header} descending`" 
+										@click="sort(header.key)"
+										v-if="sortData.reference.includes(header.key) && sortData.orders[ sortData.reference.indexOf(header.key) ] == 'asc'"
+										:aria-label="`Currently sorted by ascending. Click to sort column ${header.display} descending`" 
 										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 										<i class="fas fa-sort-up"></i>
 									</button>
 									<button 
-										@click="sort(header.header)"
-										v-if="sortData.reference.includes(header.header.replaceAll(/[ ]/g, '_')) && sortData.orders[ sortData.reference.indexOf(header.header.replaceAll(/[ ]/g, '_')) ] == 'desc'"
-										:aria-label="`Currently sorted by descending. Click to remove sorting for ${header.header} column`" 
+										@click="sort(header.key)"
+										v-if="sortData.reference.includes(header.key) && sortData.orders[ sortData.reference.indexOf(header.key) ] == 'desc'"
+										:aria-label="`Currently sorted by descending. Click to remove sorting for ${header.display} column`" 
 										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
 										<i class="fas fa-sort-down"></i>
 									</button>
@@ -57,7 +57,7 @@
 									<i class="fas fa-arrow-right"></i>
 								</button>
 							</div>
-							{{header.header}}
+							{{header.display}}
 						</th>
 					</tr>
 				</thead>
@@ -79,81 +79,41 @@
 						tabindex="-1" 
 						class="p-2"
 						v-for="(header, subIndex) in headers"
-						:class="headers.hasOwnProperty(subIndex) ? getTDClasses(subIndex, translateHeader(header.header)) : false"
+						:class="headers.hasOwnProperty(subIndex) ? getTDClasses(subIndex, header.key) : false"
 						:style="headers.hasOwnProperty(subIndex) ? headers[subIndex].style : false"
-						v-show="headers.hasOwnProperty(subIndex) && columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent ? true : false"
-						:data-key="translateHeader(header.header)"
+						v-show="headers.hasOwnProperty(subIndex) && columnsToShow.includes(headers[subIndex].key) && !headers[subIndex].hidePermanent ? true : false"
+						:data-key="header.key"
 						:key="`row-${index}-column-${subIndex}`"
 						>
-							<span tabindex="-1" v-if="(translateHeader(header.header) == 'articles' && $store.state.audits.articles.length) || 
-													   (translateHeader(header.header) == 'techniques' && $store.state.audits.techniques.length) ||
-													   (translateHeader(header.header) != 'techinques' && translateHeader(header.header) != 'articles')"
+							<span tabindex="-1" v-if="(header.key == 'articles' && $store.state.audits.articles.length) || 
+													   (header.key == 'techniques' && $store.state.audits.techniques.length) ||
+													   (header.key != 'techinques' && header.key != 'articles')"
 							>
-								<template v-if="listKeys.includes(translateHeader(header.header))">
+								<template v-if="listKeys.includes(header.key)">
 									<span 
 									tabindex="-1" 
 									class="text-left block" 
-									:class="{'break-words': plainKeys.includes(translateHeader(header.header))}"
-									v-html="displayValue(translateHeader(header.header), data[translateHeader(header.header)])"></span>
+									:class="{'break-words': plainKeys.includes(header.key)}"
+									v-html="displayValue(header.key, data[header.key])"></span>
 								</template>
 
-								<template v-else-if="data.how_discovered == 'Automated Audit' && (translateHeader(header.header) == 'descriptions' || translateHeader(header.header) =='recommendations')">
+								<template v-else-if="data.how_discovered == 'Automated Audit' && (header.key == 'descriptions' || header.key =='recommendations')">
 									
-									<span class="block break-words" tabindex="-1" >{{displayValue(translateHeader(header.header), data[translateHeader(header.header)])}}</span>
+									<span class="block break-words" tabindex="-1" >{{displayValue(header.key, data[header.key])}}</span>
 								</template>
 
-								<template v-else-if="translateHeader(header.header) == 'target' || translateHeader(header.header) =='html'">
-									<span class="block break-words" tabindex="-1" >{{displayValue(translateHeader(header.header), data[translateHeader(header.header)])}}</span>
+								<template v-else-if="header.key == 'target' || header.key =='html'">
+									<span class="block break-words" tabindex="-1" >{{displayValue(header.key, data[header.key])}}</span>
 								</template>
 
 								<template v-else>
-									<span class="block" tabindex="-1" :class="{'text-left ql-editor': translateHeader(header.header) == 'descriptions' || translateHeader(header.header) == 'recommendations', 'break-words': plainKeys.includes(translateHeader(header.header))}"  v-html="displayValue(translateHeader(header.header), data[translateHeader(header.header)])"></span>
+									<span class="block" tabindex="-1" :class="{'text-left ql-editor': header.key == 'descriptions' || header.key == 'recommendations', 'break-words': plainKeys.includes(header.key)}"  v-html="displayValue(header.key, data[header.key])"></span>
 								</template>
 								
 							</span>
 							
 						</td>
 
-
-
-
-						<!-- <td 
-						tabindex="-1" 
-						class="p-2" 
-						:ref="'columnData-'+ subIndex" 
-						:class="headers.hasOwnProperty(subIndex) ? getTDClasses(subIndex, key) : false" 
-						:style="headers.hasOwnProperty(subIndex) ? headers[subIndex].style : false" 
-						v-show="headers.hasOwnProperty(subIndex) && columnsToShow.includes(headers[subIndex].header) && !headers[subIndex].hidePermanent ? true : false" 
-						:data-key="key" 
-						v-for="(value, key, subIndex) in data" 
-						:key="'key-'+subIndex">
-							<span tabindex="-1" v-if="(key == 'articles' && $store.state.audits.articles.length) || 
-													   (key == 'techniques' && $store.state.audits.techniques.length) ||
-													   (key != 'techinques' && key != 'articles')"
-							>
-								<template v-if="listKeys.includes(key)">
-									<span 
-									tabindex="-1" 
-									class="text-left block" 
-									:class="{'break-words': plainKeys.includes(key)}"
-									v-html="displayValue(key, value)"></span>
-								</template>
-
-								<template v-else-if="data.how_discovered == 'Automated Audit' && (key == 'descriptions' || key =='recommendations')">
-									
-									<span class="block break-words" tabindex="-1" >{{displayValue(key, value)}}</span>
-								</template>
-
-								<template v-else-if="key == 'target' || key =='html'">
-									<span class="block break-words" tabindex="-1" >{{displayValue(key, value)}}</span>
-								</template>
-
-								<template v-else>
-									<span class="block" tabindex="-1" :class="{'text-left ql-editor': key == 'descriptions' || key == 'recommendations', 'break-words': plainKeys.includes(key)}"  v-html="displayValue(key, value)"></span>
-								</template>
-								
-							</span>
-						</td> -->
 					</tr>
 				</tbody>
 			</table>
@@ -174,7 +134,7 @@
 				<ul class="flex flex-wrap">
 					<template v-for="(header, index) in headers">
 						<li v-if="!header.hidePermanent" class="flex w-5/12 mx-2 my-2 justify-center items-center" :key="index">
-							<Label :for="'showCol'+ (index+1)">Show {{header.header}}</Label>
+							<Label :for="'showCol'+ (index+1)">Show {{header.display}}</Label>
 							<Checkbox v-model="header.show" :id="'showCol'+ (index+1)"></Checkbox>
 						</li>
 					</template>
@@ -324,7 +284,7 @@
 					return "articles"
 				}
 
-				return val.replace(" ", "_")
+				return val.replaceAll(" ", "_")
 			},
 			changePage($event){
 				this.$store.dispatch("audits/getIssuesOffset", {audit_id: this.$route.params.id, page: $event})
@@ -514,6 +474,9 @@
 						if( column == "audit_1_recommendations" ){
 							column = "recommendations"
 						}
+						if( column == "last_saved_by" ){
+							column = "created_by"
+						}
 						
 						if( Array.isArray(c[column]) ){
 							let toSearch = c[column]
@@ -544,10 +507,10 @@
 			},
 			showHideColumns(){
 				
-				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
+				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.key)
 				let allStickied = this.headers.filter( el => el.show && el.sticky )
 				for( let i in allStickied ){
-					let thisItem = this.headers.find( x => x.header == allStickied[i].header)
+					let thisItem = this.headers.find( x => x.key == allStickied[i].key)
 					let realIndex =  this.headers.indexOf( thisItem )
 					if( parseInt(i) === 0 ){
 						this.$set( this.headers[realIndex].style, "left", "0px" )
@@ -555,22 +518,14 @@
 						this.$set(this.headers[realIndex].style, "left", this.getLeftValue(realIndex))
 					}
 				}
-				let toEmit = this.headers.filter(h=>h.show && !h.hidePermanent).map(h=>{
-					
-					if( h.header == "audit 1 recommendations" ){
-						return "recommendations"
-					}
-					if( h.header == "success criteria" ){
-						return "articles"
-					}
-					return h.header.replaceAll(" ", "_")
-				})
+				let toEmit = this.headers.filter(h=>h.show && !h.hidePermanent).map(h=>h.key)
 				
 				this.$emit("hideColumns", toEmit)
 	
 				this.closeModal(()=>{this.columnPickerOpen = false})
 			},
 			displayValue(key, data){
+				console.log(key, data);
 				if( data == undefined ){
 					return ""
 				}
@@ -710,7 +665,7 @@
 				}
 
 				//Emit all stickied headers
-				let allStickied = this.headers.filter(h=>h.sticky).map(h=>h.header)
+				let allStickied = this.headers.filter(h=>h.sticky).map(h=>h.key)
 				this.$emit("freezeColumn", allStickied)
 			},
 			getStickyClasses(){
@@ -754,7 +709,7 @@
 					}
 				}
 
-				this.$emit("moveColumn", this.headers.map(h=>h.header))
+				this.$emit("moveColumn", this.headers.map(h=>h.key))
 			},
 			rowClasses(data){
 				let classes = []
@@ -831,8 +786,8 @@
 				this.sort(false, true)
 			},
 			headers(newVal){
-				this.search.column = newVal.filter( h=>h.show )[0].header
-				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.header)
+				this.search.column = newVal.filter( h=>h.show )[0].key
+				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.key)
 			},
 		},
 		components: {
