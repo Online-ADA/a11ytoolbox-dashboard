@@ -32,8 +32,34 @@
                     <Btn v-if="auditFullscreen !== audit.id" aria-label="Expand this audit to full screen" @click.native.prevent="setFullscreen(audit.id, 'audit')" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
                     <Btn v-if="auditFullscreen === audit.id" aria-label="Compress this audit back down" @click.native.prevent="setFullscreen(false, 'audit')" hover="true" color="white"><i class="fas fa-compress"></i></Btn>
                 </div>
-                <Table :importing="true" :issuesTable="true" v-if="audit.id !== primaryAudit.id" :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :selected="selectedAuditRows" @deselectAll="deselectAll" @selectAll="selectAll" @rowClick="selectAuditRow" :rowsData="audit.issues" :headersData="headers"></Table>
-                <Table :importing="true" :issuesTable="true" :specialRows="primaryAuditIssues.filter( i=> !issuesToImport.includes(i.issue_number)).map( i=>i.issue_number)" class="primary-audit-table" v-else :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :rowsData="primaryAuditIssues" @deselectAll="primaryDeselectAll" @selectAll="primarySelectAll" :headersData="headers" @rowClick="selectImportRow" :selected="selectedImportRows"></Table>
+                <Table 
+                :importing="true" 
+                :issuesTable="true" 
+                v-if="audit.id !== primaryAudit.id" 
+                :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" 
+                :condense="true" ref="issuesTable" 
+                :selected="selectedAuditRows" 
+                @deselectAll="deselectAll" 
+                @selectAll="selectAll" 
+                @rowClick="selectAuditRow" 
+                :rowsData="audit.issues" 
+                :headersData="headers"></Table>
+
+                <Table 
+                :importing="true" 
+                :issuesTable="true" 
+                :specialRows="primaryAuditIssues.filter( i=> !issuesToImport.includes(i.issue_number)).map( i=>i.issue_number)" 
+                class="primary-audit-table" 
+                v-else 
+                :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" 
+                :condense="true" ref="issuesTable" 
+                :rowsData="primaryAuditIssues" 
+                @deselectAll="primaryDeselectAll" 
+                @selectAll="primarySelectAll" 
+                :headersData="headers" 
+                @rowClick="selectImportRow" 
+                :selected="selectedImportRows"></Table>
+
                 <Btn v-if="selectedImportRows.length > 0 && audit.id === primaryAudit.id" @click.native.prevent="removeFromImport(selectedImportRows)" class="mx-2" color="red" hover="true">Remove selected</Btn>
             </div>
         </div>
@@ -119,6 +145,7 @@ export default {
         CSVFile: false,
         uploadCSVModalOpen: false,
         tempAudits: [],
+        audits: [],
         tempScans: [],
         showingAudits: [],
         showingScans: [],
@@ -130,18 +157,9 @@ export default {
         primaryAudit(){
             return this.$store.state.audits ? this.$store.state.audits.audit : false
         },
-        audits(){
-            if( !this.$store.state.audits.all.length ){
-                return this.tempAudits
-            }
-
-            let auditsList = this._.cloneDeep(this.$store.state.audits.all)
-            let ids = auditsList.map( a=>a.id)
-            let firstIndex = ids.indexOf( parseInt(this.$route.params.id) )
-            let firstItem = auditsList.splice(firstIndex, 1)[0]
-            auditsList.splice( 0, 0, firstItem)
-            return [ ...auditsList, ...this.tempAudits ]
-        },
+        // audits(){
+            
+        // },
         scans(){
             return [ ...this.$store.state.projects.scans, ...this.tempScans ]
         },
@@ -360,8 +378,10 @@ export default {
             return parsed
         },
         allIssues(){
+            if( !this.audits.length ){
+                return []
+            }
             let all = [...this.audits.map( a => a.issues).flat(), ...this.scans.map( s => s.issues).flat()]
-            
             var x = 0, l = all.length;
             while (x < l) {
                 if( all[x].hasOwnProperty('audit_id') ){
@@ -392,6 +412,31 @@ export default {
                 this.$store.dispatch("projects/getScansForProject", {project_id: newVal.project_id})
             }
         },
+        "$store.state.projects.project":{
+            deep:true,
+            handler(newVal){
+                if( this.audits.length || !newVal ){
+                    return
+                }
+
+                //If project hasn't loaded yet, or if it has loaded but doesn't have the audits proeprty, or if it has audits but there are none
+                if( !this.$store.state.projects.project.audits.length || this.$store.state.projects.project.audits[0].issues == undefined ){
+                    return this.tempAudits
+                }
+
+                let auditsList = this._.cloneDeep(this.$store.state.projects.project.audits)
+                let ids = auditsList.map( a=>a.id)
+                let firstIndex = ids.indexOf( parseInt(this.$route.params.id) )
+                let firstItem = auditsList.splice(firstIndex, 1)[0]
+                auditsList.splice( 0, 0, firstItem)
+                this.audits = auditsList
+            }
+        },
+        tempAudits(newVal){
+            if( newVal ){
+                this.audits == [ ...auditsList, ...this.tempAudits ]
+            }
+        }
     },
     methods: {
         handleUploadFile(e){
