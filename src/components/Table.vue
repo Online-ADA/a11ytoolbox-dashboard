@@ -1,23 +1,7 @@
 <template>
-	<div class="flex flex-col relative px-5">
-		<!-- <div style="padding-right:1px;" class="flex w-full relative justify-end items-center">
-			<div v-if="!locked">
-				<button title="Select All Rows" class="text-lg leading-none" @click.prevent="selectAll" >
-					<i class="fas fa-grip-horizontal"></i>
-				</button>
-			</div>
-			<div v-if="!locked">
-				<button class="text-lg leading-none mx-3.5" title="Deselect All Rows" @click.prevent="deselectAll">
-					<i class="fal fa-grip-horizontal"></i>
-				</button>
-			</div>
-			<div>
-				<button class="text-base leading-none" title="Open Show or Hide Columns Modal" @click.prevent="openModal(()=>{columnPickerOpen = true})" >
-					<i class="far fa-thumbtack"></i>
-				</button>
-			</div>
-		</div> -->
-		<div tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black h-2/3">
+	<div class="flex flex-col relative table-container-container" :class="{'px-5': $route.name != 'AuditShow'}">
+		
+		<div :class="{'pagination': showPagination}" tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black table-container">
 			<a v-if="rows.length" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
 			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense, 'issues-table':issuesTable}">
 				<thead>
@@ -183,8 +167,6 @@
 		@page-changed="changePage" 
 		v-show="showPagination">
 		</Pagination>
-		
-		<div class="mb-24 w-full"></div>
 		
 		<Modal style="z-index:71" :open="columnPickerOpen">
 			<div class="w-full p-3">
@@ -863,3 +845,24 @@
 		}
 	}
 </script>
+
+<style scoped>
+	.audit-show .table-container-container{
+		height: 100vh;
+		max-height: calc(100vh - 106px);
+	}
+	.audit-show .table-container-container .table-container{
+		flex-basis: auto;
+		flex-grow: 1;
+		flex-shrink: 0;
+		max-height: 100%;
+	}
+	.audit-show .table-container-container .table-container.pagination{
+		max-height: calc(100% - 55px);
+	}
+	.audit-show .table-container-container .table-container ~ div{
+		flex-basis: 55px;
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+</style>

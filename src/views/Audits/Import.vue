@@ -506,9 +506,14 @@ export default {
 }
 .audit-window:not(.fullscreen){
     max-height:685px;
+    height:685px;
     width:50%;
     margin-top: 12px;
     margin-bottom: 12px;
+}
+.audit-window:not(.fullscreen) > div{
+    height:100%;
+    max-height:100%;
 }
 .audit-window.fullscreen{
     position:fixed;

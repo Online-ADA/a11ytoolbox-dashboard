@@ -240,6 +240,7 @@
 <script>
 import Loader from '../../components/Loader'
 import Card from '../../components/Card'
+import Modal from '../../components/Modal'
 import TextInput from '../../components/TextInput'
 import Label from '../../components/Label'
 import Button from '../../components/Button'
@@ -537,7 +538,8 @@ export default {
 		Label,
 		Button,
 		Card,
-		DatePicker
+		DatePicker,
+		Modal
 	},
 }
 </script>
