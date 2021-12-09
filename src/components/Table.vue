@@ -525,7 +525,6 @@
 				this.closeModal(()=>{this.columnPickerOpen = false})
 			},
 			displayValue(key, data){
-				console.log(key, data);
 				if( data == undefined ){
 					return ""
 				}

@@ -289,7 +289,7 @@
 					}
 
 					if( this.isManager ){ //Get the team members each time modal is opened
-						this.$store.dispatch("user/getTeamMembers", {team: 2})
+						this.$store.dispatch("user/getUsers")
 					}
 				}
 			}

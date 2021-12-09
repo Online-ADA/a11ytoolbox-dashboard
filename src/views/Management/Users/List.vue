@@ -159,12 +159,7 @@ export default {
     },
     created() {},
     mounted() {
-      if( this.account && this.account.pivot.team_id === 1 ){
-        this.$store.dispatch("user/getAllAccountUsers")
-      }
-      else{
-        this.$store.dispatch("user/getTeamMembers", {team: this.account.pivot.team_id})
-      }
+      this.$store.dispatch("user/getUsers")
     },
     components: {
       DT

@@ -151,7 +151,7 @@ export default {
       },
       getUsers(){
         if( !this.users.length ){
-          this.$store.dispatch("user/getAllAccountUsers", {vm: this})
+          this.$store.dispatch("user/getUsers", {vm: this})
         }
       },
       displayUser(id){

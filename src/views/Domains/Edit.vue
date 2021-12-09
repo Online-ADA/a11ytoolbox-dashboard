@@ -143,7 +143,7 @@
 			
 		</div>
 
-		<button @click.prevent="generateSample">TEst</button>
+		<button class="standard mt-3" @click.prevent="generateSample">Generate Sample</button>
 	</div>
 </template>
 

@@ -101,7 +101,7 @@
 							</div>
 						</div>
 
-						<div class="flex flex-col items-start">
+						<!-- <div class="flex flex-col items-start">
 							<label class="block font-semibold pr-3" :stacked="false" for="generate-sitemap">
 								<input v-model="domain.sitemap_option" type="radio" id="generate-sitemap" name="domain-sitemap" value="generate" class="mt-3" />
 								Generate sitemap
@@ -111,7 +111,7 @@
 								<input  v-model="domain.sitemap_option" type="radio" id="sitemap-manual" name="domain-sitemap" value="manual" class="mt-3" />
 								Manually enter/upload sitemap OR use working sample
 							</label>
-						</div>
+						</div> -->
 
 						<div class="mt-3 w-full">
 							<button class="standard mr-2" @click.prevent="createDomain">Add Domain</button>
@@ -369,33 +369,22 @@
 		mounted(){},
 		created(){},
 		watch:{
-			"this.$store.state.projects.project":function(newVal){
-
-			},
 			selectedDomain(val) {
 				if(val) {
 					this.createDomainSectionOpen = false
 				}
 			},
-			users(newVal){
-				if( this.open && newVal.length ){
-					this.unassigned = newVal.map( o=>o.id)
-				}
-			},
+			// users(newVal){
+			// 	if( this.open && newVal.length ){
+			// 		this.unassigned = newVal.map( o=>o.id)
+			// 	}
+			// },
 			open: function(newVal){
 				if( newVal ){
 					if( !this.project.domains || !this.project.domains.length ){
 						this.createDomainSectionOpen = true
 					}
-
-					if( this.account && this.account.pivot.team_id === 1 ){
-						this.$store.dispatch("user/getAllAccountUsers")
-						return
-					}
-					else if(this.account && this.account.pivot.role_id < 3){
-						this.$store.dispatch("user/getTeamMembers", {team: this.account.pivot.team_id})
-						return
-					}
+					this.$store.dispatch("user/getUsers", {vm: this})
 				}
 			},
 			propertyType: function(newVal){
@@ -409,13 +398,14 @@
 				return this.$store.getters["auth/isManager"]
 			},
 			isExecutive(){
-				return this.account && this.account.pivot.team_id === 1
+				return this.$store.getters["auth/isExecutive"]
+			},
+			team_members(){
+				let myTeam = this.$store.getters["auth/account"].pivot.team_id
+				return this.$store.state.user.byTeam[myTeam]
 			},
 			users() {
-				if( this.account && this.account.pivot.team_id === 1 ){
-					return this.$store.state.user.all
-				}
-				return this.$store.state.user.team_members
+				return this.$store.state.user.all
 			},
 			account(){
 				return this.$store.getters["auth/account"]
@@ -429,16 +419,6 @@
 			client(){
 				return this.$store.state.clients.client
 			},
-			// domains(){
-			// 	if( !this.$store.state.projects.project ){
-			// 		return []
-			// 	}
-			// 	if( this.$store.state.projects.project.domains == undefined ){
-			// 		return []
-			// 	}
-				
-			// 	return this.$store.state.projects.project.domains
-			// },
 			loading(){
 				return this.$store.state.audits.loading
 			},

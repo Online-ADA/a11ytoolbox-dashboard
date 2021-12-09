@@ -197,6 +197,14 @@ export default {
     isAuthenticated: state => {
       return !!state.token && !!state.user
     },
+    isExecutive:(state, getters) => {
+      if( getters.isAuthenticated && getters.account ){
+        if( getters.account.pivot.team_id === 1 ){
+          return true
+        }
+      }
+      return false
+    },
     isManager: (state, getters) => {
       //Manager =  true if member of executive team or role of owner or manager (1 or 2) on current team
       

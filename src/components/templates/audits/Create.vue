@@ -510,7 +510,7 @@ export default {
 	},
 	mounted() {
 		if( this.isManager && !this.team_members.length ){
-			this.$store.dispatch("user/getTeamMembers", {team: 2})
+			this.$store.dispatch("user/getUsers")
 		}
 		
 		this.$store.dispatch("audits/getAssistiveTech")
