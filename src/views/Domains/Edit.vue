@@ -109,7 +109,7 @@
 			</Card>
 
 			<Card class="flex-1 p-4 mx-2">
-				<h3 class="mt-3 mb-1">Structured Sample</h3>
+				<h3 class="mt-3 mb-1">Sample</h3>
 				<Button class="" color="red" @click.native.prevent="structuredListModalOpen =true">Add</Button>
 				<template v-if="domain && domain.sample.length">
 					<h4 class="my-3">Items</h4>
@@ -128,7 +128,8 @@
 									<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.title" aria-labelledby="sample-title"></TextInput></td>
 									<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.url" aria-labelledby="sample-url"></TextInput></td>
 									<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="delete this sample item" @click.native.prevent="deleteItem(sample.id)" color="delete">X</Button></td>
-									<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="save edits to this sample item" @click.native.prevent="updateItem(sample)" color="orange"><i class="fas fa-save"></i></Button></td>
+									<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="save edits to this sample item" 
+									@click.native.prevent="updateItem(sample)" color="orange"><i class="fas fa-save"></i></Button></td>
 								</tr>
 							</tbody>
 						</table>
@@ -141,6 +142,8 @@
 			</Card>
 			
 		</div>
+
+		<button @click.prevent="generateSample">TEst</button>
 	</div>
 </template>
 
@@ -188,9 +191,6 @@ export default {
 
 			return false
 		},
-		domains(){
-			return this.project.domains
-		},
 	},
 	props: [],
 	watch: {
@@ -235,6 +235,7 @@ export default {
 			this.$store.dispatch("domains/removePageFromSitemap", {page_id: id, domain_id: this.domain.id})
 		},
 		updateItem(item){
+			console.log(item);
 			this.$store.dispatch("domains/updateStructuredSampleItem", {item: item})
 		},
 		handleSitemapFile(e){
@@ -264,6 +265,80 @@ export default {
 		},
 		emptySitemap(){
 			this.$store.dispatch("domains/emptySitemap", {id: this.domain.id})
+		},
+		generateSample(){
+			console.log("fired");
+			this.processSources(this.domain.sample.length ? this.domain.sample : [], this.domain.pages.length ? JSON.parse(JSON.stringify(this.domain.pages)) : [])
+		},
+		processSources(structured, sitemap){
+			this.$store.state.domains.loading = true
+
+			//The end product is calculated like this:
+			//The entire structured sample + a number of additional pages from the sitemap that equal 10% of the structured sample
+			//i.e. if the structured sample is 30 pages/screens, the working sample should be 3 additional pages
+
+			//Calculate what 10% of the structured list is
+			let tenPercent = parseInt( structured.length * .1 )
+			if( tenPercent < 10 ){
+				tenPercent = 10
+			}
+			
+			let sitemap_sample = []
+			let structured_map = []
+	
+			//Remove duplicates from structured sample
+			for( let i in structured ){
+				if( structured[i].title != null && structured[i].title.toLowerCase() == "sitewide" ){
+					continue
+				}
+				let found = structured_map.some( el => {
+					let el_title = el.title ? el.title.toLowerCase() : null
+					let el_url = el.url ? el.url.toLowerCase() : null
+					let struc_title = structured[i].title ? structured[i].title.toLowerCase() : null
+					let struc_url = structured[i].url ? structured[i].url.toLowerCase() : null
+					return el_title == struc_title && el_url == struc_url
+				})
+				if( found ){
+					continue
+				}
+				
+				structured_map.push({
+					title: structured[i].title,
+					url: structured[i].url
+				})
+			}
+
+			if( sitemap.length ){
+				//Remove duplicates from sitemap and structured sample
+				while( sitemap_sample.length < tenPercent ){
+					if( sitemap.length < 1 ){
+						break
+					}
+					let index = Math.floor( Math.random() * (sitemap.length - 1))
+					if( !sitemap[index] ){
+						continue
+					}
+					
+					if( sitemap_sample.some( el => el.url.toLowerCase() == sitemap[index].url.toLowerCase()) ){
+						sitemap.splice(index, 1)
+						continue //break early for efficiency
+					}
+					
+					if( structured_map.some( el => el.url != null && el.url.toLowerCase() == sitemap[index].url.toLowerCase()) ){
+						sitemap.splice(index, 1)
+						continue
+					}
+
+					sitemap_sample.push( {
+						title: "",
+						url: sitemap[index].url.toLowerCase()
+					})
+					sitemap.splice(index, 1)
+				}
+			}
+
+			this.$store.dispatch("domains/generateSample", {items: [{title: "Sitewide", url:null}, ...structured_map, ...sitemap_sample], domain_id: this.$route.params.id})
+			this.$store.state.domains.loading = false
 		},
 	},
 	created() {
