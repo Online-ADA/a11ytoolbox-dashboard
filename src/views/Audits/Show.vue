@@ -37,6 +37,10 @@
 			<div style="padding-bottom:60px;" class="bg-white px-4 pt-5 p-6">
 				<button aria-label="Close add issue modal" @click.prevent="closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
+
+				TOGGLE BUTTON HERE
+
+
 				<div class="flex items-start mt-3 text-left w-full flex-wrap">
 					
 					<div class="flex w-full mt-2">

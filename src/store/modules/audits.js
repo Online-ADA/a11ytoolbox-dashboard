@@ -141,69 +141,6 @@ export default {
 				.catch()
 				.then()
 			},
-			// getProject({state, rootState}, args){
-			// 	state.loading = true
-			// 	Request.get(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}`, {
-			// 		onSuccess: {
-			// 			title:'Success',
-			// 			text:'Project retrieved',
-			// 			callback: function(response){
-			// 				state.loading = false
-			// 				state.project = response.data.details
-			// 			},
-			// 			position: 'bottom right'
-			// 		},
-			// 		onError: {
-			// 			title:'Error',
-			// 			text:'Retrieving this project caused an error',
-			// 			callback: function(){
-			// 				state.loading = false
-			// 			},
-			// 			position: 'bottom right'
-			// 		},
-			// 		onWarn: {
-			// 			title: "Warning",
-			// 			text: "There was a problem retrieving the project",
-			// 			callback: function(){
-			// 				state.loading = false
-			// 			},
-			// 			position: 'bottom right'
-			// 		}
-			// 	})
-			// },
-			// getProjects({state, rootGetters, rootState}){
-			// 	state.loading = true
-			// 	let url = `${rootState.auth.API}/${rootState.auth.account}/projects`
-			// 	if( rootGetters["auth/isManager"] ){
-			// 		url = `${rootState.auth.API}/${rootState.auth.account}/projects`
-			// 	}
-			// 	Request.get(url, {
-			// 		onSuccess: {
-			// 			silent:true,
-			// 			callback: function(response){
-			// 				state.loading = false
-			// 				state.projects = response.data.details
-			// 			},
-			// 			position: 'bottom right'
-			// 		},
-			// 		onError: {
-			// 			title:'Error',
-			// 			text:'Retrieving this projects caused an error',
-			// 			callback: function(){
-			// 				state.loading = false
-			// 			},
-			// 			position: 'bottom right'
-			// 		},
-			// 		onWarn: {
-			// 			title: "Warning",
-			// 			text: "There was a problem retrieving the projects",
-			// 			callback: function(){
-			// 				state.loading = false
-			// 			},
-			// 			position: 'bottom right'
-			// 		}
-			// 	})
-			// },
 			getAudit({state, rootState}, args = {withIssues: false}){
 				state.loading = true
 				
