@@ -3,11 +3,7 @@
 		<Loader v-if="loading"></Loader>
 		
 		<A class="pr-3" type='router-link' :to="{path: `/domains/${$route.params.id}`}">View Domain</A>
-		<!-- <A type='router-link' :to="{path: `/projects/${domain.project_id}`}">View Project</A> -->
-		<!-- <template v-if="!independent">
-			<h1 class="mb-2">Create the structured sample</h1>
-			<h2 class="text-base mb-3">Before we can create an audit, we must create a structured sample. The Structured sample serves as the core list of pages available to pick from when adding new issues to your audit. The can be anything from an actual valid URL to a description like "All modals". The structured sample is required to generate a working sample (on the next page). The Sitemap is a list of actual valid URLs of the site and is used when running the scan. The Sitemap is optional, but if present, will be used in conjunction with the Structured List to generate a working sample. </h2>
-		</template> -->
+		
 		<h2 class="mb-1">{{domain.url}}</h2>
 		<div class="flex items-center justify-center mb-3">
 			<h3 class="pr-2">{{domain.url}}</h3>
@@ -139,11 +135,10 @@
 
 				<FileInput @input="handleSampleFile" class="block w-auto mx-auto pb-3" accept=".csv"></FileInput>
 				<Button color="red" @click.native.prevent="uploadSample">Upload Sample</Button>
+				<div><button class="standard mt-3" @click.prevent="generateSample">Generate Sample</button></div>
 			</Card>
 			
 		</div>
-
-		<button class="standard mt-3" @click.prevent="generateSample">Generate Sample</button>
 	</div>
 </template>
 

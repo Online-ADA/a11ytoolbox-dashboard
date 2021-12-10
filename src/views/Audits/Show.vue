@@ -38,8 +38,7 @@
 				<button aria-label="Close add issue modal" @click.prevent="closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
 
-				TOGGLE BUTTON HERE
-
+				<Toggle @changed="((ev)=>{ useSitemap = ev })" :labelLeft="'Working Sample'" :labelRight="'Sitemap'" ></Toggle>
 
 				<div class="flex items-start mt-3 text-left w-full flex-wrap">
 					
@@ -60,23 +59,22 @@
 						<div class="mx-2 flex-1">
 							<Label class="text-lg leading-6 w-full" :stacked="false" for="pages">Pages</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('pages') }" id="pages-validation">The pages field is required</small>
-							<template v-if="audit.pages && audit.pages.length">
-								<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
-									<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in audit.pages" :key="'page-'+index">
-										<template v-if="page.title">{{page.title}}</template>
-										<template v-if="page.title && page.url"> - </template>
-										<template v-if="page.url">{{page.url}}</template>
-									</option>
-								</select>
-							</template>
-							<template v-else-if="audit.domain && audit.domain.pages && audit.domain.pages.length">
+							
+							<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
+								<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in pagesSrc" :key="'page-'+index">
+									<template v-if="page.title">{{page.title}}</template>
+									<template v-if="page.title && page.url"> - </template>
+									<template v-if="page.url">{{page.url}}</template>
+								</option>
+							</select>
+							
+							<!-- <template v-else-if="audit.domain && audit.domain.pages && audit.domain.pages.length">
 								<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
 									<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in audit.domain.pages" :key="'page-'+index">
 										<template v-if="page.url">{{page.url}}</template>
 									</option>
 								</select>
-							</template>
-							<template v-else>Sitemap is empty. <button role="link" @click="$router.push({path: `/domains/${audit.domain.id}/edit`})" class="standard">Create</button> one</template>
+							</template> -->
 							
 						</div>
 						<div class="mx-2 flex-1">
@@ -223,67 +221,7 @@
 				</button>
 			</div>
 		</Modal>
-		<!-- <Modal size="wide" v-if="project" class="z-50" :open="addIssueReferenceLinkModalOpen">
-			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<button aria-label="Close select descriptions modal" @click.prevent="addIssueReferenceLinkModalOpen = false" class="absolute top-4 right-4 standard">X</button>
-				<h2 class="text-center">Select which audit and issue</h2>
-				<Label for="referenceAudits">Audit</Label>
-				<select id="referenceAudits" name="referenceAudits" aria-label="Select audit" class="m-2 w-full" v-model="selectedReference.audit">
-					<option :value="audit.id" v-for="(audit, index) in project.audits" :key="'audits-'+index">{{audit.title}}</option>
-				</select>
-				<div v-if="selectedReference.audit && selectedReference.issues.length" class="px-2">
-					<Label for="referenceIssues">Issue</Label>
-					<select id="referenceIssues" aria-label="Select issue" class="m-2 w-full" v-model="selectedReference.issue">
-						<option :value="issue" v-for="(issue, index) in selectedReference.issues" :key="'referenceIssues-'+index">{{issue.issue_number}}</option>
-					</select>
-
-					<div class="flex flex-col">
-						<Label for="referenceText">Link text</Label>
-						<TextInput v-model="selectedReference.linkText" id="referenceText"></TextInput>
-
-						<h2 class="self-center my-2">Issue preview</h2>
-					</div>
-
-					<div v-if="selectedReference.issue" class="flex w-full">
-						<div class="w-1/2 flex flex-col pr-3">
-							<Label>Description</Label>
-							<p style="max-height:200px;" class="overflow-y-auto" v-html="selectedReference.issue.descriptions"></p>
-						</div>
-						<div class="w-1/2 flex flex-col pl-3">
-							<Label>Recommendation</Label>
-							<p style="max-height:200px;" class="overflow-y-auto" v-html="selectedReference.issue.recommendations"></p>
-						</div>
-					</div>
-					<div class="flex w-full">
-						<div class="w-1/3 pr-3">
-							<Label>Pages</Label>
-							<ul style="max-height:200px;" class="overscroll-y-auto">
-								<li v-for="(page, index) in selectedReference.issue.pages" :key="'refPage-'+index">{{page}}</li>
-							</ul>
-						</div>
-						<div class="w-1/3 px-3">
-							<Label>Success Criteria</Label>
-							<ul style="max-height:200px;" class="overscroll-y-auto">
-								<li v-for="(article, index) in selectedReference.issue.articles" :key="'refPage-'+index">{{articles.find( a=> a.id==article.id).number}} - {{articles.find( a=> a.id==article.id).title}}</li>
-							</ul>
-						</div>
-						<div class="w-1/3 pl-3">
-							<Label>Status</Label>
-							<p>{{selectedReference.issue.status}}</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="addIssueReferenceLinkModalOpen = false" class="standard">
-					Cancel
-				</button>
-				<button @click.prevent="createReferenceLink" class="standard">
-					Create Reference
-				</button>
-			</div>
-			
-		</Modal> -->
+		
 		<Modal style="z-index:72;" :open="selectDescriptionsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close select descriptions modal" @click.prevent="selectDescriptionsModalOpen = false" class="absolute top-4 right-4 standard" >X</button>
@@ -358,6 +296,7 @@ import Card from '../../components/Card'
 import Label from '../../components/Label'
 import TextInput from '../../components/TextInput'
 import TextArea from '../../components/TextArea'
+import Toggle from '../../components/Toggle'
 import { EventBus } from '../../services/eventBus'
 
 export default {
@@ -467,9 +406,19 @@ export default {
 			columns: [ "id" ],
 			orders: [ "asc" ],
 			reference: ["id"]
-		}
+		},
+		useSitemap:false
 	}),
 	computed: {
+		pagesSrc(){
+			if( this.audit ){
+				if( this.useSitemap ){
+					return this.audit.domain.pages
+				}
+
+				return this.audit.domain.sample
+			}
+		},
 		isManager(){
 			return this.$store.getters["auth/isManager"]
 		},
@@ -770,7 +719,7 @@ export default {
 		createFromCopy(){
 			let copy = JSON.parse(JSON.stringify(this.audit.issues.find( i => i.id == this.selectedRows[0] )))
 			this.issue = copy
-			this.addIssuePagesToGlobalPagesList()
+			// this.addIssuePagesToGlobalPagesList()
 
 			delete this.issue.id
 			this.descriptionsQuill.root.innerHTML = this.issue.descriptions
@@ -789,7 +738,7 @@ export default {
 			// - If an object, check to see if page.title and page.url match before adding
 			this.issue = copy
 			
-			this.addIssuePagesToGlobalPagesList()
+			// this.addIssuePagesToGlobalPagesList()
 			
 			this.descriptionsQuill.root.innerHTML = this.issue.descriptions
 			this.recommendationsQuill.root.innerHTML = this.issue.recommendations
@@ -804,59 +753,59 @@ export default {
 				this.updateIssue()
 			}
 		},
-		addIssuePagesToGlobalPagesList(){
-			for( let p = 0; p < this.issue.pages.length; p++ ){
-				if( typeof this.issue.pages[p] == 'object' ){ //this would look like {title: 'xyz', url: ''}
-					let addMe = true
+		// addIssuePagesToGlobalPagesList(){
+		// 	for( let p = 0; p < this.issue.pages.length; p++ ){
+		// 		if( typeof this.issue.pages[p] == 'object' ){ //this would look like {title: 'xyz', url: ''}
+		// 			let addMe = true
 
-					for (let index = 0; index < this.audit.pages.length; index++) {
-						const existingPage = this.audit.pages[index];
-						if( existingPage.title !== null && 
-							existingPage.title !== "" &&
-							this.issue.pages[p].title !== null &&
-							this.issue.pages[p].title !== "" &&
-							existingPage.title == this.issue.pages[p].title ){
-								addMe = false
-								break
-						}
-						if( existingPage.url !== null && 
-							existingPage.url !== "" &&
-							this.issue.pages[p].url !== null &&
-							this.issue.pages[p].url !== "" &&
-							existingPage.url == this.issue.pages[p].url ){
-								addMe = false
-								break
-						}
-					}
+		// 			for (let index = 0; index < this.pagesSrc.length; index++) {
+		// 				const existingPage = this.pagesSrc[index];
+		// 				if( existingPage.title !== null && 
+		// 					existingPage.title !== "" &&
+		// 					this.issue.pages[p].title !== null &&
+		// 					this.issue.pages[p].title !== "" &&
+		// 					existingPage.title == this.issue.pages[p].title ){
+		// 						addMe = false
+		// 						break
+		// 				}
+		// 				if( existingPage.url !== null && 
+		// 					existingPage.url !== "" &&
+		// 					this.issue.pages[p].url !== null &&
+		// 					this.issue.pages[p].url !== "" &&
+		// 					existingPage.url == this.issue.pages[p].url ){
+		// 						addMe = false
+		// 						break
+		// 				}
+		// 			}
 
-					if( addMe ){
-						this.$store.state.audits.audit.pages.push({
-							title: this.issue.pages[p].title,
-							url: this.issue.pages[p].url
-						})
-					}
-				}
-				if( typeof this.issue.pages[p] == 'string' ){
-					let regX = /^\/|^http/g
-					let match = this.issue.pages[p].match(regX)
+		// 			if( addMe ){
+		// 				this.$store.state.audits.audit.pages.push({
+		// 					title: this.issue.pages[p].title,
+		// 					url: this.issue.pages[p].url
+		// 				})
+		// 			}
+		// 		}
+		// 		if( typeof this.issue.pages[p] == 'string' ){
+		// 			let regX = /^\/|^http/g
+		// 			let match = this.issue.pages[p].match(regX)
 					
-					if( match === null ){
-						let urls = this.audit.pages.map(ap=>ap.url)
-						if( !urls.includes(this.issue.pages[p]) ){
-							this.$store.state.audits.audit.pages.push({
-								title: "",
-								url: this.issue.pages[p]
-							})
-						}
-					}else{
-						this.$store.state.audits.audit.pages.push({
-							title: this.issue.pages[p],
-							url: ""
-						})
-					}
-				}
-			}
-		},
+		// 			if( match === null ){
+		// 				let urls = this.audit.pages.map(ap=>ap.url)
+		// 				if( !urls.includes(this.issue.pages[p]) ){
+		// 					this.$store.state.audits.audit.pages.push({
+		// 						title: "",
+		// 						url: this.issue.pages[p]
+		// 					})
+		// 				}
+		// 			}else{
+		// 				this.$store.state.audits.audit.pages.push({
+		// 					title: this.issue.pages[p],
+		// 					url: ""
+		// 				})
+		// 			}
+		// 		}
+		// 	}
+		// },
 		deleteSelectedIssues(){
 			this.$store.dispatch("audits/deleteIssues", { issues: this.selectedRows, audit_id: this.$route.params.id })
 			this.issue = this.getDefault()
@@ -1137,7 +1086,8 @@ export default {
 		Card,
 		Label,
 		TextInput,
-		TextArea
+		TextArea,
+		Toggle
 	},
 }
 

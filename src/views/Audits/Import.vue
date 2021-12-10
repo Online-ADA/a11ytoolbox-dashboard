@@ -174,7 +174,8 @@ export default {
         headers(){
             let parsed = [
                 {
-                    header: "id",
+                    key: "id",
+                    display: "id",
                     show: false,
                     sticky: true,
                     style: {},
@@ -182,7 +183,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "issue number",
+                    key: "issue_number",
+                    display: "issue number",
                     show: true,
                     sticky: true,
                     style: {},
@@ -198,7 +200,8 @@ export default {
                 //     hidePermanent: true
                 // },
                 {
-                    header: "pages",
+                    key: "pages",
+                    display: "pages",
                     show: true,
                     sticky: false,
                     style: {},
@@ -206,7 +209,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "status",
+                    key: "status",
+                    display: "status",
                     show: true,
                     sticky: false,
                     style: {},
@@ -214,7 +218,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "target",
+                    key: "target",
+                    display: "target",
                     show: true,
                     sticky: false,
                     style: {},
@@ -222,7 +227,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "levels",
+                    key: "levels",
+                    display: "levels",
                     show: true,
                     sticky: false,
                     style: {},
@@ -230,7 +236,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "success criteria",
+                    key: "articles",
+                    display: "success criteria",
                     show: true,
                     sticky: false,
                     style: {},
@@ -238,7 +245,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "techniques",
+                    key: "techniques",
+                    display: "techniques",
                     show: true,
                     sticky: false,
                     style: {},
@@ -246,15 +254,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "descriptions",
-                    show: true,
-                    sticky: false,
-                    style: {},
-                    width: "400px",
-                    hidePermanent: false
-                },
-                {
-                    header: "audit 1 recommendations",
+                    key: "descriptions",
+                    display: "descriptions",
                     show: true,
                     sticky: false,
                     style: {},
@@ -262,7 +263,17 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "audit states",
+                    key: "recommendations",
+                    display: "audit 1 recommendations",
+                    show: true,
+                    sticky: false,
+                    style: {},
+                    width: "400px",
+                    hidePermanent: false
+                },
+                {
+                    key: "audit_states",
+                    display: "audit states",
                     show: true,
                     sticky: false,
                     style: {},
@@ -270,7 +281,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "priority",
+                    key: "priority",
+                    display: "priority",
                     show: false,
                     sticky: false,
                     style: {},
@@ -278,7 +290,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "effort",
+                    key: "effort",
+                    display: "effort",
                     show: false,
                     sticky: false,
                     style: {},
@@ -286,7 +299,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "how discovered",
+                    key: "how_discovered",
+                    display: "how discovered",
                     show: false,
                     sticky: false,
                     style: {},
@@ -294,7 +308,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "screenshots",
+                    key: "screenshots",
+                    display: "screenshots",
                     show: false,
                     sticky: false,
                     style: {},
@@ -302,7 +317,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "resources",
+                    key: "resources",
+                    display: "resources",
                     show: false,
                     sticky: false,
                     style: {},
@@ -310,7 +326,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "browser combos",
+                    key: "browser_combos",
+                    display: "browser combos",
                     show: false,
                     sticky: false,
                     style: {},
@@ -318,7 +335,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "essential functionality",
+                    key: "essential_functionality",
+                    display: "essential functionality",
                     show: true,
                     sticky: false,
                     style: {},
@@ -326,7 +344,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "actrs",
+                    key: "actrs",
+                    display: "actrs",
                     show: false,
                     sticky: false,
                     style: {},
@@ -334,7 +353,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "created by",
+                    key: "created_by",
+                    display: "last saved by",
                     show: false,
                     sticky: false,
                     style: {},
@@ -342,7 +362,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "audit id",
+                    key: "audit_id",
+                    display: "audit id",
                     show: false,
                     sticky: false,
                     style: {},
@@ -350,7 +371,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "auditor notes",
+                    key: "audito_notes",
+                    display: "auditor notes",
                     show: true,
                     sticky: false,
                     style: {},
@@ -358,7 +380,8 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    header: "second audit comments",
+                    key: "second_audit_comments",
+                    display: "second audit comments",
                     show: false,
                     sticky: false,
                     style: {},
@@ -366,7 +389,8 @@ export default {
                     hidePermanent: this.primaryAudit.number == 2 || this.primaryAudit.number == 3
                 },
                 {
-                    header: "third audit comments",
+                    key: "third_audit_comments",
+                    display: "third audit comments",
                     show: false,
                     sticky: false,
                     style: {},
