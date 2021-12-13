@@ -14,7 +14,8 @@
 			@moveColumn="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-positions`, payload) }" 
 			:sortData="tableDefaultSortBy" 
 			@freezeColumn="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-stickied`, payload) }" 
-			:issuesTable="true" :condense="shouldCondense" 
+			:issuesTable="true" 
+			:condense="shouldCondense" 
 			:locked="audit.locked" 
 			@selectAll="selectAll" 
 			@deselectAll="deselectAll" 
@@ -423,7 +424,11 @@ export default {
 			return this.$store.getters["auth/isManager"]
 		},
 		issues(){
-			return this.audit ? this.audit.issues : []
+			if( !this.audit ){
+				return []
+			}
+			
+			return this.$store.state.audits.audit.issues
 		},
 		audit_states(){
 			return this.$store.state.audits.audit_states.map( as => as.content)

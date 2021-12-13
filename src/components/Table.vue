@@ -74,7 +74,6 @@
 					v-for="(data, index) in rows" 
 					:key="'row-'+index">
 
-
 						<td
 						tabindex="-1" 
 						class="p-2"
@@ -111,9 +110,7 @@
 								</template>
 								
 							</span>
-							
 						</td>
-
 					</tr>
 				</tbody>
 			</table>
@@ -161,6 +158,11 @@
 			dragscroll
 		},
 		props:{
+			tableType:{
+				type:String,
+				default: "audit"
+			},
+			audit_id:{},
 			issuesTable: {
 				type: Boolean,
 				default: false
@@ -259,7 +261,23 @@
 				return this.rows.length && this.perPage < this.total
 			},
 			total(){
-				return this.$store.state.audits.audit.issue_count
+				// if( this.tableType == "scan" ){
+				// 	return
+				// }
+
+				if( this.tableType == "audit" ){
+					if( this.importing ){
+						//if this is the primary audit
+						if( this.audit_id == this.$route.params.id ){
+							return this.$store.state.audits.audit.issue_count
+						}else{
+							return this.$store.state.projects.project.audits.find(a=>a.id == this.audit_id).issue_count
+						}
+						
+					}
+					return this.$store.state.audits.audit.issue_count
+				}
+				
 			},
 			rows(){
 				if( this.filtering ){
@@ -276,18 +294,18 @@
 			},
 		},
 		methods: {
-			translateHeader(val){
-				if( val == "audit 1 recommendations" ){
-					return "recommendations"
-				}
-				if( val == "success criteria" ){
-					return "articles"
-				}
-
-				return val.replaceAll(" ", "_")
-			},
 			changePage($event){
-				this.$store.dispatch("audits/getIssuesOffset", {audit_id: this.$route.params.id, page: $event})
+				if( this.importing ){
+					this.$store.dispatch("audits/getIssuesOffset", {
+						audit_id: this.audit_id, 
+						page: $event, 
+						importing: true, 
+						isPrimary: this.audit_id == this.$route.params.id
+					})
+				}else{
+					this.$store.dispatch("audits/getIssuesOffset", {audit_id: this.$route.params.id, page: $event, importing: false})
+				}
+				
 				this.current = $event
 			},
 			openModal( callback ){

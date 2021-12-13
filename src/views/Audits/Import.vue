@@ -1,23 +1,43 @@
 <template>
-  <div class="text-center mt-32">
+  <div class="text-center">
     <Loader v-if="loading"></Loader>
     <h1 class="mb-3">Import Issues for {{primaryAudit.title}}</h1>
     <div class="mb-5 w-full flex">
         <div class="w-1/4"></div>
         <div class="w-1/2 flex flex-wrap justify-center">
             <h3 class="text-base font-bold w-full">Choose which audits to compare</h3>
+            <Btn @click.native.prevent="showingAudits.includes(primaryAudit.id) ? showingAudits.splice(showingAudits.indexOf(primaryAudit.id), 1) : showingAudits.push(primaryAudit.id)" class="mx-2" :color="showingAudits.includes(primaryAudit.id) ? 'orange' : 'white'" :hover="true">{{primaryAudit.title}}</Btn>
             <Btn v-for="(audit, index) in audits" :key="'showAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'orange' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
         <div class="w-1/4"></div>
     </div>
-    <div class="mb-5 w-full flex">
-        <div class="w-1/4"></div>
-        <div class="w-1/2 flex flex-wrap justify-center">
-            <h3 class="text-base font-bold w-full">Choose which scans to compare</h3>
-            <Btn v-for="(scan, index) in scans" :key="'showAudit-'+index" @click.native.prevent="showingScans.includes(scan.id) ? showingScans.splice(showingScans.indexOf(scan.id), 1) : showingScans.push(scan.id)" class="mx-2" :color="showingScans.includes(scan.id) ? 'red' : 'white'" :hover="true">{{scan.title}}</Btn>
+
+    <!-- <button v-show="!showImportingIssues" @click.prevent="showImportingIssues = true">Show Issues to Import</button> -->
+    <!-- <div class="w-1/3 border border-black ml-1.5 p-5" v-show="showImportingIssues">
+        <div class="flex justify-between">
+            <h2>Issues to Import</h2>
+            <button @click.prevent="showImportingIssues = false">Close</button>
         </div>
-        <div class="w-1/4"></div>
-    </div>
+        <div>
+            <DT :search="false" :headers="['Issue Number', 'Status', 'Target']" :items="importing">
+                <template v-slot:cells-main>
+                    <div class="hidden"></div>
+                </template>
+                <template v-slot:cells-extra="row">
+                    <th class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">{{row.data.issue_number}}{{row}}</div>
+                    </th>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="capitalize text-sm text-gray-900">{{row.data.status}}{{row}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="capitalize text-sm text-gray-900">{{row.data.target}}{{row}}</div>
+                    </td>
+                    
+                </template>
+            </DT>
+        </div>
+    </div> -->
 
     <div class="w-full flex flex-wrap justify-center items-center mb-14">
         <div
@@ -29,13 +49,15 @@
             class="bg-white border border-pallette-grey h-auto p-4 text-center mx-1.5">
                 <div class="flex pr-2 items-center justify-center">
                     <h2 class="text-medium font-bold flex-1">{{audit.title}}</h2>
-                    <Btn v-if="auditFullscreen !== audit.id" aria-label="Expand this audit to full screen" @click.native.prevent="setFullscreen(audit.id, 'audit')" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
-                    <Btn v-if="auditFullscreen === audit.id" aria-label="Compress this audit back down" @click.native.prevent="setFullscreen(false, 'audit')" hover="true" color="white"><i class="fas fa-compress"></i></Btn>
+                    <Btn v-if="auditFullscreen !== audit.id" aria-label="Expand this audit to full screen" @click.native.prevent="setFullscreen(audit.id)" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
+                    <Btn v-if="auditFullscreen === audit.id" aria-label="Compress this audit back down" @click.native.prevent="setFullscreen(false)" hover="true" color="white"><i class="fas fa-compress"></i></Btn>
                 </div>
+                
                 <Table 
                 :importing="true" 
                 :issuesTable="true" 
                 v-if="audit.id !== primaryAudit.id" 
+                :audit_id="audit.id"
                 :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" 
                 :condense="true" ref="issuesTable" 
                 :selected="selectedAuditRows" 
@@ -44,10 +66,11 @@
                 @rowClick="selectAuditRow" 
                 :rowsData="audit.issues" 
                 :headersData="headers"></Table>
-
+                
                 <Table 
                 :importing="true" 
-                :issuesTable="true" 
+                :issuesTable="true"
+                :audit_id="primaryAudit.id"
                 :specialRows="primaryAuditIssues.filter( i=> !issuesToImport.includes(i.issue_number)).map( i=>i.issue_number)" 
                 class="primary-audit-table" 
                 v-else 
@@ -63,27 +86,10 @@
                 <Btn v-if="selectedImportRows.length > 0 && audit.id === primaryAudit.id" @click.native.prevent="removeFromImport(selectedImportRows)" class="mx-2" color="red" hover="true">Remove selected</Btn>
             </div>
         </div>
-        <!-- ############################################### -->
-        <div
-        class="scan-window" 
-        v-for="(scan, index) in filteredScans" 
-        :key="'scan-'+index" 
-        :class="[scanFullscreen === scan.id ? 'fullscreen' : 'w-1/2 my-3']" >
-            <div
-            class="bg-white border border-pallette-grey h-auto p-4 text-center mx-1.5">
-                <div class="flex pr-2 items-center justify-center">
-                    <h2 class="text-medium font-bold flex-1">{{scan.title}}</h2>
-                    <Btn v-if="scanFullscreen !== scan.id" aria-label="Expand this scan to full screen" @click.native.prevent="setFullscreen(scan.id, 'scan')" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
-                    <Btn v-if="scanFullscreen === scan.id" aria-label="Compress this scan back down" @click.native.prevent="setFullscreen(false, 'scan')" hover="true" color="white"><i class="fas fa-compress"></i></Btn>
-                </div>
-                <Table :issuesTable="true" :importing="true" :class="[ scanFullscreen === scan.id ? 'max-height-800' : 'max-height-615' ]" :condense="true" ref="issuesTable" :selected="selectedScanRows" @deselectAll="deselectAll" @selectAll="selectAll" @rowClick="selectScanRow" :rowsData="scan.issues" :headersData="headers"></Table>
-            </div>
-        </div>
     </div>
     <div class="w-full flex fixed bottom-0 left-0 right-0 px-3 py-3 bg-white border-t" style="z-index:25;max-width:calc(100% - 400px);margin-left:auto;">
         <div class="w-1/3">
-            <Btn v-if="selectedAuditRows.length > 1 || selectedScanRows.length > 1 || (selectedAuditRows.length >= 1 && selectedScanRows.length >= 1)" @click.native.prevent="compareIssuesModalOpen = true" class="mx-2" color="red" hover="true">Compare issues</Btn>
-            <Btn v-if="selectedAuditRows.length > 0 || selectedScanRows.length > 0" @click.native.prevent="addSelectedToAudit()" class="mx-2" color="red" hover="true">Import selected</Btn>
+            <Btn v-if="selectedAuditRows.length > 0" @click.native.prevent="addSelectedToAudit()" class="mx-2" color="red" hover="true">Import selected</Btn>
         </div>
         <div class="w-1/3">
             <Btn @click.native.prevent="uploadCSVModalOpen = true" class="mx-2" color="red" hover="true">Upload CSV</Btn>
@@ -111,7 +117,7 @@
         <div class="bg-white px-4 pt-5 pb-4 p-6">
             <Btn aria-label="Close compare issues modal" @click.native.prevent="compareIssuesModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Btn>
             <h2 class="text-center">Compare Issues for Importing</h2>
-            <Table :issuesTable="true" :importing="true" :condense="true" ref="compareTable" :selected="selectedCompareRows" @rowClick="selectCompareRow" :rowsData="issuesCompare" :headersData="headers"></Table>
+            <!-- <Table :issuesTable="true" :importing="true" :condense="true" ref="compareTable" :selected="selectedCompareRows" @rowClick="selectCompareRow" :rowsData="issuesCompare" :headersData="headers"></Table> -->
         </div>
         <div class="bg-gray-50 px-4 py-3 flex">
             <button @click.prevent="addSelectedComparesToAudit()" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
@@ -127,6 +133,7 @@
 
 <script>
 import Loader from '../../components/Loader'
+import DT from '../../components/DynamicTable'
 import Table from '../../components/Table'
 import Btn from '../../components/Button'
 import Modal from '../../components/Modal'
@@ -136,40 +143,31 @@ export default {
         selectedCompareRows: [], //Rows selected whilst comparing issues
         selectedImportRows: [], //Rows to actually be imported into the audit
         selectedAuditRows: [], // Rows selected from an audit
-        selectedScanRows: [], // Rows selected from a scan
         updatedFirstIndex: false,
         auditFullscreen: false,
-        scanFullscreen: false,
         compareIssuesModalOpen: false,
         issuesToImport: [],
         CSVFile: false,
         uploadCSVModalOpen: false,
         tempAudits: [],
         audits: [],
-        tempScans: [],
         showingAudits: [],
-        showingScans: [],
+        primaryAuditIssues: [],
+        allIssues: [],
+        importing: [],
     }),
     computed: {
         loading(){
             return this.$store.state.audits ? this.$store.state.audits.loading : false
         },
         primaryAudit(){
-            return this.$store.state.audits ? this.$store.state.audits.audit : false
-        },
-        // audits(){
-            
-        // },
-        scans(){
-            return [ ...this.$store.state.projects.scans, ...this.tempScans ]
+            return this.$store.state.audits.audit
         },
         filteredAudits(){
             let self = this
-            return this.audits.filter( a => self.showingAudits.includes(a.id) )
-        },
-        filteredScans(){
-            let self = this
-            return this.scans.filter( s => self.showingScans.includes(s.id) )
+            let all = [this.primaryAudit, ...this.audits]
+            
+            return all.filter( a => self.showingAudits.includes(a.id) )
         },
         headers(){
             let parsed = [
@@ -401,68 +399,70 @@ export default {
             
             return parsed
         },
-        allIssues(){
-            if( !this.audits.length ){
-                return []
-            }
-            let all = [...this.audits.map( a => a.issues).flat(), ...this.scans.map( s => s.issues).flat()]
-            var x = 0, l = all.length;
-            while (x < l) {
-                if( all[x].hasOwnProperty('audit_id') ){
-                    all[x].unique = all[x].id + all[x].issue_number + all[x].audit_id
-                }
-                if( all[x].hasOwnProperty('scan_id') ){
-                    all[x].unique = all[x].id + all[x].issue_number + all[x].scan_id
-                }
-
-                ++x;
-            }
-            
-            return all
-        },
         issuesCompare(){
             let self = this
-            return this.allIssues.filter( i => self.selectedAuditRows.includes(i.unique) || self.selectedScanRows.includes(i.unique) )
+            return this.allIssues.filter( i => self.selectedAuditRows.includes(i.unique) )
         },
-        primaryAuditIssues(){
-            return [...this.allIssues.filter( i => this.issuesToImport.includes(i.unique) ), ...this.primaryAudit.issues]
-        }
     },
     props: [],
     watch: {
-        primaryAudit(newVal){
+        "$store.state.audits.audit.issues":function(newVal){
             if( newVal ){
-                this.$store.dispatch("audits/getAudits", {project_id: newVal.project_id, withIssues: true})
-                this.$store.dispatch("projects/getScansForProject", {project_id: newVal.project_id})
+                this.setAllIssues()
+                this.primaryAuditIssues = [...this.allIssues.filter( i => this.issuesToImport.includes(i.unique) ), ...newVal]
             }
         },
-        "$store.state.projects.project":{
+        "$store.state.projects.project.audits":{
             deep:true,
             handler(newVal){
-                if( this.audits.length || !newVal ){
+                if( !newVal ){
+                    return
+                }
+                
+                if( newVal.length && newVal[0].issues == undefined ){
+                    this.$store.dispatch("audits/getAudits", {project_id: newVal[0].project_id, withIssues: true})
                     return
                 }
 
-                //If project hasn't loaded yet, or if it has loaded but doesn't have the audits proeprty, or if it has audits but there are none
-                if( !this.$store.state.projects.project.audits.length || this.$store.state.projects.project.audits[0].issues == undefined ){
-                    return this.tempAudits
+                let primaryIndex = this.$store.state.projects.project.audits.findIndex(a=>a.id == this.$route.params.id)
+                if( primaryIndex !== -1 ){
+                    this.$store.state.projects.project.audits.splice(primaryIndex, 1)
                 }
 
                 let auditsList = this._.cloneDeep(this.$store.state.projects.project.audits)
-                let ids = auditsList.map( a=>a.id)
-                let firstIndex = ids.indexOf( parseInt(this.$route.params.id) )
-                let firstItem = auditsList.splice(firstIndex, 1)[0]
-                auditsList.splice( 0, 0, firstItem)
                 this.audits = auditsList
+                this.setAllIssues()
+                
+                // let importing = this.allIssues.filter( i => this.issuesToImport.includes(i.unique) )
+                // this.primaryAuditIssues = [...importing, ...this.primaryAudit.issues]
             }
         },
         tempAudits(newVal){
             if( newVal ){
-                this.audits == [ ...auditsList, ...this.tempAudits ]
+                this.audits == [ ...this.audits, ...this.tempAudits ]
             }
         }
     },
     methods: {
+        setAllIssues(){
+            //This function is necessary to determine what is being added to the primary audit
+            if( !this.audits.length ){
+                return []
+            }
+
+            let all = this.audits.map( a =>  a.issues).flat()
+
+            var x = 0, l = all.length;
+            while (x < l) {
+                all[x].unique = all[x].id + all[x].issue_number + all[x].audit_id
+                ++x;
+            }
+            
+            this.allIssues = all
+            //primaryAuditIssues is an amalgamation of the issues that came with the primary audit AND and issues being imported. IssuesToImport is an array of unique keys (generated in AllIssues) used to pinpoint which issues from AllIssues to include
+            this.importing = this.allIssues.filter( i => this.issuesToImport.includes(i.unique) )
+            this.primaryAuditIssues = [...this.importing, ...this.primaryAudit.issues]
+        },
         handleUploadFile(e){
 			this.CSVFile = e
 		},
@@ -497,6 +497,7 @@ export default {
         },
         removeFromImport(issues){
             this.issuesToImport = this.issuesToImport.filter( i => !issues.includes(i))
+            this.setAllIssues()
             this.selectedImportRows = []
         },
         finishImport(){
@@ -513,26 +514,22 @@ export default {
         addSelectedComparesToAudit(){
             let self = this
             this.issuesToImport = [...this.issuesToImport, ...this.selectedCompareRows.filter( u=>!self.issuesToImport.includes(u))]
-
+            this.setAllIssues()
             this.compareIssuesModalOpen = false
             this.selectedCompareRows = []
             this.selectedAuditRows = []
-            this.selectedScanRows = []
         },
         addSelectedToAudit(){
+            
             let self = this
             this.issuesToImport = [ ...this.issuesToImport, ...this.selectedAuditRows.filter( u=>!self.issuesToImport.includes(u) ) ]
-            this.issuesToImport = [ ...this.issuesToImport, ...this.selectedScanRows.filter( u=>!self.issuesToImport.includes(u) ) ]
+            console.log("Firing", this.selectedAuditRows, this.issuesToImport);
+            this.setAllIssues()
             
             this.selectedAuditRows = []
-            this.selectedScanRows = []
         },
-        setFullscreen(value, type){
-            if( type == 'audit' ){
-                this.auditFullscreen = value
-            }else{
-                this.scanFullscreen = value
-            }
+        setFullscreen(value){
+            this.auditFullscreen = value
         },
         selectAuditRow(issue){
             if( this.selectedAuditRows.includes( issue.unique ) ){
@@ -542,19 +539,15 @@ export default {
 				this.selectedAuditRows.push( issue.unique )
 			}
         },
-        selectScanRow(issue){
-            if( this.selectedScanRows.includes( issue.unique ) ){
-				let index = this.selectedScanRows.indexOf( issue.unique )
-				this.selectedScanRows.splice(index, 1)
-			}else{
-				this.selectedScanRows.push( issue.unique )
-			}
-        },
     },
     created() {
-        this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
+        
     },
     mounted() {
+        this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
+        if( this.$store.state.projects.project ){
+            this.$store.dispatch("audits/getAudits", {project_id: this.$store.state.projects.project.id, withIssues: true})
+        }
         
     },
     components: {
@@ -562,7 +555,8 @@ export default {
       Table,
       Btn,
       Modal,
-      FileInput
+      FileInput,
+      DT
     },
 }
 </script>
@@ -595,26 +589,6 @@ export default {
     width:calc(100% - 420px);
 }
 .sidebarOpen ~ #content .audit-window.fullscreen{
-    width:calc(100% - 220px);
-}
-
-.scan-window:not(.fullscreen){
-    max-height:685px;
-    width:50%;
-    margin-top: 12px;
-    margin-bottom: 12px;
-}
-.scan-window.fullscreen{
-    position:fixed;
-    z-index:50;
-    width:100%;
-    height: calc(100vh - 54px);
-    top:65px;
-}
-.sidebarOpen.subSidebarExpanded ~ #content .scan-window.fullscreen{
-    width:calc(100% - 420px);
-}
-.sidebarOpen ~ #content .scan-window.fullscreen{
     width:calc(100% - 220px);
 }
 </style>

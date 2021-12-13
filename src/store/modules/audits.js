@@ -82,7 +82,19 @@ export default {
 				state.loading = true
 				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}/issues/page`, {params: {page: args.page}})
 				.then( re=>{
-					rootState.audits.audit.issues = re.data.details
+					if( args.importing ){
+						if( args.isPrimary ){
+							rootState.audits.audit.issues = re.data.details
+						}else{
+							//All of these lines are here to trigger the watcher on Import.vue
+							let index = rootState.projects.project.audits.findIndex(a=>a.id == args.audit_id)
+							let copy = rootState.projects.project.audits[index]
+							copy.issues = re.data.details
+							rootState.projects.project.audits[index] = copy
+						}
+					}else{
+						rootState.audits.audit.issues = re.data.details
+					}
 				})
 				.catch( re=>{
 					console.log(re);
