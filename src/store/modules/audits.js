@@ -82,7 +82,19 @@ export default {
 				state.loading = true
 				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.audit_id}/issues/page`, {params: {page: args.page}})
 				.then( re=>{
-					rootState.audits.audit.issues = re.data.details
+					if( args.importing ){
+						if( args.isPrimary ){
+							rootState.audits.audit.issues = re.data.details
+						}else{
+							//All of these lines are here to trigger the watcher on Import.vue
+							let index = rootState.projects.project.audits.findIndex(a=>a.id == args.audit_id)
+							let copy = rootState.projects.project.audits[index]
+							copy.issues = re.data.details
+							rootState.projects.project.audits[index] = copy
+						}
+					}else{
+						rootState.audits.audit.issues = re.data.details
+					}
 				})
 				.catch( re=>{
 					console.log(re);
@@ -141,69 +153,6 @@ export default {
 				.catch()
 				.then()
 			},
-			// getProject({state, rootState}, args){
-			// 	state.loading = true
-			// 	Request.get(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}`, {
-			// 		onSuccess: {
-			// 			title:'Success',
-			// 			text:'Project retrieved',
-			// 			callback: function(response){
-			// 				state.loading = false
-			// 				state.project = response.data.details
-			// 			},
-			// 			position: 'bottom right'
-			// 		},
-			// 		onError: {
-			// 			title:'Error',
-			// 			text:'Retrieving this project caused an error',
-			// 			callback: function(){
-			// 				state.loading = false
-			// 			},
-			// 			position: 'bottom right'
-			// 		},
-			// 		onWarn: {
-			// 			title: "Warning",
-			// 			text: "There was a problem retrieving the project",
-			// 			callback: function(){
-			// 				state.loading = false
-			// 			},
-			// 			position: 'bottom right'
-			// 		}
-			// 	})
-			// },
-			// getProjects({state, rootGetters, rootState}){
-			// 	state.loading = true
-			// 	let url = `${rootState.auth.API}/${rootState.auth.account}/projects`
-			// 	if( rootGetters["auth/isManager"] ){
-			// 		url = `${rootState.auth.API}/${rootState.auth.account}/projects`
-			// 	}
-			// 	Request.get(url, {
-			// 		onSuccess: {
-			// 			silent:true,
-			// 			callback: function(response){
-			// 				state.loading = false
-			// 				state.projects = response.data.details
-			// 			},
-			// 			position: 'bottom right'
-			// 		},
-			// 		onError: {
-			// 			title:'Error',
-			// 			text:'Retrieving this projects caused an error',
-			// 			callback: function(){
-			// 				state.loading = false
-			// 			},
-			// 			position: 'bottom right'
-			// 		},
-			// 		onWarn: {
-			// 			title: "Warning",
-			// 			text: "There was a problem retrieving the projects",
-			// 			callback: function(){
-			// 				state.loading = false
-			// 			},
-			// 			position: 'bottom right'
-			// 		}
-			// 	})
-			// },
 			getAudit({state, rootState}, args = {withIssues: false}){
 				state.loading = true
 				
@@ -502,7 +451,7 @@ export default {
 				.then( re => {
 					state.loading = false
 					rootState.projects.project.audits = re.data.details
-					
+					rootState.audits.all = re.data.details
 				})
 				.catch( re => {
 					console.log( re );

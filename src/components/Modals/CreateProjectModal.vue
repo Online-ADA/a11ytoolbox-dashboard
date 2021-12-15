@@ -85,7 +85,7 @@
 		name: 'CreateProjectModal',
 		methods:{
 			getUsers(){
-				this.$store.dispatch("user/getAllAccountUsers", {vm: this})
+				this.$store.dispatch("user/getUsers", {vm: this})
 			},
 			chooseNo(){
 				this.EventBus.closeModal( ()=>{ this.EventBus.$emit('createProjectModal', false)})

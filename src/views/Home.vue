@@ -77,7 +77,7 @@ export default {
       }
 
       if( !this.$store.state.user.all.length ){
-        this.$store.dispatch("user/getAllAccountUsers")
+        this.$store.dispatch("user/getUsers")
         return data
       }
 
@@ -138,7 +138,7 @@ export default {
   watch:{
     account:function(){
       if( !this.gettingUsers ){
-        this.$store.dispatch("user/getAllAccountUsers")
+        this.$store.dispatch("user/getUsers")
         this.gettingUsers = true
       }
     },

@@ -112,7 +112,7 @@
         methods: {
             setInitialData(data){
                 if( !this.$store.state.user.all.length ){
-                    this.$store.dispatch("user/getAllAccountUsers", {vm: data.instance})
+                    this.$store.dispatch("user/getUsers", {vm: data.instance})
                 }
             },
             displayMessage(message){

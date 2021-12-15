@@ -2,8 +2,13 @@ import Vue from 'vue'
 
 const getDefaultState = () => {
 	return {
-		team_members: [],
 		all:[],
+		byTeam: {
+			1: [],
+			2: [],
+			3: [],
+			4: []
+		},
 		user: false,
 		loading: false
 	}
@@ -12,8 +17,13 @@ const getDefaultState = () => {
 export default {
 	namespaced:true,
 	state: {
-		team_members: [],
 		all:[],
+		byTeam: {
+			1: [],
+			2: [],
+			3: [],
+			4: []
+		},
 		user: false,
 		loading: false
 	},
@@ -45,33 +55,33 @@ export default {
 			.catch( re=>console.log(re))
 			.then()
 		},
-		getAllAccountUsers({state, rootState}, args = {}){
+		getUsers({state, rootState, rootGetters}, args = {}){
 			state.loading = true
 			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/users`)
 			.then( re=>{
 				state.all = Object.values(re.data.details)
-				if( args.vm ){
-					args.vm.unassigned = state.all.filter( u => !args.vm.assigned.includes(u.id) ).map(u => u.id)
+				for (let i = 0; i < re.data.details.length; i++) {
+					const user = re.data.details[i];
+					if( user.roleInfo.team_id != null ){
+						state.byTeam[user.roleInfo.team_id].push(user.id)
+					}
 				}
-				
+				if( args.vm ){
+					let myTeam = rootGetters["auth/account"].pivot.team_id
+					args.vm.unassigned = state.all.filter( u => {
+						if( rootGetters["auth/isExecutive"] ){
+							return !args.vm.assigned.includes(u.id)
+						}else{
+							//Check that they haven't been added to Assigned list and check that they are on your team
+							return !args.vm.assigned.includes(u.id) && state.byTeam[myTeam].includes(u.id)
+						}
+					}).map(u => u.id)
+				}
 			})
 			.catch( re=> console.log(re))
 			.then( ()=> state.loading = false)
 		},
-		getTeamMembers({state, rootState}, args = {}){
-			state.loading = true
-			
-			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/users/members`, {params: {team: args.team}})
-			.then( re=>{
-				state.team_members = re.data.details
-			})
-			.catch( re=>{
-				console.log(re)
-			})
-			.then( ()=>{
-				state.loading = false
-			})
-		},
+		
 		getUser({state, rootState}, args){
 			state.loading = true
 			Request.get(`${rootState.auth.API}/${rootState.auth.account}/manage/users/${args.user_id}`, {
