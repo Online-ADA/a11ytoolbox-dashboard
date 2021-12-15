@@ -20,7 +20,7 @@
                         <div class="block">
                             <ul>
                                 <template v-if="$store.state.projects.project">
-                                    <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.projects.project.audits" :key="item.id">
+                                    <li :class="[$store.state.audits.audit.id === item.id ? 'selected' : '']" class="text-sm py-2" v-for="item in $store.state.audits.all" :key="item.id">
                                         <button class="text-white" @click="updateAudit(item)">{{getTitle(item)}}</button>
                                     </li>
                                 </template>

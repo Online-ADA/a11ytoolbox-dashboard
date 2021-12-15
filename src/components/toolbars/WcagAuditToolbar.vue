@@ -285,6 +285,7 @@ export default {
             return this.tool.type === 'audit' && this.audit
         },
         toolbarEmit(action){
+            
             let data = null
             if( action=='audit-condense' ){
                 this.toggle(action)
