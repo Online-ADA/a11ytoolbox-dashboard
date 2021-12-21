@@ -357,7 +357,11 @@ export default {
 				state.loading = true
 				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/audits/${args.issue.audit_id}/issues/store`, {params: args.issue})
 				.then( re=>{
-					state.audit.issues = re.data.details
+					//Don't add the issue to the currently displayed list if its at the page maximum for pagination
+					if( state.audit.issues.length < 100 ){
+						state.audit.issues = re.data.details
+					}
+					state.audit.issue_count = re.data.details.length
 				})
 				.catch( re=>{
 					console.log(re)
