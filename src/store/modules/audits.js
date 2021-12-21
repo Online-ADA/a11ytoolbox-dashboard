@@ -455,7 +455,7 @@ export default {
 				.then( re => {
 					state.loading = false
 					rootState.projects.project.audits = re.data.details
-					
+					rootState.audits.all = re.data.details
 				})
 				.catch( re => {
 					console.log( re );

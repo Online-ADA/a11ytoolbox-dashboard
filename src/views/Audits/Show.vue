@@ -408,7 +408,7 @@ export default {
 			orders: [ "asc" ],
 			reference: ["id"]
 		},
-		useSitemap:false
+		useSitemap:false,
 	}),
 	computed: {
 		pagesSrc(){
@@ -602,6 +602,9 @@ export default {
 				.then( () => this.$store.state.audits.loading = false )
 			}
 		},
+	},
+	beforeDestroy(){
+		EventBus.$off('toolbarEmit')
 	},
 	methods: {
 		setHeaders(headers, hide, stickied, columnPositions){
@@ -1010,11 +1013,12 @@ export default {
 				return
 			}
 			if( payload.action == 'audit-complete' ){
-				that.openModal(that.markComplete)
+				that.markComplete()
 				return
 			}
 			if( payload.action == 'audit-next' ){
-				that.openModal(that.createNextAudit)
+				
+				that.createNextAudit()
 				return
 			}
 			if( payload.action == 'audit-issue-status-change' ){
