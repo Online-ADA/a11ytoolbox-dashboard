@@ -280,7 +280,7 @@ export default {
 				this.assigned = JSON.parse(JSON.stringify(newVal.assignees.map(  o=>o.id )))
 				this.$store.dispatch("audits/getAssistiveTech")
 				this.$store.dispatch("audits/getSoftwareUsed")
-				this.$store.dispatch("user/getTeamMembers", {team: 2})
+				this.$store.dispatch("user/getUsers")
 				this.$store.dispatch("audits/getSitemap")
 				this.$store.dispatch("audits/getStructuredSample")
 			}

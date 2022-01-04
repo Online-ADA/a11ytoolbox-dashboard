@@ -3,15 +3,11 @@
 		<Loader v-if="loading"></Loader>
 		
 		<A class="pr-3" type='router-link' :to="{path: `/domains/${$route.params.id}`}">View Domain</A>
-		<!-- <A type='router-link' :to="{path: `/projects/${domain.project_id}`}">View Project</A> -->
-		<!-- <template v-if="!independent">
-			<h1 class="mb-2">Create the structured sample</h1>
-			<h2 class="text-base mb-3">Before we can create an audit, we must create a structured sample. The Structured sample serves as the core list of pages available to pick from when adding new issues to your audit. The can be anything from an actual valid URL to a description like "All modals". The structured sample is required to generate a working sample (on the next page). The Sitemap is a list of actual valid URLs of the site and is used when running the scan. The Sitemap is optional, but if present, will be used in conjunction with the Structured List to generate a working sample. </h2>
-		</template> -->
+		
 		<h2 class="mb-1">{{domain.url}}</h2>
 		<div class="flex items-center justify-center mb-3">
 			<h3 class="pr-2">{{domain.url}}</h3>
-			<Button @click.native.prevent="editDomainOpen = true" :hover="true"><i class="far fa-edit"></i></Button>
+			<Button aria-label="Edit domain title" @click.native.prevent="editDomainOpen = true" :hover="true"><i class="far fa-edit"></i></Button>
 		</div>
 		<Modal style="z-index:71;" :open="editDomainOpen">
 			<div class="bg-white px-4 pt-5 pb-4">
@@ -106,7 +102,7 @@
 			</Card>
 
 			<Card class="flex-1 p-4 mx-2">
-				<h3 class="mt-3 mb-1">Structured Sample</h3>
+				<h3 class="mt-3 mb-1">Sample</h3>
 				<Button class="" color="red" @click.native.prevent="structuredListModalOpen =true">Add</Button>
 				<template v-if="domain && domain.sample.length">
 					<h4 class="my-3">Items</h4>
@@ -125,7 +121,8 @@
 									<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.title" aria-labelledby="sample-title"></TextInput></td>
 									<td class="p-1.5 overflow-y-auto border border-black"><TextInput v-model="sample.url" aria-labelledby="sample-url"></TextInput></td>
 									<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="delete this sample item" @click.native.prevent="deleteItem(sample.id)" color="delete">X</Button></td>
-									<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="save edits to this sample item" @click.native.prevent="updateItem(sample)" color="orange"><i class="fas fa-save"></i></Button></td>
+									<td class="p-1.5 overflow-y-auto border border-black"><Button aria-label="save edits to this sample item" 
+									@click.native.prevent="updateItem(sample)" color="orange"><i class="fas fa-save"></i></Button></td>
 								</tr>
 							</tbody>
 						</table>
@@ -135,6 +132,7 @@
 
 				<FileInput @input="handleSampleFile" class="block w-auto mx-auto pb-3" accept=".csv"></FileInput>
 				<Button color="red" @click.native.prevent="uploadSample">Upload Sample</Button>
+				<div><button class="standard mt-3" @click.prevent="generateSample">Generate Sample</button></div>
 			</Card>
 			
 		</div>
@@ -185,9 +183,6 @@ export default {
 
 			return false
 		},
-		domains(){
-			return this.project.domains
-		},
 	},
 	props: [],
 	watch: {
@@ -232,6 +227,7 @@ export default {
 			this.$store.dispatch("domains/removePageFromSitemap", {page_id: id, domain_id: this.domain.id})
 		},
 		updateItem(item){
+			console.log(item);
 			this.$store.dispatch("domains/updateStructuredSampleItem", {item: item})
 		},
 		handleSitemapFile(e){
@@ -261,6 +257,80 @@ export default {
 		},
 		emptySitemap(){
 			this.$store.dispatch("domains/emptySitemap", {id: this.domain.id})
+		},
+		generateSample(){
+			console.log("fired");
+			this.processSources(this.domain.sample.length ? this.domain.sample : [], this.domain.pages.length ? JSON.parse(JSON.stringify(this.domain.pages)) : [])
+		},
+		processSources(structured, sitemap){
+			this.$store.state.domains.loading = true
+
+			//The end product is calculated like this:
+			//The entire structured sample + a number of additional pages from the sitemap that equal 10% of the structured sample
+			//i.e. if the structured sample is 30 pages/screens, the working sample should be 3 additional pages
+
+			//Calculate what 10% of the structured list is
+			let tenPercent = parseInt( structured.length * .1 )
+			if( tenPercent < 10 ){
+				tenPercent = 10
+			}
+			
+			let sitemap_sample = []
+			let structured_map = []
+	
+			//Remove duplicates from structured sample
+			for( let i in structured ){
+				if( structured[i].title != null && structured[i].title.toLowerCase() == "sitewide" ){
+					continue
+				}
+				let found = structured_map.some( el => {
+					let el_title = el.title ? el.title.toLowerCase() : null
+					let el_url = el.url ? el.url.toLowerCase() : null
+					let struc_title = structured[i].title ? structured[i].title.toLowerCase() : null
+					let struc_url = structured[i].url ? structured[i].url.toLowerCase() : null
+					return el_title == struc_title && el_url == struc_url
+				})
+				if( found ){
+					continue
+				}
+				
+				structured_map.push({
+					title: structured[i].title,
+					url: structured[i].url
+				})
+			}
+
+			if( sitemap.length ){
+				//Remove duplicates from sitemap and structured sample
+				while( sitemap_sample.length < tenPercent ){
+					if( sitemap.length < 1 ){
+						break
+					}
+					let index = Math.floor( Math.random() * (sitemap.length - 1))
+					if( !sitemap[index] ){
+						continue
+					}
+					
+					if( sitemap_sample.some( el => el.url.toLowerCase() == sitemap[index].url.toLowerCase()) ){
+						sitemap.splice(index, 1)
+						continue //break early for efficiency
+					}
+					
+					if( structured_map.some( el => el.url != null && el.url.toLowerCase() == sitemap[index].url.toLowerCase()) ){
+						sitemap.splice(index, 1)
+						continue
+					}
+
+					sitemap_sample.push( {
+						title: "",
+						url: sitemap[index].url.toLowerCase()
+					})
+					sitemap.splice(index, 1)
+				}
+			}
+
+			this.$store.dispatch("domains/generateSample", {items: [{title: "Sitewide", url:null}, ...structured_map, ...sitemap_sample], domain_id: this.$route.params.id})
+			this.$store.state.domains.loading = false
 		},
 	},
 	created() {

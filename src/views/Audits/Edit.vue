@@ -2,6 +2,10 @@
 	<div class="text-center container mx-auto">
 		<Loader v-if="loading"></Loader>
 		<h1>Edit Audit {{audit.title}}</h1>
+		<Button color="red" v-if="$store.getters['auth/isManager']" @click.native.prevent="confirmModalOpen = true" title="Delete Audit" class="ml-3.5 mt-3" >
+			<!-- <i class="fas fa-trash-alt"></i> -->
+			Delete
+		</Button>
 		<div class="flex flex-wrap">
 			<div class="w-1/4"></div>
 			<div class="w-1/2">
@@ -125,89 +129,77 @@
 					<h3>Users</h3>
 					<ul v-if="unassigned.length">
 						<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
-						<span>{{displayUser(id)}}</span><Button aria-label="Assign user to audit" hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
+						<span>{{displayUser(id)}}</span>
+						<Button :aria-label="`Assign ${displayUser(id)} to audit`" hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
 						</li>
 					</ul>
 					</Card>
 					<Card class="w-1/2">
 					<h3>Assignees</h3>
 					<ul v-if="assigned.length">
-						<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
-						<Button aria-label="Unassign user from the audit" hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
+						<li class="my-2 flex justify-center items-center" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
+							<template v-if="!team_members.includes(id)">
+								<i style="padding-top:2px; font-size:12px;" title="Assigned by an executive Team Member" class="far fa-info-circle pr-2 text-sm"></i>{{displayUser(id)}}
+							</template>
+							<template v-else>
+								<Button
+								:aria-label="`Unassign ${displayUser(id)} from the audit`" 
+								hover="true" 
+								class="text-lg leading-4 mr-2"
+								@click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
+								<!-- <Button
+								:aria-label="`Unassign ${displayUser(id)} from the audit`" 
+								:hover="!team_members.includes(id) ? false : true" 
+								class="text-lg leading-4 mr-2"
+								:class="{ 'disabled' : !team_members.includes(id) }"
+								:title="!team_members.includes(id) ? 'Assigned by an executive Team Member' : false"
+								@click.native.prevent="!team_members.includes(id) ? ()=>{} : unassign(id) ">&lt;</Button><span>{{displayUser(id)}}</span> -->
+							</template>
+							
 						</li>
 					</ul>
 					</Card>
 				</div>
 			</template>
-			<div class="flex flex-wrap w-full justify-center">
-				<h2 class="mt-2 mb-1 w-full">Working Sample</h2>
-				<h3 v-if="audit.domain" class="text-base">
-					{{audit.domain.url}}
-					<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
-				</h3>
-				<span class="text-base my-2">The working sample takes the structured list created with the domain and calculates 10% of the number of items in it. It will then grab that number of pages at random from the sitemap (if it was provided with the domain) and combine them to form the working sample.</span>
-				<span v-if="!loading && audit.pages.length" class="my-2 text-base"><span class="font-bold">Refresh Sample:</span> Pull in any changes made the the structured sample while retaining the original sitemap sample</span>
-				<span v-if="!loading && audit.pages.length" class="my-2 text-base"><span class="font-bold">Regenerate Sample:</span> Completely rebuild the working sample, including a new random sample from the sitemap, if provided.</span>
-				<div class="flex w-full justify-center">
-					<Button v-if="!loading && audit.pages.length" class="mt-1 mb-3 mx-2" hover="true" @click.native.prevent="refreshWorkingSample">Refresh Sample</Button>
-					<Button v-if="!loading && structuredSample" class="mt-1 mb-3 mx-2" hover="true" @click.native.prevent="generateWorkingSample">{{audit.pages.length ? 'Regenerate Sample' : 'Generate Sample'}}</Button>
-				</div>
-
-				<template v-if="audit.domain && audit.domain.pages && audit.domain.pages.length">
-					<template v-if="audit.pages.length">
-						<Card class="w-full p-4 mb-34 mx-2 flex-wrap items-center flex-col">
-							<div class="flex flex-wrap w-full justify-center items-end">
-								<h3 class="w-full">Add new sample item</h3>
-								<Label class="flex-1 pr-3">
-									<span>Title</span>
-									<TextInput v-model="newSampleItem.title"></TextInput>
-								</Label>
-								<Label class="flex-1">
-									<span>Url</span>
-									<TextInput v-model="newSampleItem.url"></TextInput>
-								</Label>
-								<Button style="margin-bottom:13px" class="ml-3" color="red" hover="true" @click.native.prevent="addNewSampleItem">Add Item</Button>
-							</div>
-							
-							<h4 class="my-3">Items</h4>
-							<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
-								<table class="w-full border border-black table-fixed">
-									<thead>
-										<tr>
-											<th class="text-center border border-black" width="40%" scope="col"><span id="sample-title">Title</span></th>
-											<th class="text-center border border-black" width="40%" scope="col"><span id="sample-url">Url</span></th>
-											<th class="text-center border border-black" width="10%" scope="col">Delete</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr v-for="(sample, index) in audit.pages" :key="'sample-'+index">
-											<td class="p-1.5 overflow-y-auto border border-black">
-												<TextInput class="w-full" v-model="sample.title" aria-labelledby="sample-title"></TextInput>
-											</td>
-											<td class="p-1.5 overflow-y-auto border border-black"><TextInput class="w-full" v-model="sample.url" aria-labelledby="sample-url"></TextInput></td>
-											<td class="p-1.5 overflow-y-auto border border-black"><Button @click.native.prevent="deleteItem(index)" color="delete">X</Button></td>
-										</tr>
-									</tbody>
-								</table>
-							</Card>
-							<Button @click.native.prevent="emptySample" color="red" hover="true" class="mr-3">Remove all</Button>
-							<Button @click.native.prevent="resetSample" color="red" hover="true">Reset</Button>
-						</Card>
-					</template>
-				</template>
-				<template v-else>
-					There is no sitemap yet for this domain. <button @click="$router.push({path: '/'})" class="standard mx-3">Click here</button> to create one
-				</template>
-			</div>
+			
 			<button class="standard my-5 mx-auto" @click.prevent="saveAudit">Save</button>
 			
 		</div>
+		<Modal class="adjust-with-sidebars" :open="confirmModalOpen">
+			<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+					<div class="sm:flex sm:items-start">
+						<div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+							<!-- Heroicon name: outline/exclamation -->
+							<svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+							</svg>
+						</div>
+						<div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+							<h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Delete Audit</h3>
+							<div class="mt-2">
+								<p class="text-sm text-gray-500">
+									Are you sure you want to delete this audit? This will delete all associated working sample pages and issues as well. This action cannot be undone.
+								</p>
+							</div>
+						</div>
+					</div>
+			</div>
+			<div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+					<button @click="deleteAudit" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+					Delete
+					</button>
+					<button @click="confirmModalOpen = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+					Cancel
+					</button>
+			</div>
+		</Modal>
 	</div>
 </template>
 
 <script>
 import Loader from '../../components/Loader'
 import Card from '../../components/Card'
+import Modal from '../../components/Modal'
 import TextInput from '../../components/TextInput'
 import Label from '../../components/Label'
 import Button from '../../components/Button'
@@ -215,7 +207,6 @@ import DatePicker from '../../components/Date'
 import Textarea from '../../components/TextArea'
 export default {
 	data: () => ({
-		newSampleItem: {title: "", url: ""},
 		statusSrc: [
 			{name: 'In Progress', value:'in_progress'},
 			{name:'Complete', value:'complete'},
@@ -244,7 +235,8 @@ export default {
 			project_id: "",
 			pages: [],
 			conformance_target: "WCAG 2.1 Level AA"
-		}
+		},
+		confirmModalOpen: false
 	}),
 	computed: {
 		loading(){
@@ -254,22 +246,20 @@ export default {
 			return false
 		},
 		projects(){
-			return this.$store.state.projects.all || []
+			return this.$store.state.projects.all
 		},
 		team_members(){
-			return this.$store.state.user.team_members || []
-		},
-		structuredSample(){
-			return this.$store.state.audits.structured_sample || []
-		},
-		sitemap(){
-			return this.$store.state.audits.sitemap || []
+			let myTeam = this.$store.getters["auth/account"].pivot.team_id
+			return this.$store.state.user.byTeam[myTeam]
 		},
 		assistive_tech_src(){
 			return this.$store.state.audits.assistive_tech.map( o=>o.content ) || []
 		},
 		software_used_src(){
 			return this.$store.state.audits.software_used.map( o=>o.content ) || []
+		},
+		all_users(){
+			return this.$store.state.user.all
 		}
 	},
 	props: [],
@@ -280,172 +270,35 @@ export default {
 				this.assigned = JSON.parse(JSON.stringify(newVal.assignees.map(  o=>o.id )))
 				this.$store.dispatch("audits/getAssistiveTech")
 				this.$store.dispatch("audits/getSoftwareUsed")
-				this.$store.dispatch("user/getTeamMembers", {team: 2})
+				this.$store.dispatch("user/getUsers", {vm: this})
 				this.$store.dispatch("audits/getSitemap")
 				this.$store.dispatch("audits/getStructuredSample")
 			}
 		},
-		"$store.state.user.team_members":function(newVal){
-			if( newVal && newVal.length ){
-				let self = this
-				this.unassigned = JSON.parse(JSON.stringify(newVal.filter( o=>!self.assigned.includes(o.id)).map( o=>o.id )))
-			}
-		}
+		// "$store.state.user.team_members":function(newVal){
+		// 	if( newVal && newVal.length ){
+		// 		let self = this
+		// 		this.unassigned = JSON.parse(JSON.stringify(newVal.filter( o=>!self.assigned.includes(o.id)).map( o=>o.id )))
+		// 	}
+		// }
 	},
 	methods: {
+		deleteAudit(){
+			let project_id = this.$store.state.projects.project.id
+			this.$store.dispatch("audits/deleteAudit", {audit_id: this.$route.params.id})
+			this.$router.push({path: `/projects/${project_id}`})
+		},
 		removeEssentialFunctionality(index){
 			this.audit.essential_functionality.splice(index, 1)
 		},
 		addNewEssentialFunctionality(){
 			this.audit.essential_functionality.push("")
 		},
-		addNewSampleItem(){
-			this.audit.pages.push(this.newSampleItem)
-			this.newSampleItem = {title: "", url: ""}
-		},
-		resetSample(){
-			this.$set(this.audit, "pages", JSON.parse(JSON.stringify(this.$store.state.audits.audit.pages)))
-		},
-		refreshWorkingSample(){
-			this.$store.state.audits.loading = true
-
-			//First get the current working sample
-			//Then get the structured sample. We don't want to alter the current sample in any way except to add any new entries from the structured sample in
-			//Loop through the structured sample. If the structured sample entry isn't in the current pages, we add it
-
-			//flatten current sample properties for easier comparison
-			let current_existing_titles = this.audit.pages.map(p=>p.title)
-			let current_existing_urls = this.audit.pages.map(p=>p.url)
-
-			//Now check to see if any of the structured sample objects exist within the current sample
-			let new_entries = this.structuredSample.filter( s=> {
-				if( s.title != null ){
-					let found = current_existing_titles.some( cet => cet != null && cet.toLowerCase() == s.title.toLowerCase() )
-					if( found ){
-						return false
-					}
-				}
-				if( s.url != null ){
-					let found = current_existing_urls.some( ceu => ceu != null && ceu.toLowerCase() == s.url.toLowerCase() )
-					if( found ){
-						return false
-					}
-				}
-				if( s.url == null && s.title == null ){
-					return false
-				}
-				return true
-			})
-
-			//Now remove duplicates.
-			let new_entries_final = []
-			for (let i = 0; i < new_entries.length; i++) {
-				const entry = new_entries[i];
-				let found = new_entries_final.some( ne=>{
-					if( ne.title != null && entry.title != null ){
-						if( ne.title.toLowerCase() == entry.title.toLowerCase() ){
-							return true
-						}
-					}
-					if( ne.url != null && entry.url != null ){
-						if( ne.url.toLowerCase() == entry.url.toLowerCase() ){
-							return true
-						}
-					}
-				})
-				if( !found ){
-					new_entries_final.push({
-						title: entry.title,
-						url: entry.url
-					})
-				}
-			}
-
-			this.audit.pages = [...this.audit.pages, ...new_entries_final]
-			this.$store.state.audits.loading = false
-		},
-		generateWorkingSample(){
-			this.processSources(this.structuredSample, this.sitemap.length ? JSON.parse(JSON.stringify(this.sitemap)) : [])
-		},
-		processSources(structured, sitemap){
-			this.$store.state.audits.loading = true
-
-			//The end product is calculated like this:
-			//The entire structured sample + a number of additional pages from the sitemap that equal 10% of the structured sample
-			//i.e. if the structured sample is 30 pages/screens, the working sample should be 3 additional pages
-
-			//Calculate what 10% of the structured list is
-			let tenPercent = parseInt( structured.length * .1 )
-			if( tenPercent < 10 ){
-				tenPercent = 10
-			}
-			
-			let sitemap_sample = []
-			let structured_map = []
-
-			//Remove duplicates from structured sample
-			for( let i in structured ){
-				//console.log(structured[i].title, structured[i].url);
-				if( structured[i].title != null ){
-					if( structured[i].title.toLowerCase() == "sitewide" ){
-						continue
-					}
-					if( structured_map.some( el => el.title != null && el.title.toLowerCase() == structured[i].title.toLowerCase()) ){
-						continue
-					}
-				}
-				if( structured[i].url != null ){
-					if( structured_map.some( el => el.url != null && el.url.toLowerCase() == structured[i].url.toLowerCase()) ){
-						continue
-					}
-				}
-				
-				structured_map.push({
-					title: structured[i].title,
-					url: structured[i].url
-				})
-			}
-
-			if( sitemap.length ){
-				//Remove duplicates from sitemap and structured sample
-				while( sitemap_sample.length <= tenPercent ){
-					if( sitemap.length < 1 ){
-						break
-					}
-					let index = Math.floor( Math.random() * (sitemap.length - 1))
-					if( !sitemap[index] ){
-						continue
-					}
-					
-					if( sitemap_sample.some( el => el.url.toLowerCase() == sitemap[index].url.toLowerCase()) ){
-						sitemap.splice(index, 1)
-						continue //break early for efficiency
-					}
-					
-					if( structured_map.some( el => el.url != null && el.url.toLowerCase() == sitemap[index].url.toLowerCase()) ){
-						sitemap.splice(index, 1)
-						continue
-					}
-
-					sitemap_sample.push( {
-						title: "",
-						url: sitemap[index].url.toLowerCase()
-					})
-					sitemap.splice(index, 1)
-				}
-			}
-
-			this.audit.pages = [{title: "Sitewide", url:null}, ...structured_map, ...sitemap_sample]
-			this.$store.state.audits.loading = false
-		},
-		deleteItem(index){
-			this.audit.pages.splice(index, 1)
-		},
-		emptySample(){
-			this.audit.pages = []
-		},
 		displayUser(id){
 			let user = this.team_members.find( u => u.id == id )
+			if( user == undefined ){
+				user = this.all_users.find( u => u.id == id )
+			}
 			return user != undefined ? `${user.first_name} ${user.last_name}` : false
 		},
 		assign(id){
@@ -500,7 +353,13 @@ export default {
 		Label,
 		Button,
 		Card,
-		DatePicker
+		DatePicker,
+		Modal
 	},
 }
 </script>
+<style scoped>
+	.disabled{
+		cursor: not-allowed;
+	}
+</style>

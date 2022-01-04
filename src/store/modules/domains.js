@@ -124,7 +124,15 @@ export default {
 				.catch( re=> console.log(re))
 				.finally( ()=>state.loading = false)
 			},
-			
+			generateSample({state, rootState}, args){
+				state.loading = true
+				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}/items`, {params: {items: args.items}})
+				.then( re=>{
+					state.domain.sample = re.data.details
+				})
+				.catch( re=> console.log(re))
+				.finally( ()=>state.loading = false)
+			},
 			updateStructuredSampleItem({state, rootState}, args){
 				state.loading = true
 				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})

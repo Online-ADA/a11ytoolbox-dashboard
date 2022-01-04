@@ -19,8 +19,8 @@
 					<div class="max-w-full flex flex-1">
 						<CanvasToolbar :tool="tool"></CanvasToolbar>
 						<div
-						class="flex-1 px-5"
-						:class="{'info-sidebar-expanded':infoSidebarExpanded}"
+						class="flex-1"
+						:class="{'info-sidebar-expanded':infoSidebarExpanded, 'px-5': $route.name != 'AuditShow', 'audit-show': $route.name == 'AuditShow'}"
 						id="main-content"
 						>
 							<router-view></router-view>
@@ -361,6 +361,9 @@ export default {
 	margin-right:0px;
 	max-width:100%;
 	margin-top:50px;
+}
+#main-content.audit-show{
+	margin-top:46px;
 }
 
 #main-content.info-sidebar-expanded{

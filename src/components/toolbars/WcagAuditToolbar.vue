@@ -4,9 +4,7 @@
             <!-- Audit Toolbar -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center text-13">
-                    <span v-if="audit.domain">
-                        {{audit.domain.url}}
-                        <template v-if="audit.domain.root">/{{audit.domain.root}}</template>
+                    <span v-if="audit.domain">{{audit.domain.url}}<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
                     </span>
                     <template v-if="isAuditShowPage">
                         <div class="border border-black mx-3.5 divider"></div>
@@ -50,6 +48,25 @@
                         </button>
                         <div class="border border-black mx-3.5 divider"></div>
                     </template>
+                    <!-- Table Tools -->
+                    <template v-if="isAuditShowPage">
+                        <div v-if="!audit.locked">
+                            <button title="Select All Rows" class="text-lg leading-none" @click.prevent="toolbarEmit('selectAll')" >
+                                <i class="fas fa-grip-horizontal"></i>
+                            </button>
+                        </div>
+                        <div v-if="!audit.locked">
+                            <button class="text-lg leading-none mx-3.5" title="Deselect All Rows" @click.prevent="toolbarEmit('deselectAll')">
+                                <i class="fal fa-grip-horizontal"></i>
+                            </button>
+                        </div>
+                        <div>
+                            <button class="text-base leading-none" title="Open Show or Hide Columns Modal" @click.prevent="toolbarEmit('columnPicker')" >
+                                <i class="far fa-thumbtack"></i>
+                            </button>
+                        </div>
+                        <div class="border border-black mx-3.5 divider"></div>
+                    </template>
                     <!-- Audit Tools -->
                     <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
                     <button class="ml-3.5 bg-transparent" @click="toolbarEmit('audit-issues-download')" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
@@ -58,7 +75,7 @@
 
                     <button title="Mark Audit Complete" v-if="!audit.locked" class="ml-3.5" @click="toolbarEmit('audit-complete')"><i class="fas fa-lock-open-alt"></i></button>
                     <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3" class="ml-3.5" @click="toolbarEmit('audit-next')"><i class="far fa-hand-point-right"></i></button>
-                    <button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="ml-3.5" ><i class="fas fa-trash-alt"></i></button>
+                    <!-- <button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="ml-3.5" ><i class="fas fa-trash-alt"></i></button> -->
                     <button class="ml-3.5 bg-transparent" @click="EventBus.$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
                 </span>
             </div>
@@ -268,6 +285,7 @@ export default {
             return this.tool.type === 'audit' && this.audit
         },
         toolbarEmit(action){
+            
             let data = null
             if( action=='audit-condense' ){
                 this.toggle(action)
