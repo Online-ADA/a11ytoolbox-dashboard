@@ -133,7 +133,7 @@
 							<Label for="priority">Priority</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('priority') }" id="priority-validation">{{validationMessages["priority"]}}</small>
 							<select :aria-describedby="failedValidation.includes('priority') ? 'priority-validation' : false" id="priority" v-model="issue.priority" name="priority">
-								<option :value="option" v-for="(option, index) in ['Low', 'Medium', 'High']" :key="'priority-' + index">{{option}}</option>
+								<option :value="option" v-for="(option, index) in ['Minor', 'Moderate', 'Serious', 'Critical']" :key="'priority-' + index">{{option}}</option>
 							</select>
 						</div>
 					</div>
@@ -185,7 +185,8 @@
 								<button class="mr-2 standard" @click.prevent="selectDescriptionsModalOpen = true" >Add Descriptions</button>
 								<!-- <Button @click.native.prevent="addIssueReferenceLinkModalOpen = true" color="red" hover="true">Add issue reference</Button> -->
 							</div>
-							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1" ></div>
+							
+							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1"></div>
 						</div>
 						<div class="w-1/2 flex flex-col px-2">
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations <small>(Note: this editor is not fully accessible)</small></Label>
@@ -358,7 +359,7 @@ export default {
 			auditor_notes: "",
 			second_audit_comments: "",
 			third_audit_comments: "",
-			priority: "Low",
+			priority: "Minor",
 			effort: "Low",
 		},
 		issue: {
@@ -381,7 +382,7 @@ export default {
 			auditor_notes: "",
 			second_audit_comments: "",
 			third_audit_comments: "",
-			priority: "Low",
+			priority: "Minor",
 			effort: "Low",
 		},
 		selectedSoftware: "",
@@ -761,59 +762,6 @@ export default {
 				this.updateIssue()
 			}
 		},
-		// addIssuePagesToGlobalPagesList(){
-		// 	for( let p = 0; p < this.issue.pages.length; p++ ){
-		// 		if( typeof this.issue.pages[p] == 'object' ){ //this would look like {title: 'xyz', url: ''}
-		// 			let addMe = true
-
-		// 			for (let index = 0; index < this.pagesSrc.length; index++) {
-		// 				const existingPage = this.pagesSrc[index];
-		// 				if( existingPage.title !== null && 
-		// 					existingPage.title !== "" &&
-		// 					this.issue.pages[p].title !== null &&
-		// 					this.issue.pages[p].title !== "" &&
-		// 					existingPage.title == this.issue.pages[p].title ){
-		// 						addMe = false
-		// 						break
-		// 				}
-		// 				if( existingPage.url !== null && 
-		// 					existingPage.url !== "" &&
-		// 					this.issue.pages[p].url !== null &&
-		// 					this.issue.pages[p].url !== "" &&
-		// 					existingPage.url == this.issue.pages[p].url ){
-		// 						addMe = false
-		// 						break
-		// 				}
-		// 			}
-
-		// 			if( addMe ){
-		// 				this.$store.state.audits.audit.pages.push({
-		// 					title: this.issue.pages[p].title,
-		// 					url: this.issue.pages[p].url
-		// 				})
-		// 			}
-		// 		}
-		// 		if( typeof this.issue.pages[p] == 'string' ){
-		// 			let regX = /^\/|^http/g
-		// 			let match = this.issue.pages[p].match(regX)
-					
-		// 			if( match === null ){
-		// 				let urls = this.audit.pages.map(ap=>ap.url)
-		// 				if( !urls.includes(this.issue.pages[p]) ){
-		// 					this.$store.state.audits.audit.pages.push({
-		// 						title: "",
-		// 						url: this.issue.pages[p]
-		// 					})
-		// 				}
-		// 			}else{
-		// 				this.$store.state.audits.audit.pages.push({
-		// 					title: this.issue.pages[p],
-		// 					url: ""
-		// 				})
-		// 			}
-		// 		}
-		// 	}
-		// },
 		deleteSelectedIssues(){
 			this.$store.dispatch("audits/deleteIssues", { issues: this.selectedRows, audit_id: this.$route.params.id })
 			this.issue = this.getDefault()
@@ -978,6 +926,289 @@ export default {
 			}
 
 			return id
+		},
+		setupQuillDescriptionsBar(){
+			var Block = Quill.import('blots/block');
+			Block.tagName = 'DIV';
+			Quill.register(Block, true);
+			let self = this
+			
+			self.descriptionsQuill = new Quill('#editor1', {
+				modules: {
+					toolbar: self.quillEditorOptions
+				},
+				theme: 'snow'
+			});
+
+			self.descriptionsQuill.on('text-change', function(){
+				self.issue.descriptions = self.descriptionsQuill.root.innerHTML
+			})
+
+			//Make the toolbar accessible after its been instantiated
+			let descrEditor = self.$refs.descriptionEditor.querySelector(".ql-editor")
+			descrEditor.setAttribute("role", "textbox")
+			descrEditor.setAttribute("aria-multiline", true)
+			descrEditor.setAttribute("id", "issue_descriptions")
+			descrEditor.setAttribute("tabindex", 0)
+			descrEditor.setAttribute("aria-describedby", "descriptions-validation")
+			descrEditor.setAttribute("required", "required")
+
+			let toolbar = self.$refs.descriptionEditor.previousSibling
+			let svgs = toolbar.querySelectorAll("svg")
+			for (let index = 0; index < svgs.length; index++) {
+				let el = svgs[index];
+				el.setAttribute("aria-hidden", true)
+			}
+			toolbar.querySelector(".ql-bold").setAttribute("title", "Bold")
+			toolbar.querySelector(".ql-italic").setAttribute("title", "Italic")
+			toolbar.querySelector(".ql-underline").setAttribute("title", "Underline")
+			toolbar.querySelector(".ql-strike").setAttribute("title", "Strike")
+			toolbar.querySelector(".ql-blockquote").setAttribute("title", "Block Quote")
+			toolbar.querySelector(".ql-code-block").setAttribute("title", "Code Block")
+			toolbar.querySelector(".ql-link").setAttribute("title", "Create Link")
+			toolbar.querySelector(".ql-clean").setAttribute("title", "Remove Formatting")
+
+			toolbar.querySelector(".ql-list[value=ordered]").setAttribute("title", "Ordered List")
+			toolbar.querySelector(".ql-list[value=bullet]").setAttribute("title", "Un Ordered List")
+
+			toolbar.querySelector(".ql-indent[value='-1']").setAttribute("title", "Indent Left")
+			toolbar.querySelector(".ql-indent[value='+1']").setAttribute("title", "Indent Right")
+
+			toolbar.querySelector("#ql-picker-options-0").previousSibling.setAttribute("title", "Text Style")
+			toolbar.querySelector("#ql-picker-options-1").previousSibling.setAttribute("title", "Text Size")
+			
+			
+			let picker3_items = toolbar.querySelectorAll("#ql-picker-options-2 > span")
+			for (let index = 0; index < picker3_items.length; index++) {
+				let el = picker3_items[index];
+				if( !el.getAttribute("data-value") ){
+					el.setAttribute("title", "#000000")
+					continue
+				}
+				let value = el.getAttribute("data-value")
+				el.setAttribute("title", value)
+			}
+			
+			let picker3_label = toolbar.querySelector("#ql-picker-options-2").previousSibling
+			picker3_label.setAttribute("title", "Text color picker. Current Color: #000000")
+
+			var picker3_observer = new MutationObserver(function(mutations) {
+				mutations.forEach(function(mutation) {
+					if (mutation.type === "attributes" && mutation.attributeName == "data-value") {
+						let currentValue = mutation.target.getAttribute("data-value")
+						mutation.target.setAttribute("title", "Text color picker. Current Color: "+currentValue.toUpperCase())
+					}
+				});
+			});
+
+			picker3_observer.observe(picker3_label, {
+				attributes: true //configure it to listen to attribute changes
+			});
+
+			let picker4_items = toolbar.querySelectorAll("#ql-picker-options-3 > span")
+			for (let index = 0; index < picker4_items.length; index++) {
+				let el = picker4_items[index];
+				if( !el.getAttribute("data-value") ){
+					el.setAttribute("title", "None")
+					continue
+				}
+				let value = el.getAttribute("data-value")
+				value.charAt(0).toUpperCase() + value.slice(1)
+				el.setAttribute("title", value)
+			}
+			
+			let picker4_label = toolbar.querySelector("#ql-picker-options-3").previousSibling
+			picker4_label.setAttribute("title", "Text background color picker. Current Color: None")
+
+			var picker4_observer = new MutationObserver(function(mutations) {
+				mutations.forEach(function(mutation) {
+					if (mutation.type === "attributes" && mutation.attributeName == "data-value") {
+						let currentValue = mutation.target.getAttribute("data-value")
+						if( !currentValue ){
+							mutation.target.setAttribute("title", "Text background color picker. Current Color: None")
+						}else{
+							mutation.target.setAttribute("title", "Text background color picker. Current Color: "+currentValue.toUpperCase())
+						}
+					}
+				});
+			});
+
+			picker4_observer.observe(picker4_label, {
+				attributes: true //configure it to listen to attribute changes
+			});
+
+			let picker5_items = toolbar.querySelectorAll("#ql-picker-options-4 > span")
+			for (let index = 0; index < picker5_items.length; index++) {
+				let el = picker5_items[index];
+				if( !el.getAttribute("data-value") ){
+					el.setAttribute("title", "None")
+					continue
+				}
+				let value = el.getAttribute("data-value")
+				value = value.charAt(0).toUpperCase() + value.slice(1)
+				el.setAttribute("title", value)
+			}
+
+			let picker5_label = toolbar.querySelector("#ql-picker-options-4").previousSibling
+			picker5_label.setAttribute("title", "Text Align. Current: None")
+
+			var picker5_observer = new MutationObserver(function(mutations) {
+				mutations.forEach(function(mutation) {
+					if (mutation.type === "attributes" && mutation.attributeName == "data-value") {
+						let currentValue = mutation.target.getAttribute("data-value")
+						if( !currentValue ){
+							mutation.target.setAttribute("title", "Text Align. Current: None")
+						}else{
+							currentValue = currentValue.charAt(0).toUpperCase() + currentValue.slice(1)
+							mutation.target.setAttribute("title", "Text Align. Current: "+currentValue)
+						}
+					}
+				});
+			});
+
+			picker5_observer.observe(picker5_label, {
+				attributes: true //configure it to listen to attribute changes
+			});
+
+		},
+		setupQuillRecommendationsBar(){
+			this.recommendationsQuill = new Quill('#editor2', {
+				theme: 'snow',
+				modules: {
+					toolbar: this.quillEditorOptions
+				}
+			});
+			let self = this
+			
+			this.recommendationsQuill.on('text-change', function(){
+				self.issue.recommendations = self.recommendationsQuill.root.innerHTML
+			})
+
+			let reccEditor = this.$refs.recommendationEditor.querySelector(".ql-editor")
+			reccEditor.setAttribute("role", "textbox")
+			reccEditor.setAttribute("aria-multiline", true)
+			reccEditor.setAttribute("id", "issue_recommendations")
+			reccEditor.setAttribute("tabindex", 0)
+			reccEditor.setAttribute("aria-describedby", "recommendations-validation")
+			reccEditor.setAttribute("required", "required")
+
+			let toolbar = self.$refs.recommendationEditor.previousSibling
+			let svgs = toolbar.querySelectorAll("svg")
+			for (let index = 0; index < svgs.length; index++) {
+				let el = svgs[index];
+				el.setAttribute("aria-hidden", true)
+			}
+			toolbar.querySelector(".ql-bold").setAttribute("title", "Bold")
+			toolbar.querySelector(".ql-italic").setAttribute("title", "Italic")
+			toolbar.querySelector(".ql-underline").setAttribute("title", "Underline")
+			toolbar.querySelector(".ql-strike").setAttribute("title", "Strike")
+			toolbar.querySelector(".ql-blockquote").setAttribute("title", "Block Quote")
+			toolbar.querySelector(".ql-code-block").setAttribute("title", "Code Block")
+			toolbar.querySelector(".ql-link").setAttribute("title", "Create Link")
+			toolbar.querySelector(".ql-clean").setAttribute("title", "Remove Formatting")
+
+			toolbar.querySelector(".ql-list[value=ordered]").setAttribute("title", "Ordered List")
+			toolbar.querySelector(".ql-list[value=bullet]").setAttribute("title", "Un Ordered List")
+
+			toolbar.querySelector(".ql-indent[value='-1']").setAttribute("title", "Indent Left")
+			toolbar.querySelector(".ql-indent[value='+1']").setAttribute("title", "Indent Right")
+
+			toolbar.querySelector("#ql-picker-options-5").previousSibling.setAttribute("title", "Text Style")
+			toolbar.querySelector("#ql-picker-options-6").previousSibling.setAttribute("title", "Text Size")
+			
+			let picker1_items = toolbar.querySelectorAll("#ql-picker-options-7 > span")
+			for (let index = 0; index < picker1_items.length; index++) {
+				let el = picker1_items[index];
+				if( !el.getAttribute("data-value") ){
+					el.setAttribute("title", "#000000")
+					continue
+				}
+				let value = el.getAttribute("data-value")
+				el.setAttribute("title", value)
+			}
+			
+			let picker1_label = toolbar.querySelector("#ql-picker-options-7").previousSibling
+			picker1_label.setAttribute("title", "Text color picker. Current Color: #000000")
+
+			var picker1_observer = new MutationObserver(function(mutations) {
+				mutations.forEach(function(mutation) {
+					if (mutation.type === "attributes" && mutation.attributeName == "data-value") {
+						let currentValue = mutation.target.getAttribute("data-value")
+						mutation.target.setAttribute("title", "Text color picker. Current Color: "+currentValue.toUpperCase())
+					}
+				});
+			});
+
+			picker1_observer.observe(picker1_label, {
+				attributes: true //configure it to listen to attribute changes
+			});
+
+			let picker2_items = toolbar.querySelectorAll("#ql-picker-options-8 > span")
+			for (let index = 0; index < picker2_items.length; index++) {
+				let el = picker2_items[index];
+				if( !el.getAttribute("data-value") ){
+					el.setAttribute("title", "None")
+					continue
+				}
+				let value = el.getAttribute("data-value")
+				value.charAt(0).toUpperCase() + value.slice(1)
+				el.setAttribute("title", value)
+			}
+			
+			let picker2_label = toolbar.querySelector("#ql-picker-options-8").previousSibling
+			picker2_label.setAttribute("title", "Text background color picker. Current Color: None")
+
+			var picker2_observer = new MutationObserver(function(mutations) {
+				mutations.forEach(function(mutation) {
+					if (mutation.type === "attributes" && mutation.attributeName == "data-value") {
+						let currentValue = mutation.target.getAttribute("data-value")
+						if( !currentValue ){
+							mutation.target.setAttribute("title", "Text background color picker. Current Color: None")
+						}else{
+							mutation.target.setAttribute("title", "Text background color picker. Current Color: "+currentValue.toUpperCase())
+						}
+					}
+				});
+			});
+
+			picker2_observer.observe(picker2_label, {
+				attributes: true //configure it to listen to attribute changes
+			});
+
+			let picker3_items = toolbar.querySelectorAll("#ql-picker-options-9 > span")
+			for (let index = 0; index < picker3_items.length; index++) {
+				let el = picker3_items[index];
+				if( !el.getAttribute("data-value") ){
+					el.setAttribute("title", "None")
+					continue
+				}
+				let value = el.getAttribute("data-value")
+				value = value.charAt(0).toUpperCase() + value.slice(1)
+				el.setAttribute("title", value)
+			}
+
+			let picker3_label = toolbar.querySelector("#ql-picker-options-9").previousSibling
+			picker3_label.setAttribute("title", "Text Align. Current: None")
+
+			var picker3_observer = new MutationObserver(function(mutations) {
+				mutations.forEach(function(mutation) {
+					if (mutation.type === "attributes" && mutation.attributeName == "data-value") {
+						let currentValue = mutation.target.getAttribute("data-value")
+						if( !currentValue ){
+							mutation.target.setAttribute("title", "Text Align. Current: None")
+						}else{
+							currentValue = currentValue.charAt(0).toUpperCase() + currentValue.slice(1)
+							mutation.target.setAttribute("title", "Text Align. Current: "+currentValue)
+						}
+					}
+				});
+			});
+
+			picker3_observer.observe(picker3_label, {
+				attributes: true //configure it to listen to attribute changes
+			});
+
+
 		}
 	},
 	created() {
@@ -1044,47 +1275,8 @@ export default {
 			'	<span style="font-size:12px">First choose which column you want to search from the dropdown, then enter your search criteria, then click submit</span>'+
 			'</h2>'
 
-		var Block = Quill.import('blots/block');
-		Block.tagName = 'DIV';
-		Quill.register(Block, true);
-
-		this.descriptionsQuill = new Quill('#editor1', {
-			theme: 'snow',
-			modules: {
-				toolbar: this.quillEditorOptions
-			}
-		});
-		let self = this
-		this.descriptionsQuill.on('text-change', function(){
-			self.issue.descriptions = self.descriptionsQuill.root.innerHTML
-		})
-
-		let descrEditor = this.$refs.descriptionEditor.querySelector(".ql-editor")
-		descrEditor.setAttribute("role", "textbox")
-		descrEditor.setAttribute("aria-multiline", true)
-		descrEditor.setAttribute("id", "issue_descriptions")
-		descrEditor.setAttribute("tabindex", 0)
-		descrEditor.setAttribute("aria-describedby", "descriptions-validation")
-		descrEditor.setAttribute("required", "required")
-
-		this.recommendationsQuill = new Quill('#editor2', {
-			theme: 'snow',
-			modules: {
-				toolbar: this.quillEditorOptions
-			}
-		});
-		
-		this.recommendationsQuill.on('text-change', function(){
-			self.issue.recommendations = self.recommendationsQuill.root.innerHTML
-		})
-
-		let reccEditor = this.$refs.recommendationEditor.querySelector(".ql-editor")
-		reccEditor.setAttribute("role", "textbox")
-		reccEditor.setAttribute("aria-multiline", true)
-		reccEditor.setAttribute("id", "issue_recommendations")
-		reccEditor.setAttribute("tabindex", 0)
-		reccEditor.setAttribute("aria-describedby", "recommendations-validation")
-		reccEditor.setAttribute("required", "required")
+		this.setupQuillDescriptionsBar()
+		this.setupQuillRecommendationsBar()
 	},
 	components: {
 		Loader,
@@ -1096,7 +1288,7 @@ export default {
 		Label,
 		TextInput,
 		TextArea,
-		Toggle
+		Toggle,
 	},
 }
 
