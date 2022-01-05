@@ -31,23 +31,23 @@
 		</template>
 		
 		<Modal style="z-index:71;" size="full" :open="issueModalOpen">
-			<div role="alert" :class="{ 'hidden': !showValidationAlert}" class="sr-only">
-				The following validation errors are present on the add issue form: 
-				<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
-			</div>
 			<div style="padding-bottom:60px;" class="bg-white px-4 pt-5 p-6">
 				<button aria-label="Close add issue modal" @click.prevent="closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
-
+				<button @click.prevent="showValidationAlert = !showValidationAlert">Test</button>
+				<div v-show="showValidationAlert" role="alert" id="validation-alert-box" class="text-red-600 text-center" >
+					<strong>The following validation errors are present on the add issue form: </strong>
+					<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
+				</div>
 				<Toggle @changed="((ev)=>{ useSitemap = ev })" :labelLeft="'Working Sample'" :labelRight="'Sitemap'" ></Toggle>
 
-				<div class="flex items-start mt-3 text-left w-full flex-wrap">
+				<form class="flex items-start mt-3 text-left w-full flex-wrap">
 					
-					<div class="flex w-full mt-2">
+					<div class="flex w-full mt-2 flex-wrap">
 						<div class="mx-2 flex-1">
 							<Label class="text-lg leading-6 w-full" for="success_criteria">Success Criteria</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('articles') }" id="success-criteria-validation">{{validationMessages["articles"]}}</small>
-							<select required :aria-describedby="failedValidation.includes('articles') ? 'success-criteria-validation' : false" style="min-width:200px;" id="success_criteria" class="w-full" v-model="issue.articles" multiple>
+							<select :data-validation-failed="failedValidation.includes('articles')" required :aria-describedby="failedValidation.includes('articles') ? 'success-criteria-validation' : false" style="min-width:200px;" id="success_criteria" class="w-full" v-model="issue.articles" multiple>
 								<option class="overflow-ellipsis overflow-hidden whitespace-nowrap" :value="{display: article.number + ' - ' + article.title, id: article.id}" v-for="(article, index) in articles" :key="'success_criteria-'+index">{{article.number}} - {{article.title}}</option>
 							</select>
 						</div>
@@ -59,29 +59,17 @@
 						</div>
 						<div class="mx-2 flex-1">
 							<Label class="text-lg leading-6 w-full" :stacked="false" for="pages">Pages</Label>
-							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('pages') }" id="pages-validation">The pages field is required</small>
-							
-							<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
+							<select style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
 								<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in pagesSrc" :key="'page-'+index">
 									<template v-if="page.title">{{page.title}}</template>
 									<template v-if="page.title && page.url"> - </template>
 									<template v-if="page.url">{{page.url}}</template>
 								</option>
 							</select>
-							
-							<!-- <template v-else-if="audit.domain && audit.domain.pages && audit.domain.pages.length">
-								<select :aria-describedby="failedValidation.includes('pages') ? 'pages-validation' : false" required style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
-									<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in audit.domain.pages" :key="'page-'+index">
-										<template v-if="page.url">{{page.url}}</template>
-									</option>
-								</select>
-							</template> -->
-							
 						</div>
 						<div class="mx-2 flex-1">
 							<Label class="text-lg leading-6 w-full" for="audit_status">States</Label>
-							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('audit_states') }" id="states-validation">{{validationMessages["audit_states"]}}</small>
-							<select :aria-describedby="failedValidation.includes('audit_states') ? 'states-validation' : false" required style="min-width:200px;" id="audit_status" class="w-full" v-model="issue.audit_states" multiple>
+							<select style="min-width:200px;" id="audit_status" class="w-full" v-model="issue.audit_states" multiple>
 								<option :value="status" v-for="(status, index) in audit_states" :key="'audit_status-'+index">{{status}}</option>
 							</select>
 						</div>
@@ -94,7 +82,7 @@
 						
 					</div>
 
-					<div class="flex w-full justify-evenly mt-2">
+					<div class="flex w-full flex-wrap justify-evenly mt-2">
 						<div class="w-2/3 flex items-center">
 							<div class="flex flex-col">
 								<div class="flex-1 mx-2 flex flex-col">
@@ -126,19 +114,17 @@
 						</div>
 						<div class="w-1/3 flex flex-col">
 							<Label for="effort">Effort</Label>
-							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('effort') }" id="effort-validation">{{validationMessages["effort"]}}</small>
-							<select :aria-describedby="failedValidation.includes('effort') ? 'effort-validation' : false" id="effort" v-model="issue.effort" name="effort">
+							<select id="effort" v-model="issue.effort" name="effort">
 								<option :value="option" v-for="(option, index) in ['Low', 'Medium', 'High']" :key="'effort-' + index">{{option}}</option>
 							</select>
 							<Label for="priority">Priority</Label>
-							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('priority') }" id="priority-validation">{{validationMessages["priority"]}}</small>
-							<select :aria-describedby="failedValidation.includes('priority') ? 'priority-validation' : false" id="priority" v-model="issue.priority" name="priority">
+							<select id="priority" v-model="issue.priority" name="priority">
 								<option :value="option" v-for="(option, index) in ['Minor', 'Moderate', 'Serious', 'Critical']" :key="'priority-' + index">{{option}}</option>
 							</select>
 						</div>
 					</div>
 
-					<div class="flex w-full justify-evenly mt-2">
+					<div class="flex w-full flex-wrap justify-evenly mt-2">
 						<div class="flex-1 mx-2">
 							<Label class="text-lg leading-6">
 								Screenshots
@@ -168,16 +154,16 @@
 						<div class="flex-1 mx-2">
 							<Label for="target" class="text-lg leading-6 w-full">Target</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('target') }" id="target-validation">{{validationMessages["target"]}}</small>
-							<TextInput required :aria-describedby="failedValidation.includes('target') ? 'target-validation' : false" class="flex-1 w-full" name="target" id="target" v-model="issue.target"></TextInput>
+							<TextInput :data-validation-failed="failedValidation.includes('target')" required :aria-describedby="failedValidation.includes('target') ? 'target-validation' : false" class="flex-1 w-full" name="target" id="target" v-model="issue.target"></TextInput>
+
 							<Label for="status" class="text-lg leading-6 w-full">Status</Label>
-							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('status') }" id="status-validation">{{validationMessages["status"]}}</small>
-							<select :aria-describedby="failedValidation.includes('status') ? 'status-validation' : false" id="status" name="status" v-model="issue.status">
+							<select id="status" name="status" v-model="issue.status">
 								<option :value="option" v-for="(option, index) in statuses" :key="'status-'+index">{{option}}</option>
 							</select>
 						</div>
 					</div>
 
-					<div class="flex w-full justify-evenly mt-2">
+					<div class="flex w-full flex-wrap justify-evenly mt-2">
 						<div class="w-1/2 flex flex-col px-2">
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Success Criteria Descriptions <small>(Note: this editor is not fully accessible)</small></Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
@@ -209,7 +195,7 @@
 						<Label class="text-lg leading-6 w-full" for="auditor_notes">Auditor Notes</Label>
 						<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
 					</div>
-				</div>
+				</form>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
 				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" class="mx-2 standard alert">
@@ -852,6 +838,7 @@ export default {
 			return string.replace(/[-_.]/gm, " ");
 		},
 		validate(){
+			this.showValidationAlert = false
 			let toValidate = [
 				"target",
 				"articles",
@@ -880,14 +867,34 @@ export default {
 					if( !this.failedValidation.includes( prop ) ){
 						this.failedValidation.push( prop )
 					}
+					if( prop == "descriptions" ){
+						let editor = this.$refs.descriptionEditor.querySelector(".ql-editor")
+						editor.setAttribute("data-validation-failed", true)
+					}
+					if( prop == "recommendations" ){
+						let editor = this.$refs.recommendationEditor.querySelector(".ql-editor")
+						editor.setAttribute("data-validation-failed", true)
+					}
 				}
 			}
 
 			if( this.failedValidation.length !== 0 ){
 				this.showValidationAlert = true
-				setTimeout(()=>{
-					this.showValidationAlert = false
-				}, 500)
+				let self = this
+				this.$nextTick( ()=>{
+					let allValidationErrors = document.querySelectorAll("[data-validation-failed]")
+					
+					allValidationErrors[0].scrollIntoView({
+						block: "center"
+					})
+					allValidationErrors[0].focus()
+					let issue_form_type = this.issue.id ? "Edit Issue" : "Add Issue"
+					self.$notify({
+						title: "Warning",
+						text: `There are ${allValidationErrors.length} validation errors in the ${issue_form_type} form`,
+						type: "warn"
+					})
+				})
 			}
 
 			return this.failedValidation.length === 0
@@ -933,14 +940,24 @@ export default {
 			Quill.register(Block, true);
 			let self = this
 			
-			self.descriptionsQuill = new Quill('#editor1', {
+			this.descriptionsQuill = new Quill('#editor1', {
 				modules: {
-					toolbar: self.quillEditorOptions
+					toolbar: self.quillEditorOptions,
+					keyboard: {
+						bindings: {
+							tab: {
+								key: 9,
+								handler: function (range, context) {
+									return true;
+								},
+							},
+						},
+					}
 				},
 				theme: 'snow'
 			});
 
-			self.descriptionsQuill.on('text-change', function(){
+			this.descriptionsQuill.on('text-change', function(){
 				self.issue.descriptions = self.descriptionsQuill.root.innerHTML
 			})
 
@@ -1075,7 +1092,17 @@ export default {
 			this.recommendationsQuill = new Quill('#editor2', {
 				theme: 'snow',
 				modules: {
-					toolbar: this.quillEditorOptions
+					toolbar: this.quillEditorOptions,
+					keyboard: {
+						bindings: {
+							tab: {
+								key: 9,
+								handler: function (range, context) {
+									return true;
+								},
+							},
+						},
+					}
 				}
 			});
 			let self = this
