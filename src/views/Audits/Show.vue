@@ -34,7 +34,6 @@
 			<div style="padding-bottom:60px;" class="bg-white px-4 pt-5 p-6">
 				<button aria-label="Close add issue modal" @click.prevent="closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
-				<button @click.prevent="showValidationAlert = !showValidationAlert">Test</button>
 				<div v-show="showValidationAlert" role="alert" id="validation-alert-box" class="text-red-600 text-center" >
 					<strong>The following validation errors are present on the add issue form: </strong>
 					<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
