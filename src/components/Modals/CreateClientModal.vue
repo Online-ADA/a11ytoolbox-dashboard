@@ -23,7 +23,8 @@
 		
 		<template v-if="complete">
 			<h1 class="pb-5">Do you want to create a project?</h1>
-			<button @click.prevent="EventBus.openModal( ()=>{ EventBus.$emit('createClientModal', false); EventBus.$emit('createProjectModal', true); })" class="standard mr-2">Yes</button>
+			<button @click.prevent="EventBus.transitionModal('createClientModal', 'createProjectModal')" class="standard mr-2">Yes</button>
+			
 			<button @click.prevent="chooseNo" class="standard">No</button>
 		</template>
 	</Modal>

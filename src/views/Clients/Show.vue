@@ -18,7 +18,7 @@
       <div class="w-1/2 flex flex-col">
         <Card :center="false" :gutters="false">
           <h2 class="headline-2">Recommendations</h2>
-          <div class="mt-2"><button role="link" @click="EventBus.openModal(()=>{ EventBus.$emit('createProjectModal', true) })" @click.prevent class="standard">Create</button> a new project</div>
+          <div class="mt-2"><button role="link" @click="EventBus.openModal('createProjectModal', $event)" @click.prevent class="standard">Create</button> a new project</div>
         </Card>
       </div>
     </div>

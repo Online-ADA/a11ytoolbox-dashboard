@@ -2,8 +2,8 @@
     <div class="flex shadow-lg transition-all sub-sidebar secondary relative">
         <div class="fixed">
             <div class="flex sub-nav-container" >
-                <button @click.prevent="EventBus.openModal(()=>{ EventBus.$emit('deployToolModal', true) })" aria-label="Deploy New Tool" class="deploy-tool text-white absolute">
-                    <div class="bg-pallette-button hover:bg-pallette-button-hover oswald">
+                <button @click.prevent="EventBus.openModal('deployToolModal', $event)" aria-label="Deploy New Tool" class="deploy-tool text-white absolute">
+                    <div class="bg-pallette-button hover:bg-pallette-button-hover oswald pointer-events-none">
                         +
                     </div>
                 </button>
@@ -68,6 +68,7 @@ export default {
         mediaAudits() {
             return this.$store.state.mediaAudits;
         },
+        console: () => console
     },
     components:{
     },
@@ -106,7 +107,7 @@ export default {
                     this.expanded = meta.project[id].tools.sidebar.open
                 }
             }
-        }
+        },
     },
     watch: {
         "$store.state.projects.project": function(newVal, oldVal){

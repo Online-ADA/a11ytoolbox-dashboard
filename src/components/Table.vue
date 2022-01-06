@@ -127,7 +127,7 @@
 		
 		<Modal style="z-index:71" :open="columnPickerOpen">
 			<div class="w-full p-3">
-				<button aria-label="Close column selector modal" @click.prevent="closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4 px-2 standard">X</button>
+				<button aria-label="Close column selector modal" @click.prevent="EventBus.closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4 px-2 standard">X</button>
 				<ul class="flex flex-wrap">
 					<template v-for="(header, index) in headers">
 						<li v-if="!header.hidePermanent" class="flex w-5/12 mx-2 my-2 justify-center items-center" :key="index">
@@ -308,20 +308,20 @@
 				
 				this.current = $event
 			},
-			openModal( callback ){
-				let classList = document.body.classList
-				if( !classList.contains("modalOpen") ){
-					classList.add("modalOpen")
-				}
-				callback()
-			},
-			closeModal( callback ){
-				let classList = document.body.classList
-				if( classList.contains("modalOpen") ){
-					classList.remove("modalOpen")
-				}
-				callback()
-			},
+			// openModal( callback ){
+			// 	let classList = document.body.classList
+			// 	if( !classList.contains("modalOpen") ){
+			// 		classList.add("modalOpen")
+			// 	}
+			// 	callback()
+			// },
+			// closeModal( callback ){
+			// 	let classList = document.body.classList
+			// 	if( classList.contains("modalOpen") ){
+			// 		classList.remove("modalOpen")
+			// 	}
+			// 	callback()
+			// },
 			rowCanBeRemoved(data){
 				if( this.importing && data.hasOwnProperty('unique') ){
 					return true
@@ -540,7 +540,7 @@
 				
 				this.$emit("hideColumns", toEmit)
 	
-				this.closeModal(()=>{this.columnPickerOpen = false})
+				EventBus.closeModal(()=>{this.columnPickerOpen = false})
 			},
 			displayValue(key, data){
 				if( data == undefined ){

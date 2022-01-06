@@ -32,7 +32,7 @@
 		
 		<Modal style="z-index:71;" size="full" :open="issueModalOpen">
 			<div style="padding-bottom:60px;" class="bg-white px-4 pt-5 p-6">
-				<button aria-label="Close add issue modal" @click.prevent="closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard">X</button>
+				<button aria-label="Close add issue modal" @click.prevent="EventBus.closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
 				<div v-show="showValidationAlert" role="alert" id="validation-alert-box" class="text-red-600 text-center" >
 					<strong>The following validation errors are present on the add issue form: </strong>
@@ -116,7 +116,7 @@
 							<select id="effort" v-model="issue.effort" name="effort">
 								<option :value="option" v-for="(option, index) in ['Low', 'Medium', 'High']" :key="'effort-' + index">{{option}}</option>
 							</select>
-							<Label for="priority">Priority</Label>
+							<Label for="priority">Potential User Impact</Label>
 							<select id="priority" v-model="issue.priority" name="priority">
 								<option :value="option" v-for="(option, index) in ['Minor', 'Moderate', 'Serious', 'Critical']" :key="'priority-' + index">{{option}}</option>
 							</select>
@@ -164,7 +164,7 @@
 
 					<div class="flex w-full flex-wrap justify-evenly mt-2">
 						<div class="w-1/2 flex flex-col px-2">
-							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Success Criteria Descriptions <small>(Note: this editor is not fully accessible)</small></Label>
+							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Success Criteria Descriptions </Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
 							<div class="flex items-start mb-1">
 								<button class="mr-2 standard" @click.prevent="selectDescriptionsModalOpen = true" >Add Descriptions</button>
@@ -174,7 +174,7 @@
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1"></div>
 						</div>
 						<div class="w-1/2 flex flex-col px-2">
-							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations <small>(Note: this editor is not fully accessible)</small></Label>
+							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations </Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
 							<button class="self-start mb-1 standard" @click.prevent="selectRecommendationsModalOpen = true" >Add Recommendations</button>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
@@ -200,7 +200,7 @@
 				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" class="mx-2 standard alert">
 					Delete
 				</button>
-				<button @click="closeModal( ()=>{issueModalOpen = false} )" type="button" class="standard">
+				<button @click="EventBus.closeModal( ()=>{issueModalOpen = false} )" type="button" class="standard">
 					Cancel
 				</button>
 				<button @click="saveIssue" type="button" class="mx-2 standard">
@@ -256,7 +256,7 @@
 		</Modal>
 		<Modal style="z-index:72;" :open="whichCSVModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<button aria-label="Close select descriptions modal" @click.prevent="closeModal(()=>{whichCSVModalOpen = false})" class="absolute top-4 right-4 standard">X</button>
+				<button aria-label="Close select descriptions modal" @click.prevent="EventBus.closeModal(()=>{whichCSVModalOpen = false})" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">Which item do you want to export?</h2>
 				<div class="flex my-4 justify-center">
 					<button @click.prevent="getIssuesCSV" class="mx-2 standard">Issues (.xlsx spreadsheet)</button>
@@ -264,7 +264,7 @@
 				</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="closeModal(()=>{whichCSVModalOpen = false})" class="standard">
+				<button @click="EventBus.closeModal(()=>{whichCSVModalOpen = false})" class="standard">
 					Cancel
 				</button>
 			</div>
@@ -395,6 +395,7 @@ export default {
 			reference: ["id"]
 		},
 		useSitemap:false,
+		EventBus: EventBus
 	}),
 	computed: {
 		pagesSrc(){
@@ -650,20 +651,20 @@ export default {
 		metaEvent(key, subKeys, value){
 			this.$store.dispatch("user/storeUserMeta", {key: key, subKeys: subKeys, value:value})
 		},
-		openModal( callback ){
-			let classList = document.body.classList
-			if( !classList.contains("modalOpen") ){
-				classList.add("modalOpen")
-			}
-			callback()
-		},
-		closeModal( callback ){
-			let classList = document.body.classList
-			if( classList.contains("modalOpen") ){
-				classList.remove("modalOpen")
-			}
-			callback()
-		},
+		// openModal( callback ){
+		// 	let classList = document.body.classList
+		// 	if( !classList.contains("modalOpen") ){
+		// 		classList.add("modalOpen")
+		// 	}
+		// 	callback()
+		// },
+		// closeModal( callback ){
+		// 	let classList = document.body.classList
+		// 	if( classList.contains("modalOpen") ){
+		// 		classList.remove("modalOpen")
+		// 	}
+		// 	callback()
+		// },
 		isHeaderHidePermanent(key){
 			if( this.audit.number == 1 && ( key == "second_audit_comments" || key == "third_audit_comments" ) ){
 				return true
@@ -753,7 +754,7 @@ export default {
 			this.descriptionsQuill.root.innerHTML = ""
 			this.recommendationsQuill.root.innerHTML = ""
 			this.confirmDeleteModalOpen = false
-			this.closeModal(()=>{this.issueModalOpen = false})
+			EventBus.closeModal(()=>{this.issueModalOpen = false})
 			this.selectedRows = []
 			EventBus.$emit('auditSelectedRowsUpdated', this.selectedRows.length)
 		},
@@ -761,7 +762,7 @@ export default {
 			let builder = `<a href="https://toolboxdashboard.ngrok.io/audits/${this.selectedReference.audit}/overview#${this.selectedReference.issue.issue_number}" target="_blank" rel="nofollow">${this.selectedReference.linkText}</a>`
 
 			this.descriptionsQuill.root.innerHTML += builder
-			this.closeModal(()=>{this.addIssueReferenceLinkModalOpen = false})
+			EventBus.closeModal(()=>{this.addIssueReferenceLinkModalOpen = false})
 			this.selectedReference = { audit: null, issue: null, issues: [], linkText: "" }
 		},
 		selectRow(issue){
@@ -791,7 +792,7 @@ export default {
 			
 			this.descriptionsQuill.root.innerHTML += builder
 			
-			this.closeModal(()=>{this.selectDescriptionsModalOpen = false})
+			EventBus.closeModal(()=>{this.selectDescriptionsModalOpen = false})
 			this.selectedDescriptions = []
 		},
 		addSelectedRecommendations(){
@@ -803,7 +804,7 @@ export default {
 			
 			this.recommendationsQuill.root.innerHTML += builder
 			
-			this.closeModal(()=>{this.selectRecommendationsModalOpen = false})
+			EventBus.closeModal(()=>{this.selectRecommendationsModalOpen = false})
 		},
 		addBrowserCombo(){
 			this.issue.browser_combos.push(this.browserCombo)
@@ -907,7 +908,7 @@ export default {
 				
 				this.$store.dispatch("audits/createIssue", {issue: this.issue})
 				
-				this.closeModal(()=>{this.issueModalOpen = false})
+				EventBus.closeModal(()=>{this.issueModalOpen = false})
 				this.issue = this.getDefault()
 				this.descriptionsQuill.root.innerHTML = ""
 				this.recommendationsQuill.root.innerHTML = ""
@@ -916,7 +917,7 @@ export default {
 		updateIssue(){
 			if( this.validate() ){
 				this.$store.dispatch("audits/updateIssue", {issue: this.issue, audit_id: this.$route.params.id})
-				this.closeModal(()=>{this.issueModalOpen = false})
+				EventBus.closeModal(()=>{this.issueModalOpen = false})
 				this.issue = this.getDefault()
 				this.descriptionsQuill.root.innerHTML = ""
 				this.recommendationsQuill.root.innerHTML = ""
@@ -1250,23 +1251,28 @@ export default {
 				return
 			}
 			if( payload.action == 'audit-add-issue' ){
-				that.openModal(that.newIssue)
+				EventBus.openModal(false, payload.$event, that.newIssue)
+				// that.openModal(that.newIssue)
 				return
 			}
 			if( payload.action == 'audit-delete-many' ){
-				that.openModal( ()=>{that.confirmDeleteModalOpen = true} )
+				EventBus.openModal( false, payload.$event, ()=>{that.confirmDeleteModalOpen = true} )
+				// that.openModal( ()=>{that.confirmDeleteModalOpen = true} )
 				return
 			}
 			if( payload.action == 'audit-edit-issue' ){
-				that.openModal( that.editIssue )
+				EventBus.openModal( false, payload.$event, that.editIssue )
+				// that.openModal( that.editIssue )
 				return
 			}
 			if( payload.action == 'audit-copy-issue' ){
-				that.openModal( that.createFromCopy )
+				EventBus.openModal( false, payload.$event, that.createFromCopy )
+				// that.openModal( that.createFromCopy )
 				return
 			}
 			if( payload.action == 'audit-issues-download' ){
-				that.openModal(()=>{that.whichCSVModalOpen = true})
+				EventBus.openModal( false, payload.$event, ()=>{that.whichCSVModalOpen = true})
+				// that.openModal(()=>{that.whichCSVModalOpen = true})
 				return
 			}
 			if( payload.action == 'audit-complete' ){

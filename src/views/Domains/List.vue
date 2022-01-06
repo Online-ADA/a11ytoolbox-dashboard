@@ -13,7 +13,7 @@
                         <span class="sr-only">Edit Domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span>
                         <i class="far fa-pencil"></i>
                     </A>
-                    <button @click.prevent="checkDeleteDomain(domain)"><i class="fas fa-trash-alt"></i><span class="sr-only">Delete domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span></button>
+                    <button @click.prevent="checkDeleteDomain(domain, $event)"><i class="fas fa-trash-alt"></i><span class="sr-only">Delete domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span></button>
                 </li>
             </ul>
         </template>
@@ -75,7 +75,7 @@ export default {
     props: [],
     watch: {},
     methods: {
-        checkDeleteDomain(domain){
+        checkDeleteDomain(domain, $event){
             this.attachedAudits = []
             for (let x = 0; x < this.project.audits.length; x++) {
                 let audit = this.project.audits[x];
@@ -85,7 +85,7 @@ export default {
             }
 
             if( this.attachedAudits.length ){
-                EventBus.openModal(()=>{
+                EventBus.openModal(false, $event.target, ()=>{
                     this.attemptingToDelete = domain
                     this.cannotDeleteModalOpen = true
                 })

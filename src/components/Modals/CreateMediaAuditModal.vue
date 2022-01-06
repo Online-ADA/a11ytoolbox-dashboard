@@ -3,8 +3,8 @@
 		<Loader v-if="loading"></Loader>
 		<template v-if="complete">
 			<h1 class="headline">Go to Audit?</h1>
-			<button @click.prevent="EventBus.closeModal( ()=>{ chooseYes() })" class="standard mr-3">Yes</button>
-			<button @click.prevent="EventBus.closeModal( ()=>{ chooseNo() })" class="standard">No</button>
+			<button @click.prevent="chooseYes()" class="standard mr-3">Yes</button>
+			<button @click.prevent="chooseNo()" class="standard">No</button>
 		</template>
 
 		<template v-else>
@@ -179,12 +179,11 @@
 			},
 			chooseNo(){
 				this.reset()
-				EventBus.$emit('deployMediaAuditModal', false)
-				this.$router.push({path: `/media-audits/${this.$store.state.mediaAudits.all[this.$store.state.mediaAudits.all.length - 1].id}/overview`})
+				EventBus.closeModal(()=>{ EventBus.$emit('deployMediaAuditModal', false) })
 			},
 			chooseYes(){
 				this.reset()
-				EventBus.$emit('deployMediaAuditModal', false)
+				EventBus.closeModal(()=>{ EventBus.$emit('deployMediaAuditModal', false) })
 				this.$router.push({path: `/media-audits/${this.$store.state.mediaAudits.all[this.$store.state.mediaAudits.all.length - 1].id}`})
 			},
 			displayUser(id){
