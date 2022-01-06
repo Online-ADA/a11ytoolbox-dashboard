@@ -18,7 +18,7 @@ export default {
     methods: {
     },
     mounted() {
-      
+      document.title = "Create Project"
     },
     components: {
       ProjectCreate

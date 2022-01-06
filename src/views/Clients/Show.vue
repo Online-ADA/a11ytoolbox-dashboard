@@ -71,6 +71,7 @@ export default {
         this.$store.state.clients.client = this.$store.state.clients.all.find(c=>c.id == this.$route.params.id)
         this.$store.state.clients.clientID = this.$route.params.id
       }
+      document.title = "Client Overview"
     },
     components: {
       Loader,

@@ -20,7 +20,7 @@ export default {
 		
 	},
 	mounted() {
-		
+		document.title = "Create New Domain"
 	},
 	components: {
 		DomainCreate

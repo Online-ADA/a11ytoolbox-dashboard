@@ -145,6 +145,7 @@ export default {
 	},
 	mounted() {
 		this.$store.dispatch("user/getUser", {user_id: this.$route.params.id})
+		document.title = "Manage User"
 	},
 	components: {
 		A,

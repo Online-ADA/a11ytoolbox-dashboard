@@ -493,6 +493,9 @@ export default {
 	created() {
 		this.$store.dispatch("audits/getAudit", {id: this.$route.params.id})
 	},
+	mounted(){
+		document.title = "Media Audit Edit"
+	},
 	components: {
 		Loader,
 		TextInput,

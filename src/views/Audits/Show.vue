@@ -971,6 +971,7 @@ export default {
 			descrEditor.setAttribute("required", "required")
 
 			let toolbar = self.$refs.descriptionEditor.previousSibling
+			console.log(toolbar);
 			let svgs = toolbar.querySelectorAll("svg")
 			for (let index = 0; index < svgs.length; index++) {
 				let el = svgs[index];
@@ -991,11 +992,12 @@ export default {
 			toolbar.querySelector(".ql-indent[value='-1']").setAttribute("title", "Indent Left")
 			toolbar.querySelector(".ql-indent[value='+1']").setAttribute("title", "Indent Right")
 
-			toolbar.querySelector("#ql-picker-options-0").previousSibling.setAttribute("title", "Text Style")
-			toolbar.querySelector("#ql-picker-options-1").previousSibling.setAttribute("title", "Text Size")
+			//The following code literally only works so long as the wysiwyg buttons are in this current order
+			toolbar.querySelector(".ql-formats:first-child .ql-picker-label").setAttribute("title", "Text Style")
+			toolbar.querySelector(".ql-formats:nth-child(6) .ql-picker-label").setAttribute("title", "Text Size")
 			
-			
-			let picker3_items = toolbar.querySelectorAll("#ql-picker-options-2 > span")
+			//Add labels to the text color picker options
+			let picker3_items = toolbar.querySelectorAll(".ql-color .ql-picker-options > span")
 			for (let index = 0; index < picker3_items.length; index++) {
 				let el = picker3_items[index];
 				if( !el.getAttribute("data-value") ){
@@ -1006,14 +1008,19 @@ export default {
 				el.setAttribute("title", value)
 			}
 			
-			let picker3_label = toolbar.querySelector("#ql-picker-options-2").previousSibling
+			//Add label to the selected value
+			let picker3_label = toolbar.querySelector(".ql-color .ql-picker-label")
 			picker3_label.setAttribute("title", "Text color picker. Current Color: #000000")
 
 			var picker3_observer = new MutationObserver(function(mutations) {
 				mutations.forEach(function(mutation) {
 					if (mutation.type === "attributes" && mutation.attributeName == "data-value") {
 						let currentValue = mutation.target.getAttribute("data-value")
-						mutation.target.setAttribute("title", "Text color picker. Current Color: "+currentValue.toUpperCase())
+						if( currentValue ){
+							mutation.target.setAttribute("title", "Text color picker. Current Color: "+currentValue.toUpperCase())
+						}else{
+							mutation.target.setAttribute("title", "Text color picker. Current Color: #000000")
+						}
 					}
 				});
 			});
@@ -1022,7 +1029,8 @@ export default {
 				attributes: true //configure it to listen to attribute changes
 			});
 
-			let picker4_items = toolbar.querySelectorAll("#ql-picker-options-3 > span")
+			//Add labels to the text background color picker options
+			let picker4_items = toolbar.querySelectorAll(".ql-background .ql-picker-options > span")
 			for (let index = 0; index < picker4_items.length; index++) {
 				let el = picker4_items[index];
 				if( !el.getAttribute("data-value") ){
@@ -1034,7 +1042,7 @@ export default {
 				el.setAttribute("title", value)
 			}
 			
-			let picker4_label = toolbar.querySelector("#ql-picker-options-3").previousSibling
+			let picker4_label = toolbar.querySelector(".ql-background .ql-picker-label")
 			picker4_label.setAttribute("title", "Text background color picker. Current Color: None")
 
 			var picker4_observer = new MutationObserver(function(mutations) {
@@ -1054,7 +1062,8 @@ export default {
 				attributes: true //configure it to listen to attribute changes
 			});
 
-			let picker5_items = toolbar.querySelectorAll("#ql-picker-options-4 > span")
+			//Add labels to the text align dropdown options
+			let picker5_items = toolbar.querySelectorAll(".ql-align .ql-picker-options > span")
 			for (let index = 0; index < picker5_items.length; index++) {
 				let el = picker5_items[index];
 				if( !el.getAttribute("data-value") ){
@@ -1066,7 +1075,7 @@ export default {
 				el.setAttribute("title", value)
 			}
 
-			let picker5_label = toolbar.querySelector("#ql-picker-options-4").previousSibling
+			let picker5_label = toolbar.querySelector(".ql-align .ql-picker-label")
 			picker5_label.setAttribute("title", "Text Align. Current: None")
 
 			var picker5_observer = new MutationObserver(function(mutations) {
@@ -1140,12 +1149,14 @@ export default {
 			toolbar.querySelector(".ql-indent[value='-1']").setAttribute("title", "Indent Left")
 			toolbar.querySelector(".ql-indent[value='+1']").setAttribute("title", "Indent Right")
 
-			toolbar.querySelector("#ql-picker-options-5").previousSibling.setAttribute("title", "Text Style")
-			toolbar.querySelector("#ql-picker-options-6").previousSibling.setAttribute("title", "Text Size")
+			//The following code literally only works so long as the wysiwyg buttons are in this current order
+			toolbar.querySelector(".ql-formats:first-child .ql-picker-label").setAttribute("title", "Text Style")
+			toolbar.querySelector(".ql-formats:nth-child(6) .ql-picker-label").setAttribute("title", "Text Size")
 			
-			let picker1_items = toolbar.querySelectorAll("#ql-picker-options-7 > span")
-			for (let index = 0; index < picker1_items.length; index++) {
-				let el = picker1_items[index];
+			//Add labels to the text color picker options
+			let picker3_items = toolbar.querySelectorAll(".ql-color .ql-picker-options > span")
+			for (let index = 0; index < picker3_items.length; index++) {
+				let el = picker3_items[index];
 				if( !el.getAttribute("data-value") ){
 					el.setAttribute("title", "#000000")
 					continue
@@ -1154,25 +1165,31 @@ export default {
 				el.setAttribute("title", value)
 			}
 			
-			let picker1_label = toolbar.querySelector("#ql-picker-options-7").previousSibling
-			picker1_label.setAttribute("title", "Text color picker. Current Color: #000000")
+			//Add label to the selected value
+			let picker3_label = toolbar.querySelector(".ql-color .ql-picker-label")
+			picker3_label.setAttribute("title", "Text color picker. Current Color: #000000")
 
-			var picker1_observer = new MutationObserver(function(mutations) {
+			var picker3_observer = new MutationObserver(function(mutations) {
 				mutations.forEach(function(mutation) {
 					if (mutation.type === "attributes" && mutation.attributeName == "data-value") {
 						let currentValue = mutation.target.getAttribute("data-value")
-						mutation.target.setAttribute("title", "Text color picker. Current Color: "+currentValue.toUpperCase())
+						if( currentValue ){
+							mutation.target.setAttribute("title", "Text color picker. Current Color: "+currentValue.toUpperCase())
+						}else{
+							mutation.target.setAttribute("title", "Text color picker. Current Color: #000000")
+						}
 					}
 				});
 			});
 
-			picker1_observer.observe(picker1_label, {
+			picker3_observer.observe(picker3_label, {
 				attributes: true //configure it to listen to attribute changes
 			});
 
-			let picker2_items = toolbar.querySelectorAll("#ql-picker-options-8 > span")
-			for (let index = 0; index < picker2_items.length; index++) {
-				let el = picker2_items[index];
+			//Add labels to the text background color picker options
+			let picker4_items = toolbar.querySelectorAll(".ql-background .ql-picker-options > span")
+			for (let index = 0; index < picker4_items.length; index++) {
+				let el = picker4_items[index];
 				if( !el.getAttribute("data-value") ){
 					el.setAttribute("title", "None")
 					continue
@@ -1182,10 +1199,10 @@ export default {
 				el.setAttribute("title", value)
 			}
 			
-			let picker2_label = toolbar.querySelector("#ql-picker-options-8").previousSibling
-			picker2_label.setAttribute("title", "Text background color picker. Current Color: None")
+			let picker4_label = toolbar.querySelector(".ql-background .ql-picker-label")
+			picker4_label.setAttribute("title", "Text background color picker. Current Color: None")
 
-			var picker2_observer = new MutationObserver(function(mutations) {
+			var picker4_observer = new MutationObserver(function(mutations) {
 				mutations.forEach(function(mutation) {
 					if (mutation.type === "attributes" && mutation.attributeName == "data-value") {
 						let currentValue = mutation.target.getAttribute("data-value")
@@ -1198,13 +1215,14 @@ export default {
 				});
 			});
 
-			picker2_observer.observe(picker2_label, {
+			picker4_observer.observe(picker4_label, {
 				attributes: true //configure it to listen to attribute changes
 			});
 
-			let picker3_items = toolbar.querySelectorAll("#ql-picker-options-9 > span")
-			for (let index = 0; index < picker3_items.length; index++) {
-				let el = picker3_items[index];
+			//Add labels to the text align dropdown options
+			let picker5_items = toolbar.querySelectorAll(".ql-align .ql-picker-options > span")
+			for (let index = 0; index < picker5_items.length; index++) {
+				let el = picker5_items[index];
 				if( !el.getAttribute("data-value") ){
 					el.setAttribute("title", "None")
 					continue
@@ -1214,10 +1232,10 @@ export default {
 				el.setAttribute("title", value)
 			}
 
-			let picker3_label = toolbar.querySelector("#ql-picker-options-9").previousSibling
-			picker3_label.setAttribute("title", "Text Align. Current: None")
+			let picker5_label = toolbar.querySelector(".ql-align .ql-picker-label")
+			picker5_label.setAttribute("title", "Text Align. Current: None")
 
-			var picker3_observer = new MutationObserver(function(mutations) {
+			var picker5_observer = new MutationObserver(function(mutations) {
 				mutations.forEach(function(mutation) {
 					if (mutation.type === "attributes" && mutation.attributeName == "data-value") {
 						let currentValue = mutation.target.getAttribute("data-value")
@@ -1231,11 +1249,9 @@ export default {
 				});
 			});
 
-			picker3_observer.observe(picker3_label, {
+			picker5_observer.observe(picker5_label, {
 				attributes: true //configure it to listen to attribute changes
 			});
-
-
 		}
 	},
 	created() {
@@ -1295,6 +1311,7 @@ export default {
 		
 	},
 	mounted() {
+		document.title = "Audit Issues"
 		this.$store.state.projects.tool.info = '<p>Here is a list of the various functionality you can expect on the audit issues table:</p>'+
 			'<ul class="list-disc text-left mb-3">'+
 			'	<li><strong>Horizontal scrolling:</strong> at any point while focused inside the table, using the left and right arrow keys will scroll the table to the left and right</li>'+

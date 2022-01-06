@@ -77,6 +77,7 @@ export default {
     created() {
     },
     mounted() {
+      document.title = "Project Overview"
       let that = this
   
       if( this.$store.state.projects.project.id !== this.$route.params.id ){

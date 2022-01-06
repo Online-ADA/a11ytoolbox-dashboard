@@ -94,6 +94,9 @@ export default {
 			return this.$store.getters["auth/account"]
 		}
 	},
+	mounted(){
+		document.title = "User Profile"
+	},
 	components:{
 		Loader,
 		File

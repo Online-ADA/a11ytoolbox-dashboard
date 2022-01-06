@@ -192,6 +192,7 @@ export default {
       if( this.$store.state.projects.all.length ){
         this.setProject()
       }
+      document.title = "Edit Project"
     },
     components: {
       Loader,

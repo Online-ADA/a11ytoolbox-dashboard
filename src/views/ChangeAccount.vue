@@ -24,7 +24,6 @@
 import Dropdown from '../components/Dropdown'
 import Card from '../components/Card'
 import Loader from '../components/Loader'
-// import admin from '../store/modules/admin'
 
 export default {
     name: 'ChangeAccount',
@@ -52,6 +51,9 @@ export default {
             let id = this.$store.state.auth.account
             return this.$store.state.auth.accounts.find( x=>x.id == id) || {name:""}
         }
+    },
+    mounted(){
+        document.title = "Change Account"
     },
     components:{
         Dropdown,

@@ -390,6 +390,7 @@ export default {
         }
     },
     mounted() {
+        document.title = "Audit Extras Management Dashboard"
     },
     components: {
         Loader,

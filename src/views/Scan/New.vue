@@ -253,6 +253,7 @@ export default {
     },
     created(){},
     mounted(){
+        document.title = "Create New Automated Audit"
         if( this.$store.state.audits.all.length ){
             let that = this
             this.$store.state.audits.audit = this.$store.state.audits.all.find(a=>a.id === parseInt(that.$route.params.id))

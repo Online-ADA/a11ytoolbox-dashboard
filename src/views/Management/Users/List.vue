@@ -160,6 +160,7 @@ export default {
     created() {},
     mounted() {
       this.$store.dispatch("user/getUsers")
+      document.title = "Users Management"
     },
     components: {
       DT

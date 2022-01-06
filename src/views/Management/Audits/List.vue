@@ -168,6 +168,7 @@ export default {
         this.$store.dispatch("admin/getAudits", this.$router)
     },
     mounted() {
+      document.title = "Audits Management"
     },
     components: {
       Loader,

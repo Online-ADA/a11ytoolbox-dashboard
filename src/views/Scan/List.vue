@@ -140,6 +140,7 @@ export default {
         this.$store.dispatch("projects/getProjects")
     },
     mounted() {
+        document.title = "Automated Audits Management"
     },
     components: {
         Label,

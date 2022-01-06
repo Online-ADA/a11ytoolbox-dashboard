@@ -123,7 +123,7 @@ export default {
         this.getDomains()
     },
     mounted() {
-      
+      document.title = "Domains Management"
     },
     components: {
       Loader,

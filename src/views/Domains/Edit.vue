@@ -341,6 +341,7 @@ export default {
 	},
 	mounted() {
 		this.getDomain()
+		document.title = "Edit Domain"
 	},
 	components: {
 		TextInput,

@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import admin from '../../store/modules/admin'
 
 export default {
     data: () => ({
@@ -27,9 +26,7 @@ export default {
     methods: {
     },
     created() {
-      if( this.$store.state.admin == undefined ){
-        this.$store.registerModule('admin', admin)
-      }
+      
     },
     beforeDestroy(){
       this.$store.dispatch("admin/resetState")

@@ -214,6 +214,7 @@
 		},
 		data(){
 			return {
+				EventBus: EventBus,
 				current: 1,
 				perPage: 100,
 				plainKeys : [
@@ -778,7 +779,7 @@
 					that.deselectAll()
 				}
 				if( payload.action == 'columnPicker' ){
-					that.openModal(()=>{ that.columnPickerOpen = true })
+					EventBus.openModal(false, payload.$event, ()=>{ that.columnPickerOpen = true })
 				}
 			})
 		},

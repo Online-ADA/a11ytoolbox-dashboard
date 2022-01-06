@@ -138,6 +138,7 @@ export default {
       this.$store.dispatch("admin/getProjects", this.$router)
     },
     mounted() {
+      document.title = "Projects Management"
     },
     components: {
       Loader,

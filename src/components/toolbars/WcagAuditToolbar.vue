@@ -20,30 +20,30 @@
                         </select>
                         
                         <!-- Edit Issue -->
-                        <button v-if="auditRowsSelected === 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-edit-issue', $event)">
+                        <button v-if="auditRowsSelected === 1 && !audit.locked" class="ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-edit-issue', $event)">
                             <span title="Edit Issue" ><i class="far fa-file-edit"></i></span>
                         </button>
                         <!-- Copy Issue -->
-                        <button v-if="auditRowsSelected === 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-copy-issue', $event)">
+                        <button v-if="auditRowsSelected === 1 && !audit.locked" class="ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-copy-issue', $event)">
                             <span title="Copy Issue" ><i class="far fa-copy"></i></span>
                         </button>
                         <!-- Delete Selected Issue -->
-                        <button v-if="auditRowsSelected > 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-delete-many', $event)">
+                        <button v-if="auditRowsSelected > 1 && !audit.locked" class="ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-delete-many', $event)">
                             <span title="Delete All Selected Issues" ><i class="far fa-minus-hexagon"></i></span>
                         </button>
                         <!-- Add Issue -->
-                        <button v-if="auditRowsSelected < 1 && !audit.locked" class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-add-issue', $event)">
+                        <button v-if="auditRowsSelected < 1 && !audit.locked" class="ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-add-issue', $event)">
                             <span title="Add Issue" ><i class="far fa-plus-square"></i></span>
                         </button>
                         <!-- Locked Icon -->
                         <span title="This Audit is Locked and Cannot be Modified" v-if="audit.locked"><i class="fas fa-lock" aria-hidden="true"></i></span>
                         <!-- Condense Table -->
-                        <button class="ml-3.5 bg-transparent" @click.prevent="toolbarEmit('audit-condense', $event)">
+                        <button class="ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-condense', $event)">
                             <span title="Compress Table" v-if="!toggled.includes('audit-condense')"><i class="far fa-compress-alt"></i></span>
                             <span title="Decompress Table" v-else><i class="fas fa-expand-alt"></i></span>
                         </button>
                         <!-- Search Audit -->
-                        <button class="ml-3.5 bg-transparent" @click.prevent="searchBarOpen = !searchBarOpen">
+                        <button class="ml-3.5 bg-transparent pointer-only" @click.prevent="searchBarOpen = !searchBarOpen">
                             <span title="Search Audit" ><i class="far fa-search"></i></span>
                         </button>
                         <div class="border border-black mx-3.5 divider"></div>
@@ -51,17 +51,17 @@
                     <!-- Table Tools -->
                     <template v-if="isAuditShowPage">
                         <div v-if="!audit.locked">
-                            <button title="Select All Rows" class="text-lg leading-none" @click.prevent="toolbarEmit('selectAll', $event)" >
+                            <button title="Select All Rows" class="text-lg leading-none pointer-only" @click.prevent="toolbarEmit('selectAll', $event)" >
                                 <i class="fas fa-grip-horizontal"></i>
                             </button>
                         </div>
                         <div v-if="!audit.locked">
-                            <button class="text-lg leading-none mx-3.5" title="Deselect All Rows" @click.prevent="toolbarEmit('deselectAll', $event)">
+                            <button class="text-lg leading-none mx-3.5 pointer-only" title="Deselect All Rows" @click.prevent="toolbarEmit('deselectAll', $event)">
                                 <i class="fal fa-grip-horizontal"></i>
                             </button>
                         </div>
                         <div>
-                            <button class="text-base leading-none" title="Open Show or Hide Columns Modal" @click.prevent="toolbarEmit('columnPicker', $event)" >
+                            <button class="text-base leading-none pointer-only" title="Open Show or Hide Columns Modal" @click.prevent="toolbarEmit('columnPicker', $event)" >
                                 <i class="far fa-thumbtack"></i>
                             </button>
                         </div>
@@ -69,14 +69,14 @@
                     </template>
                     <!-- Audit Tools -->
                     <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
-                    <button class="ml-3.5 bg-transparent" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
+                    <button class="ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
                     <router-link class="ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues to This Audit"><i class="far fa-file-import"></i></router-link>
                     <router-link class="ml-3.5" :to="{path: `/scan/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
 
-                    <button title="Mark Audit Complete" v-if="!audit.locked" class="ml-3.5" @click="toolbarEmit('audit-complete', $event)"><i class="fas fa-lock-open-alt"></i></button>
-                    <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3" class="ml-3.5" @click="toolbarEmit('audit-next', $event)"><i class="far fa-hand-point-right"></i></button>
-                    <!-- <button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="ml-3.5" ><i class="fas fa-trash-alt"></i></button> -->
-                    <button class="ml-3.5 bg-transparent" @click="EventBus.$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
+                    <button title="Mark Audit Complete" v-if="!audit.locked" class="ml-3.5 pointer-only" @click="toolbarEmit('audit-complete', $event)"><i class="fas fa-lock-open-alt"></i></button>
+                    <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3" class="ml-3.5 pointer-only" @click="toolbarEmit('audit-next', $event)"><i class="far fa-hand-point-right"></i></button>
+                    
+                    <button class="ml-3.5 bg-transparent pointer-only" @click="EventBus.$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
                 </span>
             </div>
         </div>
@@ -337,7 +337,10 @@ export default {
 
 </script>
 
-<style scoped>    
+<style scoped>
+    .pointer-only *{
+        pointer-events: none;
+    }
     #toolbar .search-bar button{ font-size:14px; }
     #toolbar .divider{
         height: 30px;

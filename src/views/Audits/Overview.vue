@@ -25,7 +25,7 @@ export default {
     created() {
     },
     mounted() {
-      
+      document.title = "Audit Overview"
     },
     components: {
         Card,

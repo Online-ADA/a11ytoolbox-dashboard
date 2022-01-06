@@ -20,7 +20,6 @@
 import Loader from '../../components/Loader'
 import A from '../../components/Link'
 export default {
-    name: "HelloWorld",
     data: () => ({
     }),
     computed: {
@@ -40,6 +39,7 @@ export default {
       // this.$store.dispatch("admin/getClients", this.$router)
     },
     mounted() {
+      document.title = "Clients Management"
     },
     components: {
       Loader,

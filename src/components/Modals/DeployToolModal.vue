@@ -30,7 +30,7 @@
 				</span>
 			</button>
 		</div>
-		<button @click.prevent="EventBus.closeModal('deployToolModal')" class="standard mt-2">Cancel</button>
+		<button @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('deployToolModal', false)})" class="standard mt-2">Cancel</button>
 	</Modal>
 </template>
 

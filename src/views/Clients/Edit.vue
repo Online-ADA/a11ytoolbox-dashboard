@@ -59,6 +59,7 @@ export default {
 	created() {
 	},
 	mounted() {
+		document.title = "Edit Client"
 		this.$store.dispatch("clients/getClient", {id: this.$route.params.id})
 	},
 	components: {

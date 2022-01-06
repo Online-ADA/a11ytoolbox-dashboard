@@ -99,7 +99,9 @@ export default {
     },
     created() {
     },
-    mounted() {},
+    mounted() {
+        document.title = "Domain Management"
+    },
     components: {
       Loader,
       A,

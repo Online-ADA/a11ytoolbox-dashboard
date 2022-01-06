@@ -346,6 +346,9 @@ export default {
 	created() {
 		this.$store.dispatch("audits/getAudit", {id: this.$route.params.id})
 	},
+	mounted(){
+		document.title = "Edit Audit"
+	},
 	components: {
 		Loader,
 		TextInput,

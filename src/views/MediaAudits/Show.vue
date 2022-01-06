@@ -210,6 +210,7 @@ export default {
 		
 	},
 	mounted() {
+		document.title = "Media Audit Issues"
 	},
 	components: {
 		Loader,

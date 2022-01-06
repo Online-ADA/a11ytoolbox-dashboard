@@ -84,6 +84,7 @@ export default {
         }
     },
     mounted() {
+      document.title = "All Audits Assigned to User"
     },
     components: {
       Loader,

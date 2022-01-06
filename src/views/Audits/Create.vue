@@ -105,6 +105,7 @@
             },
         },
         mounted(){
+            document.title = "Create New Audit"
             this.sheetData["sheet0"].project = this.$store.state.projects.project.id
         },
         created(){

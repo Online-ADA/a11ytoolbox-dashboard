@@ -25,7 +25,7 @@ export default {
     created() {
     },
     mounted() {
-      
+      document.title = "Media Audit Overview"
     },
     components: {
         Card,
