@@ -43,8 +43,8 @@ export default {
     components:{
     },
     methods: {
-        launchCreateProjectModal(){
-            EventBus.$emit('createProjectModal', true)
+        launchCreateProjectModal($ev){
+            EventBus.openModal('createProjectModal', $ev.target)
         },
         setCurrentProject(id){
             this.$store.state.projects.project = this.projects.find(p=>p.id === id)
