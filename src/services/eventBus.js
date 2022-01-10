@@ -4,14 +4,19 @@ export const EventBus = new Vue({
 		originElements: []
 	}),
 	methods:{
-		openModal( emit, $event, callback = false ){
+		openModal( emit, $origin, callback = false ){
 			if( emit ){
 				if( !callback ){
 					callback = ()=>{ this.$emit(emit, true) }
 				}
 			}
-			
-			this.originElements.push($event.target)
+
+			let target = $origin
+			//Check if $event is a ClickEvent or a DOM Node
+			if( !$origin.tagName ){
+				target = $origin.target
+			}
+			this.originElements.push(target)
 			
 			let classList = document.body.classList
 			if( !classList.contains("modalOpen") ){

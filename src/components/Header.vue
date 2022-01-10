@@ -154,15 +154,14 @@ export default {
         }
     },
     methods: {
-        launchCreateClientModal(){
-            EventBus.$emit('createClientModal', true)
+        launchCreateClientModal($ev){
+            EventBus.openModal('createClientModal', document.querySelector(".client-dropdown"))
         },
         closeDropdown(value){
             let index = this.dropdownsExpanded.indexOf(value)
             this.dropdownsExpanded.splice(index, 1)
         },
         expandDropdown(value){
-            console.log("fired");
             if( this.dropdownsExpanded.includes(value) ){
                 this.closeDropdown(value)
                 return
