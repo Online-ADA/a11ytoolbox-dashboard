@@ -12,7 +12,7 @@
 			@sort="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-sortedBy`, payload) }" 
 			@hideColumns="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-visible`, payload) }" 
 			@moveColumn="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-positions`, payload) }" 
-			:sortData="tableDefaultSortBy" 
+			:defaultSortData="tableDefaultSortBy" 
 			@freezeColumn="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-stickied`, payload) }" 
 			:issuesTable="true" 
 			:condense="shouldCondense" 
@@ -285,6 +285,7 @@ import TextInput from '../../components/TextInput'
 import TextArea from '../../components/TextArea'
 import Toggle from '../../components/Toggle'
 import { EventBus } from '../../services/eventBus'
+import Utility from '../../services/utility'
 
 export default {
 	data: () => ({
@@ -390,8 +391,8 @@ export default {
 		fixCSVIssues : { auditLoaded: false, articlesLoaded: false},
 		issuesFixed: false,
 		tableDefaultSortBy: {
-			columns: [ "id" ],
-			orders: [ "asc" ],
+			columns: ["id"],
+			orders: ["asc"],
 			reference: ["id"]
 		},
 		useSitemap:false,
@@ -485,22 +486,19 @@ export default {
 				"how_discovered"
 			]
 
-			this.tableDefaultSortBy = {
-				columns: [ "id" ],
-				orders: [ "asc" ],
-				reference: ["id"]
-			}
-
 			let stickied = [
 				"id",
 				"issue_number"
 			]
 
 			let columnPositions = []
+			let auditMeta = false
 
-			let auditMeta = this.$store.state.auth.user.meta.audit != undefined && 
-									this.$store.state.auth.user.meta.audit[this.$route.params.id] != undefined ? 
-									this.$store.state.auth.user.meta.audit[this.$route.params.id] : false
+			if( this.$store.state.auth.user.meta.audit != undefined && 
+				this.$store.state.auth.user.meta.audit[this.$route.params.id] != undefined ){
+					//Converts JSON storage of function values into usable values for lodash _.orderBy()
+					auditMeta = Utility.reviveAuditMetaFunction( this.$store.state.auth.user.meta.audit[this.$route.params.id] )
+			}
 			
 			if( auditMeta ){
 				if( auditMeta.issues != undefined && 
@@ -511,17 +509,17 @@ export default {
 				if( auditMeta.issues != undefined && 
 					auditMeta.issues.columns != undefined && 
 					auditMeta.issues.columns.visible != undefined ){
-					hide = headers.filter(h=>!auditMeta.issues.columns.visible.includes(h))
+						hide = headers.filter(h=>!auditMeta.issues.columns.visible.includes(h))
 				}
 				if( auditMeta.issues != undefined && 
 					auditMeta.issues.columns != undefined && 
 					auditMeta.issues.columns.sortedBy != undefined ){
-					this.tableDefaultSortBy = auditMeta.issues.columns.sortedBy
+						this.tableDefaultSortBy = auditMeta.issues.columns.sortedBy
 				}
 				if( auditMeta.issues != undefined && 
 					auditMeta.issues.columns != undefined && 
 					auditMeta.issues.columns.positions != undefined ){
-					columnPositions = auditMeta.issues.columns.positions
+						columnPositions = auditMeta.issues.columns.positions
 				}
 			}
 			
@@ -639,7 +637,7 @@ export default {
 			if( columnPositions.length ){
 				let finalOrder = []
 				for( let y = 0; y < columnPositions.length; y++ ){
-					let header = arr.find(h=>h.header == columnPositions[y])
+					let header = arr.find(h=>h.key == columnPositions[y])
 					finalOrder.push(header)
 				}
 				return finalOrder
@@ -649,22 +647,17 @@ export default {
 			
 		},
 		metaEvent(key, subKeys, value){
+			if( value.columns ){
+				for (let index = 0; index < value.columns.length; index++) {
+					const val = value.columns[index];
+					if( typeof val === 'function' ){
+						value.columns[index] = "function"
+					}
+				}
+			}
+			
 			this.$store.dispatch("user/storeUserMeta", {key: key, subKeys: subKeys, value:value})
 		},
-		// openModal( callback ){
-		// 	let classList = document.body.classList
-		// 	if( !classList.contains("modalOpen") ){
-		// 		classList.add("modalOpen")
-		// 	}
-		// 	callback()
-		// },
-		// closeModal( callback ){
-		// 	let classList = document.body.classList
-		// 	if( classList.contains("modalOpen") ){
-		// 		classList.remove("modalOpen")
-		// 	}
-		// 	callback()
-		// },
 		isHeaderHidePermanent(key){
 			if( this.audit.number == 1 && ( key == "second_audit_comments" || key == "third_audit_comments" ) ){
 				return true
@@ -971,7 +964,7 @@ export default {
 			descrEditor.setAttribute("required", "required")
 
 			let toolbar = self.$refs.descriptionEditor.previousSibling
-			console.log(toolbar);
+			
 			let svgs = toolbar.querySelectorAll("svg")
 			for (let index = 0; index < svgs.length; index++) {
 				let el = svgs[index];

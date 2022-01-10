@@ -70,6 +70,7 @@ import Modal from './components/Modal'
 import Btn from './components/Button'
 import Cookies from 'js-cookie'
 import { EventBus } from "./services/eventBus"
+// import Utility from "./services/utility.js"
 import CreateClientModal from "./components/Modals/CreateClientModal"
 import CreateProjectModal from "./components/Modals/CreateProjectModal"
 import CreateWCAGAuditModal from "./components/Modals/CreateWCAGAuditModal"
@@ -158,6 +159,12 @@ export default {
 		// },
 	},
 	watch: {
+		// "$store.state.auth.user.meta":function(newVal){
+		// 	console.log("USER META IS CHANGING", newVal);
+		// 	if( Object.keys(newVal).includes("audit") ){
+		// 		Utility.reviveUserAuditMetaFunction(newVal, this)
+		// 	}
+		// },
 		"$store.state.clients.client": function(newVal){
 			this.$store.state.audits.all = []
 			this.$store.state.projects.project = false

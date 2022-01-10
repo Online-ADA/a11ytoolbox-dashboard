@@ -96,17 +96,12 @@
 									v-html="displayValue(header.key, data[header.key])"></span>
 								</template>
 
-								<template v-else-if="data.how_discovered == 'Automated Audit' && (header.key == 'descriptions' || header.key =='recommendations')">
-									
-									<span class="block break-words" tabindex="-1" >{{displayValue(header.key, data[header.key])}}</span>
-								</template>
-
 								<template v-else-if="header.key == 'target' || header.key =='html'">
 									<span class="block break-words" tabindex="-1" >{{displayValue(header.key, data[header.key])}}</span>
 								</template>
 
 								<template v-else>
-									<span class="block" tabindex="-1" :class="{'text-left ql-editor': header.key == 'descriptions' || header.key == 'recommendations', 'break-words': plainKeys.includes(header.key)}"  v-html="displayValue(header.key, data[header.key])"></span>
+									<span class="block" tabindex="-1" :class="{'text-left ql-editor': header.key == 'descriptions' || header.key == 'recommendations', 'break-words': plainKeys.includes(header.key)}" v-html="displayValue(header.key, data[header.key])"></span>
 								</template>
 								
 							</span>
@@ -151,6 +146,7 @@
 	import TextInput from "../components/TextInput"
 	import { dragscroll } from 'vue-dragscroll'
 	import { EventBus } from '../services/eventBus'
+	import Utility from '../services/utility'
 
 
 	export default {
@@ -201,19 +197,15 @@
 				type: Boolean,
 				default: false
 			},
-			sortData: {
-				type: Object,
-				default:function(){
-					return {
-						columns: [ "id" ], //click once: add to columns, click twice: check if in columns, if so, add desc. Click third: remove from column
-						orders: [ "asc" ],
-						reference: ["id"]
-					}
-				}
-			}
+			defaultSortData: {}
 		},
 		data(){
 			return {
+				sortData: {
+					columns: ["id"],
+					orders: ["asc"],
+					reference: ["id"]
+				},
 				EventBus: EventBus,
 				current: 1,
 				perPage: 100,
@@ -309,20 +301,6 @@
 				
 				this.current = $event
 			},
-			// openModal( callback ){
-			// 	let classList = document.body.classList
-			// 	if( !classList.contains("modalOpen") ){
-			// 		classList.add("modalOpen")
-			// 	}
-			// 	callback()
-			// },
-			// closeModal( callback ){
-			// 	let classList = document.body.classList
-			// 	if( classList.contains("modalOpen") ){
-			// 		classList.remove("modalOpen")
-			// 	}
-			// 	callback()
-			// },
 			rowCanBeRemoved(data){
 				if( this.importing && data.hasOwnProperty('unique') ){
 					return true
@@ -387,90 +365,16 @@
 			sort( column, quiet = false ){
 				if( column ){
 					column = column.replaceAll(/[ ]/g, "_")
-					//String reference is necessary because sometimes our column becomes an anonymous function
 					let reference = column
-					if( column == "levels" ){
-						column = ((item)=>{
-							return item.levels.join(" ")
-						})
-					}
-					if( column == "success_criteria" ){
-						column = ((item)=>{
-							let output = ""
-							for (let x = 0; x < item.articles.length; x++) {
-								const article = item.articles[x];
-								output += " " + article.display
-							}
-							
-							return output
-						})
-					}
-					if( column == "techniques" ){
-						column = ((item)=>{
-							let output = ""
-							for (let x = 0; x < item.techniques.length; x++) {
-								const technique = item.techniques[x];
-								output += technique.display
-							}
-							return output
-						})
-					}
-					if( column == "pages" ){
-						column = ((item)=>{
-							if( item.pages ){
-								let domain = this.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
-								
-								if( this.$store.state.audits.audit.domain.root ){
-									domain = domain + "/" + this.$store.state.audits.audit.domain.root.replace(/\/$/gm, "")
-								}
-								let output = ""
-								for (let x = 0; x < item.pages.length; x++) {
-									let page = item.pages[x]
-									if( page.title ){
-										output += page.title
-									}
-									if( page.title && page.url ){
-										output += " - "
-									}
-									if( page.url ){
-										let url = page.url
-										if( url == "/" ){
-											url = ""
-										}
-										output += domain + "/" + url
-									}
-								}
-								
-								return output
-							}
-							return ""
-						})
-					}
-					let index = this.sortData.reference.indexOf(reference)
-					let indexOfID = this.sortData.reference.indexOf('id')
-					if( indexOfID >=0 ){
-						this.sortData.columns.splice(indexOfID, 1)
-						this.sortData.reference.splice(indexOfID, 1)
-						this.sortData.orders.splice(indexOfID, 1)
-					}
-					
-					if( index < 0 ){ //If sort.columns does not currently have this column
-						this.sortData.columns.push(column)
-						this.sortData.reference.push(reference)
-						this.sortData.orders.push("asc")
-					} else if( index >= 0 && this.sortData.orders[index] == 'asc' ){ //If sort.columns currently has this column
-						this.sortData.orders[index] = 'desc'
-					} else {
-						this.sortData.columns.splice(index, 1)
-						this.sortData.reference.splice(index, 1)
-						this.sortData.orders.splice(index, 1)
-					}
+					let data = Utility.getSortValue(column)
+					this.setColumnSortData(reference, data)
 
 					if( !this.sortData.columns.length ){
 						this.sortData.columns.push('id')
 						this.sortData.reference.push('id')
 						this.sortData.orders.push('asc')
 					}
+					
 				}
 				
 				this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
@@ -478,6 +382,35 @@
 
 				if( !quiet ){
 					this.$emit("sort", this.sortData)
+				}
+			},
+			setColumnSortData(reference, data){
+				let index = this.sortData.reference.indexOf(reference)
+				let indexOfID = this.sortData.reference.indexOf('id')
+				
+				if( indexOfID >=0 ){
+					this.sortData.columns.splice(indexOfID, 1)
+					this.sortData.reference.splice(indexOfID, 1)
+					this.sortData.orders.splice(indexOfID, 1)
+				}
+				
+				if( index < 0 ){ //If sort.columns does not currently have this column
+					this.sortData.columns.push(data)
+					this.sortData.reference.push(reference)
+					this.sortData.orders.push("asc")
+					return
+				} 
+				
+				if( index >= 0 && this.sortData.orders[index] == 'asc' ){ //If sort.columns currently has this column
+					this.sortData.orders[index] = 'desc'
+					return
+				}
+
+				if( index >= 0 && this.sortData.orders[index] == 'desc' ){
+					this.sortData.columns.splice(index, 1)
+					this.sortData.reference.splice(index, 1)
+					this.sortData.orders.splice(index, 1)
+					return
 				}
 			},
 			submitTableSearch(){
@@ -525,7 +458,6 @@
 				EventBus.$emit("auditFilteredRows", this.rows.length)
 			},
 			showHideColumns(){
-				
 				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.key)
 				let allStickied = this.headers.filter( el => el.show && el.sticky )
 				for( let i in allStickied ){
@@ -782,6 +714,8 @@
 					EventBus.openModal(false, payload.$event, ()=>{ that.columnPickerOpen = true })
 				}
 			})
+
+			this.sortData = this.defaultSortData
 		},
 		created(){
 			this.columnData = JSON.parse(JSON.stringify(this.rowsData))
@@ -807,6 +741,11 @@
 				this.search.column = newVal.filter( h=>h.show )[0].key
 				this.columnsToShow = this.headers.filter( h=>h.show ).map( h=>h.key)
 			},
+			defaultSortData(newVal){
+				this.sortData = newVal
+				this.filteredRows = this._.orderBy(this.filteredRows, this.sortData.columns, this.sortData.orders)
+				this.columnData = this._.orderBy(this.columnData, this.sortData.columns, this.sortData.orders)
+			}
 		},
 		components: {
 			Modal,
