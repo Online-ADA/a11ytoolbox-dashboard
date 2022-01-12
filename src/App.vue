@@ -187,7 +187,7 @@ export default {
 				}
 			}
 		},
-		"$route.path": function(newVal){
+		"$route.path": function(){
 			if( this.$route.matched[0].path == '/audits' ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"audit", info:""}
@@ -208,10 +208,23 @@ export default {
 		}
 	},
 	created() {
+		if( window.screen.width < 1024 ){
+			this.sidebarExpanded = false
+		}
 	},
 	mounted() {
+		console.log(this);
 		this.$root.$on('menuClick', (menuOpen) => {
 			this.sidebarExpanded = menuOpen;
+			
+			if( window.screen.width < 1024 ){
+				let body = document.querySelector("body")
+				if( body.classList.contains("mobile-no-overflow") ){
+					body.classList.remove("mobile-no-overflow")
+				}else{
+					body.classList.add("mobile-no-overflow")
+				}
+			}
 		} );
 		if( this.$route.path == "/projects/create" ){
 			this.$store.state.projects.project = false

@@ -66,7 +66,7 @@ window.App = new Vue({
 function run(){
   Request.getPromise(store.state.auth.API+'/state/init')
     .then( response => {
-      console.log("MAIN.JS INIT CHECK HAS RETURNED", response.data.details);
+      // console.log("MAIN.JS INIT CHECK HAS RETURNED", response.data.details);
       store.state.auth.user = response.data.details.user
       store.state.auth.accounts = response.data.details.accounts
 
@@ -82,7 +82,7 @@ function run(){
       if( accountID ){
         Request.getPromise(store.state.auth.API+`/${accountID}/clients`)
         .then( response => {
-          console.log("MAIN.JS GET CLIENTS HAS RETURNED");
+          // console.log("MAIN.JS GET CLIENTS HAS RETURNED");
           store.state.clients.all = response.data.details
           let clientID = parseInt(Cookies.get("toolboxClient"))
           

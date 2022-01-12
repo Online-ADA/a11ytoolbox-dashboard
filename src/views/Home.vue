@@ -4,8 +4,8 @@
 
     <div v-if="message" class="text-red-600">{{message}}</div>
     <h1 class="mb-5 headline">Account Overview</h1>
-    <div class="flex">
-      <div class="w-1/2 flex flex-col mr-5">
+    <div class="flex sm:flex-wrap">
+      <div class="md:w-1/2 sm:w-full flex flex-col md:mr-5">
         <Card class="mb-5" :center="false" :gutters="false">
           <h2 class="headline-2">Stats</h2>
           <div class="text-lg">{{totalClients}} Client<template v-if="totalClients !== 1">s</template></div>
@@ -22,7 +22,7 @@
           <div class="text-lg">There are no alerts at this time</div>
         </Card>
       </div>
-      <div class="w-1/2 flex flex-col">
+      <div class="md:w-1/2 sm:w-full flex flex-col sm:flex-wrap">
         <Card :center="false" :gutters="false">
           <h2 class="headline-2">Recommendations</h2>
           <template v-if="domainRecommendations.length">

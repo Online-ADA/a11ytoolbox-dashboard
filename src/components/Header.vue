@@ -1,34 +1,36 @@
 <template>
     <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full fixed px-4 py-2 shadow-custom overflow-visible">
         <router-link class="block" :to="{path:'/'}"><img alt="Ally Toolbox by Online ADA" src="../assets/logo-toolbox.png" /></router-link>
-        <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick()"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
+        <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
-        <div class="mb-auto mt-auto">
-            <div ref="clientDropdown" role="button" tabindex="0" :aria-expanded="[ dropdownsExpanded.includes('clientDropdown') ? 'true' : 'false' ]" @keyup.enter.space="expandDropdown('clientDropdown')" @click.prevent="expandDropdown('clientDropdown')" :class="{expanded: dropdownsExpanded.includes('clientDropdown')}" class="dropdown-container dropdown-nolabel client-dropdown relative flex flex-col pl-8">
-                <div v-if="$store.state.auth.user" class="flex items-center dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
-                    <span @click.prevent class="block whitespace-no-wrap no-underline text-white" >
-                        {{selectedClient}}
-                    </span>
-                    <i class="fas fa-caret-down pl-1 text-white"></i>
+        <div class="flex items-center">
+            <div class="mb-auto mt-auto">
+                <div ref="clientDropdown" role="button" tabindex="0" :aria-expanded="[ dropdownsExpanded.includes('clientDropdown') ? 'true' : 'false' ]" @keyup.enter.space="expandDropdown('clientDropdown')" @click.prevent="expandDropdown('clientDropdown')" :class="{expanded: dropdownsExpanded.includes('clientDropdown')}" class="dropdown-container dropdown-nolabel client-dropdown relative flex flex-col pl-8">
+                    <div v-if="$store.state.auth.user" class="flex items-center dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
+                        <span @click.prevent class="block whitespace-no-wrap no-underline text-white" >
+                            {{selectedClient}}
+                        </span>
+                        <i class="fas fa-caret-down pl-1 text-white"></i>
+                    </div>
+                    <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
+                        <li>
+                            <button @click.prevent="launchCreateClientModal">Create Client</button>
+                        </li>
+                        <li class="hover:bg-pallette-grey-light" v-for="(child, index) in getClients" :key="index">
+                            <template v-if="child.type == 'router-link'">
+                                <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
+                            </template>
+                            <template v-if="child.type == 'client'">
+                                <A href="#" @click.native.prevent="setClient(child.to)">{{child.label}}</A>
+                            </template>
+                        </li>
+                    </ul>
                 </div>
-                <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
-                    <li>
-                        <button @click.prevent="launchCreateClientModal">Create Client</button>
-                    </li>
-                    <li class="hover:bg-pallette-grey-light" v-for="(child, index) in getClients" :key="index">
-                        <template v-if="child.type == 'router-link'">
-                            <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
-                        </template>
-                        <template v-if="child.type == 'client'">
-                            <A href="#" @click.native.prevent="setClient(child.to)">{{child.label}}</A>
-                        </template>
-                    </li>
-                </ul>
             </div>
-        </div>
 
-        <div class="border mx-3 divider"></div>
-        <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
+            <div class="border mx-3 divider"></div>
+            <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
+        </div>
 
         <div ref="settingsDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('settingsDropdown')" @click.prevent="expandDropdown('settingsDropdown')" :aria-expanded="[ dropdownsExpanded.includes('settingsDropdown') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('settingsDropdown')}" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="settings" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
@@ -190,6 +192,10 @@ export default {
         EventBus.$on("close-dropdown", (payload)=>{
             this.closeDropdown(payload.dropdown)
         })
+
+        if( window.screen.width < 1024 ){
+            this.menuOpen = false
+        }
     },
     components:{
         Dropdown,
