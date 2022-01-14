@@ -4,7 +4,7 @@
 
     <div v-if="message" class="text-red-600">{{message}}</div>
     <h1 class="mb-5 headline">Account Overview</h1>
-    <div class="flex sm:flex-wrap">
+    <div class="flex xs:flex-wrap sm:flex-nowrap">
       <div class="md:w-1/2 sm:w-full flex flex-col md:mr-5">
         <Card class="mb-5" :center="false" :gutters="false">
           <h2 class="headline-2">Stats</h2>
@@ -17,7 +17,7 @@
           <div class="text-lg">{{usersData.customer_service.length}} Customer Service Team Member<template v-if="usersData.customer_service.length !== 1">s</template></div>
         </Card>
 
-        <Card :center="false" :gutters="false">
+        <Card class="xs:mb-5" :center="false" :gutters="false">
           <h2 class="headline-2">Alerts</h2>
           <div class="text-lg">There are no alerts at this time</div>
         </Card>

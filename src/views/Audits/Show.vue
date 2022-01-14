@@ -8,7 +8,8 @@
 				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>An automated audit is currently running and could take a couple of minutes. Data will be refreshed on completion.
 			</template>
 			
-			<Table 
+			<Table
+			class="xs:mt-[65px]" 
 			@sort="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-sortedBy`, payload) }" 
 			@hideColumns="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-visible`, payload) }" 
 			@moveColumn="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-positions`, payload) }" 

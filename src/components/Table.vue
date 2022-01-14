@@ -123,10 +123,10 @@
 		<Modal style="z-index:71" :open="columnPickerOpen">
 			<div class="w-full p-3">
 				<button aria-label="Close column selector modal" @click.prevent="EventBus.closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4 px-2 standard">X</button>
-				<ul class="flex flex-wrap">
+				<ul class="flex flex-wrap xs:mt-10 sm:mt-0">
 					<template v-for="(header, index) in headers">
-						<li v-if="!header.hidePermanent" class="flex w-5/12 mx-2 my-2 justify-center items-center" :key="index">
-							<Label :for="'showCol'+ (index+1)">Show {{header.display}}</Label>
+						<li v-if="!header.hidePermanent" class="flex xs:w-1/2 sm:w-5/12 xs:mx-0 sm:mx-2 my-2 justify-center items-center" :key="index">
+							<Label class="xs:break-all sm:break-normal" :for="'showCol'+ (index+1)">Show {{header.display}}</Label>
 							<Checkbox v-model="header.show" :id="'showCol'+ (index+1)"></Checkbox>
 						</li>
 					</template>
@@ -151,7 +151,7 @@
 
 	export default {
 		directives: {
-			dragscroll
+			dragscroll: screen.width < 1024 ? false : dragscroll
 		},
 		props:{
 			tableType:{
@@ -246,7 +246,8 @@
 					dragging: false,
 					x: 0,
 				},
-				columnsToShow: [] //exists for accessibility purposes
+				columnsToShow: [], //exists for accessibility purposes
+				mobileView: false
 			}
 		},
 		computed: {
@@ -675,6 +676,9 @@
 			},
 		},
 		mounted(){
+			if( window.screen.width < 1024 ){
+				this.mobileView = true
+			}
 			for (let x = 0; x < this.headers.length; x++) {
 				if( this.headers[x].sticky ){
 					this.$set(this.headers[x].style, "left", this.getLeftValue(x))

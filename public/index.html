@@ -39,9 +39,6 @@
       body.mobile-no-overflow{
         overflow:hidden;
       }
-      body.mobile-no-overflow #content{
-        display:none;
-      }
       #app{
         min-height:100vh;
       }
@@ -99,5 +96,9 @@
     <div id="app" class="h-full"></div>
     <!-- built files will be auto injected -->
   </body>
-  
+  <script>
+    if( window.screen.width < 1024 ){
+      document.querySelector("body").classList.add("mobileView")
+    }
+  </script>
 </html>

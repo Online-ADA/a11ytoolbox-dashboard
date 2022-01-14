@@ -106,6 +106,26 @@ export default {
 				EventBus.$emit("close-dropdown", dropdown)
 			}
 			
+		},
+		checkMobileNoOverflow(){
+			if( window.screen.width < 1024 ){
+				let body = document.querySelector("body")
+				if( body.classList.contains("mobile-no-overflow") ){
+					body.classList.remove("mobile-no-overflow")
+				}else{
+					body.classList.add("mobile-no-overflow")
+				}
+			}
+		},
+		showHideContent(){
+			if( window.screen.width < 1024 ){
+				let content = document.querySelector("#content")
+				if( content.classList.contains("hidden") ){
+					content.classList.remove("hidden")
+				}else{
+					content.classList.add("hidden")
+				}
+			}
 		}
 		// refreshSession(){
 		// 	this.$store.dispatch('auth/resetToken', this.$router.history.current.path)
@@ -213,18 +233,11 @@ export default {
 		}
 	},
 	mounted() {
-		console.log(this);
 		this.$root.$on('menuClick', (menuOpen) => {
 			this.sidebarExpanded = menuOpen;
 			
-			if( window.screen.width < 1024 ){
-				let body = document.querySelector("body")
-				if( body.classList.contains("mobile-no-overflow") ){
-					body.classList.remove("mobile-no-overflow")
-				}else{
-					body.classList.add("mobile-no-overflow")
-				}
-			}
+			this.checkMobileNoOverflow()
+			this.showHideContent()
 		} );
 		if( this.$route.path == "/projects/create" ){
 			this.$store.state.projects.project = false
@@ -253,6 +266,7 @@ export default {
 		})
 		EventBus.$on("showInfoSidebar", ()=>{
 			this.infoSidebarExpanded = !this.infoSidebarExpanded
+			that.checkMobileNoOverflow()
 		})
 
 		//Meta Events
@@ -392,6 +406,13 @@ export default {
 }
 #toolbar-container.search-bar-open + #main-content{
 	margin-top:85px;
+}
+
+@media only screen and (min-width:320px) and (max-width:1024px){
+	.info-sidebar{
+		top:205px;
+		max-height:calc(100vh - 205px);
+	}
 }
 
 </style>

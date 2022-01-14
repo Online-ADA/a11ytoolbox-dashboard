@@ -994,10 +994,6 @@ button.standard.alert:hover {
   height: 100%;
 }
 
-.h-12 {
-  height: 3rem;
-}
-
 .h-auto {
   height: auto;
 }
@@ -1012,6 +1008,10 @@ button.standard.alert:hover {
 
 .h-4 {
   height: 1rem;
+}
+
+.h-12 {
+  height: 3rem;
 }
 
 .max-h-60 {
@@ -2104,15 +2104,126 @@ button.standard.alert:hover {
   --tw-ring-offset-width: 2px;
 }
 
+@media (min-width: 320px) {
+  .xs\:absolute {
+    position: absolute;
+  }
+
+  .xs\:top-\[205px\] {
+    top: 205px;
+  }
+
+  .xs\:mx-2 {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+
+  .xs\:mx-0 {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
+  .xs\:mb-5 {
+    margin-bottom: 1.25rem;
+  }
+
+  .xs\:mt-\[65px\] {
+    margin-top: 65px;
+  }
+
+  .xs\:mt-10 {
+    margin-top: 2.5rem;
+  }
+
+  .xs\:hidden {
+    display: none;
+  }
+
+  .xs\:h-auto {
+    height: auto;
+  }
+
+  .xs\:w-full {
+    width: 100%;
+  }
+
+  .xs\:w-1\/2 {
+    width: 50%;
+  }
+
+  .xs\:max-w-full {
+    max-width: 100%;
+  }
+
+  .xs\:basis-full {
+    flex-basis: 100%;
+  }
+
+  .xs\:flex-wrap {
+    flex-wrap: wrap;
+  }
+
+  .xs\:justify-evenly {
+    justify-content: space-evenly;
+  }
+
+  .xs\:break-words {
+    overflow-wrap: break-word;
+  }
+
+  .xs\:break-all {
+    word-break: break-all;
+  }
+
+  .xs\:p-0 {
+    padding: 0px;
+  }
+}
+
 @media (min-width: 640px) {
+  .sm\:fixed {
+    position: fixed;
+  }
+
   .sm\:-mx-6 {
     margin-left: -1.5rem;
     margin-right: -1.5rem;
   }
 
+  .sm\:mx-3\.5 {
+    margin-left: 0.875rem;
+    margin-right: 0.875rem;
+  }
+
+  .sm\:mx-3 {
+    margin-left: 0.75rem;
+    margin-right: 0.75rem;
+  }
+
   .sm\:mx-0 {
     margin-left: 0px;
     margin-right: 0px;
+  }
+
+  .sm\:mx-2 {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+
+  .sm\:mr-5 {
+    margin-right: 1.25rem;
+  }
+
+  .sm\:mr-2 {
+    margin-right: 0.5rem;
+  }
+
+  .sm\:ml-3\.5 {
+    margin-left: 0.875rem;
+  }
+
+  .sm\:ml-3 {
+    margin-left: 0.75rem;
   }
 
   .sm\:mt-0 {
@@ -2123,12 +2234,12 @@ button.standard.alert:hover {
     margin-left: 1rem;
   }
 
-  .sm\:ml-3 {
-    margin-left: 0.75rem;
-  }
-
   .sm\:flex {
     display: flex;
+  }
+
+  .sm\:h-12 {
+    height: 3rem;
   }
 
   .sm\:h-10 {
@@ -2139,12 +2250,20 @@ button.standard.alert:hover {
     width: 100%;
   }
 
+  .sm\:w-1\/2 {
+    width: 50%;
+  }
+
   .sm\:w-10 {
     width: 2.5rem;
   }
 
   .sm\:w-auto {
     width: auto;
+  }
+
+  .sm\:w-5\/12 {
+    width: 41.666667%;
   }
 
   .sm\:flex-row-reverse {
@@ -2155,8 +2274,17 @@ button.standard.alert:hover {
     flex-wrap: wrap;
   }
 
+  .sm\:flex-nowrap {
+    flex-wrap: nowrap;
+  }
+
   .sm\:items-start {
     align-items: flex-start;
+  }
+
+  .sm\:break-normal {
+    overflow-wrap: normal;
+    word-break: normal;
   }
 
   .sm\:p-6 {

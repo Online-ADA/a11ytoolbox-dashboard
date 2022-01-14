@@ -22,7 +22,7 @@
 					<TextInput :data-validation-failed="failedValidation.includes('title') ? 'invalid-3' : false" required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
 
 					<Label for="audit-scope">Scope of WCAG Audit</Label>
-					<select v-model="audit.scope" class="p-1" id="audit-scope" name="scope">
+					<select v-model="audit.scope" class="p-1 xs:max-w-full" id="audit-scope" name="scope">
 						<option :value="option" v-for="option in scope_options" :key="'scope-option-'+option">{{option}}</option>
 					</select>
 					<template v-if="audit.scope == 'Other'">
@@ -111,8 +111,8 @@
 
 					<template v-if="isManager">
 						<h2 class="headline-2 pt-7 pb-3">Assign Users</h2>
-						<div class="flex w-full">
-							<Card :gutters="false" class="w-1/2 mr-5">
+						<div class="flex w-full xs:flex-wrap sm:flex-nowrap">
+							<Card :gutters="false" class="sm:w-1/2 sm:mr-5 xs:mb-5">
 								<h3 v-if="isExecutive" class="subheadline">Assign Account Users</h3>
 								<h3 v-if="!isExecutive" class="subheadline">Assign Team Members</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="unassigned.length">
@@ -121,7 +121,7 @@
 									</li>
 								</ul>
 							</Card>
-							<Card :gutters="false" class="w-1/2">
+							<Card :gutters="false" class="sm:w-1/2 xs:w-full">
 								<h3 class="subheadline">Assignees</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="assigned.length">
 									<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
