@@ -497,7 +497,7 @@ export default {
 			if( this.$store.state.auth.user.meta.audit != undefined && 
 				this.$store.state.auth.user.meta.audit[this.$route.params.id] != undefined ){
 					//Converts JSON storage of function values into usable values for lodash _.orderBy()
-					auditMeta = Utility.reviveAuditMetaFunction( this.$store.state.auth.user.meta.audit[this.$route.params.id] )
+					auditMeta = Utility.reviveAuditMetaFunction( this.$store.state.auth.user.meta.audit[this.$route.params.id], this )
 			}
 			
 			if( auditMeta ){

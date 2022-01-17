@@ -366,7 +366,7 @@
 				if( column ){
 					column = column.replaceAll(/[ ]/g, "_")
 					let reference = column
-					let data = Utility.getSortValue(column)
+					let data = Utility.getSortValue(column, this)
 					this.setColumnSortData(reference, data)
 
 					if( !this.sortData.columns.length ){

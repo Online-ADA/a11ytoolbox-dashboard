@@ -6,8 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "build-dev": "vue-cli-service build --mode development",
-    "lint": "vue-cli-service lint",
-    "buildcss": "npx tailwindcss build ./src/assets/tailwind.css -o ./public/tailwind.css"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@burhanahmeed/vue-modal-2": "^1.1.11",
@@ -19,7 +18,6 @@
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.21",
     "postcss": "^7.0.36",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.4",
     "uuid": "^8.3.2",
     "vue": "^2.6.14",
     "vue-dragscroll": "^3.0.0",

@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	h1 {
+		@apply text-4xl;
+	}
+	.headline {
+		@apply text-headline font-headline font-bold uppercase;
+	}
+	.subheadline {
+		@apply text-subheadline font-subheadline font-semibold uppercase;
+	}
+	.headline-2 {
+		@apply text-headline-2 font-semibold font-headline-2 uppercase;
+	}
+	h2 {
+    	@apply text-3xl;
+	}
+	h3{
+		@apply text-2xl;
+	}
+	h4{
+		@apply text-xl;
+	}
+	select {
+		@apply block border cursor-pointer focus:ring-1 outline-none ring-pallette-blue rounded shadow;
+	}
+	table :not(.ql-editor) ol{
+		@apply list-decimal pl-4;
+	}
+	table :not(.ql-editor) ul{
+		@apply list-disc pl-4;
+	}
+	table tr:focus{
+		@apply relative z-10;
+	}
+	:not(tr), button{
+		@apply focus:outline-black;
+	}
+	button.standard{
+		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover text-base font-button transition-colors text-white px-2;
+	}
+	button.standard.alert{
+		@apply bg-pallette-alert hover:bg-pallette-alert-hover;
+	}
+}
