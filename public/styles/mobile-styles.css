@@ -112,4 +112,7 @@
     #toolbar-container{
         max-width:100vw !important;
     }
+    .search-bar{
+        height:auto !important;
+    }
 }
