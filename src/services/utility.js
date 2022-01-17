@@ -114,13 +114,13 @@ class Utility {
                     let index = val.issues.columns.sortedBy.columns.indexOf("function")
                     let audit_id = metaKeys[x]
                     //Set the value of the actual meta within the user object in the global store
-                    vm.$store.state.auth.user.meta.audit[ audit_id ].issues.columns.sortedBy.columns[index] = this.getSortValue( val.issues.columns.sortedBy.reference[index] )
+                    vm.$store.state.auth.user.meta.audit[ audit_id ].issues.columns.sortedBy.columns[index] = this.getSortValue( val.issues.columns.sortedBy.reference[index], vm )
                 }
             }
         }
     }
 
-    reviveAuditMetaFunction(metaData){
+    reviveAuditMetaFunction(metaData, vm){
         if( metaData.issues && 
             metaData.issues.columns && 
             metaData.issues.columns.sortedBy &&
@@ -129,7 +129,7 @@ class Utility {
                 for (let x = 0; x < metaData.issues.columns.sortedBy.columns.length; x++) {
                     let column = metaData.issues.columns.sortedBy.columns[x];
                     if( column == "function" ){
-                        metaData.issues.columns.sortedBy.columns[ x ] = this.getSortValue( metaData.issues.columns.sortedBy.reference[x] )
+                        metaData.issues.columns.sortedBy.columns[ x ] = this.getSortValue( metaData.issues.columns.sortedBy.reference[x], vm )
                     }
                 }
         }
@@ -137,7 +137,7 @@ class Utility {
         return metaData
     }
 
-    getSortValue(column){
+    getSortValue(column, vm){
         let data = column
         //String reference is necessary because sometimes our column becomes an anonymous function
         if( column == "levels" ){
@@ -192,10 +192,10 @@ class Utility {
         if( column == "pages" ){
             data = ((item)=>{
                 if( item.pages ){
-                    let domain = this.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
+                    let domain = vm.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
                     
-                    if( this.$store.state.audits.audit.domain.root ){
-                        domain = domain + "/" + this.$store.state.audits.audit.domain.root.replace(/\/$/gm, "")
+                    if( vm.$store.state.audits.audit.domain.root ){
+                        domain = domain + "/" + vm.$store.state.audits.audit.domain.root.replace(/\/$/gm, "")
                     }
                     let output = ""
                     for (let x = 0; x < item.pages.length; x++) {
