@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col">
-        <div class="flex justify-evenly pb-3">
+        <div class="flex justify-evenly pb-3 xs:flex-wrap sm:flex-nowrap">
             <label>
                 <span class="pr-2">Search {{display}}:</span>
                 <TextInput v-model="search" :placeholder="placeholder"></TextInput>

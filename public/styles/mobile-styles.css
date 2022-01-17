@@ -97,10 +97,19 @@
         padding: 0px !important;
         margin-top:20px !important;
     }
+
+    .container{
+        max-width:100%;
+    }
 }
 
 
 /* 768px and down */
-/* @media only screen and (max-width: 768px) {
-
-} */
+@media only screen and (max-width: 767px) {
+    #main-content{
+        margin-top:100px !important;
+    }
+    #toolbar-container{
+        max-width:100vw !important;
+    }
+}

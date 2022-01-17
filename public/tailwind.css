@@ -1050,10 +1050,6 @@ button.standard.alert:hover {
   width: 1.5rem;
 }
 
-.w-5\/12 {
-  width: 41.666667%;
-}
-
 .w-1\/2 {
   width: 50%;
 }
@@ -1086,6 +1082,10 @@ button.standard.alert:hover {
   width: 8.333333%;
 }
 
+.w-5\/12 {
+  width: 41.666667%;
+}
+
 .w-3\/12 {
   width: 25%;
 }
@@ -1106,6 +1106,10 @@ button.standard.alert:hover {
   min-width: -webkit-max-content;
   min-width: -moz-max-content;
   min-width: max-content;
+}
+
+.min-w-\[600px\] {
+  min-width: 600px;
 }
 
 .max-w-full {
@@ -2104,13 +2108,14 @@ button.standard.alert:hover {
   --tw-ring-offset-width: 2px;
 }
 
-@media (min-width: 320px) {
+@media (min-width: 320px) and (max-width: 639px) {
   .xs\:absolute {
     position: absolute;
   }
 
-  .xs\:top-\[205px\] {
-    top: 205px;
+  .xs\:mx-0 {
+    margin-left: 0px;
+    margin-right: 0px;
   }
 
   .xs\:mx-2 {
@@ -2118,9 +2123,8 @@ button.standard.alert:hover {
     margin-right: 0.5rem;
   }
 
-  .xs\:mx-0 {
-    margin-left: 0px;
-    margin-right: 0px;
+  .xs\:mt-10 {
+    margin-top: 2.5rem;
   }
 
   .xs\:mb-5 {
@@ -2131,8 +2135,12 @@ button.standard.alert:hover {
     margin-top: 65px;
   }
 
-  .xs\:mt-10 {
-    margin-top: 2.5rem;
+  .xs\:mt-3 {
+    margin-top: 0.75rem;
+  }
+
+  .xs\:mb-3 {
+    margin-bottom: 0.75rem;
   }
 
   .xs\:hidden {
@@ -2167,10 +2175,6 @@ button.standard.alert:hover {
     justify-content: space-evenly;
   }
 
-  .xs\:break-words {
-    overflow-wrap: break-word;
-  }
-
   .xs\:break-all {
     word-break: break-all;
   }
@@ -2178,9 +2182,19 @@ button.standard.alert:hover {
   .xs\:p-0 {
     padding: 0px;
   }
+
+  .xs\:text-\[26px\] {
+    font-size: 26px;
+  }
+
+  .xs\:shadow-none {
+    --tw-shadow: 0 0 #0000;
+    --tw-shadow-colored: 0 0 #0000;
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  }
 }
 
-@media (min-width: 640px) {
+@media (min-width: 640px) and (max-width: 767px) {
   .sm\:fixed {
     position: fixed;
   }
@@ -2188,6 +2202,11 @@ button.standard.alert:hover {
   .sm\:-mx-6 {
     margin-left: -1.5rem;
     margin-right: -1.5rem;
+  }
+
+  .sm\:mx-2 {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
   }
 
   .sm\:mx-3\.5 {
@@ -2205,9 +2224,8 @@ button.standard.alert:hover {
     margin-right: 0px;
   }
 
-  .sm\:mx-2 {
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
+  .sm\:mt-0 {
+    margin-top: 0px;
   }
 
   .sm\:mr-5 {
@@ -2226,16 +2244,20 @@ button.standard.alert:hover {
     margin-left: 0.75rem;
   }
 
-  .sm\:mt-0 {
-    margin-top: 0px;
-  }
-
   .sm\:ml-4 {
     margin-left: 1rem;
   }
 
+  .sm\:mt-3 {
+    margin-top: 0.75rem;
+  }
+
   .sm\:flex {
     display: flex;
+  }
+
+  .sm\:hidden {
+    display: none;
   }
 
   .sm\:h-12 {
@@ -2244,6 +2266,14 @@ button.standard.alert:hover {
 
   .sm\:h-10 {
     height: 2.5rem;
+  }
+
+  .sm\:w-auto {
+    width: auto;
+  }
+
+  .sm\:w-5\/12 {
+    width: 41.666667%;
   }
 
   .sm\:w-full {
@@ -2258,12 +2288,12 @@ button.standard.alert:hover {
     width: 2.5rem;
   }
 
-  .sm\:w-auto {
-    width: auto;
+  .sm\:w-2\/3 {
+    width: 66.666667%;
   }
 
-  .sm\:w-5\/12 {
-    width: 41.666667%;
+  .sm\:max-w-full {
+    max-width: 100%;
   }
 
   .sm\:flex-row-reverse {
@@ -2304,9 +2334,18 @@ button.standard.alert:hover {
     text-align: left;
   }
 
+  .sm\:text-right {
+    text-align: right;
+  }
+
   .sm\:text-sm {
     font-size: 0.875rem;
     line-height: 1.25rem;
+  }
+
+  .sm\:text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
   }
 }
 
@@ -2317,6 +2356,15 @@ button.standard.alert:hover {
 
   .md\:w-1\/2 {
     width: 50%;
+  }
+
+  .md\:p-6 {
+    padding: 1.5rem;
+  }
+
+  .md\:px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 

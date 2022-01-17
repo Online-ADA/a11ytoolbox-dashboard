@@ -32,7 +32,7 @@
 		</template>
 		
 		<Modal style="z-index:71;" size="full" :open="issueModalOpen">
-			<div style="padding-bottom:60px;" class="bg-white px-4 pt-5 p-6">
+			<div style="padding-bottom:60px;" class="bg-white md:px-4 pt-5 md:p-6">
 				<button aria-label="Close add issue modal" @click.prevent="EventBus.closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard">X</button>
 				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
 				<div v-show="showValidationAlert" role="alert" id="validation-alert-box" class="text-red-600 text-center" >
@@ -83,8 +83,8 @@
 					</div>
 
 					<div class="flex w-full flex-wrap justify-evenly mt-2">
-						<div class="w-2/3 flex items-center">
-							<div class="flex flex-col">
+						<div class="xs:w-full sm:w-full flex-wrap w-2/3 flex items-center">
+							<div class="flex flex-col xs:w-full">
 								<div class="flex-1 mx-2 flex flex-col">
 									<Label class="text-lg leading-6 w-full" for="software_used">Software Used</Label>
 									<select style="min-width:200px;" id="software_used" class="flex-1" v-model="selectedSoftware">
@@ -112,7 +112,7 @@
 								</Label>
 							</div>
 						</div>
-						<div class="w-1/3 flex flex-col">
+						<div class="xs:w-full sm:w-1/2 flex-wrap w-1/3 flex flex-col">
 							<Label for="effort">Effort</Label>
 							<select id="effort" v-model="issue.effort" name="effort">
 								<option :value="option" v-for="(option, index) in ['Low', 'Medium', 'High']" :key="'effort-' + index">{{option}}</option>
@@ -125,10 +125,10 @@
 					</div>
 
 					<div class="flex w-full flex-wrap justify-evenly mt-2">
-						<div class="flex-1 mx-2">
+						<div class="flex-1 mx-2 max-w-full">
 							<Label class="text-lg leading-6">
 								Screenshots
-								<Card :gutters="false" :center="false" class="overflow-y-auto w-full text-left max-h-80 my-2">
+								<Card :gutters="false" :center="false" class="xs:shadow-none xs:p-0 overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.screenshots" :key="`screen-${i}`">
 										<TextInput class="flex-1" name="screenshots" id="screenshots" v-model="issue.screenshots[i]"></TextInput>
 										<button class="ml-1 standard alert" :title="'Remove screenshot ' + issue.screenshots[i]" @click.prevent="removeScreenshot(i)"><i class="fas fa-trash-alt"></i></button>
@@ -138,10 +138,10 @@
 								</Card>
 							</Label>
 						</div>
-						<div class="flex-1 mx-2">
+						<div class="flex-1 mx-2 max-w-full">
 							<Label class="text-lg leading-6">
 								Resources
-								<Card :gutters="false" :center="false" class="overflow-y-auto w-full text-left max-h-80 my-2">
+								<Card :gutters="false" :center="false" class="xs:shadow-none xs:p-0 overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.resources" :key="`resource-${i}`">
 										<TextInput class="flex-1" name="resources" id="resources" v-model="issue.resources[i]"></TextInput>
 										<button :title="'Remove resource ' + issue.resources[i]" class="ml-1 standard alert" @click.prevent="removeResource(i)"><i class="fas fa-trash-alt"></i></button>
@@ -151,7 +151,7 @@
 								</Card>
 							</Label>
 						</div>
-						<div class="flex-1 mx-2">
+						<div class="flex-1 sm:mx-2">
 							<Label for="target" class="text-lg leading-6 w-full">Target</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('target') }" id="target-validation">{{validationMessages["target"]}}</small>
 							<TextInput :data-validation-failed="failedValidation.includes('target')" required :aria-describedby="failedValidation.includes('target') ? 'target-validation' : false" class="flex-1 w-full" name="target" id="target" v-model="issue.target"></TextInput>
@@ -164,7 +164,7 @@
 					</div>
 
 					<div class="flex w-full flex-wrap justify-evenly mt-2">
-						<div class="w-1/2 flex flex-col px-2">
+						<div class="md:w-1/2 flex flex-col px-2">
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Success Criteria Descriptions </Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
 							<div class="flex items-start mb-1">
@@ -174,14 +174,14 @@
 							
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1"></div>
 						</div>
-						<div class="w-1/2 flex flex-col px-2">
+						<div class="md:w-1/2 flex flex-col px-2">
 							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations </Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
 							<button class="self-start mb-1 standard" @click.prevent="selectRecommendationsModalOpen = true" >Add Recommendations</button>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
 						</div>
 					</div>
-					<div class="flex w-1/2 flex-col mt-2 px-2">
+					<div class="flex md:w-1/2 flex-col mt-2 px-2">
 						<template v-if="audit.number == 2">
 							<Label class="text-lg leading-6 w-full" for="second_audit_comments">Second Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="second_audit_comments" v-model="issue.second_audit_comments"></TextArea>
@@ -191,7 +191,7 @@
 							<TextArea rows="14" class="w-full" id="third_audit_comments" v-model="issue.third_audit_comments"></TextArea>
 						</template>
 					</div>
-					<div class="flex w-1/2 flex-col mt-2 px-2">
+					<div class="flex md:w-1/2 xs:w-full sm:w-full flex-col mt-2 px-2">
 						<Label class="text-lg leading-6 w-full" for="auditor_notes">Auditor Notes</Label>
 						<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
 					</div>

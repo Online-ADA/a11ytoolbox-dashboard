@@ -5,7 +5,7 @@
 			<h1 class="mb-3">User: {{user.first_name}} {{user.last_name}}</h1>
 			<form class="w-full bg-white p-5">
 				<!-- Row -->
-				<div class="flex w-full">
+				<div class="flex w-full flex-wrap">
 					<div class="flex-1">
 						<h2 class="text-xl bold">First Name</h2>
 						<div>{{user.first_name}}</div>

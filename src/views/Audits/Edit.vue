@@ -7,27 +7,27 @@
 			Delete
 		</Button>
 		<div class="flex flex-wrap">
-			<div class="w-1/4"></div>
-			<div class="w-1/2">
+			<div class="xs:hidden sm:hidden w-1/4"></div>
+			<div class="xs:w-full sm:w-full w-1/2">
 				<Label for="locked">Audit Locked</Label>
 				<select v-model="audit.locked" id="locked" class="mx-auto" name="status">
 					<option :value="false">False</option>
 					<option :value="true">True</option>
 				</select>
 			</div>
-			<div class="w-1/4"></div>
-			<div class="w-1/4"></div>
-			<div class="w-1/4">
+			<div class="xs:hidden sm:hidden w-1/4"></div>
+			<div class="xs:hidden sm:hidden w-1/4"></div>
+			<div class="xs:w-full sm:w-1/2 w-1/4">
 				<Label for="start_date">Start Date</Label>
 				<DatePicker name="start_date" id="start_date" class="mx-auto" @input="changeStartDate" v-model="audit.start_date"></DatePicker>
 			</div>
-			<div class="w-1/4">
+			<div class="xs:w-full sm:w-1/2 w-1/4">
 				<Label for="end_date">End Date</Label>
 				<DatePicker name="end_date" id="end_date" class="mx-auto" @input="changeEndDate" v-model="audit.end_date"></DatePicker>
 			</div>
-			<div class="w-1/4"></div>
-			<div class="w-full flex justify-center">
-				<div class="px-2">
+			<div class="xs:hidden sm:hidden w-1/4"></div>
+			<div class="w-full flex justify-center xs:flex-wrap">
+				<div class="px-2 xs:w-1/2">
 					<Label for="status">Status</Label>
 					<select v-model="audit.status" id="status" class="mx-auto p-1" name="status">
 						<option :value="status.value" v-for="(status, index) in statusSrc" :key="`status-${index}`">{{status.name}}</option>
@@ -37,25 +37,25 @@
 					<Label for="title">Title</Label>
 					<TextInput class="w-full" id="title" name="title" v-model="audit.title" />
 				</div>
-				<div class="px-2">
+				<div class="px-2 xs:w-1/2">
 					<Label for="audit_num">Audit #</Label>
 					<select v-model="audit.number" id="audit_num" name="audit_num" class="mx-auto">
 						<option :value="option" v-for="option in [1, 2, 3]" :key="'audit_num-'+option">{{option}}</option>
 					</select>
 					<!-- <Select id="audit_num" class="mx-auto" :options="[1, 2, 3]" v-model="audit.number"></Select> -->
 				</div>
-				<div class="px-2">
+				<div class="px-2 xs:w-1/2">
 					<Label for="ctarget">Conformance Target</Label>
 					<TextInput class="w-full" id="ctarget" name="ctarget" v-model="audit.conformance_target" />
 				</div>
 			</div>
 
-			<div class="w-1/2 text-left px-2">
+			<div class="xs:w-full w-1/2 text-left px-2">
 				<Label for="scope">Scope of the Audit</Label>
 				<Textarea class="w-full" id="scope" name="scope" v-model="audit.scope" rows="4"></Textarea>
 			</div>
 
-			<div class="w-1/2 text-left px-2">
+			<div class="xs:w-full w-1/2 text-left px-2">
 				<Label for="essential_functionality">
 					Essential Functionality
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
@@ -69,12 +69,12 @@
 				</Label>
 			</div>
 
-			<div class="w-1/2 text-left px-2">
+			<div class="xs:w-full w-1/2 text-left px-2">
 				<Label for="additional_requirements">Additional Requirements</Label>
 				<Textarea class="w-full" id="additional_requirements" name="additional_requirements" v-model="audit.additional_requirements" rows="4"></Textarea>
 			</div>
 
-			<div class="w-1/2 text-left px-2">
+			<div class="xs:w-full w-1/2 text-left px-2">
 				<Label for="software">
 					Software Used
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
@@ -90,7 +90,7 @@
 				</Label>
 			</div>
 
-			<div class="w-1/2 text-left px-2">
+			<div class="xs:w-full w-1/2 text-left px-2">
 				<Label for="software">
 					Assistive Tech
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
@@ -106,7 +106,7 @@
 				</Label>
 			</div>
 
-			<div class="w-1/2 text-left px-2">
+			<div class="xs:w-full w-1/2 text-left px-2">
 				<Label for="software">
 					Tech Requirements
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
@@ -124,8 +124,8 @@
 			</div>
 			
 			<template v-if="$store.getters['auth/isManager']">
-				<div class="flex my-3 w-full">
-					<Card class="w-1/2">
+				<div class="flex my-3 w-full xs:flex-wrap">
+					<Card class="xs:w-full w-1/2 xs:mb-3">
 					<h3>Users</h3>
 					<ul v-if="unassigned.length">
 						<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
@@ -134,7 +134,7 @@
 						</li>
 					</ul>
 					</Card>
-					<Card class="w-1/2">
+					<Card class="xs:w-full w-1/2">
 					<h3>Assignees</h3>
 					<ul v-if="assigned.length">
 						<li class="my-2 flex justify-center items-center" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">

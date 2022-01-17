@@ -36,9 +36,9 @@
 				<h4 class="mb-3">Add item</h4>
 				<Button @click.native.prevent="structuredListModalOpen = false" aria-label="Close add items to structured list modal" :hover="true">X</Button>
 			</div>
-			<div style="max-height:550px" class="w-full px-2 overflow-y-auto">
+			<div style="max-height:550px" class="w-full xs:p-0 px-2 overflow-y-auto">
 				<span id="content-description" class="sr-only">If this field is left empty, it will not be added to the list upon saving but it will indicate a failure</span>
-				<div :key="'strucList-' + index" v-for="(item, index) in structured_items" class="flex items-center my-2">
+				<div :key="'strucList-' + index" v-for="(item, index) in structured_items" class="flex items-center my-2 xs:flex-wrap">
 					<div class="flex flex-1 flex-col mx-1">
 						<Label :stacked="false" class="flex-1" :for="'title-' + index">Title<small aria-hidden="true" class="text-red-600">*</small></Label>
 						<TextInput aria-describedby="content-description" placeholder="All Modals, https://onlineada.com/contact..." class="flex-1" :id="'title-' + index" v-model="structured_items[index].title" />
@@ -55,7 +55,7 @@
 			</div>
 		</Modal>
 
-		<div class="w-full flex">
+		<div class="w-full flex xs:flex-wrap sm:flex-wrap">
 			<Card class="flex-1 p-4 mx-2">
 				<h3 class="mt-3 mb-1">Sitemap</h3>
 
@@ -104,13 +104,13 @@
 				<Button color="red" @click.native.prevent="uploadSitemap">Upload sitemap</Button>
 			</Card>
 
-			<Card class="flex-1 p-4 mx-2">
+			<Card class="flex-1 p-4 mx-2 sm:mt-3 xs:mt-3 xs:max-w-full sm:max-w-full">
 				<h3 class="mt-3 mb-1">Sample</h3>
 				<Button class="" color="red" @click.native.prevent="structuredListModalOpen =true">Add</Button>
 				<template v-if="domain && domain.sample.length">
 					<h4 class="my-3">Items</h4>
 					<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
-						<table class="w-full border border-black table-fixed">
+						<table class="w-full border border-black table-fixed min-w-[600px]">
 							<thead>
 								<tr>
 									<th class="text-center border border-black" width="40%" scope="col"><span id="sample-title">Title</span></th>

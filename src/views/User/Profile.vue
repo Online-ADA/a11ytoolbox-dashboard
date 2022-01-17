@@ -5,7 +5,7 @@
 		<h1 class="mb-3">User Profile</h1>
 		<form class="w-full bg-white p-5">
 			<!-- Row -->
-			<div class="flex w-full justify-center">
+			<div class="flex w-full justify-center flex-wrap">
 				<div class="flex-1">
 					<h2 class="text-xl bold">First Name</h2>
 					<div>{{user.first_name}}</div>

@@ -109,10 +109,20 @@ export default {
         return this.$store.state.user.loading
       },
       users() {
+        if( !this.account ){
+          return []
+        }
         if( this.account.pivot.team_id === 1 ){
           return this.$store.state.user.all
         }
-        return this.$store.state.user.team_members
+
+        let users = []
+        for (let x = 0; x < this.$store.state.user.byTeam[this.account.pivot.team_id].length; x++) {
+          const user_id = this.$store.state.user.byTeam[this.account.pivot.team_id][x]
+          let user = this.$store.state.user.all.find( u=>u.id == user_id)
+          users.push(user)
+        }
+        return users
       },
       account(){
         return this.$store.getters["auth/account"]

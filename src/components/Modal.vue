@@ -6,7 +6,7 @@
 			<!-- This element is to trick the browser into centering the modal contents. -->
 			<span class="inline-block align-middle h-screen" aria-hidden="true">&#8203;</span>
 			
-			<div :class="{'max-w-lg': size == 'compact', 'max-w-4xl': size == 'wide', 'max-w-full': size == 'full', 'creation-max-w': size == 'creation'}" class="modal-main relative inline-block bg-white text-left overflow-hidden shadow-xl transform align-middle p-4 w-full xs:p-0">
+			<div :class="{'max-w-lg': size == 'compact', 'max-w-4xl': size == 'wide', 'max-w-full': size == 'full', 'creation-max-w': size == 'creation'}" class="modal-main relative inline-block bg-white text-left overflow-hidden shadow-xl transform align-middle p-4 w-full">
 				<div v-if="sizeButtons" class="flex ml-3 mt-2 absolute">
 					<button @click="changeSize('compact')" aria-label="Change the size of this modal to be compact" class="standard px-2">
 						Compact

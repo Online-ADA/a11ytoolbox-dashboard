@@ -67,7 +67,7 @@
             <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
                     <template v-if="child.type == 'router-link'">
-                        <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
+                        <router-link class="hover:text-gray-500 block" :to="child.to"><span class="sm:text-right" v-html="child.label"></span></router-link>
                     </template>
                     <template v-if="child.type == 'logout'">
                         <A href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>

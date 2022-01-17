@@ -14,8 +14,8 @@
 				</select>
 
 				<template v-if="isManager">
-					<div class="flex my-3">
-						<Card :gutters="false" class="w-1/2 mr-5">
+					<div class="flex my-3 xs:flex-wrap">
+						<Card :gutters="false" class="xs:w-full xs:mb-3 w-1/2 sm:mr-5 md:mr-5">
 							<h2 class="pb-3 headline-2">Users</h2>
 							<ul style="max-height:310px;" class="overflow-y-auto" v-if="unassigned.length">
 							<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
@@ -24,7 +24,7 @@
 							</li>
 							</ul>
 						</Card>
-						<Card :gutters="false" class="w-1/2">
+						<Card :gutters="false" class="xs:w-full xs:mb-3 w-1/2">
 							<h2 class="pb-3 headline-2">Assignees</h2>
 							<ul style="max-height:310px;" class="overflow-y-auto" v-if="assigned.length">
 							<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">

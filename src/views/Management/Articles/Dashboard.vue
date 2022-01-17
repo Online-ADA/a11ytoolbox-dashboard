@@ -2,7 +2,7 @@
     <div class="flex flex-wrap container mx-auto">
         <Loader v-if="loading"></Loader>
         <div class="flex w-full justify-center my-4">
-            <Card class="w-2/3 mx-auto relative">
+            <Card class="xs:w-full sm:w-2/3 mx-auto relative">
                 <h2 class="mb-2">Success Critera</h2>
                 <button aria-label="Add new success criterion" @click="displayArticlePopup(newItem({item: newArticle, extra: 'article'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && articles.length">
@@ -12,7 +12,7 @@
             </Card>
         </div>
         <div class="flex w-full justify-center my-4">
-            <Card class="w-2/3 mx-auto relative">
+            <Card class="xs:w-full sm:w-2/3 mx-auto relative">
                 <h2>Techniques</h2>
                 <button aria-label="Add new technique" @click="displayArticlePopup(newItem({item: newTechnique, extra: 'technique'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && techniques.length">
@@ -22,8 +22,8 @@
             </Card>
         </div>
         <div class="flex w-full justify-center my-4">
-            <Card class="w-2/3 mx-auto relative">
-                <h2>Recommendations</h2>
+            <Card class="xs:w-full sm:w-2/3 mx-auto relative">
+                <h2 class="xs:text-[26px] sm:text-3xl">Recommendations</h2>
                 <button aria-label="Add new recommendation" @click="displayArticlePopup(newItem({item: newRecommendation, extra: 'recommendation'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && recommendations.length">
                     <SearchList :dataSendBack="'recommendation'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['description']" :items="recommendations"></SearchList>
@@ -32,7 +32,7 @@
             </Card>
         </div>
         <div class="flex w-full justify-center my-4">
-            <Card class="w-2/3 mx-auto relative">
+            <Card class="xs:w-full sm:w-2/3 mx-auto relative">
                 <h2>Audit States</h2>
                 <button aria-label="Add a new audit state" @click="displayArticlePopup(newItem({item: newState, extra: 'audit_state'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && states.length">
@@ -42,7 +42,7 @@
             </Card>
         </div>
         <div class="flex w-full justify-center my-4">
-            <Card class="w-2/3 mx-auto relative">
+            <Card class="xs:w-full sm:w-2/3 mx-auto relative">
                 <h2>Assistive Technologies</h2>
                 <button aria-label="Add a new assistive technology" @click="displayArticlePopup(newItem({item: newAsstTech, extra: 'assistive_tech'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && assistiveTechnologies.length">
@@ -52,7 +52,7 @@
             </Card>
         </div>
         <div class="flex w-full justify-center my-4">
-            <Card class="w-2/3 mx-auto relative">
+            <Card class="xs:w-full sm:w-2/3 mx-auto relative">
                 <h2>Software Used</h2>
                 <button aria-label="Add new software used" @click="displayArticlePopup(newItem({item: newSoftwareUsed, extra: 'software_used'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && softwareUsed.length">
@@ -198,7 +198,7 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
+            <div class="bg-gray-50 px-4 py-3 flex flex-row-reverse flex-wrap">
                 <button v-if="articleEditItem.id" @click="confirmDelete" type="button" class="mx-2 justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red w-auto text-sm">
                 Delete
                 </button>

@@ -90,8 +90,8 @@
 
 					<template v-if="isManager">
 						<h2 class="headline-2 pt-7 pb-3">Assign Users</h2>
-						<div class="flex w-full">
-							<Card :gutters="false" class="w-1/2 mr-5">
+						<div class="flex w-full xs:flex-wrap">
+							<Card :gutters="false" class="xs:w-full w-1/2 md:mr-5 sm:mr-5 xs:mb-5">
 								<h3 class="subheadline">Team Members</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="unassigned.length">
 									<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
@@ -99,7 +99,7 @@
 									</li>
 								</ul>
 							</Card>
-							<Card :gutters="false" class="w-1/2">
+							<Card :gutters="false" class="xs:w-full w-1/2">
 								<h3 class="subheadline">Assignees</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="assigned.length">
 									<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
