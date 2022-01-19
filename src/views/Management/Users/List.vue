@@ -1,7 +1,7 @@
 <template>
-  <div class="container mx-auto">
-    <div class="w-full flex flex-col justify-center items-center" v-if="users.length">
-      <h1>Users on this account:</h1>
+  <div class="container">
+    <div class="w-full flex flex-col items-center" v-if="users.length">
+      <h1 class="headline">Users on this account:</h1>
       <DT 
       :searchOverride="searchOverride" 
       :searchableProps="searchableProps"

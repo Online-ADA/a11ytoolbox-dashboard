@@ -1,12 +1,14 @@
 <template>
-    <div id="toolbar" class="w-full pl-4 p-2 shadow-custom bg-white">
-        <div class="flex items-center justify-end">
-            <div class="flex items-center text-13">
-                <span class="w-auto mr-2 flex justify-end items-center">
-                    <template>
-                        <router-link v-if="object_id && route_name"  :to="base_url" :title="link_title"><i class="far fa-cog"></i></router-link>
-                    </template>
-                </span>
+    <div id="toolbar-container" class="fixed xs:absolute sm:absolute z-50 w-full xs:h-auto sm:h-auto h-12">
+        <div id="toolbar" class="w-full pl-4 p-2 shadow-custom bg-white">
+            <div class="flex items-center justify-end">
+                <div class="flex items-center text-13">
+                    <span class="w-auto mr-2 flex justify-end items-center">
+                        <template>
+                            <router-link v-if="object_id && route_name"  :to="base_url" :title="link_title"><i class="far fa-cog"></i></router-link>
+                        </template>
+                    </span>
+                </div>
             </div>
         </div>
     </div>

@@ -13,7 +13,7 @@
 		@apply text-subheadline font-subheadline font-semibold uppercase;
 	}
 	.headline-2 {
-		@apply text-headline-2 font-semibold font-headline-2 uppercase;
+		@apply text-headline-2 font-semibold font-headline-2 uppercase pt-4 pb-3;
 	}
 	h2 {
     	@apply text-3xl;
@@ -41,6 +41,15 @@
 	}
 	button.standard{
 		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover text-base font-button transition-colors text-white px-2;
+	}
+	a.standard{
+		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover text-base font-button transition-colors text-white px-2;
+	}
+	a.standard.inverted{
+		@apply uppercase bg-white hover:bg-pallette-button text-base font-button transition-colors text-pallette-button hover:text-white border border-pallette-button hover:border-0 px-2;
+	}
+	button.standard.inverted{
+		@apply uppercase bg-white hover:bg-pallette-button text-base font-button transition-colors text-pallette-button hover:text-white border border-pallette-button hover:border-0 px-2;
 	}
 	button.standard.alert{
 		@apply bg-pallette-alert hover:bg-pallette-alert-hover;

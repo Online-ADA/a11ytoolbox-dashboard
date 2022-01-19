@@ -1,27 +1,27 @@
 <template>
     <div class="flex flex-col">
-        <div class="flex justify-evenly pb-3 xs:flex-wrap sm:flex-nowrap">
-            <label>
-                <span class="pr-2">Search {{display}}:</span>
+        <div class="flex pb-3 xs:flex-wrap flex-nowrap">
+            <label class="mr-3.5">
+                <span class="pr-2 subheadline text-lg">Search {{display}}:</span>
                 <TextInput v-model="search" :placeholder="placeholder"></TextInput>
             </label>
             <div v-if="displayProps.length && displayProps.length > 1" class="flex">
-                <Button class="mx-1" :style="[prop == display ? activeStyle : '']" :class="[prop == display ? activeClass : '']" @click.native.prevent="changeDisplay(prop)" v-for="(prop, index) in displayProps" :key="index" :hover="true">{{prop}}</Button>
+                <button class="mx-1 standard" :class="[prop == display ? '' : 'inverted']" @click.prevent="changeDisplay(prop)" v-for="(prop, index) in displayProps" :key="index" :hover="true">{{prop}}</button>
             </div>
         </div>
-        <div style="max-height:500px" class="flex w-full flex-wrap justify-center overflow-auto">
+        <div style="max-height:500px" class="flex w-full flex-wrap overflow-auto">
             <component :is="tag"
             @click="sendEmit(item)"
             :href="href(item)"
             :target="target"
             style="transition:transform .15s ease-in-out, z-index .15s ease-in-out" 
-            :class="[ display != 'description' ? 'justify-center' : '', hoverEffect == 'grow' ? growClasses : '' ]" 
-            class="cursor-pointer bg-white my-2 p-2.5 rounded relative z-0 flex flex-col items-center border list-item-custom border-gray-300 shadow mx-1"
+            :class="[ hoverEffect == 'grow' ? growClasses : '' ]" 
+            class="cursor-pointer bg-white my-2 p-2.5 rounded relative z-0 flex flex-col border list-item-custom border-gray-300 shadow mx-1"
             v-for="(item, index) in filteredList" 
             :key="index">
-                <div class="text-large text-pallette-grey-dark">{{item[display]}}</div>
+                <div class="text-left text-large text-pallette-grey-dark">{{item[display]}}</div>
                 
-                <div v-if="showDescription" v-html="item.description" class="text-small text-pallette-grey-dark"></div>
+                <div v-if="showDescription" v-html="item.description" class="text-left text-small text-pallette-grey-dark"></div>
             </component>
         </div>     
     </div>

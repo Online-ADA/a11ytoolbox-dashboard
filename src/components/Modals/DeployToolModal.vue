@@ -5,23 +5,23 @@
 			<span class="headline-2">Select a Tool to Continue</span>
 		</div>
 		
-		<div class="flex justify-evenly items-start" v-if="myTeam == 1 || myTeam == 2">
+		<div class="flex items-start" v-if="myTeam == 1 || myTeam == 2">
 			<button 
-			class="font-bold mr-2 text-center text-pallette-button hover:text-pallette-button-hover" 
+			class="font-bold text-center text-pallette-button hover:text-pallette-button-hover" 
 			@click.prevent="EventBus.transitionModal( 'deployToolModal', 'deployWCAGAuditModal')">
 				<div class="mb-5 text-6xl"><i class="far fa-th-list"></i></div>
 				<span class="barlow text-xl">WCAG Audit</span>
 			</button>
 			
 			<button 
-			class="font-bold mr-2 text-center text-pallette-button hover:text-pallette-button-hover" 
+			class="font-bold text-center text-pallette-button hover:text-pallette-button-hover mx-5" 
 			@click.prevent="EventBus.transitionModal( 'deployToolModal', 'deployMediaAuditModal')">
 				<div class="mb-5 text-6xl"><i class="far fa-photo-video"></i></div>
 				<span class="barlow text-xl">Media Audit</span>
 			</button>
 			
 			<button 
-			class="font-bold mr-2 text-center text-pallette-button hover:text-pallette-button-hover" 
+			class="font-bold text-center text-pallette-button hover:text-pallette-button-hover" 
 			@click.prevent>
 				<div class="mb-5 text-6xl"><i class="far fa-palette"></i></div>
 				<span class="barlow text-xl">

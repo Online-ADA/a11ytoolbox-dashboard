@@ -1,45 +1,41 @@
 <template>
-	<div class="flex flex-col items-center justify-center container mx-auto px-4">
-		<Loader v-if="$store.state.clients.loading"></Loader>
+	<div class="container px-4 w-full">
+		<!-- <Loader v-if="$store.state.clients.loading"></Loader> -->
 
-		<h1 class="mb-3">User Profile</h1>
+		<h1 class="mb-3 headline">User Profile</h1>
 		<form class="w-full bg-white p-5">
 			<!-- Row -->
-			<div class="flex w-full justify-center flex-wrap">
+			<div class="flex w-full flex-wrap">
 				<div class="flex-1">
-					<h2 class="text-xl bold">First Name</h2>
+					<h2 class="text-lg subheadline">First Name</h2>
 					<div>{{user.first_name}}</div>
 				</div>
 				<div class="flex-1">
-					<h2 class="text-xl bold">Last Name</h2>
+					<h2 class="text-lg subheadline">Last Name</h2>
 					<div>{{user.last_name}}</div>
 				</div>
 				<div class="flex-1">
-					<h2 class="text-xl bold">Email</h2>
+					<h2 class="text-lg subheadline">Email</h2>
 					<div>{{user.email}}</div>
 				</div>
 				<div class="flex-1">
-					<h2 class="text-xl bold">Phone</h2>
+					<h2 class="text-lg subheadline">Phone</h2>
 					<div>{{user.phone}}</div>
 				</div>
 			</div>
 			<!-- Row -->
-			<div class="flex w-full justify-center mt-3">
-				<div class="flex-1">
-					<h2 class="text-xl bold">Accounts</h2>
-					
-					<ul>
-						<li class="border border-black p-2 my-3" v-for="(account, index) in accounts" :key="'account-index-'+index">
-							<div class="text-sm">Account Name: <span class="bold">{{account.name}}</span></div>
-							<div class="text-sm">Account Status: {{account.status}}</div>
-							<div class="text-sm">Role: <span class="capitalize">{{textRole(account.pivot.role_id)}}</span></div>
-						</li>
-					</ul>
-					
-				</div>
+			<div class="w-full mt-3">
+				<h2 class="headline-2">Accounts</h2>
+				<ul>
+					<li class="border border-black p-2 my-3" v-for="(account, index) in accounts" :key="'account-index-'+index">
+						<div><h3 class="text-base subheadline pr-3 inline-block">Account Name:</h3><span class="text-base">{{account.name}}</span></div>
+						<div><h3 class="text-base subheadline pr-3 inline-block">Account Status:</h3><span class="text-base">{{account.status}}</span></div>
+						<div><h3 class="text-base subheadline pr-3 inline-block">Role:</h3><span class="text-base capitalize">{{textRole(account.pivot.role_id)}}</span></div>
+					</li>
+				</ul>
 			</div>
 			<div class="mt-3">
-				<h2 class="text-xl bold">Avatar</h2>
+				<h2 class="headline-2">Avatar</h2>
 				<File @input="handleAvatar" class="block w-auto pb-3" accept="image/*,.svg"></File>
 			</div>
 			<button @click.prevent="save" class="standard mt-3">Save</button>

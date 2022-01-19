@@ -1,5 +1,5 @@
 <template>
-	<div class="text-center mx-auto">
+	<div>
 		<Loader v-if="loading"></Loader>
 		
 		<template v-if="audit">
@@ -34,8 +34,8 @@
 		<Modal style="z-index:71;" size="full" :open="issueModalOpen">
 			<div style="padding-bottom:60px;" class="bg-white md:px-4 pt-5 md:p-6">
 				<button aria-label="Close add issue modal" @click.prevent="EventBus.closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard">X</button>
-				<h2 class="text-center">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
-				<div v-show="showValidationAlert" role="alert" id="validation-alert-box" class="text-red-600 text-center" >
+				<h2 class="headline">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
+				<div v-show="showValidationAlert" role="alert" id="validation-alert-box" class="text-red-600" >
 					<strong>The following validation errors are present on the add issue form: </strong>
 					<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
 				</div>
@@ -45,20 +45,20 @@
 					
 					<div class="flex w-full mt-2 flex-wrap">
 						<div class="mx-2 flex-1">
-							<Label class="text-lg leading-6 w-full" for="success_criteria">Success Criteria</Label>
+							<Label class="text-lg leading-6 w-full subheadline" for="success_criteria">Success Criteria</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('articles') }" id="success-criteria-validation">{{validationMessages["articles"]}}</small>
 							<select :data-validation-failed="failedValidation.includes('articles')" required :aria-describedby="failedValidation.includes('articles') ? 'success-criteria-validation' : false" style="min-width:200px;" id="success_criteria" class="w-full" v-model="issue.articles" multiple>
 								<option class="overflow-ellipsis overflow-hidden whitespace-nowrap" :value="{display: article.number + ' - ' + article.title, id: article.id}" v-for="(article, index) in articles" :key="'success_criteria-'+index">{{article.number}} - {{article.title}}</option>
 							</select>
 						</div>
 						<div class="mx-2 flex-1">
-							<Label class="text-lg leading-6 w-full" for="techniques">Techniques</Label>
+							<Label class="text-lg leading-6 w-full subheadline" for="techniques">Techniques</Label>
 							<select style="min-width:200px;min-height:118px;" id="techniques" class="w-full" v-model="issue.techniques" multiple>
 								<option :value="{display: technique.number + ' - ' + technique.title, id: technique.id}" v-for="(technique, index) in filteredTechniques" :key="'technique-'+index">{{technique.number}}</option>
 							</select>
 						</div>
 						<div class="mx-2 flex-1">
-							<Label class="text-lg leading-6 w-full" :stacked="false" for="pages">Pages</Label>
+							<Label class="text-lg leading-6 w-full subheadline" :stacked="false" for="pages">Pages</Label>
 							<select style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
 								<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in pagesSrc" :key="'page-'+index">
 									<template v-if="page.title">{{page.title}}</template>
@@ -68,13 +68,13 @@
 							</select>
 						</div>
 						<div class="mx-2 flex-1">
-							<Label class="text-lg leading-6 w-full" for="audit_status">States</Label>
+							<Label class="text-lg leading-6 w-full subheadline" for="audit_status">States</Label>
 							<select style="min-width:200px;" id="audit_status" class="w-full" v-model="issue.audit_states" multiple>
 								<option :value="status" v-for="(status, index) in audit_states" :key="'audit_status-'+index">{{status}}</option>
 							</select>
 						</div>
 						<div class="mx-2 flex-1">
-							<Label class="text-lg leading-6 w-full" for="essential_functionalities">Essential Functionalities</Label>
+							<Label class="text-lg leading-6 w-full subheadline" for="essential_functionalities">Essential Functionalities</Label>
 							<select class="w-full" style="min-width:200px;;" multiple id="essential_functionalities" name="essential_functionalities" v-model="issue.essential_functionality">
 								<option v-for="(option, index) in audit.essential_functionality" :key="'essentials-'+index">{{option}}</option>
 							</select>
@@ -86,13 +86,13 @@
 						<div class="xs:w-full sm:w-full flex-wrap w-2/3 flex items-center">
 							<div class="flex flex-col xs:w-full">
 								<div class="flex-1 mx-2 flex flex-col">
-									<Label class="text-lg leading-6 w-full" for="software_used">Software Used</Label>
+									<Label class="text-lg leading-6 w-full subheadline" for="software_used">Software Used</Label>
 									<select style="min-width:200px;" id="software_used" class="flex-1" v-model="selectedSoftware">
 										<option :value="option" v-for="(option, index) in audit.software_used" :key="'software_used-'+index">{{option}}</option>
 									</select>
 								</div>
 								<div class="flex-1 mx-2 flex flex-col">
-									<Label class="text-lg leading-6 w-full" for="assistive_tech">Assistive Technology</Label>
+									<Label class="text-lg leading-6 w-full subheadline" for="assistive_tech">Assistive Technology</Label>
 									<select style="min-width:200px;" id="assistive_tech" class="flex-1" v-model="selectedTech">
 										<option value="">None</option>
 										<option :value="option" v-for="(option, index) in audit.assistive_tech" :key="'assistive_tech-'+index">{{option}}</option>
@@ -101,7 +101,7 @@
 							</div>
 							<button style="margin-top:40px" class="px-2 standard" @click.prevent="addBrowserCombo">Add Combo</button>
 							<div class="flex-1 mx-2">
-								<Label style="margin-bottom:0;" for="browser_combos" class="text-lg leading-6">
+								<Label style="margin-bottom:0;" for="browser_combos" class="text-lg leading-6 subheadline">
 									Browser Combinations
 									<Card :gutters="false" :center="false" style="min-height:8rem" class="overflow-y-auto w-full text-left max-h-32 my-2">
 										<div class="flex mb-3" v-for="(input, i) in issue.browser_combos" :key="`bc-${i}`">
@@ -113,11 +113,11 @@
 							</div>
 						</div>
 						<div class="xs:w-full sm:w-1/2 flex-wrap w-1/3 flex flex-col">
-							<Label for="effort">Effort</Label>
+							<Label class="subheadline text-lg" for="effort">Effort</Label>
 							<select id="effort" v-model="issue.effort" name="effort">
 								<option :value="option" v-for="(option, index) in ['Low', 'Medium', 'High']" :key="'effort-' + index">{{option}}</option>
 							</select>
-							<Label for="priority">Potential User Impact</Label>
+							<Label class="subheadline text-lg" for="priority">Potential User Impact</Label>
 							<select id="priority" v-model="issue.priority" name="priority">
 								<option :value="option" v-for="(option, index) in ['Minor', 'Moderate', 'Serious', 'Critical']" :key="'priority-' + index">{{option}}</option>
 							</select>
@@ -126,7 +126,7 @@
 
 					<div class="flex w-full flex-wrap justify-evenly mt-2">
 						<div class="flex-1 mx-2 max-w-full">
-							<Label class="text-lg leading-6">
+							<Label class="text-lg leading-6 subheadline">
 								Screenshots
 								<Card :gutters="false" :center="false" class="xs:shadow-none xs:p-0 overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.screenshots" :key="`screen-${i}`">
@@ -139,7 +139,7 @@
 							</Label>
 						</div>
 						<div class="flex-1 mx-2 max-w-full">
-							<Label class="text-lg leading-6">
+							<Label class="text-lg leading-6 subheadline">
 								Resources
 								<Card :gutters="false" :center="false" class="xs:shadow-none xs:p-0 overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.resources" :key="`resource-${i}`">
@@ -152,11 +152,11 @@
 							</Label>
 						</div>
 						<div class="flex-1 sm:mx-2">
-							<Label for="target" class="text-lg leading-6 w-full">Target</Label>
+							<Label for="target" class="text-lg leading-6 w-full subheadline">Target</Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('target') }" id="target-validation">{{validationMessages["target"]}}</small>
 							<TextInput :data-validation-failed="failedValidation.includes('target')" required :aria-describedby="failedValidation.includes('target') ? 'target-validation' : false" class="flex-1 w-full" name="target" id="target" v-model="issue.target"></TextInput>
 
-							<Label for="status" class="text-lg leading-6 w-full">Status</Label>
+							<Label for="status" class="text-lg leading-6 w-full subheadline">Status</Label>
 							<select id="status" name="status" v-model="issue.status">
 								<option :value="option" v-for="(option, index) in statuses" :key="'status-'+index">{{option}}</option>
 							</select>
@@ -165,7 +165,7 @@
 
 					<div class="flex w-full flex-wrap justify-evenly mt-2">
 						<div class="md:w-1/2 flex flex-col px-2">
-							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_descriptions">Success Criteria Descriptions </Label>
+							<Label :stacked="false" class="text-lg leading-6 w-full subheadline" for="issue_descriptions">Success Criteria Descriptions </Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
 							<div class="flex items-start mb-1">
 								<button class="mr-2 standard" @click.prevent="selectDescriptionsModalOpen = true" >Add Descriptions</button>
@@ -175,7 +175,7 @@
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1"></div>
 						</div>
 						<div class="md:w-1/2 flex flex-col px-2">
-							<Label :stacked="false" class="text-lg leading-6 w-full" for="issue_recommendations">Recommendations </Label>
+							<Label :stacked="false" class="text-lg leading-6 w-full subheadline" for="issue_recommendations">Recommendations </Label>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
 							<button class="self-start mb-1 standard" @click.prevent="selectRecommendationsModalOpen = true" >Add Recommendations</button>
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
@@ -183,16 +183,16 @@
 					</div>
 					<div class="flex md:w-1/2 flex-col mt-2 px-2">
 						<template v-if="audit.number == 2">
-							<Label class="text-lg leading-6 w-full" for="second_audit_comments">Second Audit Comments</Label>
+							<Label class="text-lg leading-6 w-full subheadline" for="second_audit_comments">Second Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="second_audit_comments" v-model="issue.second_audit_comments"></TextArea>
 						</template>
 						<template v-else-if="audit.number == 3">
-							<Label class="text-lg leading-6 w-full" for="third_audit_comments">Third Audit Comments</Label>
+							<Label class="text-lg leading-6 w-full subheadline" for="third_audit_comments">Third Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="third_audit_comments" v-model="issue.third_audit_comments"></TextArea>
 						</template>
 					</div>
 					<div class="flex md:w-1/2 xs:w-full sm:w-full flex-col mt-2 px-2">
-						<Label class="text-lg leading-6 w-full" for="auditor_notes">Auditor Notes</Label>
+						<Label class="text-lg leading-6 w-full subheadline" for="auditor_notes">Auditor Notes</Label>
 						<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
 					</div>
 				</form>
@@ -213,7 +213,7 @@
 		<Modal style="z-index:72;" :open="selectDescriptionsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close select descriptions modal" @click.prevent="selectDescriptionsModalOpen = false" class="absolute top-4 right-4 standard" >X</button>
-				<h2 class="text-center">Which Success Criteria descriptions would you like to add?</h2>
+				<h2 class="headline-2">Which Success Criteria descriptions would you like to add?</h2>
 				<select aria-label="Select descriptions" class="m-2 w-full" multiple v-model="selectedDescriptions">
 					<option :value="articles.find( a=>a.id == option.id)" v-for="(option, index) in issue.articles" :key="'descriptions-'+index">{{articles.find( a=>a.id == option.id).number}}</option>
 				</select>
@@ -228,7 +228,7 @@
 		<Modal style="z-index:72;" :open="selectRecommendationsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close select recommendations modal" @click.prevent="selectRecommendationsModalOpen = false" class="absolute top-4 right-4 standard" >X</button>
-				<h2 class="text-center">Which recommendations would you like to add?</h2>
+				<h2 class="headline-2">Which recommendations would you like to add?</h2>
 				<select aria-label="Select recommendations" class="m-2 w-full" multiple v-model="selectedRecommendations">
 					<option :value="option" v-for="(option, index) in filteredRecommendations" :key="'recommendations-'+index">{{option.description}}</option>
 				</select>
@@ -243,7 +243,7 @@
 		<Modal style="z-index:73;" :open="confirmDeleteModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close select descriptions modal" @click.prevent="confirmDeleteModalOpen = false" class="absolute top-4 right-4 standard">X</button>
-				<h2 class="text-center">Are you sure you want to delete {{ selectedRows.length === 1 ? 'this issue' : 'these issues' }}?</h2>
+				<h2 class="headline-2">Are you sure you want to delete {{ selectedRows.length === 1 ? 'this issue' : 'these issues' }}?</h2>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
 				<button @click="confirmDeleteModalOpen = false" class="standard mr-3">
@@ -258,7 +258,7 @@
 		<Modal style="z-index:72;" :open="whichCSVModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close select descriptions modal" @click.prevent="EventBus.closeModal(()=>{whichCSVModalOpen = false})" class="absolute top-4 right-4 standard">X</button>
-				<h2 class="text-center">Which item do you want to export?</h2>
+				<h2 class="headline-2">Which item do you want to export?</h2>
 				<div class="flex my-4 justify-center">
 					<button @click.prevent="getIssuesCSV" class="mx-2 standard">Issues (.xlsx spreadsheet)</button>
 					<button @click.prevent="getSampleCSV" class="mx-2 standard">Working Sample (CSV)</button>

@@ -1,39 +1,38 @@
 <template>
-  <div class="text-center">
+  <div>
     <Loader v-if="loading"></Loader>
-    <h1>{{project.name}}</h1>
-    <Button color="red" v-if="$store.getters['auth/isManager']" @click.native.prevent="confirmModalOpen = true" title="Delete Project" class="ml-3.5 mt-3" >
-      <!-- <i class="fas fa-trash-alt"></i> -->
+    <h1 class="headline">{{project.name}}</h1>
+    <button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Project" class="standard alert mt-3" >
       Delete
-    </Button>
-    <Form @submit.native.prevent>
-      <Label for="name">Name</Label>
+    </button>
+    <form>
+      <Label class="subheadline text-lg" for="name">Name</Label>
       <TextInput id="name" name="name" v-model="project.name" />
-      <Label for="status">Status</Label>
 
-      <Select class="mx-auto" :options="statusSrc" v-model="project.status"></Select>
+      <Label class="subheadline text-lg" for="status">Status</Label>
+      <Select :options="statusSrc" v-model="project.status"></Select>
       
         <template v-if="$store.getters['auth/isManager']">
-          <Label for="status">Client</Label>
-          <Select class="mx-auto" :options="clientList" v-model="project.client_id"></Select>
+          <Label class="subheadline text-lg" for="status">Client</Label>
+          <Select :options="clientList" v-model="project.client_id"></Select>
         </template>
 
       <template v-if="$store.getters['auth/isManager']">
         <div class="flex my-3">
           <Card class="w-1/2">
 
-            <h3>Users</h3>
+            <h3 class="headline-2">Users</h3>
             <ul v-if="unassigned.length">
               <li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
-                <span>{{displayUser(id)}}</span><Button hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
+                <span>{{displayUser(id)}}</span><Button :title="`Assign ${displayUser(id)}`" hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
               </li>
             </ul>
           </Card>
           <Card class="w-1/2">
-            <h3>Assignees</h3>
+            <h3 class="headline-2">Assignees</h3>
             <ul v-if="assigned.length">
               <li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
-                <Button hover="true" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
+                <Button hover="true" :title="`Unassign ${displayUser(id)}`" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
               </li>
             </ul>
           </Card>
@@ -41,8 +40,8 @@
         
       </template>
 
-      <Button hover="true" @click.native.prevent="saveProject">Save</Button>
-    </Form>
+      <button class="standard mt-2" hover="true" @click.native.prevent="saveProject">Save</button>
+    </form>
 
     <Modal class="adjust-with-sidebars" :open="confirmModalOpen">
       <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -54,7 +53,7 @@
                   </svg>
               </div>
               <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900 headline-2" id="modal-title">
                   Delete Project
                   </h3>
                   <div class="mt-2">
@@ -65,11 +64,11 @@
               </div>
           </div>
       </div>
-      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-          <button @click="deleteProject" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+      <div class="bg-gray-50 px-4 py-3 px-6 flex flex-row-reverse">
+          <button @click="deleteProject" type="button" class="standard alert">
           Delete
           </button>
-          <button @click="confirmModalOpen = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+          <button @click="confirmModalOpen = false" type="button" class="standard">
           Cancel
           </button>
       </div>

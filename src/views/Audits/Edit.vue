@@ -1,62 +1,57 @@
 <template>
-	<div class="text-center container mx-auto">
+	<div class="container">
 		<Loader v-if="loading"></Loader>
-		<h1>Edit Audit {{audit.title}}</h1>
-		<Button color="red" v-if="$store.getters['auth/isManager']" @click.native.prevent="confirmModalOpen = true" title="Delete Audit" class="ml-3.5 mt-3" >
-			<!-- <i class="fas fa-trash-alt"></i> -->
+		<h1 class="headline px-2">Edit Audit {{audit.title}}</h1>
+		<Button color="red" v-if="$store.getters['auth/isManager']" @click.native.prevent="confirmModalOpen = true" title="Delete Audit" class="mt-3 px-2" >
 			Delete
 		</Button>
 		<div class="flex flex-wrap">
-			<div class="xs:hidden sm:hidden w-1/4"></div>
-			<div class="xs:w-full sm:w-full w-1/2">
-				<Label for="locked">Audit Locked</Label>
-				<select v-model="audit.locked" id="locked" class="mx-auto" name="status">
+			<div class="xs:w-full px-2">
+				<Label class="subheadline text-lg" for="locked">Audit Locked</Label>
+				<select v-model="audit.locked" id="locked" class="" name="status">
 					<option :value="false">False</option>
 					<option :value="true">True</option>
 				</select>
 			</div>
-			<div class="xs:hidden sm:hidden w-1/4"></div>
-			<div class="xs:hidden sm:hidden w-1/4"></div>
-			<div class="xs:w-full sm:w-1/2 w-1/4">
-				<Label for="start_date">Start Date</Label>
-				<DatePicker name="start_date" id="start_date" class="mx-auto" @input="changeStartDate" v-model="audit.start_date"></DatePicker>
+			<div class="xs:w-full px-2">
+				<Label class="subheadline text-lg" for="start_date">Start Date</Label>
+				<DatePicker name="start_date" id="start_date" class="" @input="changeStartDate" v-model="audit.start_date"></DatePicker>
 			</div>
-			<div class="xs:w-full sm:w-1/2 w-1/4">
-				<Label for="end_date">End Date</Label>
-				<DatePicker name="end_date" id="end_date" class="mx-auto" @input="changeEndDate" v-model="audit.end_date"></DatePicker>
+			<div class="xs:w-full px-2">
+				<Label class="subheadline text-lg" for="end_date">End Date</Label>
+				<DatePicker name="end_date" id="end_date" class="" @input="changeEndDate" v-model="audit.end_date"></DatePicker>
 			</div>
-			<div class="xs:hidden sm:hidden w-1/4"></div>
-			<div class="w-full flex justify-center xs:flex-wrap">
+
+			<div class="w-full flex xs:flex-wrap">
 				<div class="px-2 xs:w-1/2">
-					<Label for="status">Status</Label>
-					<select v-model="audit.status" id="status" class="mx-auto p-1" name="status">
+					<Label class="subheadline text-lg" for="status">Status</Label>
+					<select v-model="audit.status" id="status" class="p-1" name="status">
 						<option :value="status.value" v-for="(status, index) in statusSrc" :key="`status-${index}`">{{status.name}}</option>
 					</select>
 				</div>
 				<div class="px-2 w-1/2">
-					<Label for="title">Title</Label>
+					<Label class="subheadline text-lg" for="title">Title</Label>
 					<TextInput class="w-full" id="title" name="title" v-model="audit.title" />
 				</div>
 				<div class="px-2 xs:w-1/2">
-					<Label for="audit_num">Audit #</Label>
-					<select v-model="audit.number" id="audit_num" name="audit_num" class="mx-auto">
+					<Label class="whitespace-nowrap subheadline text-lg" for="audit_num">Audit #</Label>
+					<select v-model="audit.number" id="audit_num" name="audit_num" class="">
 						<option :value="option" v-for="option in [1, 2, 3]" :key="'audit_num-'+option">{{option}}</option>
 					</select>
-					<!-- <Select id="audit_num" class="mx-auto" :options="[1, 2, 3]" v-model="audit.number"></Select> -->
 				</div>
 				<div class="px-2 xs:w-1/2">
-					<Label for="ctarget">Conformance Target</Label>
+					<Label class="subheadline text-lg" for="ctarget">Conformance Target</Label>
 					<TextInput class="w-full" id="ctarget" name="ctarget" v-model="audit.conformance_target" />
 				</div>
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label for="scope">Scope of the Audit</Label>
+				<Label class="subheadline text-lg" for="scope">Scope of the Audit</Label>
 				<Textarea class="w-full" id="scope" name="scope" v-model="audit.scope" rows="4"></Textarea>
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label for="essential_functionality">
+				<Label class="subheadline text-lg" for="essential_functionality">
 					Essential Functionality
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
 						<div class="flex mb-3" v-for="(input, i) in audit.essential_functionality" :key="`AT-select-${i}`">
@@ -70,12 +65,12 @@
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label for="additional_requirements">Additional Requirements</Label>
+				<Label class="subheadline text-lg" for="additional_requirements">Additional Requirements</Label>
 				<Textarea class="w-full" id="additional_requirements" name="additional_requirements" v-model="audit.additional_requirements" rows="4"></Textarea>
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label for="software">
+				<Label class="subheadline text-lg" for="software">
 					Software Used
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
 						<div class="flex mb-3" v-for="(input, i) in audit.software_used" :key="`SU-select-${i}`">
@@ -91,7 +86,7 @@
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label for="software">
+				<Label class="subheadline text-lg" for="software">
 					Assistive Tech
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
 						<div class="flex mb-3" v-for="(input, i) in audit.assistive_tech" :key="`AT-select-${i}`">
@@ -107,7 +102,7 @@
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label for="software">
+				<Label class="subheadline text-lg" for="software">
 					Tech Requirements
 					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
 						<div class="flex mb-3" v-for="(input, i) in audit.tech_requirements" :key="`TR-select-${i}`">
@@ -126,7 +121,7 @@
 			<template v-if="$store.getters['auth/isManager']">
 				<div class="flex my-3 w-full xs:flex-wrap">
 					<Card class="xs:w-full w-1/2 xs:mb-3">
-					<h3>Users</h3>
+					<h3 class="headline-2" >Users</h3>
 					<ul v-if="unassigned.length">
 						<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
 						<span>{{displayUser(id)}}</span>
@@ -135,7 +130,7 @@
 					</ul>
 					</Card>
 					<Card class="xs:w-full w-1/2">
-					<h3>Assignees</h3>
+					<h3 class="headline-2">Assignees</h3>
 					<ul v-if="assigned.length">
 						<li class="my-2 flex justify-center items-center" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
 							<template v-if="!team_members.includes(id)">
@@ -162,7 +157,7 @@
 				</div>
 			</template>
 			
-			<button class="standard my-5 mx-auto" @click.prevent="saveAudit">Save</button>
+			<button class="standard my-5" @click.prevent="saveAudit">Save</button>
 			
 		</div>
 		<Modal class="adjust-with-sidebars" :open="confirmModalOpen">
@@ -174,7 +169,7 @@
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
 							</svg>
 						</div>
-						<div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+						<div class="mt-3 ml-4 xs:text-center xs:mt-3 xs:ml-0 text-left">
 							<h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Delete Audit</h3>
 							<div class="mt-2">
 								<p class="text-sm text-gray-500">
@@ -185,12 +180,12 @@
 					</div>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-					<button @click="deleteAudit" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-					Delete
-					</button>
-					<button @click="confirmModalOpen = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-					Cancel
-					</button>
+				<button @click="deleteAudit" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+				Delete
+				</button>
+				<button @click="confirmModalOpen = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+				Cancel
+				</button>
 			</div>
 		</Modal>
 	</div>

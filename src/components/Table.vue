@@ -123,11 +123,11 @@
 		<Modal style="z-index:71" :open="columnPickerOpen">
 			<div class="w-full p-3">
 				<button aria-label="Close column selector modal" @click.prevent="EventBus.closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4 px-2 standard">X</button>
-				<ul class="flex flex-wrap xs:mt-10 sm:mt-0">
+				<ul class="flex flex-wrap xs:mt-10 mt-0">
 					<template v-for="(header, index) in headers">
-						<li v-if="!header.hidePermanent" class="flex xs:w-1/2 sm:w-5/12 xs:mx-0 sm:mx-2 my-2 justify-center items-center" :key="index">
-							<Label class="xs:break-all sm:break-normal" :for="'showCol'+ (index+1)">Show {{header.display}}</Label>
+						<li v-if="!header.hidePermanent" class="flex xs:w-1/2 w-5/12 xs:mx-0 mx-2 my-2 items-center" :key="index">
 							<Checkbox v-model="header.show" :id="'showCol'+ (index+1)"></Checkbox>
+							<Label class="xs:break-all break-normal" :for="'showCol'+ (index+1)">Show {{header.display}}</Label>
 						</li>
 					</template>
 				</ul>
