@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="w-full flex flex-col items-center" v-if="users.length">
+    <div class="w-full flex flex-col" v-if="users.length">
       <h1 class="headline">Users on this account:</h1>
       <DT 
       :searchOverride="searchOverride" 
