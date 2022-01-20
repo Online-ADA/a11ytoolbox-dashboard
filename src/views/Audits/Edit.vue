@@ -2,9 +2,9 @@
 	<div class="container">
 		<Loader v-if="loading"></Loader>
 		<h1 class="headline px-2">Edit Audit {{audit.title}}</h1>
-		<Button color="red" v-if="$store.getters['auth/isManager']" @click.native.prevent="confirmModalOpen = true" title="Delete Audit" class="mt-3 px-2" >
+		<button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="mt-3 standard alert" >
 			Delete
-		</Button>
+		</button>
 		<div class="flex flex-wrap">
 			<div class="xs:w-full px-2">
 				<Label class="subheadline text-lg" for="locked">Audit Locked</Label>
