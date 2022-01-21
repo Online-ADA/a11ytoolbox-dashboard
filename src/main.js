@@ -24,6 +24,7 @@ const token = Cookies.get('oada_UID')
 var apiHost = "https://apitoolbox.ngrok.io"
 var accountHost = "https://oadaaccounts.ngrok.io"
 var site = "toolboxdashboard.ngrok.io"
+var dashboard = "https://oadadashboard.ngrok.io"
 Vue.prototype.$http.defaults.headers.common['Accept'] = "application/json"
 
 if( Cookies.get("loggingIn") == undefined ){
@@ -40,6 +41,7 @@ if( window.location.hostname == "auditortools.onlineada.com" ){
   apiHost = "https://auditortoolsapi.onlineada.com"
   accountHost = "https://accounts.onlineada.com"
   site = "auditortools.onlineada.com"
+  dashboard = "https://dashboard.onlineada.com"
 }
 if( window.location.hostname == "dashboardtoolbox.ngrok.io" ){
   apiHost = "https://toolboxapi.ngrok.io"
@@ -56,6 +58,7 @@ store.state.auth.site = site
 store.state.auth.accapi = accountHost
 store.state.auth.toolboxapi = apiHost
 store.state.auth.API = `${apiHost}/api`
+store.state.auth.dashboard = dashboard
 
 window.App = new Vue({
   router,
@@ -65,40 +68,45 @@ window.App = new Vue({
 
 function run(){
   Request.getPromise(store.state.auth.API+'/state/init')
-    .then( response => {
-      // console.log("MAIN.JS INIT CHECK HAS RETURNED", response.data.details);
+    .then( response => { 
+      //If we are logged into the accounts dashboard
       store.state.auth.user = response.data.details.user
       store.state.auth.accounts = response.data.details.accounts
 
+      //If there is no cookie set for the current account, set it to the first stored vuex accounts
       if( Cookies.get("toolboxAccount") === undefined ){
         Cookies.set("toolboxAccount", parseInt(store.state.auth.accounts[0].id))
       }
 
+      //If the stored vuex account is not set, set it to the toolboxAccount cookie
       if( store.state.auth.account === false ){
         store.state.auth.account = Cookies.get("toolboxAccount")
       }
       
       let accountID = Cookies.get("toolboxAccount")
       if( accountID ){
+        //If the account ID is set, then go get all the clients on the account
         Request.getPromise(store.state.auth.API+`/${accountID}/clients`)
         .then( response => {
-          // console.log("MAIN.JS GET CLIENTS HAS RETURNED");
+          
           store.state.clients.all = response.data.details
           let clientID = parseInt(Cookies.get("toolboxClient"))
           
           if( clientID ){
+            //If the clientID cookie was set, set the vuex client store to that value
             store.state.clients.client = store.state.clients.all.find( c=>c.id === clientID )
-            //Resets the cookie
+            //Refresh the cookie expire time to 365 days
             if(store.state.clients.client){
               Cookies.set('toolboxClient', store.state.clients.client.id, 365)
             }
             
           }
           if( !clientID && store.state.clients.all.length){
+            //If the toolboxClient cookie was not set but there are clients in the vuex store, set the global selected client and the toolboxClient cookie to the first client
             store.state.clients.client = store.state.clients.all[0]
             Cookies.set('toolboxClient', store.state.clients.client.id, 365)
           }
-          
+          store.state.auth.checkTokenExpire()
           runBeforeEach()
         })
         .catch()
@@ -112,17 +120,6 @@ function run(){
         if( Cookies.get("loggingIn") === "false" && re.response.data.message == "Unauthenticated." ){
           store.dispatch("auth/login")
         }
-      }
-      //TODO: Not sure this is needed.
-      else{
-        let the_redirect = params.get('oada_redirect')
-        if(!the_redirect || the_redirect == '' || the_redirect == '?') the_redirect = '/';
-        store.dispatch('auth/setToken',{
-          token: params.get('oada_auth'),
-          token_expire: params.get('oada_token_expire'),
-          redirect: the_redirect,
-          router: router,
-      })
       }
     })
 }
