@@ -54,10 +54,15 @@
                 </div>
                 
                 <Table 
+                v-if="audit.id !== primaryAudit.id"
                 :importing="true" 
-                :issuesTable="true" 
-                v-if="audit.id !== primaryAudit.id" 
+                :issuesTable="true"
                 :audit_id="audit.id"
+                :defaultSortData='{
+                    columns: ["id"],
+                    orders: ["asc"],
+                    reference: ["id"]
+                }'
                 :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" 
                 :condense="true" ref="issuesTable" 
                 :selected="selectedAuditRows" 
@@ -68,12 +73,17 @@
                 :headersData="headers"></Table>
                 
                 <Table 
+                v-else
                 :importing="true" 
                 :issuesTable="true"
                 :audit_id="primaryAudit.id"
+                :defaultSortData='{
+                    columns: ["id"],
+                    orders: ["asc"],
+                    reference: ["id"]
+                }'
                 :specialRows="primaryAuditIssues.filter( i=> !issuesToImport.includes(i.issue_number)).map( i=>i.issue_number)" 
-                class="primary-audit-table" 
-                v-else 
+                class="primary-audit-table"
                 :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" 
                 :condense="true" ref="issuesTable" 
                 :rowsData="primaryAuditIssues" 
@@ -369,7 +379,7 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    key: "audito_notes",
+                    key: "auditor_notes",
                     display: "auditor notes",
                     show: true,
                     sticky: false,
