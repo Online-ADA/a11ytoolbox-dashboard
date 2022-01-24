@@ -1,7 +1,7 @@
 <template>
-  <div class="container mx-auto">
-    <div class="w-full flex flex-col justify-center items-center" v-if="users.length">
-      <h1>Users on this account:</h1>
+  <div class="container">
+    <div class="w-full flex flex-col" v-if="users.length">
+      <h1 class="headline">Users on this account:</h1>
       <DT 
       :searchOverride="searchOverride" 
       :searchableProps="searchableProps"
@@ -109,10 +109,20 @@ export default {
         return this.$store.state.user.loading
       },
       users() {
+        if( !this.account ){
+          return []
+        }
         if( this.account.pivot.team_id === 1 ){
           return this.$store.state.user.all
         }
-        return this.$store.state.user.team_members
+
+        let users = []
+        for (let x = 0; x < this.$store.state.user.byTeam[this.account.pivot.team_id].length; x++) {
+          const user_id = this.$store.state.user.byTeam[this.account.pivot.team_id][x]
+          let user = this.$store.state.user.all.find( u=>u.id == user_id)
+          users.push(user)
+        }
+        return users
       },
       account(){
         return this.$store.getters["auth/account"]
@@ -160,6 +170,7 @@ export default {
     created() {},
     mounted() {
       this.$store.dispatch("user/getUsers")
+      document.title = "Users Management"
     },
     components: {
       DT

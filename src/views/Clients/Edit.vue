@@ -1,19 +1,19 @@
 <template>
-	<div class="text-center">
+	<div>
 		<Loader v-if="loading"></Loader>
-		<h1>{{client.name}}</h1>
-		<Form @submit.native.prevent>
-			<Label for="name">Client Name</Label>
+		<h1 class="headline">{{client.name}}</h1>
+		<form @submit.prevent>
+			<Label class="subheadline text-lg" for="name">Client Name</Label>
 			<TextInput class="mb-2" id="name" name="name" v-model="client.name" />
 
-			<Label for="email">Client Email</Label>
+			<Label class="subheadline text-lg" for="email">Client Email</Label>
 			<TextInput id="email" name="email" v-model="client.email" />
 
-			<Label for="status">Status</Label>
-			<Select id="status" class="mx-auto" :options="statusSrc" v-model="client.status"></Select>
+			<Label class="subheadline text-lg" for="status">Status</Label>
+			<Select id="status" :options="statusSrc" v-model="client.status"></Select>
 
-			<Button hover="true" @click.native.prevent="saveClient">Save</Button>
-		</Form>
+			<button class="standard mt-3" @click.prevent="saveClient">Save</button>
+		</form>
 	</div>
 </template>
 
@@ -22,8 +22,6 @@ import Loader from '../../components/Loader'
 import TextInput from '../../components/TextInput'
 import Label from '../../components/Label'
 import Select from '../../components/Select'
-import Form from '../../components/Form'
-import Button from '../../components/Button'
 export default {
 	data: () => ({
 		statusSrc: [
@@ -59,15 +57,14 @@ export default {
 	created() {
 	},
 	mounted() {
+		document.title = "Edit Client"
 		this.$store.dispatch("clients/getClient", {id: this.$route.params.id})
 	},
 	components: {
 		Loader,
 		TextInput,
 		Label,
-		Form,
 		Select,
-		Button
 	},
 }
 </script>

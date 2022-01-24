@@ -22,10 +22,6 @@ export default {
             router: that.$router,
         })
     }
-
-    // if(!params.get('oada_auth') || params.get('oada_auth') == ''){
-    //     that.$router.push({path: '/'})
-    // }
   }
 }
 </script>

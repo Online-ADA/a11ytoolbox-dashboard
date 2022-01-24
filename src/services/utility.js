@@ -99,6 +99,130 @@ class Utility {
             {value:"video-caption", description: "Ensures <video> elements have captions"}
         ]
     }
+
+    reviveUserAuditMetaFunction(data, vm){
+        //Starting at the top level, so the page was refreshed (User->meta)
+
+        //Loop over every audit and check if meta property "sortedBy" is set
+        let auditsMeta = Object.values(data.audit)
+        let metaKeys = Object.keys(data.audit)
+        for (let x = 0; x < auditsMeta.length; x++) {
+            let val = auditsMeta[x]
+            
+            if( val.issues && val.issues.columns && val.issues.columns.sortedBy ){
+                if( val.issues.columns.sortedBy.columns.includes("function") ){
+                    let index = val.issues.columns.sortedBy.columns.indexOf("function")
+                    let audit_id = metaKeys[x]
+                    //Set the value of the actual meta within the user object in the global store
+                    vm.$store.state.auth.user.meta.audit[ audit_id ].issues.columns.sortedBy.columns[index] = this.getSortValue( val.issues.columns.sortedBy.reference[index], vm )
+                }
+            }
+        }
+    }
+
+    reviveAuditMetaFunction(metaData, vm){
+        if( metaData.issues && 
+            metaData.issues.columns && 
+            metaData.issues.columns.sortedBy &&
+            metaData.issues.columns.sortedBy.columns &&
+            metaData.issues.columns.sortedBy.columns.includes("function") ){
+                for (let x = 0; x < metaData.issues.columns.sortedBy.columns.length; x++) {
+                    let column = metaData.issues.columns.sortedBy.columns[x];
+                    if( column == "function" ){
+                        metaData.issues.columns.sortedBy.columns[ x ] = this.getSortValue( metaData.issues.columns.sortedBy.reference[x], vm )
+                    }
+                }
+        }
+        
+        return metaData
+    }
+
+    getSortValue(column, vm){
+        let data = column
+        //String reference is necessary because sometimes our column becomes an anonymous function
+        if( column == "levels" ){
+            data = ((item)=>{
+                return item.levels.join(" ")
+            })
+        }
+        if( column == "priority" ){
+            data = ((item)=>{
+                let output = ""
+                switch(item.priority.toLowerCase()){
+                    case "critical":
+                        output = "1"
+                        break
+                    case "serious":
+                        output = "2"
+                        break
+                    case "moderate":
+                        output = "3"
+                        break
+                    case "minor":
+                        output = "4"
+                        break
+                    default:
+                        output = "5"
+                        break
+                }
+                return output
+            })
+        }
+        if( column == "success_criteria" ){
+            data = ((item)=>{
+                let output = ""
+                for (let x = 0; x < item.articles.length; x++) {
+                    const article = item.articles[x];
+                    output += " " + article.display
+                }
+                
+                return output
+            })
+        }
+        if( column == "techniques" ){
+            data = ((item)=>{
+                let output = ""
+                for (let x = 0; x < item.techniques.length; x++) {
+                    const technique = item.techniques[x];
+                    output += technique.display
+                }
+                return output
+            })
+        }
+        if( column == "pages" ){
+            data = ((item)=>{
+                if( item.pages ){
+                    let domain = vm.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
+                    
+                    if( vm.$store.state.audits.audit.domain.root ){
+                        domain = domain + "/" + vm.$store.state.audits.audit.domain.root.replace(/\/$/gm, "")
+                    }
+                    let output = ""
+                    for (let x = 0; x < item.pages.length; x++) {
+                        let page = item.pages[x]
+                        if( page.title ){
+                            output += page.title
+                        }
+                        if( page.title && page.url ){
+                            output += " - "
+                        }
+                        if( page.url ){
+                            let url = page.url
+                            if( url == "/" ){
+                                url = ""
+                            }
+                            output += domain + "/" + url
+                        }
+                    }
+                    
+                    return output
+                }
+                return ""
+            })
+        }
+
+        return data
+    }
 }
 
 export default new Utility()

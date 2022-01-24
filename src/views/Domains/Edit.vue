@@ -1,113 +1,117 @@
 <template>
-	<div class="text-center pb-24 container mx-auto">
+	<div class="pb-24 container">
 		<Loader v-if="loading"></Loader>
 		
-		<A class="pr-3" type='router-link' :to="{path: `/domains/${$route.params.id}`}">View Domain</A>
+		<A class="pr-3 standard" type='router-link' :to="{path: `/domains/${$route.params.id}`}">View Domain</A>
 		
-		<h2 class="mb-1">{{domain.url}}</h2>
-		<div class="flex items-center justify-center mb-3">
-			<h3 class="pr-2">{{domain.url}}</h3>
-			<Button aria-label="Edit domain title" @click.native.prevent="editDomainOpen = true" :hover="true"><i class="far fa-edit"></i></Button>
+		<h2 class="mb-1 headline">{{domain.url}}</h2>
+		<div class="flex items-center mb-3">
+			<h3 class="pr-2 headline-2">{{domain.url}}</h3>
+			<button class="standard" aria-label="Edit domain title" @click.prevent="editDomainOpen = true"><i class="far fa-edit"></i></button>
 		</div>
 		<Modal style="z-index:71;" :open="editDomainOpen">
 			<div class="bg-white px-4 pt-5 pb-4">
-				<div class="flex items-start">
-					<div class="mt-3 text-left w-full">
-						<h3 class="text-lg leading-6 font-medium text-gray-900">
-							Edit
-						</h3>
-						<div class="mt-2 w-full">
-							<Label class="mt-2" for="edit-url">Edit Url</Label>
-							<TextInput class="w-full" v-model="data.url" id="edit-url"></TextInput>
-						</div>
+				
+				<div class="mt-3 text-left w-full">
+					<h3 class="headline">
+						Edit
+					</h3>
+					<div class="mt-2 w-full">
+						<Label class="text-lg subheadline" for="edit-title">Edit Title</Label>
+						<TextInput class="w-full" v-model="data.title" id="edit-title"></TextInput>
+
+						<Label class="mt-2 text-lg subheadline" for="edit-url">Edit Url</Label>
+						<TextInput class="w-full" v-model="data.url" id="edit-url"></TextInput>
 					</div>
 				</div>
+				
 			</div>
-			<div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-				<Button @click.native.prevent="saveDomain" :hover="true">Save</Button>
-				<Button class="mr-2" @click.native.prevent="editDomainOpen = false" :hover="false">Cancel</Button>
-			</div>
+			
+			<button @click.prevent="saveDomain" class="standard">Save</button>
+			<button class="ml-3.5 standard" @click.prevent="editDomainOpen = false">Cancel</button>
+			
 		</Modal>
 		<Modal style="z-index:71;" :size="'wide'" :open="structuredListModalOpen">
 			<div class="w-full flex justify-between">
 				<h4 class="mb-3">Add item</h4>
-				<Button @click.native.prevent="structuredListModalOpen = false" aria-label="Close add items to structured list modal" :hover="true">X</Button>
+				<button class="standard" @click.prevent="structuredListModalOpen = false" aria-label="Close add items to structured list modal">X</button>
 			</div>
-			<div style="max-height:550px" class="w-full px-2 overflow-y-auto">
+			<div style="max-height:550px" class="w-full xs:p-0 px-2 overflow-y-auto">
 				<span id="content-description" class="sr-only">If this field is left empty, it will not be added to the list upon saving but it will indicate a failure</span>
-				<div :key="'strucList-' + index" v-for="(item, index) in structured_items" class="flex items-center my-2">
+				<div :key="'strucList-' + index" v-for="(item, index) in structured_items" class="flex items-center my-2 xs:flex-wrap">
 					<div class="flex flex-1 flex-col mx-1">
-						<Label :stacked="false" class="flex-1" :for="'title-' + index">Title<small aria-hidden="true" class="text-red-600">*</small></Label>
+						<Label :stacked="false" class="flex-1 text-lg subheading" :for="'title-' + index">Title<small aria-hidden="true" class="text-red-600">*</small></Label>
 						<TextInput aria-describedby="content-description" placeholder="All Modals, https://onlineada.com/contact..." class="flex-1" :id="'title-' + index" v-model="structured_items[index].title" />
 					</div>
 					<div class="flex flex-1 flex-col mx-1">
-						<Label class="flex-1" :for="'url-' + index">Url</Label>
+						<Label class="flex-1 text-lg subheading" :for="'url-' + index">Url</Label>
 						<TextInput placeholder="https://nimb.ws/AyYVWS" class="flex-1" :id="'url-' + index" v-model="structured_items[index].url" />
 					</div>
 
-					<Button class="ml-2 self-end pb-2.5" color="delete" @click.native.prevent="popStructuredItem(index)"><i class="far fa-trash-alt"></i></Button>
+					<button title="Delete structured item" class="ml-2 self-end pb-2.5 standard alert" @click.prevent="popStructuredItem(index)"><i class="far fa-trash-alt"></i></button>
 				</div>
-				<Button class="" color="red" @click.native.prevent="saveStructuredList">Save List</Button>
-				<Button class="ml-2" color="red" @click.native.prevent="addStructuredItem">Add</Button>
+				<button class="standard" @click.prevent="saveStructuredList">Save List</button>
+				<button class="ml-2 standard" @click.prevent="addStructuredItem">Add</button>
 			</div>
 		</Modal>
 
-		<div class="w-full flex">
-			<Card class="flex-1 p-4 mx-2">
-				<h3 class="mt-3 mb-1">Sitemap</h3>
+		<div class="w-full flex xs:flex-wrap sm:flex-wrap">
+			<Card :center="false" class="flex-1 p-4 mx-2">
+				<h3 class="mt-3 mb-1 headline-2">Sitemap</h3>
 
-				<div class="flex w-full justify-center">
+				<div class="flex w-full">
 					<label class="py-2 font-semibold block" for="specifyRoot">Specify Root</label>
 					<Checkbox v-model="specifyRoot" id="specifyRoot"></Checkbox>
 				</div>
 				
 
-				<div v-if="specifyRoot" class="flex flex-1 flex-col mx-auto w-1/2 pb-5">
-					<Label class="flex-1" for="domainRoot">Root</Label>
+				<div v-if="specifyRoot" class="flex flex-1 flex-col pb-5">
+					<Label class="flex-1 text-lg subheading" for="domainRoot">Root</Label>
 					<div class="flex w-full">
 						<TextInput class="flex-1" id="domainRoot" v-model="domainRoot" />
-						<Button class="ml-2" color="red" @click.native.prevent="saveRoot">Save</Button>
+						<button class="ml-2 standard" @click.prevent="saveRoot">Save</button>
 					</div>
 				</div>
 
-				<h4 class="mb-3">Add url</h4>
+				<h4 class="text-left pt-3 pb-4 subheadline">Add url</h4>
 				<div class="w-full flex mb-4">
 					<div class="w-full px-2">
-						<Label :stacked="false" class="flex items-center justify-center w-full" for="url"><span class="pr-3">Url</span><small>(Without domain)</small></Label>
+						<Label :stacked="false" class="subheadline text-lg flex items-center w-full" for="url"><span class="pr-3">Url</span><small>(Without domain)</small></Label>
 						<div class="flex items-center flex-1">
 							<span class="flex-1">{{domain.url}}/<span class="break-word" v-if="domain.root">{{domain.root}}/</span>
 								</span>
 							<TextInput style="flex-basis:100%" aria-label="Enter a url path" placeholder="contact" class="w-full flex-1" id="url" v-model="page.url" />
-							<Button class="ml-2" color="red" @click.native.prevent="addPage">Add</Button>
+							<button class="ml-2 standard" @click.prevent="addPage">Add</button>
 						</div>
 					</div>
 				</div>
-				<Button color="red" @click.native.prevent="generateSitemap">Generate sitemap</Button>
+				<button class="standard" @click.prevent="generateSitemap">Generate sitemap</button>
 				<template v-if="domain && domain.pages.length">
-					<h4 class="mb-3">Pages</h4>
-					<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
+					<h4 class="subheadline pt-3 pb-4">Pages</h4>
+					<Card style="max-height:400px" :gutters="false" class="block my-4 overflow-y-auto">
 						<ul class="mb-4">
-							<li v-for="page in domain.pages" :key="page.id">
+							<li class="my-1" v-for="page in domain.pages" :key="page.id">
 								{{page.url}}
-								<Button aria-label="delete this page" @click.native.prevent="deletePage(page.id)" color="delete" class="ml-4">X</Button>
+								<button aria-label="delete this page" @click.prevent="deletePage(page.id)" class="ml-4 standard alert">X</button>
 							</li>
 						</ul>
 					</Card>
-					<Button @click.native.prevent="emptySitemap" color="delete">Remove all<span class="sr-only"> sample items</span></Button>
+					<button class="standard alert" @click.prevent="emptySitemap" >Remove all<span class="sr-only"> sample items</span></button>
 				</template>
 
-				<FileInput @input="handleSitemapFile" class="block w-auto mx-auto pb-3 mt-4" accept=".csv, .xml"></FileInput>
-				<small class="text-xs">Note: If the domain on an entry in the uploaded file does not match this domain, it will not be added to the sitemap.</small>
-				<Button color="red" @click.native.prevent="uploadSitemap">Upload sitemap</Button>
+				<FileInput @input="handleSitemapFile" class="block w-auto pb-3 mt-4" accept=".csv, .xml"></FileInput>
+				
+				<small class="text-xs block w-full mb-3">Note: If the domain on an entry in the uploaded file does not match this domain, it will not be added to the sitemap.</small>
+				<button class="standard" @click.prevent="uploadSitemap">Upload sitemap</button>
 			</Card>
 
-			<Card class="flex-1 p-4 mx-2">
-				<h3 class="mt-3 mb-1">Sample</h3>
-				<Button class="" color="red" @click.native.prevent="structuredListModalOpen =true">Add</Button>
+			<Card :center="false" class="flex-1 p-4 mx-2 sm:mt-3 xs:mt-3 xs:max-w-full sm:max-w-full">
+				<h3 class="mt-3 mb-1 headline-2">Sample</h3>
+				<button class="standard" @click.prevent="structuredListModalOpen =true">Add</button>
 				<template v-if="domain && domain.sample.length">
-					<h4 class="my-3">Items</h4>
-					<Card style="max-height:400px" :gutters="false" class="block mx-auto my-4 overflow-y-auto">
-						<table class="w-full border border-black table-fixed">
+					<h4 class="my-3 subheadline">Items</h4>
+					<Card :center="false" style="max-height:400px" :gutters="false" class="block my-4 overflow-y-auto">
+						<table class="w-full border border-black table-fixed min-w-[600px]">
 							<thead>
 								<tr>
 									<th class="text-center border border-black" width="40%" scope="col"><span id="sample-title">Title</span></th>
@@ -127,12 +131,12 @@
 							</tbody>
 						</table>
 					</Card>
-					<Button @click.native.prevent="emptySample" color="delete">Remove all</Button>
+					<button class="standard alert mb-3" @click.prevent="emptySample">Remove all</button>
 				</template>
 
-				<FileInput @input="handleSampleFile" class="block w-auto mx-auto pb-3" accept=".csv"></FileInput>
-				<Button color="red" @click.native.prevent="uploadSample">Upload Sample</Button>
-				<div><button class="standard mt-3" @click.prevent="generateSample">Generate Sample</button></div>
+				<FileInput @input="handleSampleFile" class="block w-auto pb-3" accept=".csv"></FileInput>
+				<button class="standard mr-3.5" @click.prevent="uploadSample">Upload Sample</button>
+				<button class="standard mt-3" @click.prevent="generateSample">Generate Sample</button>
 			</Card>
 			
 		</div>
@@ -338,6 +342,7 @@ export default {
 	},
 	mounted() {
 		this.getDomain()
+		document.title = "Edit Domain"
 	},
 	components: {
 		TextInput,

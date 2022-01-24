@@ -1,8 +1,24 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
+
 
 module.exports = {
-  darkMode: false, // or 'media' or 'class'
+  content: ["../src/**/*.{html,js,vue}"],
   theme: {
+    screens: {
+      'xs': [
+        {'min': '320px', 'max': '639px'}
+      ],
+      // => @media (min-width: 320px) and (max-width: 639px) { ... }
+      'sm': [
+        {'min': '640px', 'max':'767px'}
+      ],
+      // => @media (min-width: 640px) and (max-width: 767px) { ... }
+      'md': '768px',
+      // => @media (min-width: 768px) { ... }
+      'lg': '1024px',
+      // => @media (min-width: 1024px) { ... }
+      'xl': '1280px',
+      // => @media (min-width: 1280px) { ... }
+    },
     boxShadow: {
       custom: '0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)',
       sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',

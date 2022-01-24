@@ -113,6 +113,7 @@ export default {
     created() {
     },
     mounted() {
+        document.title = "Automated Audits Management"
     },
     components: {
         Label,

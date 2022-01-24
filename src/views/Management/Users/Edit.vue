@@ -2,37 +2,37 @@
 	<div>
 		<Loader v-if="loading"></Loader>
 		<template v-if="user">
-			<h1 class="mb-3">User: {{user.first_name}} {{user.last_name}}</h1>
+			<h1 class="mb-3 headline">User: {{user.first_name}} {{user.last_name}}</h1>
 			<form class="w-full bg-white p-5">
 				<!-- Row -->
-				<div class="flex w-full">
+				<div class="flex w-full flex-wrap">
 					<div class="flex-1">
-						<h2 class="text-xl bold">First Name</h2>
+						<h2 class="text-lg subheadline">First Name</h2>
 						<div>{{user.first_name}}</div>
 					</div>
 					<div class="flex-1">
-						<h2 class="text-xl bold">Last Name</h2>
+						<h2 class="text-lg subheadline">Last Name</h2>
 						<div>{{user.last_name}}</div>
 					</div>
 					<div class="flex-1">
-						<h2 class="text-xl bold">Email</h2>
+						<h2 class="text-lg subheadline">Email</h2>
 						<div>{{user.email}}</div>
 					</div>
 					<div class="flex-1">
-						<h2 class="text-xl bold">Phone</h2>
+						<h2 class="text-lg subheadline">Phone</h2>
 						<div>{{user.phone}}</div>
 					</div>
 				</div>
 				<!-- Row -->
 				<div class="flex w-full mt-3">
 					<div class="flex-1">
-						<h2 class="text-xl bold">Accounts</h2>
+						<h2 class="headline-2">Accounts</h2>
 						
 						<ul>
 							<li class="border border-black p-2 my-3" v-for="(account, index) in accounts" :key="'account-index-'+index">
-								<div class="text-sm">Account Name: <span class="bold">{{account.name}}</span></div>
-								<div class="text-sm">Account Status: {{account.status}}</div>
-								<div class="text-sm">Role: <span class="capitalize">{{role(account.pivot.role_id)}}</span></div>
+								<div><h3 class="text-base subheadline inline-block pr-3">Account Name:</h3><span class="text-base">{{account.name}}</span></div>
+								<div><h3 class="text-base subheadline inline-block pr-3">Account Status:</h3><span class="text-base">{{account.status}}</span></div>
+								<div><h3 class="text-base subheadline inline-block pr-3">Role:</h3><span class="text-base capitalize">{{role(account.pivot.role_id)}}</span></div>
 							</li>
 						</ul>
 						
@@ -40,19 +40,16 @@
 				</div>
 			</form>
 		
-			<div>
+			<Label class="headline-2 mt-3" for="role">Role</Label>
+			<select v-model="selectedRole" class="p-1 mb-3" @change="modifyRole" id="role" name="role">
+				<option value="2">Manager</option>
+				<option value="3">Standard</option>
+				<option value="4">Limited</option>
+			</select>
 			
-				<Label class="text-xl" for="role">Role</Label>
-				<select v-model="selectedRole" class="p-1 mx-auto" @change="modifyRole" id="role" name="role">
-					<option value="2">Manager</option>
-					<option value="3">Standard</option>
-					<option value="4">Limited</option>
-				</select>
-				
-			</div>
 			<div v-if="iAmExecutive">
-				<Label class="text-xl" for="team">Team</Label>
-				<select v-model="selectedTeam" class="p-1 mx-auto" @change="modifyTeam" id="team" name="team">
+				<Label class="headline-2" for="team">Team</Label>
+				<select v-model="selectedTeam" class="p-1" @change="modifyTeam" id="team" name="team">
 					<option value="1">Executive</option>
 					<option value="2">Development</option>
 					<option value="3">Design</option>
@@ -60,10 +57,8 @@
 				</select>
 			</div>
 			<div v-else>
-				<div class="w-2/4 mx-auto">
-					<Label class="text-xl" for="team">Team</Label>
-					<span class="text-lg">{{team(selectedTeam)}}</span>
-				</div>
+				<Label class="headline-2" for="team">Team</Label>
+				<span class="text-lg">{{team(selectedTeam)}}</span>
 			</div>
 		</template>
 	</div>
@@ -145,6 +140,7 @@ export default {
 	},
 	mounted() {
 		this.$store.dispatch("user/getUser", {user_id: this.$route.params.id})
+		document.title = "Manage User"
 	},
 	components: {
 		A,

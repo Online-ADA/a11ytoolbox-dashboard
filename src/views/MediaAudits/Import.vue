@@ -486,7 +486,7 @@ export default {
         this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
     },
     mounted() {
-        
+        document.title = "Media Audit Import Issues"
     },
     components: {
       Loader,

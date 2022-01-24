@@ -90,6 +90,7 @@ export default {
 			this.getDomain()
 		},
 		mounted() {
+			document.title = "Domain Overview"
 		},
 		components: {
 			Loader,

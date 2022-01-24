@@ -15,14 +15,13 @@
                     </template>
                 </div>
                 <span class="w-auto mr-2 flex items-center">
-                    <template>
-                        <!-- Search Audit 
+                    <!-- <template>
+                        Search Audit 
                         <button class="ml-3.5 bg-transparent" @click.prevent="searchBarOpen = !searchBarOpen">
                             <span title="Search Audit" ><i class="far fa-search"></i></span>
                         </button>
-                        -->
-                        <!--<div class="border border-black mx-3.5 divider"></div>-->
-                    </template>
+                        <div class="border border-black mx-3.5 divider"></div>
+                    </template> -->
                     <!-- Audit Tools 
                     <button class="ml-3.5 bg-transparent" @click="$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
                     -->
@@ -56,7 +55,7 @@
 
 <script>
 import Checkbox from "../Checkbox.vue"
-import { EventBus } from '../../services/eventBus'
+// import { EventBus } from '../../services/eventBus'
 
 export default {
     props:{

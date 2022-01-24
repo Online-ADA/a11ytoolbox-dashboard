@@ -84,6 +84,7 @@ export default {
         }
     },
     mounted() {
+      document.title = "Media Audits Assigned to User"
     },
     components: {
       Loader,

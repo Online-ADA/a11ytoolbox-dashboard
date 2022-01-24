@@ -548,7 +548,7 @@ export default {
         if( this.$store.state.projects.project ){
             this.$store.dispatch("audits/getAudits", {project_id: this.$store.state.projects.project.id, withIssues: true})
         }
-        
+        document.title = "Import Audit Issues"
     },
     components: {
       Loader,

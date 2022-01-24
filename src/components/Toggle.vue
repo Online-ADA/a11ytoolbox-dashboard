@@ -1,9 +1,9 @@
 <template>
     <label class="switch flex items-center">
         <input v-model="checked" @change="$emit('changed', checked)" type="checkbox">
-        <span class="font-bold">{{labelLeft}}</span>
+        <span class="headline-2">{{labelLeft}}</span>
         <span :class="{'checked':checked}" class="slider round mx-3"></span>
-        <span class="font-bold">{{labelRight}}</span>
+        <span class="headline-2">{{labelRight}}</span>
     </label>
 </template>
 

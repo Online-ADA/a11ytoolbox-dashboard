@@ -88,6 +88,7 @@ export default {
         }
     },
     mounted() {
+        document.title = "Projects Assigned to User"
     },
     components: {
       Loader,

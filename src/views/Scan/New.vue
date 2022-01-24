@@ -1,24 +1,23 @@
 <template>
-    <div class="container mx-auto flex justify-center items-center flex-col">
-        <h1 class="mb-3">Initiate a New Automated Audit</h1>
+    <div class="container">
+        <h1 class="mb-3 headline">Initiate a New Automated Audit</h1>
 
         <div class="flex w-full flex-wrap my-4">
             <template v-if="showSuccess">
-                <p class="text-base w-full text-center">Your audit has been queued. An email will be sent to the address on your account when it has finished.</p>
+                <p class="text-base w-full">Your audit has been queued. An email will be sent to the address on your account when it has finished.</p>
             </template>
-            <!-- <template v-if="!showSuccess"> -->
-            <template>
-                <div class="w-full text-center">
-                    <h3 class="text-base">Automated Audit Options</h3>
+            <template v-if="!showSuccess">
+                <div>
+                    <h2 class="subheadline mb-3">Automated Audit Options</h2>
                 </div>
                 
                 <template v-if="isManager">
-                    <Radio :value="false" class="mx-auto w-full" v-model="custom" :items="[{display:'Default', value:false}, {display: 'Custom', value:true}]" align="center"></Radio>
-                    <Radio :value="true" v-show="custom" class="mx-auto w-full" v-model="simple" :items="[{display:'Simple', value:true}, {display: 'Advanced', value:false}]" align="center"></Radio>
+                    <Radio :value="false"  v-model="custom" :items="[{display:'Default', value:false}, {display: 'Custom', value:true}]" ></Radio>
+                    <Radio :value="true" v-show="custom" v-model="simple" :items="[{display:'Simple', value:true}, {display: 'Advanced', value:false}]"></Radio>
                 </template>
 
                 <template v-if="!isManager">
-                    <Button class="mx-auto" :color="[custom ? 'red' : 'white']" :hover="true" @click.native.prevent="custom = !custom">Advanced</Button>
+                    <button class="standard" @click.prevent="custom = !custom">Advanced</button>
                 </template>
                 <template v-if="custom && simple">
                     <!--
@@ -30,53 +29,50 @@
                         - Just items that need manual review
                         - Just color contrast
                     -->
-                    <div class="w-full text-center">
-                        <h3 class="text-base w-full">Choose an option below to run only that automation</h3>
-                        <div class="w-full flex flex-wrap items-center">
-                            <Radio class="mx-auto w-full" v-model="options.simpleRules.type" 
-                            :items="[
-                                {display:'WCAG 2.0 and 2.1 Level A', value:'wcagA'}, 
-                                {display:'WCAG 2.0 and 2.1 Level AA', value:'wcagAA'}, 
-                                {display:'Common accessibility best practices', value:'best-practices'}, 
-                                {display:'W3C approved Accessibility Conformance Testing rules', value:'ACT'},
-                                {display:'errors', value:'errors'},
-                                {display:'items needing manual review', value:'review'},
-                                {display:'Color Contrast', value:'contrast'},
-                                {display:'Specific WCAG rules', value:'specific'},
-                            ]" align="center"></Radio>
-                            <div v-show="options.simpleRules.type == 'specific'" class="w-full text-center">
-                                <Label>
-                                    Input WCAG Level A and/or Level AA criteria as the number only and comma-separated, i.e. 1.1.1, 1.2.3.
-                                    <input placeholder="1.1.1, 1.4.11" v-model="options.simpleRules.specifically" class="border border-black rounded p-3" type="text" autocomplete="new-password" />
-                                </Label>
-                            </div>
+                    
+                    <h2 class="subheadline mb-3">Choose an option below to run only that automation</h2>
+                    <div class="flex flex-wrap">
+                        <Radio class="w-full" v-model="options.simpleRules.type" 
+                        :items="[
+                            {display:'WCAG 2.0 and 2.1 Level A', value:'wcagA'}, 
+                            {display:'WCAG 2.0 and 2.1 Level AA', value:'wcagAA'}, 
+                            {display:'Common accessibility best practices', value:'best-practices'}, 
+                            {display:'W3C approved Accessibility Conformance Testing rules', value:'ACT'},
+                            {display:'errors', value:'errors'},
+                            {display:'items needing manual review', value:'review'},
+                            {display:'Color Contrast', value:'contrast'},
+                            {display:'Specific WCAG rules', value:'specific'},
+                        ]"></Radio>
+                        <div v-show="options.simpleRules.type == 'specific'" class="w-full text-center">
+                            <Label>
+                                Input WCAG Level A and/or Level AA criteria as the number only and comma-separated, i.e. 1.1.1, 1.2.3.
+                                <input placeholder="1.1.1, 1.4.11" v-model="options.simpleRules.specifically" class="border border-black rounded p-3" type="text" autocomplete="new-password" />
+                            </Label>
                         </div>
                     </div>
                 </template>
                 <template v-if="custom && !simple">
-                    <div class="w-full text-center">
-                        <h3 class="text-large w-full bold">Choose Tags (leave blank to run all tags)</h3>
-                        <div class="w-full flex flex-wrap items-center">
-                            <Label class="flex w-1/4 text-left" :stacked="false" v-for="tag in src.tags" :key="'tag-'+tag.value">
-                                <Checkbox :vsValue="tag.value" v-model="options.advancedRules.tags"></Checkbox>
-                                {{tag.display}}
-                            </Label>
-                        </div>
+                    <h3 class="headline-2">Choose Tags (leave blank to run all tags)</h3>
+                    <div class="flex flex-wrap items-center">
+                        <Label class="flex w-1/4 text-left" :stacked="false" v-for="tag in src.tags" :key="'tag-'+tag.value">
+                            <Checkbox :vsValue="tag.value" v-model="options.advancedRules.tags"></Checkbox>
+                            {{tag.display}}
+                        </Label>
                     </div>
-
-                    <div class="w-full flex flex-wrap justify-center items-center">
-                        <h3 class="text-large w-full bold">Configure Rules</h3>
-                        <Radio class="mx-2" align="center" v-model="options.advancedRules.customizeRules" :value="options.advancedRules.customizeRules" :items="[{display:'Run all rules', value:false}, {display:'Customize', value:true}]"></Radio>
+                    
+                    <div class="flex flex-wrap w-full">
+                        <h3 class="headline-2">Configure Rules</h3>
+                        <Radio v-model="options.advancedRules.customizeRules" :value="options.advancedRules.customizeRules" :items="[{display:'Run all rules', value:false}, {display:'Customize', value:true}]"></Radio>
                         
                         <div v-show="options.advancedRules.customizeRules">
-                            <div class="w-full flex justify-center">
-                                <Button class="mx-1" @click.native.prevent="enableAllRules" size="sm" :hover="true">Enable all</Button>
-                                <Button class="mx-1" @click.native.prevent="disableAllRules" size="sm" :hover="true">Disable all</Button>
+                            <div class="flex">
+                                <button class="mx-2 standard" @click.prevent="enableAllRules">Enable all</button>
+                                <button class="mx-2 standard" @click.prevent="disableAllRules">Disable all</button>
                             </div>
-                            <div class="w-full flex flex-wrap items-center">
-                                <Label class="text-center w-1/6 capitalize" v-for="rule in src.rules" :key="'rule-'+rule.value">
+                            <div class="flex flex-wrap">
+                                <Label class=" w-1/6 capitalize" v-for="rule in src.rules" :key="'rule-'+rule.value">
                                     {{rule.display}}
-                                    <Radio :value="options.advancedRules.rules[rule.value].enabled" align="center" v-model="options.advancedRules.rules[rule.value].enabled" :items="[
+                                    <Radio :value="options.advancedRules.rules[rule.value].enabled" v-model="options.advancedRules.rules[rule.value].enabled" :items="[
                                         {display:'On', value:true}, 
                                         {display:'Off', value:false}, 
                                     ]"></Radio>
@@ -85,35 +81,33 @@
                         </div>
                     </div>
 
-                    <div class="w-full text-center" >
-                        <h3 class="text-large w-full bold">Choose Categories (leave blank to run all categories)</h3>
-                        <div class="w-full flex flex-wrap items-center">
-                            <Label class="flex w-1/4 text-left" :stacked="false" v-for="cat in src.categories" :key="'cat-'+cat.value">
-                                <Checkbox :vsValue="cat.value" v-model="options.advancedRules.categories"></Checkbox>
-                                {{cat.display}}
-                            </Label>
-                        </div>
+                    <h3 class="headline-2">Choose Categories (leave blank to run all categories)</h3>
+                    <div class="flex flex-wrap">
+                        <Label class="flex w-1/4 text-left" :stacked="false" v-for="cat in src.categories" :key="'cat-'+cat.value">
+                            <Checkbox :vsValue="cat.value" v-model="options.advancedRules.categories"></Checkbox>
+                            {{cat.display}}
+                        </Label>
                     </div>
                 </template>
 
-                <div class="w-full my-2 flex flex-wrap justify-center">
-                    <Radio :value="'full'" class="mx-auto w-full" v-model="section" :items="[{display:'Full Page Audit', value:'full'}, {display: 'Section Specific Audit', value:'specific'}]" align="center"></Radio>
+                <div class="my-2 flex flex-wrap">
+                    <Radio :value="'full'" class="w-full" v-model="section" :items="[{display:'Full Page Audit', value:'full'}, {display: 'Section Specific Audit', value:'specific'}]"></Radio>
 
                     <template v-if="section == 'specific'">
-                        <h3 class="w-full text-center">Section Specific Audit</h3>
-                        <p class="text-base w-full text-center">If you would like to audit only a section of the page, enter the CSS selector here. *NOTE: This context will be applied to every page</p>
-                        <Label for="context">
+                        <h3 class="headline-2">Section Specific Audit</h3>
+                        <p class="text-base w-full">If you would like to audit only a section of the page, enter the CSS selector here. *NOTE: This context will be applied to every page</p>
+                        <Label class="text-lg subheadline" for="context">
                             Enter a CSS selector or leave blank to scan the whole page
                             <input class="border border-black rounded p-3" placeholder="#main" v-model="options.context" autocomplete="new-password" />
                         </Label>
                     </template>
                     
                 </div>
-                <div class="flex w-full justify-center items-center">
-                    <Radio :value="true" class="mx-auto w-full" v-model="append" :items="[{display:'Append to Current Audit', value:true}, {display: 'Generate as New Audit', value:false}]" align="center"></Radio>
+                <div class="flex w-full items-center">
+                    <Radio :value="true" class="w-full" v-model="append" :items="[{display:'Append to Current Audit', value:true}, {display: 'Generate as New Audit', value:false}]"></Radio>
                 </div>
-                <div class="w-full my-2 flex justify-center">
-                    <Button @click.native.prevent="startScan" color="white">Start Automated Audit</Button>
+                <div class="w-full my-2 flex">
+                    <button class="standard" @click.prevent="startScan" >Start Automated Audit</button>
                 </div>
             </template>
         </div>
@@ -254,6 +248,7 @@ export default {
     },
     created(){},
     mounted(){
+        document.title = "Create New Automated Audit"
         if( this.$store.state.audits.all.length ){
             let that = this
             this.$store.state.audits.audit = this.$store.state.audits.all.find(a=>a.id === parseInt(that.$route.params.id))

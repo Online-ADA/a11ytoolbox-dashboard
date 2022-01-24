@@ -196,6 +196,9 @@ export default {
 					}
 
 					rootState.audits.all.push(re.data.details)
+					if( !rootState.projects.project.audits ){
+						rootState.projects.project.audits = []
+					}
 					rootState.projects.project.audits.push(re.data.details)
 					rootState.overview.refresh.account.audits = true
 					

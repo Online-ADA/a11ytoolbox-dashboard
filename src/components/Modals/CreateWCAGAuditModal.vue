@@ -22,7 +22,7 @@
 					<TextInput :data-validation-failed="failedValidation.includes('title') ? 'invalid-3' : false" required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
 
 					<Label for="audit-scope">Scope of WCAG Audit</Label>
-					<select v-model="audit.scope" class="p-1" id="audit-scope" name="scope">
+					<select v-model="audit.scope" class="p-1 xs:max-w-full" id="audit-scope" name="scope">
 						<option :value="option" v-for="option in scope_options" :key="'scope-option-'+option">{{option}}</option>
 					</select>
 					<template v-if="audit.scope == 'Other'">
@@ -59,7 +59,8 @@
 						:data-validation-failed="failedValidation.includes('domain') ? 'invalid-3' : false" 
 						required 
 						:aria-describedby="failedValidation.includes('domain') ? 'domain-validation' : false" 
-						aria-labelledby="choose_select_heading" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" 
+						aria-labelledby="choose_select_heading" 
+						class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow xs:w-full sm:w-auto" v-model="selectedDomain" 
 						name="choose_domain" 
 						id="choose_select">
 							<option :value="domain.id" v-for="(domain) in $store.state.projects.project.domains" :key="'domain-' + domain.id">
@@ -111,8 +112,8 @@
 
 					<template v-if="isManager">
 						<h2 class="headline-2 pt-7 pb-3">Assign Users</h2>
-						<div class="flex w-full">
-							<Card :gutters="false" class="w-1/2 mr-5">
+						<div class="flex w-full xs:flex-wrap">
+							<Card :gutters="false" class="xs:w-full w-1/2 md:mr-5 sm:mr-5 xs:mb-5">
 								<h3 v-if="isExecutive" class="subheadline">Assign Account Users</h3>
 								<h3 v-if="!isExecutive" class="subheadline">Assign Team Members</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="unassigned.length">
@@ -121,7 +122,7 @@
 									</li>
 								</ul>
 							</Card>
-							<Card :gutters="false" class="w-1/2">
+							<Card :gutters="false" class="xs:w-full w-1/2">
 								<h3 class="subheadline">Assignees</h3>
 								<ul class="overflow-y-auto max-h-60" v-if="assigned.length">
 									<li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">

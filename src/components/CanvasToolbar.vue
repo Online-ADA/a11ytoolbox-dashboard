@@ -1,5 +1,5 @@
 <template>
-    <div id="toolbar-container" :class="classes" class="fixed z-50 w-full h-12">
+    <div>
         <WcagAuditToolbar v-if="tool.type === 'audit'" v-on:classupdate="UpdateClasses"/>
         <MediaAuditToolbar v-if="tool.type === 'media-audit'" v-on:classupdate="UpdateClasses"/>
         <OverviewToolbar v-if="$route.name == 'ProjectShow' || $route.name == 'ClientShow'" v-on:classupdate="UpdateClasses"/>
@@ -8,7 +8,7 @@
 
 
 <script>
-import { EventBus } from '../services/eventBus'
+// import { EventBus } from '../services/eventBus'
 import WcagAuditToolbar from './toolbars/WcagAuditToolbar'
 import MediaAuditToolbar from './toolbars/MediaAuditToolbar'
 import OverviewToolbar from './toolbars/OverviewToolbar'

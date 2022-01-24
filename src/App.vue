@@ -70,6 +70,7 @@ import Modal from './components/Modal'
 import Btn from './components/Button'
 import Cookies from 'js-cookie'
 import { EventBus } from "./services/eventBus"
+// import Utility from "./services/utility.js"
 import CreateClientModal from "./components/Modals/CreateClientModal"
 import CreateProjectModal from "./components/Modals/CreateProjectModal"
 import CreateWCAGAuditModal from "./components/Modals/CreateWCAGAuditModal"
@@ -105,6 +106,26 @@ export default {
 				EventBus.$emit("close-dropdown", dropdown)
 			}
 			
+		},
+		checkMobileNoOverflow(){
+			if( window.screen.width < 1024 ){
+				let body = document.querySelector("body")
+				if( body.classList.contains("mobile-no-overflow") ){
+					body.classList.remove("mobile-no-overflow")
+				}else{
+					body.classList.add("mobile-no-overflow")
+				}
+			}
+		},
+		showHideContent(){
+			if( window.screen.width < 1024 ){
+				let content = document.querySelector("#content")
+				if( content.classList.contains("hidden") ){
+					content.classList.remove("hidden")
+				}else{
+					content.classList.add("hidden")
+				}
+			}
 		}
 		// refreshSession(){
 		// 	this.$store.dispatch('auth/resetToken', this.$router.history.current.path)
@@ -158,6 +179,12 @@ export default {
 		// },
 	},
 	watch: {
+		// "$store.state.auth.user.meta":function(newVal){
+		// 	console.log("USER META IS CHANGING", newVal);
+		// 	if( Object.keys(newVal).includes("audit") ){
+		// 		Utility.reviveUserAuditMetaFunction(newVal, this)
+		// 	}
+		// },
 		"$store.state.clients.client": function(newVal){
 			this.$store.state.audits.all = []
 			this.$store.state.projects.project = false
@@ -180,7 +207,7 @@ export default {
 				}
 			}
 		},
-		"$route.path": function(newVal){
+		"$route.path": function(){
 			if( this.$route.matched[0].path == '/audits' ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"audit", info:""}
@@ -201,10 +228,16 @@ export default {
 		}
 	},
 	created() {
+		if( window.screen.width < 1024 ){
+			this.sidebarExpanded = false
+		}
 	},
 	mounted() {
 		this.$root.$on('menuClick', (menuOpen) => {
 			this.sidebarExpanded = menuOpen;
+			
+			this.checkMobileNoOverflow()
+			this.showHideContent()
 		} );
 		if( this.$route.path == "/projects/create" ){
 			this.$store.state.projects.project = false
@@ -233,6 +266,7 @@ export default {
 		})
 		EventBus.$on("showInfoSidebar", ()=>{
 			this.infoSidebarExpanded = !this.infoSidebarExpanded
+			that.checkMobileNoOverflow()
 		})
 
 		//Meta Events
@@ -372,6 +406,13 @@ export default {
 }
 #toolbar-container.search-bar-open + #main-content{
 	margin-top:85px;
+}
+
+@media only screen and (min-width:320px) and (max-width:1024px){
+	.info-sidebar{
+		top:205px;
+		max-height:calc(100vh - 205px);
+	}
 }
 
 </style>

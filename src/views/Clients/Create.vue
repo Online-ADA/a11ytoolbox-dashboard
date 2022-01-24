@@ -59,6 +59,7 @@ export default {
 	created() {
 	},
 	mounted() {
+		document.title = "Create New Client"
 	},
 	components: {
 		Loader,

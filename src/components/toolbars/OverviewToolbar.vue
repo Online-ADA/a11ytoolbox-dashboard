@@ -1,5 +1,5 @@
 <template>
-    <div id="toolbar-container" class="fixed z-50 w-full h-12" >
+    <div id="toolbar-container" class="fixed xs:absolute sm:absolute z-50 w-full xs:h-auto sm:h-auto h-12">
         <div id="toolbar" class="w-full pl-4 p-2 shadow-custom bg-white">
             <div class="flex items-center justify-end">
                 <div class="flex items-center text-13">
