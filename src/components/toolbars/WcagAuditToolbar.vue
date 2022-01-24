@@ -71,7 +71,7 @@
                     <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
                     <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
                     <router-link class="xs:ml-0 ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues to This Audit"><i class="far fa-file-import"></i></router-link>
-                    <router-link class="xs:ml-0 ml-3.5" :to="{path: `/scan/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
+                    <router-link class="xs:ml-0 ml-3.5" :to="{path: `/automations/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
 
                     <button title="Mark Audit Complete" v-if="!audit.locked" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-complete', $event)"><i class="fas fa-lock-open-alt"></i></button>
                     <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-next', $event)"><i class="far fa-hand-point-right"></i></button>
