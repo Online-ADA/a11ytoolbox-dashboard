@@ -52,6 +52,7 @@ if( window.location.hostname == "toolboxdashboardd.ngrok.io" ){
   apiHost = "https://toolboxapii.ngrok.io"
   accountHost = "https://oadaaccountss.ngrok.io"
   site = "toolboxdashboardd.ngrok.io"
+  dashboard = "https://oadadashboardd.ngrok.io"
 }
 
 store.state.auth.site = site
@@ -60,14 +61,13 @@ store.state.auth.toolboxapi = apiHost
 store.state.auth.API = `${apiHost}/api`
 store.state.auth.dashboard = dashboard
 
-window.App = new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
-
-function run(){
-  Request.getPromise(store.state.auth.API+'/state/init')
+async function run(){
+  window.App = new Vue({
+    router,
+    store,
+    render: h => h(App)
+  }).$mount('#app')
+  await Request.getPromise(store.state.auth.API+'/state/init',{async:true})
     .then( response => { 
       //If we are logged into the accounts dashboard
       store.state.auth.user = response.data.details.user
@@ -99,7 +99,6 @@ function run(){
             if(store.state.clients.client){
               Cookies.set('toolboxClient', store.state.clients.client.id, 365)
             }
-            
           }
           if( !clientID && store.state.clients.all.length){
             //If the toolboxClient cookie was not set but there are clients in the vuex store, set the global selected client and the toolboxClient cookie to the first client
@@ -107,13 +106,12 @@ function run(){
             Cookies.set('toolboxClient', store.state.clients.client.id, 365)
           }
           store.state.auth.checkTokenExpire()
-          runBeforeEach()
         })
         .catch()
       }else{
-        runBeforeEach()
+        console.log('here')
+        //TODO: What do we do here now that we are checking for licenes?
       }
-      
     })
     .catch(re => {
       if( !params.get('oada_auth') ){
@@ -122,69 +120,70 @@ function run(){
         }
       }
     })
+    router.beforeEach( (to, from, next) => {
+      //Let's do nothing if it's hitting the authentication route. Everything is handled within and will run us back through here once authentication attempt is completed
+      if(to.name == 'auth') {
+        next()
+        return
+      }
+      //Route Heirarchy:check account has been selected, check roles and permissions, then check roles, then check permissions, then check logged in
+      if( !store.getters["auth/account"] && to.path != "/" ){
+        next("/")
+        return
+      }
+      //TODO: We need a way to validate A: the license parameter exists in the url and B: that the license id is indeed a valid number. 
+      if(!to.params.license) {
+        // window.location = store.state.auth.dashboard+'/toolbox'
+        //TODO: If license param is NOT valid we need to redirect to api or accounts to grab the first toolbox license available and validate access altogether ??
+      }
+      // let account = store.state.auth.accounts.find(acc=>acc.id == store.state.auth.account)
+      let teamCheck = store.getters["auth/account"].pivot.team_id === to.meta.team || store.getters["auth/account"].pivot.team_id === 1
+      let roleCheck = store.getters["auth/account"].pivot.role_id <= to.meta.role
+      
+      if( to.meta.role != undefined && to.meta.team != undefined ){
+        //check for role and teams
+        if( roleCheck && teamCheck ){
+          next()
+          return
+        }else{
+          store.state.auth.authMessage = "Incorrect role and team"
+          next("/")
+          return
+        }
+      }
+      if( to.meta.role != undefined ){
+        console.log("This should be checking for role");
+        //check roles
+        if( roleCheck ){
+          next()
+          return
+        }else{
+          store.state.auth.authMessage = store.state.auth.authMessages.incorrect_role
+          next("/")
+          return
+        }
+      }
+      if( to.meta.team != undefined ){
+        //check for permissions or redirect to login
+        if( teamCheck ){
+          next()
+          return
+        }else{
+          store.state.auth.authMessage = "Incorrect team"
+          next("/")
+          return
+        }
+      }
+      if( store.getters['auth/isAuthenticated'] ){
+        next()
+        return
+      }
+      if( to.path != "/" ){
+        next("/")
+        return
+      }
+      next()
+    })
+
 }
 run()
-
-function runBeforeEach(){
-  router.beforeEach( (to, from, next) => {
-    //Route Heirarchy:check account has been selected, check roles and permissions, then check roles, then check permissions, then check logged in
-    if( !store.getters["auth/account"] && to.path != "/" ){
-      next("/")
-      return
-    }
-
-    // let account = store.state.auth.accounts.find(acc=>acc.id == store.state.auth.account)
-    let teamCheck = store.getters["auth/account"].pivot.team_id === to.meta.team || store.getters["auth/account"].pivot.team_id === 1
-    let roleCheck = store.getters["auth/account"].pivot.role_id <= to.meta.role
-    
-    if( to.meta.role != undefined && to.meta.team != undefined ){
-      //check for role and teams
-      
-      if( roleCheck && teamCheck ){
-        next()
-        return
-      }else{
-        store.state.auth.authMessage = "Incorrect role and team"
-        next("/")
-        return
-      }
-    }
-    
-    if( to.meta.role != undefined ){
-      console.log("This should be checking for role");
-      //check roles
-      if( roleCheck ){
-        next()
-        return
-      }else{
-        store.state.auth.authMessage = store.state.auth.authMessages.incorrect_role
-        next("/")
-        return
-      }
-    }
-
-    if( to.meta.team != undefined ){
-      //check for permissions or redirect to login
-      
-      if( teamCheck ){
-        next()
-        return
-      }else{
-        store.state.auth.authMessage = "Incorrect team"
-        next("/")
-        return
-      }
-    }
-
-    if( store.getters['auth/isAuthenticated'] ){
-      next()
-      return
-    }
-    
-    if( to.path != "/" ){
-      next("/")
-      return
-    }
-    next()
-  })
-}

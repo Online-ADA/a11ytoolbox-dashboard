@@ -74,13 +74,22 @@ export default {
     },
     methods: {
         updateMediaAudit(item) {
-            this.$router.push({path: `/media-audits/${item.id}`})
+            this.$router.push({
+                name: 'MediaAuditShow',
+                params: {
+                    license: this.$route.params.license,
+                    id: item.id
+                }
+            })
         },
         updateAudit(item){
-            this.$router.push({path: this.getRoute(item)})
-        },
-        getRoute(item){
-            return "/audits/" + item.id
+            this.$router.push({
+                name: 'AuditShow',
+                params: {
+                    license: this.$route.params.license,
+                    id: item.id
+                }
+            })
         },
         getTitle(item){
             return item.title

@@ -48,7 +48,13 @@ export default {
         },
         setCurrentProject(id){
             this.$store.state.projects.project = this.projects.find(p=>p.id === id)
-            this.$router.push({path:`/projects/${id}`})
+            this.$router.push({
+                name: 'ProjectShow',
+                params: {
+                    license: this.$route.params.license,
+                    id: id
+                }
+            })
         },
     },
     computed: {

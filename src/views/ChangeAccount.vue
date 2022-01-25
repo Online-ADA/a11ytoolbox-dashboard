@@ -39,10 +39,9 @@ export default {
     },
     computed:{
         accountsWithRole(){
-            var that = this;
             //Return the accounts where the key of the accountsRoles includes the ID of the current account
-            
-            let accountsRoles = Object.keys(that.$store.state.auth.accountsRoles)
+            console.log(this.$store.state.auth)
+            let accountsRoles = Object.keys(this.$store.state.auth.accountsRoles)
             return this.$store.state.auth.accounts.filter( (acc)=>{
                 return accountsRoles.includes(acc.id.toString())
             })

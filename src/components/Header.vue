@@ -1,6 +1,6 @@
 <template>
     <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full fixed px-4 py-2 shadow-custom overflow-visible">
-        <router-link class="block" :to="{path:'/'}"><img alt="Ally Toolbox by Online ADA" src="../assets/logo-toolbox.png" /></router-link>
+        <router-link class="block" :to="{path:'/'+$route.params.license}"><img alt="Ally Toolbox by Online ADA" src="../assets/logo-toolbox.png" /></router-link>
         <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
         <div class="flex items-center">
@@ -41,18 +41,18 @@
             <ul class="text-left mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <template v-if="isManager">
                     <li class="hover:bg-pallette-grey-light">
-                        <router-link class="hover:text-gray-500 block" :to="'/manage/articles'">
+                        <router-link class="hover:text-gray-500 block" :to="'/'+$route.params.license+'/manage/articles'">
                             <span>Success Criteria</span>
                         </router-link>
                     </li>
                     <li class="hover:bg-pallette-grey-light">
-                        <router-link class="hover:text-gray-500 block" :to="'/manage/users'">
+                        <router-link class="hover:text-gray-500 block" :to="'/'+$route.params.license+'/manage/users'">
                             <span>Users</span>
                         </router-link>
                     </li>
                 </template>
                 <li>
-                    <router-link :to="'/domains'" class="hover:text-gray-500 block"><span>Domains</span></router-link>
+                    <router-link :to="'/'+$route.params.license+'/domains'" class="hover:text-gray-500 block"><span>Domains</span></router-link>
                 </li>
             </ul>
             <span id="management-label" class="sub-label text-white uppercase">Settings</span>
@@ -67,7 +67,7 @@
             <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
                     <template v-if="child.type == 'router-link'">
-                        <router-link class="hover:text-gray-500 block" :to="child.to"><span class="sm:text-right" v-html="child.label"></span></router-link>
+                        <router-link class="hover:text-gray-500 block" :to="GoToDropdown(child)"><span class="sm:text-right" v-html="child.label"></span></router-link>
                     </template>
                     <template v-if="child.type == 'logout'">
                         <A href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
@@ -78,7 +78,7 @@
             <span class="sub-label text-white">{{account}}</span>
         </div>
 
-        <router-link aria-label="Go to user profile" to="/user/profile"><img alt="User Avatar" :src="user_avatar" class="avatar" /></router-link>
+        <router-link aria-label="Go to user profile" :to="profileLink"><img alt="User Avatar" :src="user_avatar" class="avatar" /></router-link>
     </div>
 </template>
 
@@ -146,7 +146,10 @@ export default {
         },
         isManager(){
             return this.$store.getters['auth/isManager']
-        }
+        },
+        profileLink() {
+            return `/${this.$route.params.license}/user/profile`
+        },
     },
     watch: {
         "$store.state.auth.accounts":function(newVal){
@@ -156,6 +159,9 @@ export default {
         }
     },
     methods: {
+        GoToDropdown(item) {
+            return `/${this.$route.params.license}${item.to}`
+        },
         launchCreateClientModal($ev){
             EventBus.openModal('createClientModal', document.querySelector(".client-dropdown"))
         },
@@ -181,9 +187,14 @@ export default {
         },
         setClient(id){
             this.$store.state.projects.project = false
-            let that = this
             this.$store.dispatch("clients/getClient", {id: id, callback: (()=>{
-                that.$router.push({path: `/clients/${id}`})
+                this.$router.push({
+                    name: 'ClientShow',
+                    params: {
+                        license: this.$route.params.license,
+                        id: id
+                    }
+                })
             })})
         }
     },

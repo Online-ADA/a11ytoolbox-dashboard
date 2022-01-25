@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import Vue from 'vue'
-
+import router from '../../router'
 //The only cookie that dictates whether the user should be logged in or not is the oada_UID. This is saved as the Token and it's lifetime is what is checked against 
 //for whether the user should be redirected
 
@@ -143,7 +143,7 @@ export default {
         state.redirect = redirect
       }
       Cookies.set("loggingIn", true)
-      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth"
+      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/123/auth"
     },
     setToken({state, dispatch}, payload){
       state.dispatch = dispatch
@@ -157,12 +157,12 @@ export default {
       state.checkTokenExpire(state)
 
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
+      dispatch("check")
       if(payload.redirect) {
         payload.router.push({path: payload.redirect})
       }else{
         payload.router.push({path: state.redirect})
       }
-      dispatch("check")
     },
     logout({state, dispatch}){
       state.token = false
