@@ -470,10 +470,15 @@ export default {
     methods: {
         setAllIssues(){
             //This function is necessary to determine what is being added to the primary audit
-            if( !this.audits.length ){
-                return []
-            }
-
+            /**
+             * TODO: Make sure we absolutely do not need this conditional
+             * This check was breaking the import in the case where:
+             * A: The primary audit had 0 issues
+             * B: The project had only one audit which is the primary audit
+             **/
+            // if( !this.audits.length ){
+            //     return []
+            // }
             let all = [...this.audits.map( a =>  a.issues).flat(), ...this.temporary_audits.map(a => a.issues).flat()]
 
             var x = 0, l = all.length;
