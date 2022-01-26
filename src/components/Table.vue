@@ -264,6 +264,8 @@
 						//if this is the primary audit
 						if( this.audit_id == this.$route.params.id ){
 							return this.$store.state.audits.audit.issue_count
+						}else if(typeof this.audit_id === 'string' && this.audit_id.includes('_temp_')){
+							return this.$store.state.audits.temporary_audits.find(a=>a.id == this.audit_id).issue_count
 						}else{
 							return this.$store.state.projects.project.audits.find(a=>a.id == this.audit_id).issue_count
 						}
