@@ -22,6 +22,7 @@ const CheckAuditState = (state,id,api,account) => {
 const getDefaultState = () => {
 	return {
 		all: [],
+		temporary_audits: [],
 		audit: false,
 		team_members: [],
 		loading: false,
@@ -51,6 +52,7 @@ export default {
 		namespaced:true,
 		state: {
 			all: [],
+			temporary_audits: [],
 			audit: false,
 			team_members: [],
 			loading: false,
@@ -101,7 +103,7 @@ export default {
 				})
 				.then( ()=> state.loading = false)
 			},
-			uploadIssuesCSV({rootState}, args){
+			uploadIssuesCSV({rootState,state}, args){
 				let form_data = new FormData()
 				form_data.append('upload', args.file)
 				let myHeaders = {...Vue.prototype.$http.defaults.headers.common, 'Content-Type': 'multipart/form-data'}
@@ -115,11 +117,12 @@ export default {
 					})
 					
 					let newTemp = {
-						id: generateUniqueID(args.vm.audits.map(a=>a.id)),
-						title: "Temp CSV upload #" + (args.vm.tempAudits.length+1),
-						issues: re.data.details
+						id: `_temp_${generateUniqueID(args.vm.audits.map(a=>a.id))}`,
+						title: "Temp CSV upload #" + (state.temporary_audits.length+1),
+						issues: re.data.details,
+						issue_count: re.data.details.length
 					}
-					args.vm.tempAudits.push(newTemp)
+					state.temporary_audits.push(newTemp)
 				})
 				.catch()
 				.then()

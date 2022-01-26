@@ -11,7 +11,14 @@
         </div>
         <div class="w-1/4"></div>
     </div>
-
+    <div class="mb-5 w-full flex">
+        <div class="w-1/4"></div>
+        <div class="w-1/2 flex flex-wrap justify-center">
+            <h3 class="text-base font-bold w-full">Choose which temporary audits to compare</h3>
+            <Btn v-for="(audit, index) in temporary_audits" :key="'showTempAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'orange' : 'white'" :hover="true">{{audit.title}}</Btn>
+        </div>
+        <div class="w-1/4"></div>
+    </div>
     <!-- <button v-show="!showImportingIssues" @click.prevent="showImportingIssues = true">Show Issues to Import</button> -->
     <!-- <div class="w-1/3 border border-black ml-1.5 p-5" v-show="showImportingIssues">
         <div class="flex justify-between">
@@ -54,10 +61,15 @@
                 </div>
                 
                 <Table 
+                v-if="audit.id !== primaryAudit.id"
                 :importing="true" 
-                :issuesTable="true" 
-                v-if="audit.id !== primaryAudit.id" 
+                :issuesTable="true"
                 :audit_id="audit.id"
+                :defaultSortData='{
+                    columns: ["id"],
+                    orders: ["asc"],
+                    reference: ["id"]
+                }'
                 :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" 
                 :condense="true" ref="issuesTable" 
                 :selected="selectedAuditRows" 
@@ -68,12 +80,17 @@
                 :headersData="headers"></Table>
                 
                 <Table 
+                v-else
                 :importing="true" 
                 :issuesTable="true"
                 :audit_id="primaryAudit.id"
+                :defaultSortData='{
+                    columns: ["id"],
+                    orders: ["asc"],
+                    reference: ["id"]
+                }'
                 :specialRows="primaryAuditIssues.filter( i=> !issuesToImport.includes(i.issue_number)).map( i=>i.issue_number)" 
-                class="primary-audit-table" 
-                v-else 
+                class="primary-audit-table"
                 :class="[ auditFullscreen === audit.id ? 'max-height-800' : 'max-height-615' ]" 
                 :condense="true" ref="issuesTable" 
                 :rowsData="primaryAuditIssues" 
@@ -149,7 +166,6 @@ export default {
         issuesToImport: [],
         CSVFile: false,
         uploadCSVModalOpen: false,
-        tempAudits: [],
         audits: [],
         showingAudits: [],
         primaryAuditIssues: [],
@@ -165,9 +181,12 @@ export default {
         },
         filteredAudits(){
             let self = this
-            let all = [this.primaryAudit, ...this.audits]
+            let all = [this.primaryAudit, ...this.audits,...this.temporary_audits]
             
             return all.filter( a => self.showingAudits.includes(a.id) )
+        },
+        temporary_audits() {
+            return this.$store.state.audits.temporary_audits
         },
         headers(){
             let parsed = [
@@ -369,7 +388,7 @@ export default {
                     hidePermanent: false
                 },
                 {
-                    key: "audito_notes",
+                    key: "auditor_notes",
                     display: "auditor notes",
                     show: true,
                     sticky: false,
@@ -437,11 +456,16 @@ export default {
                 // this.primaryAuditIssues = [...importing, ...this.primaryAudit.issues]
             }
         },
-        tempAudits(newVal){
-            if( newVal ){
-                this.audits == [ ...this.audits, ...this.tempAudits ]
-            }
-        }
+        temporary_audits: {
+            deep:true,
+            handler(newVal) {
+                if( !newVal ){
+                    return
+                }
+                //Set all temp audits issues
+                this.setAllIssues()
+            },
+        },
     },
     methods: {
         setAllIssues(){
@@ -450,7 +474,7 @@ export default {
                 return []
             }
 
-            let all = this.audits.map( a =>  a.issues).flat()
+            let all = [...this.audits.map( a =>  a.issues).flat(), ...this.temporary_audits.map(a => a.issues).flat()]
 
             var x = 0, l = all.length;
             while (x < l) {
