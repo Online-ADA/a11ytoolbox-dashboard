@@ -3,13 +3,13 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import Axios from 'axios'
-import Cookies from 'js-cookie'
 import Notifications from 'vue-notification'
 import request from './services/request'
 import VueLodash from 'vue-lodash'
 import orderBy from 'lodash/orderBy'
 import cloneDeep from 'lodash/cloneDeep'
 import VueDragscroll from 'vue-dragscroll'
+import Cookies from './services/cookies'
 
 Vue.use(VueDragscroll)
 Vue.use(VueLodash, { lodash: { orderBy, cloneDeep } })
@@ -32,6 +32,7 @@ if( Cookies.get("loggingIn") == undefined ){
 }
 
 const params = new URLSearchParams(window.location.search)
+const license_id = window.location.pathname.split('/')[1]
 
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
@@ -60,33 +61,23 @@ store.state.auth.accapi = accountHost
 store.state.auth.toolboxapi = apiHost
 store.state.auth.API = `${apiHost}/api`
 store.state.auth.dashboard = dashboard
-
 async function run(){
   window.App = new Vue({
     router,
     store,
     render: h => h(App)
   }).$mount('#app')
-  await Request.getPromise(store.state.auth.API+'/state/init',{async:true})
+  await Request.getPromise(store.state.auth.API+'/state/init',{async:false,params:{license:license_id}})
     .then( response => { 
       //If we are logged into the accounts dashboard
-      store.state.auth.user = response.data.details.user
-      store.state.auth.accounts = response.data.details.accounts
+      //TODO: This will be returning simplly a license, and a user. the account will be abstracted out of the license object returned.
+      store.commit('auth/setState',{key:'user',value:response.data.details.user})
+      store.commit('auth/setState',{key:'license',value:response.data.details.license})
+      store.commit('auth/setState',{key:'account',value:parseInt(response.data.details.license.account.id)})
 
-      //If there is no cookie set for the current account, set it to the first stored vuex accounts
-      if( Cookies.get("toolboxAccount") === undefined ){
-        Cookies.set("toolboxAccount", parseInt(store.state.auth.accounts[0].id))
-      }
-
-      //If the stored vuex account is not set, set it to the toolboxAccount cookie
-      if( store.state.auth.account === false ){
-        store.state.auth.account = Cookies.get("toolboxAccount")
-      }
-      
-      let accountID = Cookies.get("toolboxAccount")
-      if( accountID ){
+      if( store.state.auth.account ){
         //If the account ID is set, then go get all the clients on the account
-        Request.getPromise(store.state.auth.API+`/${accountID}/clients`)
+        Request.getPromise(store.state.auth.API+`/${store.state.auth.account}/clients`)
         .then( response => {
           
           store.state.clients.all = response.data.details

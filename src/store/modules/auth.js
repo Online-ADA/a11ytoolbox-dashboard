@@ -1,5 +1,5 @@
 import axios from 'axios'
-import Cookies from 'js-cookie'
+import Cookies from '../../services/cookies'
 import Vue from 'vue'
 import router from '../../router'
 //The only cookie that dictates whether the user should be logged in or not is the oada_UID. This is saved as the Token and it's lifetime is what is checked against 
@@ -19,7 +19,7 @@ export default {
     token_expire: Cookies.get('oada_UID_expire') || false,
     token_check_every: 600000, //2 minutes = 120000, 600000 = 10 minutes
     account: parseInt(Cookies.get('toolboxAccount')) || false,
-    accounts: [],
+    license: parseInt(Cookies.get('toolboxLicense')) || false,
     authMessage: "",
     authMessages: {
       incorrect_role: "You do not have the required role",
@@ -82,6 +82,9 @@ export default {
       if(payload.key == 'account'){
         Cookies.set('toolboxAccount', payload.value, 365)
       }
+      if(payload.key == 'license'){
+        Cookies.set('toolboxLicense', payload.value.id, 365)
+      }
       Vue.set(state,payload.key,payload.value)
     },
     setAuthState(state,payload) {
@@ -94,12 +97,14 @@ export default {
       Request.getPromise(state.API+'/state/init')
       .then( response => {
         state.user = response.data.details.user
-        state.accounts = response.data.details.accounts
+        // state.accounts = response.data.details.accounts
         
         //If account cookie is not set, then set it to the first account returned
         if( Cookies.get("toolboxAccount") === undefined ){
-          Cookies.set("toolboxAccount", parseInt(state.accounts[0].id))
+          //TODO: No longer assigning accounts. we are loading single license and the account it belongs to.
+          // Cookies.set("toolboxAccount", parseInt(state.accounts[0].id))
         }
+        //TODO: Set the license
 
         //If the vuex store for the account is not set, retrieve it from the cookie
         if( state.account === false ){
@@ -141,9 +146,12 @@ export default {
       console.log("Running login...");
       if( redirect ){
         state.redirect = redirect
+      }else{
+        state.redirect = `/${router.currentRoute.params.license}`
       }
       Cookies.set("loggingIn", true)
-      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/123/auth"
+      let oada_auth_route = `/${router.currentRoute.params.license}/auth`
+      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route="+oada_auth_route
     },
     setToken({state, dispatch}, payload){
       state.dispatch = dispatch
@@ -168,7 +176,6 @@ export default {
       state.token = false
       state.token_expire = false
       state.account = false
-      state.accounts = []
       state.user = false
       state.token_check_interval = 600000
       
@@ -176,6 +183,7 @@ export default {
       Cookies.remove('oada_UID_expire')
       Cookies.remove('toolboxAccount')
       Cookies.remove('toolboxClient')
+      Cookies.remove('toolboxLicense')
 
       dispatch("audits/resetState", null, {root: true})
       dispatch("clients/resetState", null, {root: true})
@@ -204,7 +212,6 @@ export default {
       //User role/team info is now stored on the account
       //Teams: 1 = Executive, 2 = Development, 3 = Design, 4 = Customer Service
       //The auth.account getter houses the current users's team and role
-      
       if( getters.isAuthenticated && getters.account ){
         if( getters.account.pivot.team_id === 1 ){
           return true
@@ -216,15 +223,14 @@ export default {
       return false
     },
     account: (state)=> {
-      let account = state.accounts.find( acc => acc.id == state.account)
-      if( account !== undefined ){
-        return account
+      if( state.license && state.license.account ){
+        return state.license.account
       }
-      if( !account && state.accounts.length ){
-        Cookies.set('toolboxAccount', state.accounts[0])
-        state.account = state.accounts[0]
-        return state.accounts[0]
-      }
+      // if( !account && state.accounts.length ){
+      //   Cookies.set('toolboxAccount', state.accounts[0])
+      //   state.account = state.accounts[0]
+      //   return state.accounts[0]
+      // }
       return false
     }
   },

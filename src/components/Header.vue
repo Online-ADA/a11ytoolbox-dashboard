@@ -74,7 +74,6 @@
                     </template>
                 </li>
             </ul>
-            
             <span class="sub-label text-white">{{account}}</span>
         </div>
 
@@ -98,11 +97,6 @@ export default {
                     label: 'Logout',
                     to: 'auth/logout'
                 },
-                {
-                    type: 'router-link',
-                    label: 'Accounts',
-                    to: '/account'
-                }
             ],
             menuOpen: true,
             dropdownsExpanded: []
@@ -110,14 +104,15 @@ export default {
     },
     name: 'ada-header',
     mounted(){
-        if( this.$store.state.auth.accounts !== false && this.$store.state.auth.accounts.length ){
-            this.updateAccountName()
-        }
+        //TODO: This is also only relavent now if the license is updated. 
+        // if( this.$store.state.auth.accounts !== false && this.$store.state.auth.accounts.length ){
+        //     this.updateAccountName()
+        // }
     },
     computed: {
         account(){
-            if( this.$store.state.auth.account && this.$store.state.auth.accounts.length ){
-                return this.$store.state.auth.accounts.find(acc=>acc.id == this.$store.state.auth.account).name
+            if( this.$store.getters['auth/account'] ){
+                return this.$store.getters['auth/account'].name
             }
             return ""
         },
@@ -152,11 +147,12 @@ export default {
         },
     },
     watch: {
-        "$store.state.auth.accounts":function(newVal){
-            if( newVal !== false && newVal.length ){
-                this.updateAccountName()
-            }
-        }
+        //TODO: This would apply if the license is changed? There is currently no in app navigation that allows the license to change
+        // "$store.state.auth.accounts":function(newVal){
+        //     if( newVal !== false && newVal.length ){
+        //         this.updateAccountName()
+        //     }
+        // }
     },
     methods: {
         GoToDropdown(item) {
@@ -179,7 +175,7 @@ export default {
             }
         },
         updateAccountName(){
-            this.userDropdown[0].label = this.$store.state.auth.accounts.find(acc=>acc.id == this.$store.state.auth.account).name
+            if(this.account) this.userDropdown[0].label = this.account.name
         },
         menuClick() {
             this.menuOpen = !this.menuOpen;

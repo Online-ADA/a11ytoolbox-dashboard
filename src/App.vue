@@ -68,7 +68,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import SecondarySidebar from '@/components/SecondarySidebar.vue'
 import Modal from './components/Modal'
 import Btn from './components/Button'
-import Cookies from 'js-cookie'
+import Cookies from './services/cookies'
 import { EventBus } from "./services/eventBus"
 // import Utility from "./services/utility.js"
 import CreateClientModal from "./components/Modals/CreateClientModal"

@@ -30,7 +30,7 @@
               {{domainRecommendations.length}} of your domains <template v-if="domainRecommendations.length !== 1">do</template><template v-else>does</template> not have a sitemap yet
             </div>
             <div v-for="domain in domainRecommendations" :key="`domain-rec-${domain.id}`" class="mt-2">
-              <button role="link" @click="$router.push({path: `/domains/${domain.id}/edit`})" class="standard">Create</button> sitemap for {{domain.url}}
+              <button role="link" @click="$router.push({path: `${$route.params.license}/domains/${domain.id}/edit`})" class="standard">Create</button> sitemap for {{domain.url}}
             </div>
           </template>
           <template v-else>There are no recommendations at this time</template>
