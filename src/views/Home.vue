@@ -3,7 +3,7 @@
     <Loader v-if="$store.state.clients.loading || !$store.getters['auth/isAuthenticated']"></Loader>
 
     <div v-if="message" class="text-red-600">{{message}}</div>
-    <h1 class="mb-5 headline">Account Overview</h1>
+    <h1 class="mb-5 headline">License Overview</h1>
     <div class="flex xs:flex-wrap sm:flex-nowrap">
       <div class="md:w-1/2 sm:w-full flex flex-col md:mr-5">
         <Card class="mb-5" :center="false" :gutters="false">
@@ -101,9 +101,6 @@ export default {
 
       return data
     },
-    // total(){
-    //   return this.$store.state.auth.token_total_minutes_remaining
-    // },
     account(){
       return this.$store.getters["auth/account"]
     },
@@ -145,9 +142,6 @@ export default {
     "$store.state.projects.all":function(){
       this.$store.state.overview.refresh.account.audits = true
     },
-    // "$store.state.overview.refresh.account.projects":function() {
-    //   console.log("firing", this.$store.state.projects.project.audits);
-    // },
     "$store.state.overview.refresh.account.audits":function(newVal) {
       //Refreshes the number of audits on the account when the overview refresh property is triggered true
       if( newVal ){

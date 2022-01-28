@@ -3,7 +3,7 @@
         <Loader v-if="loading"></Loader>
         <div class="flex w-full my-4">
             <Card :center="false" class="xs:w-full w-2/3 relative">
-                <h2 class="mb-2 headline">Success Critera</h2>
+                <h2 class="mb-2 headline">Success Criteria</h2>
                 <button aria-label="Add new success criterion" @click="displayArticlePopup(newItem({item: newArticle, extra: 'article'}))" type="button" class="absolute bg-pallette-green mr-4 mt-4 px-2.5 py-1 right-0 rounded text-small text-white top-0">+</button>
                 <template v-if="!loading && articles.length">
                     <SearchList :dataSendBack="'article'" @click="displayArticlePopup" hover-effect="grow" :displayProps="['title', 'number', 'description']" :items="articles"></SearchList>

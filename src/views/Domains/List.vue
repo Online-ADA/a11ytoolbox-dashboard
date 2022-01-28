@@ -9,7 +9,7 @@
                     <span class="mr-3">
                         {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template>
                     </span>
-                    <router-link class="standard mr-3" :to="{path: `/domains/${domain.id}/edit`}">
+                    <router-link class="standard mr-3" :to="{path: `/${$route.params.license}/domains/${domain.id}/edit`}">
                         Edit
                         <span class="sr-only"> domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span>
                     </router-link>

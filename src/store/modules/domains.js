@@ -43,7 +43,7 @@ export default {
 			// },
 			deleteDomain({state, rootState}, args){
 				state.loading = true
-				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}`)
+				Request.destroyPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.domain_id}`)
 				.then( re => {
 					state.loading = false
 					state.all = re.data.details
@@ -70,7 +70,7 @@ export default {
 			},
 			createDomain({state, rootState}, args){
 				state.loading = true;
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains`, {
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains`, {
 					params: {
 						domain: args.domain
 					}
@@ -94,7 +94,7 @@ export default {
 			},
 			saveRoot({state, rootState}, args){
 				state.loading = true;
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/root`, {
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}/root`, {
 					params: {
 						root: args.root
 					}
@@ -112,7 +112,7 @@ export default {
 			
 			getDomains({state, rootState}, args){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/`, {
+				Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/`, {
 					params: {
 						project_id: args.project_id
 					}
@@ -125,7 +125,7 @@ export default {
 			},
 			generateSample({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}/items`, {params: {items: args.items}})
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.domain_id}/items`, {params: {items: args.items}})
 				.then( re=>{
 					state.domain.sample = re.data.details
 				})
@@ -134,7 +134,7 @@ export default {
 			},
 			updateStructuredSampleItem({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.item.domain_id}/item/${args.item.id}`, {params: args.item})
 				.then( re=>{
 					if( !Request.muted() ){
 						Vue.notify({
@@ -187,7 +187,7 @@ export default {
 						position: 'bottom right'
 					}
 				};
-				Request.get(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}`, requestArgs)
+				Request.get(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}`, requestArgs)
 			},
 			addPageToSitemap({state, rootState}, args){
 				state.loading = true
@@ -196,7 +196,7 @@ export default {
 						page: args.page
 					}
 				}
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.page.domain_id}/page`, requestArgs)
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.page.domain_id}/page`, requestArgs)
 				.then( (response) => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -226,7 +226,7 @@ export default {
 			},
 			removeItemFromSample({state, rootState}, args){
 				state.loading = true
-				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}/item/${args.item_id}`)
+				Request.destroyPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.domain_id}/item/${args.item_id}`)
 				.then( (response) => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -254,7 +254,7 @@ export default {
 			},
 			removePageFromSitemap({state, rootState}, args){
 				state.loading = true
-				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.domain_id}/page/${args.page_id}`)
+				Request.destroyPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.domain_id}/page/${args.page_id}`)
 				.then( (response) => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -299,7 +299,7 @@ export default {
 					}
 				}
 
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sample`, requestArgs)
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}/sample`, requestArgs)
 				.then( re=>{
 					state.domain = re.data.details
 				})
@@ -312,7 +312,7 @@ export default {
 			},
 			generateSitemap({rootState,state},args) {
 				state.loading = true 
-				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sitemapGenerate`)
+				Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}/sitemapGenerate`)
 				.then( (response) => {
 					if( !Request.muted() ){
 						if(response.data.success == '1') {
@@ -380,11 +380,11 @@ export default {
 						position: 'bottom right'
 					}
 				};
-				Request.post(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sitemap`, requestArgs)
+				Request.post(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}/sitemap`, requestArgs)
 			},
 			emptySitemap({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sitemapEmpty`)
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}/sitemapEmpty`)
 				.then( response => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -412,7 +412,7 @@ export default {
 			},
 			emptySample({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}/sampleEmpty`)
 				.then( response => {
 					if( !Request.muted() ){
 						Vue.notify({
@@ -440,7 +440,7 @@ export default {
 			},
 			saveDomain({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}`, {params: {domain: args.domain}})
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}`, {params: {domain: args.domain}})
 				.then( re=>{
 					state.domain = re.data.details
 					if( !Request.muted() ){

@@ -24,7 +24,7 @@
             <h3 class="headline-2">Users</h3>
             <ul v-if="unassigned.length">
               <li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
-                <span>{{displayUser(id)}}</span><Button :title="`Assign ${displayUser(id)}`" hover="true" class="text-lg leading-4 ml-2" @click.native.prevent="assign(id)">&gt;</Button>
+                <span>{{displayUser(id)}}</span><Button :title="`Assign ${displayUser(id)}`" hover="true" class="text-lg leading-4 ml-2" @click.prevent="assign(id)">&gt;</Button>
               </li>
             </ul>
           </Card>
@@ -32,7 +32,7 @@
             <h3 class="headline-2">Assignees</h3>
             <ul v-if="assigned.length">
               <li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
-                <Button hover="true" :title="`Unassign ${displayUser(id)}`" class="text-lg leading-4 mr-2" @click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
+                <Button hover="true" :title="`Unassign ${displayUser(id)}`" class="text-lg leading-4 mr-2" @click.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
               </li>
             </ul>
           </Card>
@@ -40,7 +40,7 @@
         
       </template>
 
-      <button class="standard mt-2" hover="true" @click.native.prevent="saveProject">Save</button>
+      <button class="standard mt-2" hover="true" @click.prevent.stop="saveProject">Save</button>
     </form>
 
     <Modal class="adjust-with-sidebars" :open="confirmModalOpen">

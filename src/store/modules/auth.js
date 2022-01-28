@@ -19,7 +19,7 @@ export default {
     token_expire: Cookies.get('oada_UID_expire') || false,
     token_check_every: 600000, //2 minutes = 120000, 600000 = 10 minutes
     account: parseInt(Cookies.get('toolboxAccount')) || false,
-    license: parseInt(Cookies.get('toolboxLicense')) || false,
+    license: false,
     authMessage: "",
     authMessages: {
       incorrect_role: "You do not have the required role",
@@ -81,9 +81,7 @@ export default {
     setState(state,payload) {
       if(payload.key == 'account'){
         Cookies.set('toolboxAccount', payload.value, 365)
-      }
-      if(payload.key == 'license'){
-        Cookies.set('toolboxLicense', payload.value.id, 365)
+        axios.defaults.headers.common['oadatbaccount'] = payload.value
       }
       Vue.set(state,payload.key,payload.value)
     },
@@ -92,24 +90,14 @@ export default {
     },
   },
   actions: {
-    check({state, rootState}) {
+    check({state, rootState,commit}) {
       console.log("Running Auth Check");
-      Request.getPromise(state.API+'/state/init')
+      let license_id = state.license ? state.license.id : window.location.pathname.split('/')[1]
+      Request.getPromise(`${state.API}/state/init`,{params: {license:license_id}})
       .then( response => {
         state.user = response.data.details.user
-        // state.accounts = response.data.details.accounts
-        
-        //If account cookie is not set, then set it to the first account returned
-        if( Cookies.get("toolboxAccount") === undefined ){
-          //TODO: No longer assigning accounts. we are loading single license and the account it belongs to.
-          // Cookies.set("toolboxAccount", parseInt(state.accounts[0].id))
-        }
-        //TODO: Set the license
-
-        //If the vuex store for the account is not set, retrieve it from the cookie
-        if( state.account === false ){
-          state.account = Cookies.get("toolboxAccount")
-        }
+        state.license = response.data.details.license
+        state.account = parseInt(response.data.details.license.account.id)
 
         //If the toolbox client cookie IS set and there are clients in the global vuex store, then set the current client to the one from the cookie
         if( Cookies.get("toolboxClient") && rootState.clients.all.length ){
@@ -122,7 +110,7 @@ export default {
         }
         //If the toolbox client cookie is not set but there aren't any clients in the global store, go get the clients from the API and set them like above from what is returned
         if( !Cookies.get("toolboxClient") && !rootState.clients.all.length ){
-          Request.getPromise(`${state.API}/${rootState.auth.account}/clients`)
+          Request.getPromise(`${state.API}/l/${rootState.auth.license.id}/clients`)
           .then(response=>{
             if( response.data.details.length ){
               rootState.clients.all = response.data.details
@@ -178,12 +166,12 @@ export default {
       state.account = false
       state.user = false
       state.token_check_interval = 600000
-      
+
       Cookies.remove('oada_UID')
       Cookies.remove('oada_UID_expire')
+      //TODO: clean up everything on logout? New Cookies class adds prefixes
       Cookies.remove('toolboxAccount')
       Cookies.remove('toolboxClient')
-      Cookies.remove('toolboxLicense')
 
       dispatch("audits/resetState", null, {root: true})
       dispatch("clients/resetState", null, {root: true})

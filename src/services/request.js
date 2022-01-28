@@ -262,6 +262,9 @@ class Request {
         if(response.data != undefined && response.data.message == 'No Account Access') {
             window.location = window.App.$store.state.auth.accapi+"/signin/?oada_redirect=/"
         }
+        if(response.data != undefined && response.data.success === 0) {
+            alert(response.data.message)
+        }
         if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){
             // window.App.$store.dispatch("auth/logout")
             // if( window.App.$router.currentRoute.path != "/" ){

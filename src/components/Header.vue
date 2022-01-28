@@ -31,7 +31,9 @@
             <div class="border mx-3 divider"></div>
             <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
         </div>
-
+        <!-- <div class="flex items-center justify-center ml-12 text-white">
+            {{license.name}}
+        </div> -->
         <div ref="settingsDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('settingsDropdown')" @click.prevent="expandDropdown('settingsDropdown')" :aria-expanded="[ dropdownsExpanded.includes('settingsDropdown') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('settingsDropdown')}" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="settings" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
                 <span aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
@@ -110,6 +112,9 @@ export default {
         // }
     },
     computed: {
+        license() {
+            return this.$store.state.auth.license
+        },
         account(){
             if( this.$store.getters['auth/account'] ){
                 return this.$store.getters['auth/account'].name

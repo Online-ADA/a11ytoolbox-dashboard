@@ -127,9 +127,6 @@ export default {
 				}
 			}
 		}
-		// refreshSession(){
-		// 	this.$store.dispatch('auth/resetToken', this.$router.history.current.path)
-		// },
 	},
   	computed: {
 		tool(){
