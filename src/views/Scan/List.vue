@@ -1,9 +1,9 @@
 <template>
-    <div class="container mx-auto">
+    <div class="container">
         <Loader v-if="loading"></Loader>
         
         <div class="w-full flex flex-col justify-center items-center mt-10" v-if="scans && scans.length">
-            <h2>Automated Audits Report</h2>
+            <h2 class="headline">Automated Audits Report</h2>
             <DT :searchableProps="['title', 'url']" :items="scans" :headers="headers">
                 <template v-slot:cells-main>
                     <div class="hidden"></div>
