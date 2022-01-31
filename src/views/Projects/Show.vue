@@ -21,7 +21,7 @@
         <div class="w-1/2 flex flex-col">
           <Card :center="false" :gutters="false">
             <h2 class="headline-2">Recommendations</h2>
-            <div class="mt-2"><button role="link" @click="$router.push({path: `/${$route.params.license}/projects/${project.id}/edit`})" class="standard">Edit</button> {{project.name}}</div>
+            <div class="mt-2"><button role="link" @click="$router.push({path: `/projects/${project.id}/edit`})" class="standard">Edit</button> {{project.name}}</div>
           </Card>
         </div>
       </div>

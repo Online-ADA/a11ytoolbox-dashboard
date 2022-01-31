@@ -55,9 +55,9 @@ export default {
             if(this.object_id && this.route_name){
                 switch (this.route_name) {
                     case 'ProjectShow':
-                        return `/${this.$route.params.license}/projects/${this.object_id}/edit`
+                        return `/projects/${this.object_id}/edit`
                     case 'ClientShow':
-                        return `/${this.$route.params.license}/clients/${this.object_id}/edit`
+                        return `/clients/${this.object_id}/edit`
                 }
             }
             return ''

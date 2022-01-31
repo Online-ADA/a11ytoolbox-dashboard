@@ -1,7 +1,6 @@
 import axios from 'axios'
 import Cookies from '../../services/cookies'
 import Vue from 'vue'
-import router from '../../router'
 //The only cookie that dictates whether the user should be logged in or not is the oada_UID. This is saved as the Token and it's lifetime is what is checked against 
 //for whether the user should be redirected
 
@@ -83,6 +82,9 @@ export default {
         Cookies.set('toolboxAccount', payload.value, 365)
         axios.defaults.headers.common['oadatbaccount'] = payload.value
       }
+      if(payload.key == 'license') {
+        Cookies.set('toolboxLicense',payload.value.id,365)
+      }
       Vue.set(state,payload.key,payload.value)
     },
     setAuthState(state,payload) {
@@ -134,12 +136,9 @@ export default {
       console.log("Running login...");
       if( redirect ){
         state.redirect = redirect
-      }else{
-        state.redirect = `/${router.currentRoute.params.license}`
       }
       Cookies.set("loggingIn", true)
-      let oada_auth_route = `/${router.currentRoute.params.license}/auth`
-      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route="+oada_auth_route
+      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth"
     },
     setToken({state, dispatch}, payload){
       state.dispatch = dispatch

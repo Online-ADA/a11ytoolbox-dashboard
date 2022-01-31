@@ -27,7 +27,7 @@
 			:rowsData="issues" 
 			:headersData="headers"></Table>
 			<template v-else>
-				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/${$route.params.license}/audits/${$route.params.id}/import`}">Click here</A> to import issues
+				There are no issues currently. <A id="no-issues-import" class="hover:bg-pallette-red mx-2 justify-center rounded border border-gray-300 shadow-sm px-2 py-1 bg-white transition-colors duration-100 font-medium text-gray-700 w-auto text-sm" type='router-link' :to="{path: `/audits/${$route.params.id}/import`}">Click here</A> to import issues
 			</template>
 		</template>
 		

@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import store from '../store'
+import Cookies from '../services/cookies'
 class Request {
     /* Args to pass:
         - params ~ Object: additional data to be sent with the request
@@ -248,12 +250,8 @@ class Request {
 
     checkForRedirect(response){
         if( response.response != undefined && response.response.data.message == "Unauthenticated." ){
-            // window.App.$store.dispatch("auth/logout")
-            // if( window.App.$router.currentRoute.path != "/" ){
-            //     this.mute = true
-            //     window.App.$store.state.auth.authMessage = "You've been logged out. Please log in again"
-            //     window.App.$router.push({path: "/"})
-            // }
+            //TODO: Need to retest this scenario. This condition was randomly giving me trouble again.
+            if( ( !Cookies.get("loggingIn") || Cookies.get("loggingIn") === "false" ) ) store.dispatch("auth/login")
             return
         }
         if(response.response != undefined && response.response.data.message == 'No Account Access') {

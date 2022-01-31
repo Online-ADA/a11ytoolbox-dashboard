@@ -313,7 +313,7 @@ export default {
 						text: "Audit updated",
 						callback: function(){
 							state.loading = false
-							args.router.push({path: `/${rootState.auth.license.id}/audits/${args.id}`})
+							args.router.push({path: `/audits/${args.id}`})
 						},
 						position: 'bottom right'
 					},
@@ -406,7 +406,7 @@ export default {
 				state.loading = true
 				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.audit_id}/import`, {params: { issues: args.issues }})
 				.then( ()=>{
-					args.router.push({name: 'AuditShow', params: {license: rootState.auth.license.id,id: args.audit_id}})
+					args.router.push({name: 'AuditShow', params: {id: args.audit_id}})
 				})
 				.catch()
 				.then( ()=>{

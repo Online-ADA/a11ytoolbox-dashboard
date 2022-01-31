@@ -690,7 +690,7 @@ export default {
 						console.log(response.data.details);
 						rootState.clients.all = response.data.details
 						setTimeout(()=>{
-							args.router.push({path: `/${rootState.auth.license.id}/manage/clients`})
+							args.router.push({path: `/manage/clients`})
 						}, 2000)
 					}
 				},
@@ -723,7 +723,7 @@ export default {
 						state.loading.clients = false
 						rootState.clients.all = response.data.details
 						setTimeout(()=>{
-							args.router.push({path: `/${rootState.auth.license.id}/manage/clients`})
+							args.router.push({path: `/manage/clients`})
 						}, 2000)
 					}
 				},

@@ -77,7 +77,6 @@ export default {
             this.$router.push({
                 name: 'MediaAuditShow',
                 params: {
-                    license: this.$route.params.license,
                     id: item.id
                 }
             })
@@ -86,7 +85,6 @@ export default {
             this.$router.push({
                 name: 'AuditShow',
                 params: {
-                    license: this.$route.params.license,
                     id: item.id
                 }
             })

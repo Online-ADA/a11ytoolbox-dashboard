@@ -148,7 +148,7 @@ export default {
             return this.$store.getters['auth/isManager']
         },
         profileLink() {
-            return `/${this.$route.params.license}/user/profile`
+            return `/user/profile`
         },
     },
     watch: {
@@ -161,7 +161,7 @@ export default {
     },
     methods: {
         GoToDropdown(item) {
-            return `/${this.$route.params.license}${item.to}`
+            return `/${item.to}`
         },
         launchCreateClientModal($ev){
             EventBus.openModal('createClientModal', document.querySelector(".client-dropdown"))
@@ -192,7 +192,6 @@ export default {
                 this.$router.push({
                     name: 'ClientShow',
                     params: {
-                        license: this.$route.params.license,
                         id: id
                     }
                 })

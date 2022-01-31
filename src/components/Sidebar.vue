@@ -51,7 +51,6 @@ export default {
             this.$router.push({
                 name: 'ProjectShow',
                 params: {
-                    license: this.$route.params.license,
                     id: id
                 }
             })

@@ -32,7 +32,8 @@ if( Cookies.get("loggingIn") == undefined ){
 }
 
 const params = new URLSearchParams(window.location.search)
-const license_id = window.location.pathname.split('/')[1]
+//TODO: change this to load a query parameter once
+const license_id = params.get('license') ? params.get('license') : Cookies.get('toolboxLicense')
 
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
@@ -73,7 +74,6 @@ async function run(){
       store.commit('auth/setState',{key:'user',value:response.data.details.user})
       store.commit('auth/setState',{key:'license',value:response.data.details.license})
       store.commit('auth/setState',{key:'account',value:parseInt(response.data.details.license.account.id)})
-
       if( store.state.auth.license ){
         //If the license ID is set, then go get all the clients related to that license
         Request.getPromise(store.state.auth.API+`/l/${store.state.auth.license.id}/clients`)
@@ -120,11 +120,6 @@ async function run(){
       if( !store.getters["auth/account"] && to.path != "/" ){
         next("/")
         return
-      }
-      //TODO: We need a way to validate A: the license parameter exists in the url and B: that the license id is indeed a valid number. 
-      if(!to.params.license) {
-        // window.location = store.state.auth.dashboard+'/toolbox'
-        //TODO: If license param is NOT valid we need to redirect to api or accounts to grab the first toolbox license available and validate access altogether ??
       }
       // let account = store.state.auth.accounts.find(acc=>acc.id == store.state.auth.account)
       let teamCheck = store.getters["auth/account"].pivot.team_id === to.meta.team || store.getters["auth/account"].pivot.team_id === 1

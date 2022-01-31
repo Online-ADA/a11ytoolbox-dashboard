@@ -1,15 +1,18 @@
 const Prefix = {
     'loggingIn': false,
-    'toolboxClient': true,
-    'toolboxAccount': true,
+    'toolboxClient': false,
+    'toolboxAccount': false,
     'oada_UID': false,
     'oada_UID_expire': false,
+    'toolboxLicense' : false,
 }
 class Cookies {
-    constructor(license) {
-        this._license = license
+    constructor() {
+        this._license = false
     }
     set(name,value,expires_in_days = false) {
+        console.log(name,value)
+        if(name == 'toolboxLicense') this._license = value
         if(Prefix[name]) name = `${this._license}-${name}`
         let expires = 'Session'
         if(expires_in_days){
@@ -45,4 +48,4 @@ class Cookies {
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
     }
 }
-export default new Cookies(window.location.pathname.split('/')[1])
+export default new Cookies()
