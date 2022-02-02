@@ -496,7 +496,7 @@ export default {
 		},
 		modifyRole({state, rootState}, args){
 			state.loading.users = true
-			Request.post(`${rootState.auth.API}/l/${rootState.auth.license.id}/manage/users/setRole`, {
+			Request.post(`${rootState.auth.API}/a/${rootState.auth.account}/manage/users/setRole`, {
 				params: {
 					"user_id": rootState.user.user.id,
 					"role" : args.role
@@ -523,7 +523,7 @@ export default {
 		},
 		modifyTeam({state, rootState}, args){
 			state.loading.users = true
-			Request.post(`${rootState.auth.API}/l/${rootState.auth.license.id}/manage/users/setTeam`, {
+			Request.post(`${rootState.auth.API}/a/${rootState.auth.account}/manage/users/setTeam`, {
 				params: {
 					"user_id": rootState.user.user.id,
 					"team" : args.team
@@ -550,7 +550,7 @@ export default {
 		},
 		getUsers({state, rootState}){
 			state.loading.users = true
-			Request.get(`${rootState.auth.API}/l/${rootState.auth.license.id}/users`, {
+			Request.get(`${rootState.auth.API}/a/${rootState.auth.account}/users`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){

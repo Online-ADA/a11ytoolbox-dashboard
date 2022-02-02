@@ -34,7 +34,9 @@ if( Cookies.get("loggingIn") == undefined ){
 const params = new URLSearchParams(window.location.search)
 //TODO: change this to load a query parameter once
 const license_id = params.get('license') ? params.get('license') : Cookies.get('toolboxLicense')
-
+if( Cookies.get("toolboxAccount")  ){
+  Vue.prototype.$http.defaults.headers.common['oadatbaccount'] = Cookies.get("toolboxAccount") 
+}
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }

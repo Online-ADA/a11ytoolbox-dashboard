@@ -1,6 +1,6 @@
 <template>
     <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full fixed px-4 py-2 shadow-custom overflow-visible">
-        <router-link class="block" :to="{path:'/'+$route.params.license}"><img alt="Ally Toolbox by Online ADA" src="../assets/logo-toolbox.png" /></router-link>
+        <router-link class="block" :to="{path:'/'}"><img alt="Ally Toolbox by Online ADA" src="../assets/logo-toolbox.png" /></router-link>
         <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
         <div class="flex items-center">
@@ -31,9 +31,6 @@
             <div class="border mx-3 divider"></div>
             <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
         </div>
-        <!-- <div class="flex items-center justify-center ml-12 text-white">
-            {{license.name}}
-        </div> -->
         <div ref="settingsDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('settingsDropdown')" @click.prevent="expandDropdown('settingsDropdown')" :aria-expanded="[ dropdownsExpanded.includes('settingsDropdown') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('settingsDropdown')}" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="settings" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
                 <span aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
@@ -43,18 +40,18 @@
             <ul class="text-left mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <template v-if="isManager">
                     <li class="hover:bg-pallette-grey-light">
-                        <router-link class="hover:text-gray-500 block" :to="'/'+$route.params.license+'/manage/articles'">
+                        <router-link class="hover:text-gray-500 block" :to="'/manage/articles'">
                             <span>Success Criteria</span>
                         </router-link>
                     </li>
                     <li class="hover:bg-pallette-grey-light">
-                        <router-link class="hover:text-gray-500 block" :to="'/'+$route.params.license+'/manage/users'">
+                        <router-link class="hover:text-gray-500 block" :to="'/manage/users'">
                             <span>Users</span>
                         </router-link>
                     </li>
                 </template>
                 <li>
-                    <router-link :to="'/'+$route.params.license+'/domains'" class="hover:text-gray-500 block"><span>Domains</span></router-link>
+                    <router-link :to="'/domains'" class="hover:text-gray-500 block"><span>Domains</span></router-link>
                 </li>
             </ul>
             <span id="management-label" class="sub-label text-white uppercase">Settings</span>
@@ -106,15 +103,8 @@ export default {
     },
     name: 'ada-header',
     mounted(){
-        //TODO: This is also only relavent now if the license is updated. 
-        // if( this.$store.state.auth.accounts !== false && this.$store.state.auth.accounts.length ){
-        //     this.updateAccountName()
-        // }
     },
     computed: {
-        license() {
-            return this.$store.state.auth.license
-        },
         account(){
             if( this.$store.getters['auth/account'] ){
                 return this.$store.getters['auth/account'].name
@@ -152,12 +142,6 @@ export default {
         },
     },
     watch: {
-        //TODO: This would apply if the license is changed? There is currently no in app navigation that allows the license to change
-        // "$store.state.auth.accounts":function(newVal){
-        //     if( newVal !== false && newVal.length ){
-        //         this.updateAccountName()
-        //     }
-        // }
     },
     methods: {
         GoToDropdown(item) {

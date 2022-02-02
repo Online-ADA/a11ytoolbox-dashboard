@@ -70,7 +70,6 @@ export default {
       var current_date = Date.now()
       var seconds_remaining = Number( (this.token_expire - current_date) / 1000 )
       return (seconds_remaining / 3600) * 60
-
       //Returns the minutes and seconds within the timeframe of an hour
       // let minutesLeftTwo = Math.floor(seconds_remaining % 3600 / 60)
       // let secondsLeft = Math.floor(seconds_remaining % 3600 % 60)
@@ -84,6 +83,7 @@ export default {
       }
       if(payload.key == 'license') {
         Cookies.set('toolboxLicense',payload.value.id,365)
+        axios.defaults.headers.common['oadatblicense'] = payload.value.id
       }
       Vue.set(state,payload.key,payload.value)
     },

@@ -86,7 +86,7 @@ export default {
 		
 		getUser({state, rootState}, args){
 			state.loading = true
-			Request.get(`${rootState.auth.API}/l/${rootState.auth.license.id}/manage/users/${args.user_id}`, {
+			Request.get(`${rootState.auth.API}/a/${rootState.auth.account}/manage/users/${args.user_id}`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
