@@ -94,7 +94,8 @@ export default {
   actions: {
     check({state, rootState,commit}) {
       console.log("Running Auth Check");
-      let license_id = state.license ? state.license.id : window.location.pathname.split('/')[1]
+      const url_params = new URLSearchParams(window.location.search)
+      const license_id = url_params.get('license') ? url_params.get('license') : Cookies.get('toolboxLicense')
       Request.getPromise(`${state.API}/state/init`,{params: {license:license_id}})
       .then( response => {
         state.user = response.data.details.user
@@ -137,16 +138,17 @@ export default {
       if( redirect ){
         state.redirect = redirect
       }
+      let auth_redirect = encodeURIComponent(`/auth?license=${Cookies.get('toolboxLicense')}`)
       Cookies.set("loggingIn", true)
-      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth"
+      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route="+auth_redirect
     },
     setToken({state, dispatch}, payload){
       state.dispatch = dispatch
       console.log("Setting token", payload)
-      Cookies.set('oada_UID', payload.token, { expires: 365 })
+      Cookies.set('oada_UID', payload.token, 365)
 
       //Confusingly storing the expire value for 365 days. It is the value itself we check against though, not the existence of the value
-      Cookies.set('oada_UID_expire', payload.token_expire * 1000, { expires: 365 }) 
+      Cookies.set('oada_UID_expire', payload.token_expire * 1000, 365) 
       state.token = payload.token
       state.token_expire = payload.token_expire * 1000
       state.checkTokenExpire(state)

@@ -30,10 +30,9 @@ Vue.prototype.$http.defaults.headers.common['Accept'] = "application/json"
 if( Cookies.get("loggingIn") == undefined ){
   Cookies.set("loggingIn", false)
 }
-
 const params = new URLSearchParams(window.location.search)
-//TODO: change this to load a query parameter once
 const license_id = params.get('license') ? params.get('license') : Cookies.get('toolboxLicense')
+Cookies.set('toolboxLicense',license_id)
 if( Cookies.get("toolboxAccount")  ){
   Vue.prototype.$http.defaults.headers.common['oadatbaccount'] = Cookies.get("toolboxAccount") 
 }
@@ -89,6 +88,11 @@ async function run(){
             store.state.clients.client = store.state.clients.all.find( c=>c.id === clientID )
             //Refresh the cookie expire time to 365 days
             if(store.state.clients.client){
+              Cookies.set('toolboxClient', store.state.clients.client.id, 365)
+            }else{
+              //Client id is leftover from another license that was previously loaded. Let's set it now to the first client.
+              store.state.clients.clientID = store.state.clients.all[0].id
+              store.state.clients.client = store.state.clients.all[0]
               Cookies.set('toolboxClient', store.state.clients.client.id, 365)
             }
           }
