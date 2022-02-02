@@ -1,8 +1,8 @@
 <template>
-    <div class="container">
+    <div class="">
         <Loader v-if="loading"></Loader>
         
-        <div class="w-full flex flex-col justify-center items-center mt-10" v-if="scans && scans.length">
+        <div class="w-full flex flex-col mt-10" v-if="scans && scans.length">
             <h2 class="headline">Automated Audits Report</h2>
             <DT :searchableProps="['title', 'url']" :items="scans" :headers="headers">
                 <template v-slot:cells-main>
@@ -13,7 +13,7 @@
                         <div class="text-sm text-gray-900">{{row.data.title}}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{{row.data.issues_total}}</div>
+                        <div class="text-sm text-gray-900">{{row.data.total_issues}}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">
@@ -21,21 +21,46 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="capitalize text-sm text-gray-900">{{row.data.pages.length}}</div>
+                        <div class="capitalize text-sm text-gray-900">{{totalPages(row.data.pages)}}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">
-                            <Button class="ml-2" color="delete" @click.native.prevent="openModal(row.data.id)" >delete</Button>
+                            {{appendedOrNew(row.data)}}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            <template v-if="row.data.appends == 0">N/A</template>
+                            <template v-else-if="associatedAudit(row.data.appends)">
+                                <router-link :to="`/audits/${row.data.appends}`">{{associatedAudit(row.data.appends).title}}</router-link>
+                            </template>
+                            <template v-else>Audit Deleted</template>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            {{row.data.process_complete ? "True" : "False"}}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            <button @click.prevent="showLog($event, row.data.failed_urls )" class="standard">View Log</button>
+                        </div>
+                    </td>
+
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">
+                            <button class="ml-2 standard alert" @click.prevent="openModal(row.data.id)" >delete</button>
                         </div>
                     </td>
                 </template>
             </DT>
         </div>
         <div class="text-center" v-if="!loading && !scans.length">
-            <h2>There are no scans for this project</h2>
+            <h2>There are no automated audits for this project</h2>
         </div>
         
-        <Modal :open="modalOpen">
+        <Modal :open="deleteModalOpen">
             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div class="sm:flex sm:items-start">
                     <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
@@ -65,6 +90,23 @@
                 </button>
             </div>
         </Modal>
+
+        <Modal :open="logModalOpen">
+            <div class="p-4">
+                <h2 class="subheadline">Failed Url Log</h2>
+                <ul class="max-h-[600px] overflow-y-auto">
+                    <li v-for="(failure, index) in failData" :key="`failure-${index}`">
+                        <h3 class="headline-2">{{failure.page}}</h3>
+                        <ul class="pl-4">
+                            <li style="list-style-type: square;" class="text-sm" v-for="(item, subIndex) in failure.log" :key="`failureData-${subIndex}`">
+                                {{item}}
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <button @click="closeLog" class="standard mt-4">Close</button>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -74,12 +116,15 @@ import Loader from '../../components/Loader.vue'
 import Button from '../../components/Button.vue'
 import Modal from '../../components/Modal.vue'
 import DT from '../../components/DynamicTable.vue'
+import { EventBus } from "../../services/eventBus"
 
 export default {
     data: () => ({
-        modalOpen: false,
+        deleteModalOpen: false,
         deleteID: false,
-        headers: ["Title", "Number of issues", "Domain", "Number of pages", "Delete Scan"]
+        headers: ["Title", "Number of issues", "Domain", "Number of Pages", "Appended or New", "Associated Audit", "Finished", "Errors", "Delete Automation"],
+        failData: false,
+        logModalOpen: false
     }),
     computed: {
         loading(){
@@ -88,6 +133,9 @@ export default {
         scans() {
             return this.$store.state.scan.all
         },
+        audits(){
+            return this.$store.state.projects.project.audits
+        }
     },
     props: [],
     watch: {
@@ -98,22 +146,58 @@ export default {
         },
     },
     methods: {
+        showLog($ev, data){
+            EventBus.openModal(false, $ev.target, ()=>{
+                this.logModalOpen = true
+                this.failData = data
+            })
+        },
+        closeLog(){
+            EventBus.closeModal(()=>{
+                this.logModalOpen = false
+                this.failData = false
+            })
+        },
         openModal(id){
             this.deleteID = id
-            this.modalOpen = true
+            this.deleteModalOpen = true
         },
         deleteScan(){
-            this.modalOpen = false
+            this.deleteModalOpen = false
             this.$store.dispatch("scan/deleteScan", {scan_id: this.deleteID})
         },
         closeModal(){
-            this.modalOpen = false
-        }
+            this.deleteModalOpen = false
+        },
+        totalPages(data){
+            if( data.queued == undefined ){
+                return data.length
+            }
+            return Object.keys(data.queued).length + Object.keys(data.completed).length;
+        },
+        associatedAudit(id){
+            let audit = this.audits.find(a=>a.id == id)
+            if( audit ){
+                return audit
+            }
+
+            return false
+        },
+        appendedOrNew(data){
+            if( data.appends == 0 ){
+                return "New"
+            }
+
+            return "Appended"
+        },
     },
     created() {
     },
     mounted() {
         document.title = "Automated Audits Management"
+        if( this.$store.state.projects.project ){
+            this.$store.dispatch("scan/getProjectScans", {project_id: this.$store.state.projects.project.id})
+        }
     },
     components: {
         Label,
