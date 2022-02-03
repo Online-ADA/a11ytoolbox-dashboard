@@ -28,7 +28,7 @@ export default {
             commit('resetState')
         },
         initiateScan({rootState}, args){
-            Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/scan/init`, {params: { scan_options: args.config, id: args.id, appends: args.appends}})
+            Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/scan/init`, {params: { scan_options: args.config, id: args.id, appends: args.appends}})
 				.then( re=>{
 					Vue.notify({
 						title: "Success",
@@ -43,7 +43,7 @@ export default {
 		getProjectScans({state, rootState}, args){
 			state.loading = true
 			
-			Request.getPromise( `${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}/scans` )
+			Request.getPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.project_id}/scans` )
 			.then( re => state.all = re.data.details )
 			.catch( re => {
 				console.log(re)
@@ -52,7 +52,7 @@ export default {
 		},
 		deleteScan({state, rootState}, args){
 			state.loading = true
-			Request.destroyPromise( `${rootState.auth.API}/${rootState.auth.account}/scan/${args.scan_id}`)
+			Request.destroyPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/scan/${args.scan_id}`)
 			.then( re=>state.all = re.data.details)
 			.catch( re=>console.log(re))
 			.then( () => state.loading = false )
