@@ -68,7 +68,7 @@ import Sidebar from '@/components/Sidebar.vue'
 import SecondarySidebar from '@/components/SecondarySidebar.vue'
 import Modal from './components/Modal'
 import Btn from './components/Button'
-import Cookies from 'js-cookie'
+import Cookies from './services/cookies'
 import { EventBus } from "./services/eventBus"
 // import Utility from "./services/utility.js"
 import CreateClientModal from "./components/Modals/CreateClientModal"
@@ -127,9 +127,6 @@ export default {
 				}
 			}
 		}
-		// refreshSession(){
-		// 	this.$store.dispatch('auth/resetToken', this.$router.history.current.path)
-		// },
 	},
   	computed: {
 		tool(){
@@ -208,13 +205,13 @@ export default {
 			}
 		},
 		"$route.path": function(){
-			if( this.$route.matched[0].path == '/audits' ){
+			if( this.$route.matched[0].name == 'Audits' ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"audit", info:""}
 					return
 				}
 			}
-			if( this.$route.matched[0].path == '/media-audits' ){
+			if( this.$route.matched[0].name == 'MediaAudits' ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"media-audit", info:""}
 					return

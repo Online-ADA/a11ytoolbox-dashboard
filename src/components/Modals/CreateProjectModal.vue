@@ -77,7 +77,7 @@
 					name: "",
 					status: "active",
 					created_by: "",
-					account_id: "",
+					license_id: "",
 					client_id: "",
 				},
 			}
@@ -89,7 +89,7 @@
 			},
 			chooseNo(){
 				this.EventBus.closeModal( ()=>{ this.EventBus.$emit('createProjectModal', false)})
-				this.$router.push({path: `/projects/${this.$store.state.projects.project.id}`})
+				this.$router.push({path: `/${this.$route.params.license}/projects/${this.$store.state.projects.project.id}`})
 				this.reset()
 			},
 			reset(){
@@ -119,6 +119,7 @@
 				this.unassigned.push(user)
 			},
 			createProject(){
+				this.project.license_id = this.$store.state.auth.license.id
 				this.project.assigned = this.assigned;
 				this.$store.dispatch("projects/createProject", {project: this.project, router: this.$router, vm: this})
 			}

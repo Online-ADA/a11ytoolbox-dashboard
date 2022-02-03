@@ -3,7 +3,7 @@
     <Loader v-if="$store.state.clients.loading || !$store.getters['auth/isAuthenticated']"></Loader>
 
     <div v-if="message" class="text-red-600">{{message}}</div>
-    <h1 class="mb-5 headline">Account Overview</h1>
+    <h1 class="mb-5 headline">License Overview</h1>
     <div class="flex xs:flex-wrap sm:flex-nowrap">
       <div class="md:w-1/2 sm:w-full flex flex-col md:mr-5">
         <Card class="mb-5" :center="false" :gutters="false">
@@ -30,7 +30,7 @@
               {{domainRecommendations.length}} of your domains <template v-if="domainRecommendations.length !== 1">do</template><template v-else>does</template> not have a sitemap yet
             </div>
             <div v-for="domain in domainRecommendations" :key="`domain-rec-${domain.id}`" class="mt-2">
-              <button role="link" @click="$router.push({path: `/domains/${domain.id}/edit`})" class="standard">Create</button> sitemap for {{domain.url}}
+              <button role="link" @click="$router.push({path: `${$route.params.license}/domains/${domain.id}/edit`})" class="standard">Create</button> sitemap for {{domain.url}}
             </div>
           </template>
           <template v-else>There are no recommendations at this time</template>
@@ -101,9 +101,6 @@ export default {
 
       return data
     },
-    // total(){
-    //   return this.$store.state.auth.token_total_minutes_remaining
-    // },
     account(){
       return this.$store.getters["auth/account"]
     },
@@ -145,9 +142,6 @@ export default {
     "$store.state.projects.all":function(){
       this.$store.state.overview.refresh.account.audits = true
     },
-    // "$store.state.overview.refresh.account.projects":function() {
-    //   console.log("firing", this.$store.state.projects.project.audits);
-    // },
     "$store.state.overview.refresh.account.audits":function(newVal) {
       //Refreshes the number of audits on the account when the overview refresh property is triggered true
       if( newVal ){

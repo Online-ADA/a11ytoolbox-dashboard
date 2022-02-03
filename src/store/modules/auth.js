@@ -1,7 +1,6 @@
 import axios from 'axios'
-import Cookies from 'js-cookie'
+import Cookies from '../../services/cookies'
 import Vue from 'vue'
-
 //The only cookie that dictates whether the user should be logged in or not is the oada_UID. This is saved as the Token and it's lifetime is what is checked against 
 //for whether the user should be redirected
 
@@ -19,7 +18,7 @@ export default {
     token_expire: Cookies.get('oada_UID_expire') || false,
     token_check_every: 600000, //2 minutes = 120000, 600000 = 10 minutes
     account: parseInt(Cookies.get('toolboxAccount')) || false,
-    accounts: [],
+    license: false,
     authMessage: "",
     authMessages: {
       incorrect_role: "You do not have the required role",
@@ -71,7 +70,6 @@ export default {
       var current_date = Date.now()
       var seconds_remaining = Number( (this.token_expire - current_date) / 1000 )
       return (seconds_remaining / 3600) * 60
-
       //Returns the minutes and seconds within the timeframe of an hour
       // let minutesLeftTwo = Math.floor(seconds_remaining % 3600 / 60)
       // let secondsLeft = Math.floor(seconds_remaining % 3600 % 60)
@@ -81,6 +79,11 @@ export default {
     setState(state,payload) {
       if(payload.key == 'account'){
         Cookies.set('toolboxAccount', payload.value, 365)
+        axios.defaults.headers.common['oadatbaccount'] = payload.value
+      }
+      if(payload.key == 'license') {
+        Cookies.set('toolboxLicense',payload.value.id,365)
+        axios.defaults.headers.common['oadatblicense'] = payload.value.id
       }
       Vue.set(state,payload.key,payload.value)
     },
@@ -89,22 +92,15 @@ export default {
     },
   },
   actions: {
-    check({state, rootState}) {
+    check({state, rootState,commit}) {
       console.log("Running Auth Check");
-      Request.getPromise(state.API+'/state/init')
+      const url_params = new URLSearchParams(window.location.search)
+      const license_id = url_params.get('license') ? url_params.get('license') : Cookies.get('toolboxLicense')
+      Request.getPromise(`${state.API}/state/init`,{params: {license:license_id}})
       .then( response => {
         state.user = response.data.details.user
-        state.accounts = response.data.details.accounts
-        
-        //If account cookie is not set, then set it to the first account returned
-        if( Cookies.get("toolboxAccount") === undefined ){
-          Cookies.set("toolboxAccount", parseInt(state.accounts[0].id))
-        }
-
-        //If the vuex store for the account is not set, retrieve it from the cookie
-        if( state.account === false ){
-          state.account = Cookies.get("toolboxAccount")
-        }
+        state.license = response.data.details.license
+        state.account = parseInt(response.data.details.license.account.id)
 
         //If the toolbox client cookie IS set and there are clients in the global vuex store, then set the current client to the one from the cookie
         if( Cookies.get("toolboxClient") && rootState.clients.all.length ){
@@ -117,7 +113,7 @@ export default {
         }
         //If the toolbox client cookie is not set but there aren't any clients in the global store, go get the clients from the API and set them like above from what is returned
         if( !Cookies.get("toolboxClient") && !rootState.clients.all.length ){
-          Request.getPromise(`${state.API}/${rootState.auth.account}/clients`)
+          Request.getPromise(`${state.API}/l/${rootState.auth.license.id}/clients`)
           .then(response=>{
             if( response.data.details.length ){
               rootState.clients.all = response.data.details
@@ -142,38 +138,39 @@ export default {
       if( redirect ){
         state.redirect = redirect
       }
+      let auth_redirect = encodeURIComponent(`/auth?license=${Cookies.get('toolboxLicense')}`)
       Cookies.set("loggingIn", true)
-      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route=/auth"
+      window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route="+auth_redirect
     },
     setToken({state, dispatch}, payload){
       state.dispatch = dispatch
       console.log("Setting token", payload)
-      Cookies.set('oada_UID', payload.token, { expires: 365 })
+      Cookies.set('oada_UID', payload.token, 365)
 
       //Confusingly storing the expire value for 365 days. It is the value itself we check against though, not the existence of the value
-      Cookies.set('oada_UID_expire', payload.token_expire * 1000, { expires: 365 }) 
+      Cookies.set('oada_UID_expire', payload.token_expire * 1000, 365) 
       state.token = payload.token
       state.token_expire = payload.token_expire * 1000
       state.checkTokenExpire(state)
 
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
+      dispatch("check")
       if(payload.redirect) {
         payload.router.push({path: payload.redirect})
       }else{
         payload.router.push({path: state.redirect})
       }
-      dispatch("check")
     },
     logout({state, dispatch}){
       state.token = false
       state.token_expire = false
       state.account = false
-      state.accounts = []
       state.user = false
       state.token_check_interval = 600000
-      
+
       Cookies.remove('oada_UID')
       Cookies.remove('oada_UID_expire')
+      //TODO: clean up everything on logout? New Cookies class adds prefixes
       Cookies.remove('toolboxAccount')
       Cookies.remove('toolboxClient')
 
@@ -204,7 +201,6 @@ export default {
       //User role/team info is now stored on the account
       //Teams: 1 = Executive, 2 = Development, 3 = Design, 4 = Customer Service
       //The auth.account getter houses the current users's team and role
-      
       if( getters.isAuthenticated && getters.account ){
         if( getters.account.pivot.team_id === 1 ){
           return true
@@ -216,15 +212,14 @@ export default {
       return false
     },
     account: (state)=> {
-      let account = state.accounts.find( acc => acc.id == state.account)
-      if( account !== undefined ){
-        return account
+      if( state.license && state.license.account ){
+        return state.license.account
       }
-      if( !account && state.accounts.length ){
-        Cookies.set('toolboxAccount', state.accounts[0])
-        state.account = state.accounts[0]
-        return state.accounts[0]
-      }
+      // if( !account && state.accounts.length ){
+      //   Cookies.set('toolboxAccount', state.accounts[0])
+      //   state.account = state.accounts[0]
+      //   return state.accounts[0]
+      // }
       return false
     }
   },

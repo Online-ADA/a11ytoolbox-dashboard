@@ -8,10 +8,8 @@
 export default {
   name: 'Auth',
   created(){
-    
     let that = this
     let params = (new URL(document.location)).searchParams;
-
     let the_redirect = params.get('oada_redirect')
     if(!the_redirect || the_redirect == '' || the_redirect == '?') the_redirect = '/';
     if(params.get('oada_auth') && params.get('oada_auth') != ''){

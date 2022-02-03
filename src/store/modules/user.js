@@ -42,7 +42,7 @@ export default {
 		uploadAvatar({rootState}, args){
 			let form_data = new FormData()
 			form_data.append('avatar', args.file)
-			Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/user/avatar`, {params: form_data, headers:{ 'Content-Type': 'multipart/form-data' }})
+			Request.postPromise(`${rootState.auth.API}/a/${rootState.auth.account}/user/avatar`, {params: form_data, headers:{ 'Content-Type': 'multipart/form-data' }})
 			.then( re=>{
 				Vue.notify({
 					title: "Success",
@@ -56,8 +56,10 @@ export default {
 			.then()
 		},
 		getUsers({state, rootState, rootGetters}, args = {}){
+			//prevent this method from being called multiple times while still loading previous request
+			if(state.loading) return
 			state.loading = true
-			Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/users`)
+			Request.getPromise(`${rootState.auth.API}/a/${rootState.auth.account}/users`)
 			.then( re=>{
 				state.all = Object.values(re.data.details)
 				for (let i = 0; i < re.data.details.length; i++) {
@@ -84,7 +86,7 @@ export default {
 		
 		getUser({state, rootState}, args){
 			state.loading = true
-			Request.get(`${rootState.auth.API}/${rootState.auth.account}/manage/users/${args.user_id}`, {
+			Request.get(`${rootState.auth.API}/a/${rootState.auth.account}/manage/users/${args.user_id}`, {
 				onSuccess: {
 					silent: true,
 					callback: function(response){
@@ -104,7 +106,7 @@ export default {
 			})
 		},
 		storeUserMeta({rootState}, args){
-			Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/user/meta`, {
+			Request.postPromise(`${rootState.auth.API}/a/${rootState.auth.account}/user/meta`, {
 				params: {
 					meta: {
 						key: args.key,

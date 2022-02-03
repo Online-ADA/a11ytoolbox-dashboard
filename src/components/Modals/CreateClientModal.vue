@@ -75,7 +75,7 @@
 			},
 			chooseNo(){
 				EventBus.closeModal( ()=>{ EventBus.$emit('createClientModal', false)})
-				this.$router.push({path: `/clients/${this.$store.state.clients.client.id}`})
+				this.$router.push({path: `/${this.$route.params.license}/clients/${this.$store.state.clients.client.id}`})
 				this.reset()
 			},
 			reset(){

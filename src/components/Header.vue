@@ -31,7 +31,6 @@
             <div class="border mx-3 divider"></div>
             <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
         </div>
-
         <div ref="settingsDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('settingsDropdown')" @click.prevent="expandDropdown('settingsDropdown')" :aria-expanded="[ dropdownsExpanded.includes('settingsDropdown') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('settingsDropdown')}" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
             <div id="settings" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
                 <span aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
@@ -70,18 +69,17 @@
             <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
                     <template v-if="child.type == 'router-link'">
-                        <router-link class="hover:text-gray-500 block" :to="child.to"><span class="sm:text-right" v-html="child.label"></span></router-link>
+                        <router-link class="hover:text-gray-500 block" :to="GoToDropdown(child)"><span class="sm:text-right" v-html="child.label"></span></router-link>
                     </template>
                     <template v-if="child.type == 'logout'">
                         <A href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
                     </template>
                 </li>
             </ul>
-            
             <span class="sub-label text-white">{{account}}</span>
         </div>
 
-        <router-link aria-label="Go to user profile" to="/user/profile"><img alt="User Avatar" :src="user_avatar" class="avatar" /></router-link>
+        <router-link aria-label="Go to user profile" :to="profileLink"><img alt="User Avatar" :src="user_avatar" class="avatar" /></router-link>
     </div>
 </template>
 
@@ -101,11 +99,6 @@ export default {
                     label: 'Logout',
                     to: 'auth/logout'
                 },
-                {
-                    type: 'router-link',
-                    label: 'Accounts',
-                    to: '/account'
-                }
             ],
             menuOpen: true,
             dropdownsExpanded: []
@@ -113,14 +106,11 @@ export default {
     },
     name: 'ada-header',
     mounted(){
-        if( this.$store.state.auth.accounts !== false && this.$store.state.auth.accounts.length ){
-            this.updateAccountName()
-        }
     },
     computed: {
         account(){
-            if( this.$store.state.auth.account && this.$store.state.auth.accounts.length ){
-                return this.$store.state.auth.accounts.find(acc=>acc.id == this.$store.state.auth.account).name
+            if( this.$store.getters['auth/account'] ){
+                return this.$store.getters['auth/account'].name
             }
             return ""
         },
@@ -149,16 +139,17 @@ export default {
         },
         isManager(){
             return this.$store.getters['auth/isManager']
-        }
+        },
+        profileLink() {
+            return `/user/profile`
+        },
     },
     watch: {
-        "$store.state.auth.accounts":function(newVal){
-            if( newVal !== false && newVal.length ){
-                this.updateAccountName()
-            }
-        }
     },
     methods: {
+        GoToDropdown(item) {
+            return `/${item.to}`
+        },
         launchCreateClientModal($ev){
             EventBus.openModal('createClientModal', document.querySelector(".client-dropdown"))
         },
@@ -176,7 +167,7 @@ export default {
             }
         },
         updateAccountName(){
-            this.userDropdown[0].label = this.$store.state.auth.accounts.find(acc=>acc.id == this.$store.state.auth.account).name
+            if(this.account) this.userDropdown[0].label = this.account.name
         },
         menuClick() {
             this.menuOpen = !this.menuOpen;
@@ -184,9 +175,13 @@ export default {
         },
         setClient(id){
             this.$store.state.projects.project = false
-            let that = this
             this.$store.dispatch("clients/getClient", {id: id, callback: (()=>{
-                that.$router.push({path: `/clients/${id}`})
+                this.$router.push({
+                    name: 'ClientShow',
+                    params: {
+                        id: id
+                    }
+                })
             })})
         }
     },

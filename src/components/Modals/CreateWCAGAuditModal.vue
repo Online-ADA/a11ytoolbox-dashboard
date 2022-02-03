@@ -207,7 +207,7 @@
 			chooseYes(){
 				this.reset()
 				EventBus.$emit('deployWCAGAuditModal', false)
-				this.$router.push({path: `/audits/${this.$store.state.audits.all[this.$store.state.audits.all.length - 1].id}`})
+				this.$router.push({path: `/${this.$route.params.license}/audits/${this.$store.state.audits.all[this.$store.state.audits.all.length - 1].id}`})
 			},
 			displayUser(id){
 				let user = this.users.find( u => u.id == id )

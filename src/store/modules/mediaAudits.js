@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import { EventBus } from '../../services/eventBus'
 
-const CheckAuditState = (state,id,api,account) => {
-	Request.getPromise(`${api}/${account}/media-audits/${id}/status`)
+const CheckAuditState = (state,id,api,license) => {
+	Request.getPromise(`${api}/l/${license}/media-audits/${id}/status`)
 	.then( re=>{
 		if(re.data.success == '1') {
 			if(re.data.details == 'Complete') {
@@ -60,7 +60,7 @@ export default {
 			},
 			getAudit({state, rootState}, args = {withIssues: false}){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/media-audits/${args.id}`, {params: {withIssues: args.withIssues}})
+				Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/media-audits/${args.id}`, {params: {withIssues: args.withIssues}})
 				.then( re=>{
 					Vue.set(state,'audit',re.data.details)
 					// let audit_index = state.all.findIndex((item)=> {return item.id == args.id})
@@ -77,7 +77,7 @@ export default {
 			},
 			getAudits({state, rootState}, args, withIssues=false){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/media-audits`, {
+				Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/media-audits`, {
 					params: {
 						clientID: rootState.clients.client.id,
 						projectID: args.project_id,
@@ -104,7 +104,7 @@ export default {
 									state,
 									state.all[i].id,
 									rootState.auth.API,
-									rootState.auth.account
+									rootState.auth.license.id
 								)
 							}
 						}
@@ -134,7 +134,7 @@ export default {
 			},
 			InitAudit({state,rootState},args) {
 				state.loading = true;
-				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/media-audits/${args.audit_id}/init`)
+				Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/media-audits/${args.audit_id}/init`)
 				.then( re=>{
 					if(re.data.success != '1') {
 						if( !Request.muted() ){
@@ -156,7 +156,7 @@ export default {
 							state,
 							args.audit_id,
 							rootState.auth.API,
-							rootState.auth.account
+							rootState.auth.license.id
 						)
 						if( !Request.muted() ){
 							Vue.notify({
@@ -184,7 +184,7 @@ export default {
 			},
 			createAudit({state, rootState}, args){
 				state.loading = true;
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/media-audits`, { params: { audit: args.audit } })
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/media-audits`, { params: { audit: args.audit } })
 				.then( re=>{
 					if(re.data.success != '1') {
 						if( !Request.muted() ){

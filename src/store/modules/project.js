@@ -43,7 +43,7 @@ export default {
 			},
 			getProject({state, rootState}, args){
 				state.loading = true
-				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.id}`)
+				Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.id}`)
 				.then( re => {
 					state.project = re.data.details
 					
@@ -70,7 +70,7 @@ export default {
 			},
 			createProject({state, rootState, dispatch}, args){
 				state.loading = true;
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/projects`, {
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects`, {
 					params: {
 						project: args.project
 					}
@@ -120,7 +120,7 @@ export default {
 			getProjects({state, rootState}, notify=true){
 				state.loading = true
 				
-				Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/projects`, {
+				Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects`, {
 					params: {
 						clientID: rootState.clients.client.id
 					} 
@@ -179,7 +179,7 @@ export default {
 				// 		}
 				// 	}
 				// };
-				Request.postPromise(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.id}`, {
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.id}`, {
 					params: {
 						project_id: args.id,
 						data: args.project
@@ -207,7 +207,7 @@ export default {
 			deleteProject({state, rootState}, args){
 				state.loading = true
 				let index = state.all.findIndex(p=>p.id == args.project_id)
-				Request.destroyPromise(`${rootState.auth.API}/${rootState.auth.account}/projects/${args.project_id}`)
+				Request.destroyPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.project_id}`)
 				.then( re => {
 					state.loading = false
 					state.all = re.data.details
