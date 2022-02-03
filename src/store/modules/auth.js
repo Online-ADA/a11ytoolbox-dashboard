@@ -98,9 +98,9 @@ export default {
       const license_id = url_params.get('license') ? url_params.get('license') : Cookies.get('toolboxLicense')
       Request.getPromise(`${state.API}/state/init`,{params: {license:license_id}})
       .then( response => {
-        state.user = response.data.details.user
-        state.license = response.data.details.license
-        state.account = parseInt(response.data.details.license.account.id)
+        commit('setState',{key:'user',value:response.data.details.user})
+        commit('setState',{key:'license',value:response.data.details.license})
+        commit('setState',{key:'account',value:parseInt(response.data.details.license.account.id)})
 
         //If the toolbox client cookie IS set and there are clients in the global vuex store, then set the current client to the one from the cookie
         if( Cookies.get("toolboxClient") && rootState.clients.all.length ){
@@ -138,7 +138,7 @@ export default {
       if( redirect ){
         state.redirect = redirect
       }
-      let auth_redirect = encodeURIComponent(`/auth?license=${Cookies.get('toolboxLicense')}`)
+      let auth_redirect = encodeURIComponent(`/auth`)
       Cookies.set("loggingIn", true)
       window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route="+auth_redirect
     },
