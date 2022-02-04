@@ -28,7 +28,7 @@ export default {
             commit('resetState')
         },
         initiateScan({rootState}, args){
-            Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/scan/init`, {params: { scan_options: args.config, id: args.id, appends: args.appends}})
+            Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/scan/init`, {params: { scan_options: args.config, id: args.id, appends: args.appends,pages:args.pages,sitemap:args.sitemap}})
 				.then( re=>{
 					if(re.data.success == 'error') {
 						args.callback('error')
