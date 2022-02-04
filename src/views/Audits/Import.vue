@@ -1,23 +1,19 @@
 <template>
-  <div class="text-center">
+  <div>
     <Loader v-if="loading"></Loader>
     <h1 class="mb-3">Import Issues for {{primaryAudit.title}}</h1>
     <div class="mb-5 w-full flex">
-        <div class="w-1/4"></div>
-        <div class="w-1/2 flex flex-wrap justify-center">
+        <div class="w-full flex flex-wrap">
             <h3 class="text-base font-bold w-full">Choose which audits to compare</h3>
             <Btn @click.native.prevent="showingAudits.includes(primaryAudit.id) ? showingAudits.splice(showingAudits.indexOf(primaryAudit.id), 1) : showingAudits.push(primaryAudit.id)" class="mx-2" :color="showingAudits.includes(primaryAudit.id) ? 'orange' : 'white'" :hover="true">{{primaryAudit.title}}</Btn>
             <Btn v-for="(audit, index) in audits" :key="'showAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'orange' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
-        <div class="w-1/4"></div>
     </div>
     <div class="mb-5 w-full flex">
-        <div class="w-1/4"></div>
-        <div class="w-1/2 flex flex-wrap justify-center">
+        <div class="w-full flex flex-wrap">
             <h3 class="text-base font-bold w-full">Choose which temporary audits to compare</h3>
             <Btn v-for="(audit, index) in temporary_audits" :key="'showTempAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'orange' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
-        <div class="w-1/4"></div>
     </div>
     <!-- <button v-show="!showImportingIssues" @click.prevent="showImportingIssues = true">Show Issues to Import</button> -->
     <!-- <div class="w-1/3 border border-black ml-1.5 p-5" v-show="showImportingIssues">
@@ -46,7 +42,7 @@
         </div>
     </div> -->
 
-    <div class="w-full flex flex-wrap justify-center items-center mb-14">
+    <div class="w-full flex flex-wrap items-center mb-14">
         <div
         class="audit-window"
         v-for="(audit, index) in filteredAudits" 
@@ -54,7 +50,7 @@
         :class="[auditFullscreen === audit.id ? 'fullscreen' : 'w-1/2 my-3']" >
             <div 
             class="bg-white border border-pallette-grey h-auto p-4 text-center mx-1.5">
-                <div class="flex pr-2 items-center justify-center">
+                <div class="flex pr-2 items-center">
                     <h2 class="text-medium font-bold flex-1">{{audit.title}}</h2>
                     <Btn v-if="auditFullscreen !== audit.id" aria-label="Expand this audit to full screen" @click.native.prevent="setFullscreen(audit.id)" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
                     <Btn v-if="auditFullscreen === audit.id" aria-label="Compress this audit back down" @click.native.prevent="setFullscreen(false)" hover="true" color="white"><i class="fas fa-compress"></i></Btn>

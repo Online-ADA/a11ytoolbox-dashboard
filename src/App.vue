@@ -28,6 +28,7 @@
 							<CreateProjectModal style="z-index:999" :open="showProjectCreationModal"></CreateProjectModal>
 							<DeployToolModal style="z-index:999" :open="showToolDeployModal"></DeployToolModal>
 							<CreateWCAGAuditModal style="z-index:999" :open="showDeployWCAGAuditModal"></CreateWCAGAuditModal>
+							<CreateColorSwatchModal style="z-index:999" :open="showCreateColorSwatchModal"></CreateColorSwatchModal>
 							<CreateMediaAuditModal style="z-index:999" :open="showDeployMediaAuditModal"></CreateMediaAuditModal>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
@@ -85,6 +86,7 @@ export default {
 			showProjectCreationModal: false,
 			showToolDeployModal: false,
 			showDeployWCAGAuditModal: false,
+			showCreateColorSwatchModal: false,
 			showDeployMediaAuditModal: false,
 			EventBus: EventBus,
 			openDropdowns:[],
@@ -253,6 +255,9 @@ export default {
 		})
 		EventBus.$on("deployWCAGAuditModal", (payload)=>{
 			that.showDeployWCAGAuditModal = payload
+		})
+		EventBus.$on("deployColorSwatchModal", (payload)=>{
+			that.showCreateColorSwatchModal = payload
 		})
 		EventBus.$on("deployMediaAuditModal", (payload)=>{
 			that.showDeployMediaAuditModal = payload
