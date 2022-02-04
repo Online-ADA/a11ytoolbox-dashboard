@@ -30,12 +30,23 @@ export default {
         initiateScan({rootState}, args){
             Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/scan/init`, {params: { scan_options: args.config, id: args.id, appends: args.appends}})
 				.then( re=>{
-					Vue.notify({
-						title: "Success",
-						text: "A scan has been initiated.",
-						type: "success",
-						position: 'bottom right'
-					})
+					if(re.data.success == 'error') {
+						args.callback('error')
+						Vue.notify({
+							title: "ERROR",
+							text: re.data.message,
+							type: "error",
+							position: 'bottom right'
+						})
+					}else{
+						args.callback('success')
+						Vue.notify({
+							title: "Success",
+							text: "A scan has been initiated.",
+							type: "success",
+							position: 'bottom right'
+						})
+					}
 				})
 				.catch( re=>console.log(re))
 				.then()

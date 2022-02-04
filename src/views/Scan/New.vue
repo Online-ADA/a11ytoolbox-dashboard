@@ -275,8 +275,9 @@ export default {
             }
         },
         startScan(){
-            this.$store.dispatch("scan/initiateScan", {config: this.parseOptionsObject(), id: this.$route.params.id, appends: this.append})
-            this.showSuccess = true
+            this.$store.dispatch("scan/initiateScan", {config: this.parseOptionsObject(), id: this.$route.params.id, appends: this.append, callback: (status) => {
+                if(status == 'success') this.showSuccess = true
+            }})
         },
         parseOptionsObject(){
             //if manager, you have custom true/false and simple true/false
