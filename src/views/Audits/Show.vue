@@ -685,7 +685,7 @@ export default {
 		},
 		getIssuesCSV(){
 			this.$store.state.audits.loading = true
-			Request.postPromise(`${this.$store.state.auth.API}/${this.$store.state.auth.account}/audits/${this.$route.params.id}/meta`, {params: {key: "sort", value: this.$refs.issuesTable.columnData.map( o=> o.id)}})
+			Request.postPromise(`${this.$store.state.auth.API}/l/${this.$store.state.auth.license.id}/audits/${this.$route.params.id}/meta`, {params: {key: "sort", value: this.$refs.issuesTable.columnData.map( o=> o.id)}})
 			.then( ()=> {
 				this.$store.state.audits.loading = false
 				window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.account}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues`
