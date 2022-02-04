@@ -6,7 +6,7 @@
 			<template v-if="audit.status == 'in_progress'">
 				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>Audit is currently running and could take a couple of minutes. Data will be refreshed on audit completion.
 			</template>
-			<Table :issuesTable="true" :condense="shouldCondense" :locked="false" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-else-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
+			<Table :defaultSortData="tableDefaultSortBy"  :issuesTable="true" :condense="shouldCondense" :locked="false" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-else-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently.
 			</template>
@@ -74,6 +74,11 @@ export default {
 			status: "The status field is required",
 			effort: "The effort field is required",
 			priority: "The priority field is required",
+		},
+		tableDefaultSortBy: {
+			columns: ["id"],
+			orders: ["asc"],
+			reference: ["id"]
 		},
 	}),
 	computed: {
