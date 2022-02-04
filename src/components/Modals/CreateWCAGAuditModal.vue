@@ -103,8 +103,12 @@
 						</div>
 
 						<div class="mt-3 w-full">
-							<button class="standard mr-2" @click.prevent="createDomain">Add Domain</button>
+							<button v-if="domain_loading" disabled class="standard mr-2">Add Domain</button>
+							<button v-else class="standard mr-2" @click.prevent="createDomain">Add Domain</button>
 						</div>
+						<div class="feedback" role="status" aria-live="polite"> 
+							{{domain_feedback}}
+						</div> 
 					</form>
 				</template>
 				
@@ -163,6 +167,8 @@
 			EventBus: EventBus,
 			selectedDomain: false,
 			createDomainSectionOpen: false,
+			domain_loading: false,
+			domain_feedback: '',
 			protocol: "https://",
 			url: "",
 			domain: {
@@ -207,7 +213,7 @@
 			chooseYes(){
 				this.reset()
 				EventBus.$emit('deployWCAGAuditModal', false)
-				this.$router.push({path: `/${this.$route.params.license}/audits/${this.$store.state.audits.all[this.$store.state.audits.all.length - 1].id}`})
+				this.$router.push({path: `/audits/${this.$store.state.audits.all[this.$store.state.audits.all.length - 1].id}`})
 			},
 			displayUser(id){
 				let user = this.users.find( u => u.id == id )
@@ -266,6 +272,8 @@
 				this.unassigned = []
 			},
 			createDomain(){
+				this.domain_loading = true
+				this.domain_feedback = 'Domain is being created.'
 				this.domain.url = this.fullUrl
 				this.domain.project_id = this.project.id
 				let that = this
@@ -274,9 +282,11 @@
 					that.selectedDomain = domain.id
 					that.domain.url = ""
 					that.url = ""
-					let domains = []
+					let domains = that.$store.state.projects.project.domains
 					domains.push(domain)
 					that.$store.state.projects.project.domains = domains
+					that.domain_feedback = 'Domain created successfully and added to list.'
+					that.domain_loading = false
 				})})
 			},
 			assign(id){
