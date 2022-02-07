@@ -122,7 +122,6 @@ export default{
     changePage: function (page, pressed) {
       if (page > 0 && page <= this.totalPages) {
         this.$emit('page-changed', page)
-        
         if( pressed == 'page' ){
           setTimeout(() => {
             this.$refs['page-button-'+page][0].focus()
@@ -149,6 +148,11 @@ export default{
         high = this.total
       }
       return high
+    }
+  },
+  created()  {
+    if(this.$route.query && this.$route.query.page) {
+      this.changePage(parseInt(this.$route.query.page),'page')
     }
   },
   computed: {

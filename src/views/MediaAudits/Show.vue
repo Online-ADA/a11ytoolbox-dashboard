@@ -135,7 +135,8 @@ export default {
 			]
 			for( let key of Object.keys(this.audit.issues[0]) ){
 				let header_item = {
-					header: this.parseHeader(key),
+					key: key,
+					display: this.parseHeader(key),
 					show: !hideByDefault.includes(key),
 					sticky: key == "issue_number" || key == "id" ? true : false,
 					style: {},
@@ -157,6 +158,9 @@ export default {
 	watch: {
 		"$route.params.id": function(){
 			this.$store.dispatch("mediaAudits/getAudit", {id: this.$route.params.id, withIssues: true})
+		},
+		"$store.state.auth.license": function(newVal){
+			if(newVal && !this.$store.state.mediaAudits.audit) this.$store.dispatch("mediaAudits/getAudit", {id: this.$route.params.id, withIssues: true})
 		},
 		"$store.state.mediaAudits.audit": function(newVal){
 			this.$store.dispatch("projects/getProject", {id: newVal.project_id})
@@ -202,7 +206,7 @@ export default {
 		}
 	},
 	created() {
-		if( this.$store.state.mediaAudits ){
+		if( this.$store.state.mediaAudits && this.$store.state.auth.license){
 			this.$store.dispatch("mediaAudits/getAudit", {id: this.$route.params.id, withIssues: true})
 		}
 		let that = this
