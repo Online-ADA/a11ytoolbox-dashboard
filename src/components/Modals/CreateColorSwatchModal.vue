@@ -1,20 +1,26 @@
 <template>
-	<div>
-		HELLO WORLD
-	</div>
+	<Modal :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
+		<h1 class="headline">Create Color Swatch</h1>
+		<ColorPicker></ColorPicker>
+		<button @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('deployColorSwatchModal', false)})" class="standard mt-2">Cancel</button>
+	</Modal>
 </template>
 
 <script>
 	import { EventBus } from "../../services/eventBus"
+	import Modal from "../Modal.vue"
+	import ColorPicker from "../ColorPicker/ColorPicker.vue"
 
 	export default {
 		props:{
-			
+			open:{
+				type: Boolean,
+				default: false
+			},
 		},
 		data(){
 			return {
 				EventBus: EventBus,
-				
 				complete: false
 			}
 		},
@@ -29,15 +35,11 @@
 
 		},
 		computed: {
-			loading(){
-				if( this.$store.state.clients ){
-					return this.$store.state.clients.loading
-				}
-				return false
-			},
+			
 		},
 		components:{
-			
+			Modal,
+			ColorPicker
 		}
 	}
 </script>

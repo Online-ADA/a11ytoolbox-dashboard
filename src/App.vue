@@ -77,6 +77,7 @@ import CreateProjectModal from "./components/Modals/CreateProjectModal"
 import CreateWCAGAuditModal from "./components/Modals/CreateWCAGAuditModal"
 import DeployToolModal from "./components/Modals/DeployToolModal"
 import CreateMediaAuditModal from './components/Modals/CreateMediaAuditModal'
+import CreateColorSwatchModal from './components/Modals/CreateColorSwatchModal'
 export default {
   data(){
 		return {
@@ -290,7 +291,8 @@ export default {
 		CreateProjectModal,
 		CreateWCAGAuditModal,
 		DeployToolModal,
-		CreateMediaAuditModal
+		CreateMediaAuditModal,
+		CreateColorSwatchModal
 	}
 }
 </script>
