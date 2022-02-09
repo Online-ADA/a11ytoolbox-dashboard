@@ -259,7 +259,6 @@
 				// if( this.tableType == "scan" ){
 				// 	return
 				// }
-
 				if( this.tableType == "audit" ){
 					if( this.importing ){
 						//if this is the primary audit
@@ -272,8 +271,10 @@
 						}
 						
 					}
-					return this.$store.state.audits.audit.issue_count
+					if(this.$route.name == 'MediaAuditShow') return this.$store.state.mediaAudits.audit.issue_count
+					if(this.$route.name == 'AuditShow')return this.$store.state.audits.audit.issue_count
 				}
+				return 0
 				
 			},
 			rows(){
@@ -292,17 +293,30 @@
 		},
 		methods: {
 			changePage($event){
-				if( this.importing ){
-					this.$store.dispatch("audits/getIssuesOffset", {
-						audit_id: this.audit_id, 
-						page: $event, 
-						importing: true, 
-						isPrimary: this.audit_id == this.$route.params.id
-					})
-				}else{
-					this.$store.dispatch("audits/getIssuesOffset", {audit_id: this.$route.params.id, page: $event, importing: false})
+				if(this.$route.name == 'AuditShow') {
+					if( this.importing ){
+						this.$store.dispatch("audits/getIssuesOffset", {
+							audit_id: this.audit_id, 
+							page: $event, 
+							importing: true, 
+							isPrimary: this.audit_id == this.$route.params.id
+						})
+					}else{
+						this.$store.dispatch("audits/getIssuesOffset", {audit_id: this.$route.params.id, page: $event, importing: false})
+					}
 				}
-				
+				if(this.$route.name == 'MediaAuditShow') {
+					if( this.importing ){
+						this.$store.dispatch("mediaAudits/getIssuesOffset", {
+							audit_id: this.audit_id, 
+							page: $event, 
+							importing: true, 
+							isPrimary: this.audit_id == this.$route.params.id
+						})
+					}else{
+						this.$store.dispatch("mediaAudits/getIssuesOffset", {audit_id: this.$route.params.id, page: $event, importing: false})
+					}
+				}
 				this.current = $event
 			},
 			rowCanBeRemoved(data){
@@ -497,7 +511,9 @@
 							for (let index = 0; index < data.length; index++) {
 								let content = ""
 								const element = data[index];
-								
+								if(typeof element === 'string') {
+									element = {url:element}
+								}
 								if( element.title ){
 									content += element.title
 								}
@@ -505,23 +521,29 @@
 									content += " - "
 								}
 								if( element.url ){
-									let domain = this.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
-									
-									if( this.$store.state.audits.audit.domain.root ){
-										domain = domain + "/" + this.$store.state.audits.audit.domain.root.replace(/\/$/gm, "")
+									let url;
+									if(this.$route.name == 'MediaAuditShow') {
+										url = element.url 
 									}
-									let url = element.url
-									if( url == "/" ){
-										url = ""
-									}
-									
-									if( !url.includes(domain) ){
-										if( url[0] == "/" ){
-											url = domain + url
+									if(this.$route.name == 'AuditShow') {
+										let domain = this.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
+										
+										if( this.$store.state.audits.audit.domain.root ){
+											domain = domain + "/" + this.$store.state.audits.audit.domain.root.replace(/\/$/gm, "")
 										}
-										else{
-											url = domain + "/" + url
+										url = element.url
+										if( url == "/" ){
+											url = ""
 										}
+										
+										if( !url.includes(domain) ){
+											if( url[0] == "/" ){
+												url = domain + url
+											}
+											else{
+												url = domain + "/" + url
+											}
+										}										
 									}
 									content += '<a target="_blank" href="'+url+'">' + url + '</a>'
 								}

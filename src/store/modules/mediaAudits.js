@@ -62,12 +62,32 @@ export default {
 				state.loading = true
 				Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/media-audits/${args.id}`, {params: {withIssues: args.withIssues}})
 				.then( re=>{
-					Vue.set(state,'audit',re.data.details)
-					// let audit_index = state.all.findIndex((item)=> {return item.id == args.id})
-					// if(audit_index > -1) Vue.set(state.all,audit_index,re.data.details)
+					state.audit = re.data.details
 					if( args.vm ){
-						args.vm.audit = state.audit
 						args.vm.assigned = state.audit.assignees.map( o=>o.id)
+					}
+				})
+				.catch( re=>{
+					console.log(re);
+				})
+				.then( ()=> state.loading = false)
+			},
+			getIssuesOffset({state,rootState},args) {
+				state.loading = true
+				Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/media-audits/${args.audit_id}/issues/page`, {params: {page: args.page}})
+				.then( re=>{
+					if( args.importing ){
+						if( args.isPrimary ){
+							state.audit.issues = re.data.details
+						}else{
+							//All of these lines are here to trigger the watcher on Import.vue
+							let index = state.all.findIndex(a=>a.id == args.audit_id)
+							let copy = state.all[index]
+							copy.issues = re.data.details
+							state.all[index] = copy
+						}
+					}else{
+						state.audit.issues = re.data.details
 					}
 				})
 				.catch( re=>{
