@@ -318,6 +318,8 @@
 					}
 				}
 				this.current = $event
+
+				this.$emit("pageChange", {page:this.current, limit:this.perPage})
 			},
 			rowCanBeRemoved(data){
 				if( this.importing && data.hasOwnProperty('unique') ){

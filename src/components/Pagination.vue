@@ -33,7 +33,7 @@
           <button :ref="`page-button-${1}`" aria-label="Go to first page" class="relative inline-flex items-center border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" 
           @click.prevent="changePage(1, 'page')">
             <div class="flex hover:bg-gray-200 h-6 w-6 items-center justify-center">
-              <span :aria-current="[current == page ? 'page' : false]" class="">
+              <span :aria-current="[current == 1 ? 'page' : false]" class="">
                 1
               </span>
             </div>
@@ -120,6 +120,7 @@ export default{
       return this.current < this.totalPages
     },
     changePage: function (page, pressed) {
+      
       if (page > 0 && page <= this.totalPages) {
         this.$emit('page-changed', page)
         if( pressed == 'page' ){
