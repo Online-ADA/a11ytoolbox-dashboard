@@ -39,27 +39,26 @@
 					<strong>The following validation errors are present on the add issue form: </strong>
 					<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
 				</div>
-				<Toggle @changed="((ev)=>{ useSitemap = ev })" :labelLeft="'Working Sample'" :labelRight="'Sitemap'" ></Toggle>
 
 				<form class="flex items-start mt-3 text-left w-full flex-wrap">
 					
+					<!-- Row 1 -->
 					<div class="flex w-full mt-2 flex-wrap">
-						<div class="mx-2 flex-1">
-							<Label class="text-lg leading-6 w-full subheadline" for="success_criteria">Success Criteria</Label>
-							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('articles') }" id="success-criteria-validation">{{validationMessages["articles"]}}</small>
-							<select :data-validation-failed="failedValidation.includes('articles')" required :aria-describedby="failedValidation.includes('articles') ? 'success-criteria-validation' : false" style="min-width:200px;" id="success_criteria" class="w-full" v-model="issue.articles" multiple>
-								<option class="overflow-ellipsis overflow-hidden whitespace-nowrap" :value="{display: article.number + ' - ' + article.title, id: article.id}" v-for="(article, index) in articles" :key="'success_criteria-'+index">{{article.number}} - {{article.title}}</option>
-							</select>
+						<div class="w-[493.48px] max-[493.48px]">
+							<Label for="target" class="text-lg leading-6 w-full subheadline">Target Element Description</Label>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('target') }" id="target-validation">{{validationMessages["target"]}}</small>
+							<TextInput :data-validation-failed="failedValidation.includes('target')" required :aria-describedby="failedValidation.includes('target') ? 'target-validation' : false" class="flex-1 w-full" name="target" id="target" v-model="issue.target"></TextInput>
 						</div>
-						<div class="mx-2 flex-1">
-							<Label class="text-lg leading-6 w-full subheadline" for="techniques">Techniques</Label>
-							<select style="min-width:200px;min-height:118px;" id="techniques" class="w-full" v-model="issue.techniques" multiple>
-								<option :value="{display: technique.number + ' - ' + technique.title, id: technique.id}" v-for="(technique, index) in filteredTechniques" :key="'technique-'+index">{{technique.number}}</option>
-							</select>
-						</div>
-						<div class="mx-2 flex-1">
-							<Label class="text-lg leading-6 w-full subheadline" :stacked="false" for="pages">Pages</Label>
-							<select style="min-width:200px;" id="pages" class="w-full" v-model="issue.pages" multiple>
+					</div>
+					<!-- Row 2 -->
+					<div class="flex w-full mt-2 flex-wrap">
+						<div class="pr-2 flex-1 h-[220px]">
+							<div class="flex justify-between">
+								<Label class="text-lg leading-6 w-full subheadline" :stacked="false" for="pages">Pages</Label>
+								<Toggle class="whitespace-nowrap" @changed="((ev)=>{ useSitemap = ev })" :labelLeft="'Working Sample'" :labelRight="'Sitemap'" ></Toggle>
+							</div>
+							
+							<select id="pages" class="w-full h-full max-h-[180px] min-w-[200px]" v-model="issue.pages" multiple>
 								<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in pagesSrc" :key="'page-'+index">
 									<template v-if="page.title">{{page.title}}</template>
 									<template v-if="page.title && page.url"> - </template>
@@ -67,21 +66,92 @@
 								</option>
 							</select>
 						</div>
+
 						<div class="mx-2 flex-1">
-							<Label class="text-lg leading-6 w-full subheadline" for="audit_status">States</Label>
-							<select style="min-width:200px;" id="audit_status" class="w-full" v-model="issue.audit_states" multiple>
-								<option :value="status" v-for="(status, index) in audit_states" :key="'audit_status-'+index">{{status}}</option>
-							</select>
-						</div>
-						<div class="mx-2 flex-1">
-							<Label class="text-lg leading-6 w-full subheadline" for="essential_functionalities">Essential Functionalities</Label>
-							<select class="w-full" style="min-width:200px;;" multiple id="essential_functionalities" name="essential_functionalities" v-model="issue.essential_functionality">
-								<option v-for="(option, index) in audit.essential_functionality" :key="'essentials-'+index">{{option}}</option>
-							</select>
+							<div>
+								<Label class="text-lg leading-6 w-full subheadline" for="success_criteria">Success Criteria</Label>
+								<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('articles') }" id="success-criteria-validation">{{validationMessages["articles"]}}</small>
+								<select :data-validation-failed="failedValidation.includes('articles')" required :aria-describedby="failedValidation.includes('articles') ? 'success-criteria-validation' : false" id="success_criteria" class="min-w-[200px] w-full" v-model="issue.articles" multiple>
+									<option class="overflow-ellipsis overflow-hidden whitespace-nowrap" :value="{display: article.number + ' - ' + article.title, id: article.id}" v-for="(article, index) in articles" :key="'success_criteria-'+index">{{article.number}} - {{article.title}}</option>
+								</select>
+							</div>
+							<div>
+								<div v-show="filteredTechniques.length" class="mx-2 flex-1">
+									<Label class="text-lg leading-6 w-full subheadline" for="techniques">Add Techniques</Label>
+									<div class="overflow-y-auto max-h-[50px] h-[50px]">
+										<div class="flex justify-start items-center" v-for="(technique, index) in filteredTechniques" :key="'technique-'+index">
+											<Checkbox v-model="issue.techniques" :vsValue="{display: technique.number + ' - ' + technique.title, id: technique.id}" :data-technique="technique.number"></Checkbox>
+											<Label class="text-lg leading-6 subheadline py-0" for="techniques">{{technique.number}}</Label>
+										</div>
+									</div>
+									
+								</div>
+							</div>
 						</div>
 						
-					</div>
+						<div class="mx-2 w-[15%]">
+							<div>
+								<Label for="status" class="text-lg leading-6 w-full subheadline">Status</Label>
+								<select class="w-full p-[2.5px]" id="status" name="status" v-model="issue.status">
+									<option :value="option" v-for="(option, index) in statuses" :key="'status-'+index">{{option}}</option>
+								</select>
+							</div>
+							<div>
+								<Label class="subheadline text-lg" for="effort">Effort</Label>
+								<select class="w-full p-[2.5px]" id="effort" v-model="issue.effort" name="effort">
+									<option :value="option" v-for="(option, index) in ['Low', 'Medium', 'High']" :key="'effort-' + index">{{option}}</option>
+								</select>
+							</div>
+							<div>
+								<Label class="subheadline text-lg" for="priority">Potential User Impact</Label>
+								<select class="w-full p-[2.5px]" id="priority" v-model="issue.priority" name="priority">
+									<option :value="option" v-for="(option, index) in ['Minor', 'Moderate', 'Serious', 'Critical']" :key="'priority-' + index">{{option}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="mx-2 flex-1">
+							<div>
+								<Label class="text-lg leading-6 w-full subheadline" for="audit_status">States</Label>
+								<select id="audit_status" class="w-full min-w-[200px] h-[70px]" v-model="issue.audit_states" multiple>
+									<option :value="status" v-for="(status, index) in audit_states" :key="'audit_status-'+index">{{status}}</option>
+								</select>
+							</div>
 
+							<div v-show="audit.essential_functionality && audit.essential_functionality.length">
+							<!-- <div> for testing -->
+								<Label class="text-lg leading-6 w-full subheadline" for="essential_functionalities">Essential Functionalities</Label>
+								<select class="w-full min-w-[200px] h-[70px]" multiple id="essential_functionalities" name="essential_functionalities" v-model="issue.essential_functionality">
+									<option v-for="(option, index) in audit.essential_functionality" :key="'essentials-'+index">{{option}}</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Row 3 -->
+					<div class="flex w-full sm:flex-wrap md:flex-wrap mt-2">
+						<div class="flex flex-col pr-2 flex-1">
+							<div class="flex justify-between items-center">
+								<Label :stacked="false" class="text-lg leading-6 w-full subheadline flex-1" for="issue_descriptions">Success Criteria Descriptions</Label>
+								<button class="standard" @click.prevent="selectDescriptionsModalOpen = true" >Reset Descriptions</button>
+							</div>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
+							
+							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1"></div>
+						</div>
+						<div class="flex flex-col px-2 flex-1">
+							<Label :stacked="false" class="text-lg leading-6 w-full subheadline" for="issue_description">Issue Description</Label>
+							<textarea style="max-height:392px;min-height:392px;overflow-y:auto;" class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" rows="16" v-model="issue.issue_description"></textarea>
+						</div>
+						<div class="flex flex-col px-2 flex-1">
+							<div class="flex justify-between items-center">
+								<Label :stacked="false" class="text-lg leading-6 w-full subheadline flex-1" for="issue_recommendations">Recommendations </Label>
+								<button class="standard" @click.prevent="selectRecommendationsModalOpen = true" >Add Recommendations</button>
+							</div>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
+							
+							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
+						</div>
+					</div>
+					<!-- Row 4 -->
 					<div class="flex w-full flex-wrap justify-evenly mt-2">
 						<div class="xs:w-full sm:w-full flex-wrap w-2/3 flex items-center">
 							<div class="flex flex-col xs:w-full">
@@ -112,89 +182,58 @@
 								</Label>
 							</div>
 						</div>
-						<div class="xs:w-full sm:w-1/2 flex-wrap w-1/3 flex flex-col">
-							<Label class="subheadline text-lg" for="effort">Effort</Label>
-							<select id="effort" v-model="issue.effort" name="effort">
-								<option :value="option" v-for="(option, index) in ['Low', 'Medium', 'High']" :key="'effort-' + index">{{option}}</option>
-							</select>
-							<Label class="subheadline text-lg" for="priority">Potential User Impact</Label>
-							<select id="priority" v-model="issue.priority" name="priority">
-								<option :value="option" v-for="(option, index) in ['Minor', 'Moderate', 'Serious', 'Critical']" :key="'priority-' + index">{{option}}</option>
-							</select>
-						</div>
 					</div>
-
-					<div class="flex w-full flex-wrap justify-evenly mt-2">
-						<div class="flex-1 mx-2 max-w-full">
+					<!-- Row 5 -->
+					<div class="flex w-full flex-wrap mt-2">
+						<div class="flex-1 pr-2 max-w-full">
 							<Label class="text-lg leading-6 subheadline">
-								Screenshots
+								Links to Screenshots
 								<Card :gutters="false" :center="false" class="xs:shadow-none xs:p-0 overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.screenshots" :key="`screen-${i}`">
 										<TextInput class="flex-1" name="screenshots" id="screenshots" v-model="issue.screenshots[i]"></TextInput>
 										<button class="ml-1 standard alert" :title="'Remove screenshot ' + issue.screenshots[i]" @click.prevent="removeScreenshot(i)"><i class="fas fa-trash-alt"></i></button>
 									</div>
 									
-									<button class="standard" @click.prevent="addNewScreenshot">Add New</button>
+									<button class="standard" @click.prevent="addNewScreenshot">
+										<i data-v-0b35166e="" class="far fa-plus" aria-hidden="true"></i>
+										<span class="sr-only">Add New</span>
+									</button>
 								</Card>
 							</Label>
 						</div>
 						<div class="flex-1 mx-2 max-w-full">
 							<Label class="text-lg leading-6 subheadline">
-								Resources
+								Links to Outside Resources
 								<Card :gutters="false" :center="false" class="xs:shadow-none xs:p-0 overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.resources" :key="`resource-${i}`">
 										<TextInput class="flex-1" name="resources" id="resources" v-model="issue.resources[i]"></TextInput>
 										<button :title="'Remove resource ' + issue.resources[i]" class="ml-1 standard alert" @click.prevent="removeResource(i)"><i class="fas fa-trash-alt"></i></button>
 									</div>
 									
-									<button class="standard" @click.prevent="addNewResource">Add New</button>
+									<button class="standard" @click.prevent="addNewResource">
+										<i data-v-0b35166e="" class="far fa-plus" aria-hidden="true"></i>
+										<span class="sr-only">Add New</span>
+									</button>
 								</Card>
 							</Label>
 						</div>
-						<div class="flex-1 sm:mx-2">
-							<Label for="target" class="text-lg leading-6 w-full subheadline">Target</Label>
-							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('target') }" id="target-validation">{{validationMessages["target"]}}</small>
-							<TextInput :data-validation-failed="failedValidation.includes('target')" required :aria-describedby="failedValidation.includes('target') ? 'target-validation' : false" class="flex-1 w-full" name="target" id="target" v-model="issue.target"></TextInput>
-
-							<Label for="status" class="text-lg leading-6 w-full subheadline">Status</Label>
-							<select id="status" name="status" v-model="issue.status">
-								<option :value="option" v-for="(option, index) in statuses" :key="'status-'+index">{{option}}</option>
-							</select>
-						</div>
 					</div>
-
-					<div class="flex w-full flex-wrap justify-evenly mt-2">
-						<div class="md:w-1/2 flex flex-col px-2">
-							<Label :stacked="false" class="text-lg leading-6 w-full subheadline" for="issue_descriptions">Success Criteria Descriptions </Label>
-							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
-							<div class="flex items-start mb-1">
-								<button class="mr-2 standard" @click.prevent="selectDescriptionsModalOpen = true" >Add Descriptions</button>
-								<!-- <Button @click.native.prevent="addIssueReferenceLinkModalOpen = true" color="red" hover="true">Add issue reference</Button> -->
-							</div>
-							
-							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1"></div>
+					<!-- Row 6 -->
+					<div class="flex w-full mt-2">
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pr-2">
+							<Label class="text-lg leading-6 w-full subheadline" for="auditor_notes">Auditor Notes</Label>
+							<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
 						</div>
-						<div class="md:w-1/2 flex flex-col px-2">
-							<Label :stacked="false" class="text-lg leading-6 w-full subheadline" for="issue_recommendations">Recommendations </Label>
-							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
-							<button class="self-start mb-1 standard" @click.prevent="selectRecommendationsModalOpen = true" >Add Recommendations</button>
-							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
-						</div>
-					</div>
-					<div class="flex md:w-1/2 flex-col mt-2 px-2">
-						<template v-if="audit.number == 2">
+						<div v-if="audit.number == 2">
 							<Label class="text-lg leading-6 w-full subheadline" for="second_audit_comments">Second Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="second_audit_comments" v-model="issue.second_audit_comments"></TextArea>
-						</template>
-						<template v-else-if="audit.number == 3">
+						</div>
+						<div v-else-if="audit.number == 3">
 							<Label class="text-lg leading-6 w-full subheadline" for="third_audit_comments">Third Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="third_audit_comments" v-model="issue.third_audit_comments"></TextArea>
-						</template>
+						</div>
 					</div>
-					<div class="flex md:w-1/2 xs:w-full sm:w-full flex-col mt-2 px-2">
-						<Label class="text-lg leading-6 w-full subheadline" for="auditor_notes">Auditor Notes</Label>
-						<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
-					</div>
+					
 				</form>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
@@ -287,6 +326,7 @@ import TextArea from '../../components/TextArea'
 import Toggle from '../../components/Toggle'
 import { EventBus } from '../../services/eventBus'
 import Utility from '../../services/utility'
+import Checkbox from "../../components/Checkbox"
 
 export default {
 	data: () => ({
@@ -544,11 +584,27 @@ export default {
 			this.selectedSoftware = newVal.software_used[0]
 			this.$store.dispatch("projects/getProject", {id: newVal.project_id})
 		},
-		"issue.articles": function(){
+		"issue.articles": function(newVal, oldVal){
 			if( this.selectedRows.length > 1 ){
 				return
 			}
-
+			let newIDs = []
+			let newValIDs = newVal.map(a => a.id)
+			//Go through all of the new IDs
+			for (let x = 0; x < newValIDs.length; x++) {
+				let id = newValIDs[x];
+				//Go through the array of old values
+				//If oldVal contains the current id, continue to the next id
+				if( oldVal.some( v=>v.id === id ) ){
+					continue
+				}
+				newIDs.push(id)
+			}
+			
+			if( newIDs.length ){
+				this.addIssueArticleDescriptions(newIDs)
+			}
+			
 			this.issue.levels = []
 			this.issue.techniques = []
 			for( let i in this.issue.articles ){
@@ -556,6 +612,27 @@ export default {
 				if( !this.issue.levels.includes( this.articles[ article_id ].level ) ){
 					this.issue.levels.push( this.articles[ article_id ].level )
 				}
+			}
+		},
+		"issue.techniques": function(newVal, oldVal){
+			if( this.selectedRows.length > 1 ){
+				return
+			}
+			let newIDs = []
+			let newValIDs = newVal.map(a => a.id)
+			//Go through all of the new IDs
+			for (let x = 0; x < newValIDs.length; x++) {
+				let id = newValIDs[x];
+				//Go through the array of old values
+				//If oldVal contains the current id, continue to the next id
+				if( oldVal.some( v=>v.id === id ) ){
+					continue
+				}
+				newIDs.push(id)
+			}
+			
+			if( newIDs.length ){
+				this.addIssueTechniqueDescriptions(newIDs)
 			}
 		},
 		failedValidation(newVal){
@@ -593,6 +670,30 @@ export default {
 		EventBus.$off('toolbarEmit')
 	},
 	methods: {
+		addIssueArticleDescriptions(articleIDs){
+			//For every article ID, find the corresponding article in this.articles and construct the 
+			//HTML around the number and description of said article
+			let builder = ""
+			
+			for (let x = 0; x < articleIDs.length; x++) {
+				let article = this.articles.find(a=>a.id == articleIDs[x])
+				builder += "<div>" + this.htmlDecode(article.number + " - " + article.description) + '</div><br>'
+			}
+			builder = builder.replace(/\n|\r/g, "</div><div>")
+
+			this.descriptionsQuill.root.innerHTML += builder
+		},
+		addIssueTechniqueDescriptions(techniqueIDs){
+			let builder = ""
+			
+			for (let x = 0; x < techniqueIDs.length; x++) {
+				let technique = this.techniques.find(a=>a.id == techniqueIDs[x])
+				builder += "<div>" + this.htmlDecode(technique.number + " - " + technique.description) + '</div><br>'
+			}
+			builder = builder.replace(/\n|\r/g, "</div><div>")
+
+			this.descriptionsQuill.root.innerHTML += builder
+		},
 		setHeaders(headers, hide, stickied, columnPositions){
 			let widthMap = {
 				id: "150px",
@@ -608,6 +709,7 @@ export default {
 				essential_functionality: "300px",
 				articles: "150px",
 				techniques: "150px",
+				issue_description: "400px",
 				recommendations: "400px",
 				descriptions: "400px",
 				levels: "150px",
@@ -777,18 +879,7 @@ export default {
 			var doc = new DOMParser().parseFromString(input, "text/html");
 			return doc.documentElement.textContent;
 		},
-		addSelectedDescriptions(){
-			let builder = ""
-			for( let j in this.selectedDescriptions ){
-				builder += "<div>" + this.htmlDecode(this.selectedDescriptions[j].number + " - " + this.selectedDescriptions[j].description) + '</div><br>'
-			}
-			builder = builder.replace(/\n|\r/g, "</div><div>")
-			
-			this.descriptionsQuill.root.innerHTML += builder
-			
-			EventBus.closeModal(()=>{this.selectDescriptionsModalOpen = false})
-			this.selectedDescriptions = []
-		},
+		
 		addSelectedRecommendations(){
 			let builder = ""
 			for( let j in this.selectedRecommendations ){
@@ -824,6 +915,9 @@ export default {
 			}
 			if( string == "recommendations" ){
 				return "audit 1 recommendations"
+			}
+			if( string == "issue_description" ){
+				return "issue description"
 			}
 
 			if( string == "created_by" ){
@@ -1332,6 +1426,7 @@ export default {
 		TextInput,
 		TextArea,
 		Toggle,
+		Checkbox
 	},
 }
 

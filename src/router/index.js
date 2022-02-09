@@ -33,14 +33,24 @@ const routes = [
     ]
   },
   {
-    path: "/domains",
-    component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/Index.vue'),
+    path: "/properties",
+    component: () => import(/* webpackChunkName: "properties" */ '../views/Properties/Index.vue'),
     children:[
       {
         path: "/",
-        name: "DomainsList",
-        component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/List.vue')
-      },
+        component: () => import(/* webpackChunkName: "properties" */ '../views/Properties/List.vue'),
+      }
+    ]
+  },
+  {
+    path: "/domains",
+    component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/Index.vue'),
+    children:[
+      // {
+      //   path: "/",
+      //   name: "DomainsList",
+      //   component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/List.vue')
+      // },
       {
         path: "create",
         name: "DomainsCreate",

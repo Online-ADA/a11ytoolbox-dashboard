@@ -10,6 +10,7 @@ import scanModule from './modules/scan.js'
 import userModule from './modules/user.js'
 import overviewModule from './modules/overview.js'
 import mediaAuditsModule from './modules/mediaAudits.js'
+import propertiesModule from './modules/properties.js'
 
 Vue.use(Vuex)
 
@@ -24,6 +25,7 @@ export default new Vuex.Store({
         scan: scanModule,
         admin: adminModule,
         user: userModule,
-        overview: overviewModule
+        overview: overviewModule,
+        properties: propertiesModule
     }
 })

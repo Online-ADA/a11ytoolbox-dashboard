@@ -212,6 +212,7 @@
 				plainKeys : [
 					"id", 
 					"issue_number", 
+					"issue_description", 
 					"group_id", 
 					"descriptions", 
 					"recommendations", 
