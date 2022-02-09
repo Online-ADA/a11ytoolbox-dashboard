@@ -72,7 +72,7 @@
 							<div>
 								<Label class="text-lg leading-6 w-full subheadline" for="success_criteria">Success Criteria</Label>
 								<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('articles') }" id="success-criteria-validation">{{validationMessages["articles"]}}</small>
-								<select :data-validation-failed="failedValidation.includes('articles')" required :aria-describedby="failedValidation.includes('articles') ? 'success-criteria-validation' : false" id="success_criteria" class="min-w-[200px] w-full" v-model="issue.articles" multiple>
+								<select @change="changeArticles" :data-validation-failed="failedValidation.includes('articles')" required :aria-describedby="failedValidation.includes('articles') ? 'success-criteria-validation' : false" id="success_criteria" class="min-w-[200px] w-full" v-model="issue.articles" multiple>
 									<option class="overflow-ellipsis overflow-hidden whitespace-nowrap" :value="{display: article.number + ' - ' + article.title, id: article.id}" v-for="(article, index) in articles" :key="'success_criteria-'+index">{{article.number}} - {{article.title}}</option>
 								</select>
 							</div>
@@ -316,6 +316,7 @@ import Checkbox from "../../components/Checkbox"
 
 export default {
 	data: () => ({
+		prevSelectedArticles: [],
 		paginationData: {page:1, limit:100},
 		shouldCondense: false,
 		confirmDeleteModalOpen: false,
@@ -573,22 +574,6 @@ export default {
 			if( this.selectedRows.length > 1 ){
 				return
 			}
-			let newIDs = []
-			let newValIDs = newVal.map(a => a.id)
-			//Go through all of the new IDs
-			for (let x = 0; x < newValIDs.length; x++) {
-				let id = newValIDs[x];
-				//Go through the array of old values
-				//If oldVal contains the current id, continue to the next id
-				if( oldVal.some( v=>v.id === id ) ){
-					continue
-				}
-				newIDs.push(id)
-			}
-			
-			if( newIDs.length ){
-				this.addIssueArticleDescriptions(newIDs)
-			}
 			
 			this.issue.levels = []
 			this.issue.techniques = []
@@ -655,8 +640,28 @@ export default {
 		EventBus.$off('toolbarEmit')
 	},
 	methods: {
+		changeArticles(){
+			let newIDs = []
+			let newValIDs = this.issue.articles.map(a => a.id)
+			//Go through all of the new IDs
+			for (let x = 0; x < newValIDs.length; x++) {
+				let id = newValIDs[x];
+				//Go through the array of old values
+				//If oldVal contains the current id, continue to the next id
+				if( this.prevSelectedArticles.some( v=>v.id === id ) ){
+					continue
+				}
+				newIDs.push(id)
+			}
+			
+			if( newIDs.length ){
+				this.addIssueArticleDescriptions(newIDs)
+			}
+
+			this.prevSelectedArticles = this.issue.articles
+			
+		},
 		storePaginationData(data){
-			console.log("Pagination Changed", data);
 			this.paginationData = data
 		},
 		resetIssueDescriptions(){
@@ -837,7 +842,7 @@ export default {
 			}
 		},
 		deleteSelectedIssues(){
-			this.$store.dispatch("audits/deleteIssues", { issues: this.selectedRows, audit_id: this.$route.params.id,  })
+			this.$store.dispatch("audits/deleteIssues", { issues: this.selectedRows, audit_id: this.$route.params.id, pagination: this.paginationData })
 			this.issue = this.getDefault()
 			this.descriptionsQuill.root.innerHTML = ""
 			this.recommendationsQuill.root.innerHTML = ""
@@ -986,7 +991,7 @@ export default {
 				
 				this.issue.issue_number = uniqid
 				
-				this.$store.dispatch("audits/createIssue", {issue: this.issue})
+				this.$store.dispatch("audits/createIssue", {issue: this.issue, pagination: this.paginationData})
 				
 				EventBus.closeModal(()=>{this.issueModalOpen = false})
 				this.issue = this.getDefault()
@@ -996,7 +1001,7 @@ export default {
 		},
 		updateIssue(){
 			if( this.validate() ){
-				this.$store.dispatch("audits/updateIssue", {issue: this.issue, audit_id: this.$route.params.id})
+				this.$store.dispatch("audits/updateIssue", {issue: this.issue, audit_id: this.$route.params.id, pagination: this.paginationData})
 				EventBus.closeModal(()=>{this.issueModalOpen = false})
 				this.issue = this.getDefault()
 				this.descriptionsQuill.root.innerHTML = ""
