@@ -131,7 +131,7 @@
 						<div class="flex flex-col pr-2 flex-1">
 							<div class="flex justify-between items-center">
 								<Label :stacked="false" class="text-lg leading-6 w-full subheadline flex-1" for="issue_descriptions">Success Criteria Descriptions</Label>
-								<button class="standard" @click.prevent="selectDescriptionsModalOpen = true" >Reset Descriptions</button>
+								<button class="standard" @click.prevent="resetIssueDescriptions" >Reset Descriptions</button>
 							</div>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
 							
@@ -249,21 +249,6 @@
 			</div>
 		</Modal>
 		
-		<Modal style="z-index:72;" :open="selectDescriptionsModalOpen">
-			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<button aria-label="Close select descriptions modal" @click.prevent="selectDescriptionsModalOpen = false" class="absolute top-4 right-4 standard" >X</button>
-				<h2 class="headline-2">Which Success Criteria descriptions would you like to add?</h2>
-				<select aria-label="Select descriptions" class="m-2 w-full" multiple v-model="selectedDescriptions">
-					<option :value="articles.find( a=>a.id == option.id)" v-for="(option, index) in issue.articles" :key="'descriptions-'+index">{{articles.find( a=>a.id == option.id).number}}</option>
-				</select>
-				<button @click.prevent="addSelectedDescriptions" class="mx-2 standard">Add</button>
-			</div>
-			<div class="bg-gray-50 px-4 py-3 flex">
-				<button @click="selectDescriptionsModalOpen = false" class="standard">
-					Cancel
-				</button>
-			</div>
-		</Modal>
 		<Modal style="z-index:72;" :open="selectRecommendationsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close select recommendations modal" @click.prevent="selectRecommendationsModalOpen = false" class="absolute top-4 right-4 standard" >X</button>
@@ -360,9 +345,7 @@ export default {
 		],
 		darkMode: false,
 		issueModalOpen: false,
-		selectDescriptionsModalOpen: false,
 		selectRecommendationsModalOpen: false,
-		addIssueReferenceLinkModalOpen: false,
 		selectedDescriptions: [],
 		selectedReference: { audit: null, issue: null, issues: [], linkText: "" },
 		selectedRecommendations: [],
@@ -670,6 +653,9 @@ export default {
 		EventBus.$off('toolbarEmit')
 	},
 	methods: {
+		resetIssueDescriptions(){
+			this.descriptionsQuill.root.innerHTML = ""
+		},
 		addIssueArticleDescriptions(articleIDs){
 			//For every article ID, find the corresponding article in this.articles and construct the 
 			//HTML around the number and description of said article
