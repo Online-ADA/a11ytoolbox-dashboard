@@ -23,6 +23,7 @@
 			ref="issuesTable" 
 			:selected="selectedRows" 
 			@rowClick="selectRow" 
+			@pageChange="storePaginationData"
 			v-if="issues && issues.length" 
 			:rowsData="issues" 
 			:headersData="headers"></Table>
@@ -172,7 +173,7 @@
 							<button style="margin-top:40px" class="px-2 standard" @click.prevent="addBrowserCombo">Add Combo</button>
 							<div class="flex-1 mx-2">
 								<Label style="margin-bottom:0;" for="browser_combos" class="text-lg leading-6 subheadline">
-									Browser Combinations
+									Testing Software Used
 									<Card :gutters="false" :center="false" style="min-height:8rem" class="overflow-y-auto w-full text-left max-h-32 my-2">
 										<div class="flex mb-3" v-for="(input, i) in issue.browser_combos" :key="`bc-${i}`">
 											<TextInput class="flex-1" name="browser_combos" id="browser_combos" v-model="issue.browser_combos[i]"></TextInput>
@@ -315,6 +316,7 @@ import Checkbox from "../../components/Checkbox"
 
 export default {
 	data: () => ({
+		paginationData: {page:1, limit:100},
 		shouldCondense: false,
 		confirmDeleteModalOpen: false,
 		whichCSVModalOpen: false,
@@ -653,6 +655,10 @@ export default {
 		EventBus.$off('toolbarEmit')
 	},
 	methods: {
+		storePaginationData(data){
+			console.log("Pagination Changed", data);
+			this.paginationData = data
+		},
 		resetIssueDescriptions(){
 			this.descriptionsQuill.root.innerHTML = ""
 		},
@@ -831,7 +837,7 @@ export default {
 			}
 		},
 		deleteSelectedIssues(){
-			this.$store.dispatch("audits/deleteIssues", { issues: this.selectedRows, audit_id: this.$route.params.id })
+			this.$store.dispatch("audits/deleteIssues", { issues: this.selectedRows, audit_id: this.$route.params.id,  })
 			this.issue = this.getDefault()
 			this.descriptionsQuill.root.innerHTML = ""
 			this.recommendationsQuill.root.innerHTML = ""
