@@ -559,10 +559,18 @@ export default {
 		},
 		project(){
 			return this.$store.state.projects.project || false
+		},
+		license(){
+			return this.$store.state.auth.license
 		}
 	},
 	props: [],
 	watch: {
+		"$store.state.auth.license":function(newVal){
+			if( newVal.id && this.$store.state.audits ){
+				this.fireMountedGetters()
+			}
+		},
 		"$route.params.id": function(){
 			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
 			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
@@ -1339,13 +1347,17 @@ export default {
 			picker5_observer.observe(picker5_label, {
 				attributes: true //configure it to listen to attribute changes
 			});
-		}
-	},
-	created() {
-		if( this.$store.state.audits ){
+		},
+		fireMountedGetters(){
+			console.log("firing mounted getters");
 			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
 			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
 			this.$store.dispatch("audits/getAuditStates")
+		}
+	},
+	created() {
+		if( this.$store.state.audits && this.license ){
+			this.fireMountedGetters()
 		}
 		let that = this
 		EventBus.$on('toolbarEmit', (payload)=>{

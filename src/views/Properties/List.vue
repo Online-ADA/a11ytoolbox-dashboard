@@ -14,10 +14,7 @@
                                 Edit
                                 <span class="sr-only"> domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span>
                             </router-link>
-                            <!-- <A class="block mr-3 standard" type="router-link" :to="{path: `/domains/${domain.id}/edit`}">
-                                Edit
-                                <span class="sr-only"> domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span>
-                            </A> -->
+                            
                             <button class="standard alert" @click.prevent="checkDeleteDomain(domain, $event)">
                                 <!-- <i class="fas fa-trash-alt"></i> -->
                                 Delete

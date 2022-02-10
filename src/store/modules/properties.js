@@ -79,6 +79,22 @@ export default {
 			})
 			.then( ()=> state.loading = false)
 		},
+		getSoftware({state, rootState}, args){
+			state.loading = true
+			Request.getPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/properties/${args.id}` )
+			.then( re => {
+				// if( args.callbacks && args.callbacks.success ){
+				// 	args.callbacks.success(re.data.details)
+				// }
+			})
+			.catch( re => {
+				console.log(re)
+				// if( args.callbacks && args.callbacks.fail ){
+				// 	args.callbacks.fail()
+				// }
+			})
+			.then( ()=> state.loading = false)
+		}
 	},
 	getters: { 
 		

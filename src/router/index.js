@@ -69,6 +69,17 @@ const routes = [
     ]
   },
   {
+    path: "/software",
+    component: () => import(/* webpackChunkName: "domains" */ '../views/Software/Index.vue'),
+    children:[
+      {
+        path: ":id/edit",
+        name: "SoftwareEdit",
+        component: () => import(/* webpackChunkName: "domains" */ '../views/Software/Edit.vue')
+      },
+    ]
+  },
+  {
     path: "/clients",
     component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Index.vue'),
     children: [

@@ -2,7 +2,7 @@
 	<div class="pb-24 container">
 		<Loader v-if="loading"></Loader>
 		
-		<A class="pr-3 standard" type='router-link' :to="{path: `/domains/${$route.params.id}`}">View Domain</A>
+		<!-- <a class="pr-3 standard cursor-pointer" type='router-link' :to="{path: `/domains/${$route.params.id}`}">View Domain</a> -->
 		
 		<h2 class="mb-1 headline">{{domain.url}}</h2>
 		<div class="flex items-center mb-3">

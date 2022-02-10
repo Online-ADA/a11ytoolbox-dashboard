@@ -88,7 +88,7 @@ module.exports = {
         },
       },
       fontSize:{
-        'headline': ['44px', { lineHeight: '1' }],
+        'headline': ['44px', { lineHeight: '1.3' }],
         'headline-2': ['20px', { lineHeight: '1' }],
         'subheadline': ['20px', { lineHeight: '1' }],
         body: ["14px", { lineHeight: '1' }],
