@@ -76,7 +76,7 @@
                     </template>
                 </li>
             </ul>
-            <span class="sub-label text-white">{{account}}</span>
+            <span class="sub-label text-white">{{license_title}}</span>
         </div>
 
         <router-link aria-label="Go to user profile" :to="profileLink"><img alt="User Avatar" :src="user_avatar" class="avatar" /></router-link>
@@ -108,11 +108,15 @@ export default {
     mounted(){
     },
     computed: {
-        account(){
-            if( this.$store.getters['auth/account'] ){
-                return this.$store.getters['auth/account'].name
+        license_title(){
+            if( this.license ){
+                if(this.license.name && this.license.name.trim() != '') return this.license.name
+                return this.license.id
             }
             return ""
+        },
+        license() {
+            return this.$store.state.auth.license
         },
         getClients() {
             let clients = [];
@@ -165,9 +169,6 @@ export default {
                 this.dropdownsExpanded.push(value)
                 EventBus.$emit("dropdown-expanded", {dropdown: value, ref: this.$refs[value]})
             }
-        },
-        updateAccountName(){
-            if(this.account) this.userDropdown[0].label = this.account.name
         },
         menuClick() {
             this.menuOpen = !this.menuOpen;

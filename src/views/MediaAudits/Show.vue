@@ -6,7 +6,7 @@
 			<template v-if="audit.status == 'in_progress'">
 				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>Audit is currently running and could take a couple of minutes. Data will be refreshed on audit completion.
 			</template>
-			<Table :issuesTable="true" :condense="shouldCondense" :locked="false" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-else-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
+			<Table :defaultSortData="tableDefaultSortBy"  :issuesTable="true" :condense="shouldCondense" :locked="false" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-else-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
 			<template v-else>
 				There are no issues currently.
 			</template>
@@ -75,6 +75,11 @@ export default {
 			effort: "The effort field is required",
 			priority: "The priority field is required",
 		},
+		tableDefaultSortBy: {
+			columns: ["id"],
+			orders: ["asc"],
+			reference: ["id"]
+		},
 	}),
 	computed: {
 		isManager(){
@@ -130,7 +135,8 @@ export default {
 			]
 			for( let key of Object.keys(this.audit.issues[0]) ){
 				let header_item = {
-					header: this.parseHeader(key),
+					key: key,
+					display: this.parseHeader(key),
 					show: !hideByDefault.includes(key),
 					sticky: key == "issue_number" || key == "id" ? true : false,
 					style: {},
@@ -152,6 +158,9 @@ export default {
 	watch: {
 		"$route.params.id": function(){
 			this.$store.dispatch("mediaAudits/getAudit", {id: this.$route.params.id, withIssues: true})
+		},
+		"$store.state.auth.license": function(newVal){
+			if(newVal && !this.$store.state.mediaAudits.audit) this.$store.dispatch("mediaAudits/getAudit", {id: this.$route.params.id, withIssues: true})
 		},
 		"$store.state.mediaAudits.audit": function(newVal){
 			this.$store.dispatch("projects/getProject", {id: newVal.project_id})
@@ -197,7 +206,7 @@ export default {
 		}
 	},
 	created() {
-		if( this.$store.state.mediaAudits ){
+		if( this.$store.state.mediaAudits && this.$store.state.auth.license){
 			this.$store.dispatch("mediaAudits/getAudit", {id: this.$route.params.id, withIssues: true})
 		}
 		let that = this

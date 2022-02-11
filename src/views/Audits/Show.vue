@@ -353,6 +353,7 @@ export default {
 		selectedReference: { audit: null, issue: null, issues: [], linkText: "" },
 		selectedRecommendations: [],
 		issueDefaults: {
+			issue_description: "",
 			status: "New",
 			pages: [],
 			audit_states: [],
@@ -376,6 +377,7 @@ export default {
 			effort: "Low",
 		},
 		issue: {
+			issue_description: "",
 			status: "New",
 			pages: [],
 			audit_states: [],

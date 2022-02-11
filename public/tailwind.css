@@ -1950,11 +1950,6 @@ button.standard.alert:hover {
   color: rgb(66 66 66 / var(--tw-text-opacity));
 }
 
-.text-black {
-  --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity));
-}
-
 .text-pallette-button {
   --tw-text-opacity: 1;
   color: rgb(0 68 88 / var(--tw-text-opacity));
