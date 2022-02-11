@@ -1349,7 +1349,6 @@ export default {
 			});
 		},
 		fireMountedGetters(){
-			console.log("firing mounted getters");
 			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
 			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
 			this.$store.dispatch("audits/getAuditStates")
