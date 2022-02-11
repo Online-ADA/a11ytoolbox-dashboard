@@ -564,11 +564,6 @@ export default {
 	},
 	props: [],
 	watch: {
-		"$store.state.auth.license":function(newVal){
-			if( newVal.id && this.$store.state.audits ){
-				this.fireMountedGetters()
-			}
-		},
 		"$route.params.id": function(){
 			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
 			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
@@ -1346,16 +1341,12 @@ export default {
 				attributes: true //configure it to listen to attribute changes
 			});
 		},
-		fireMountedGetters(){
-			console.log("firing mounted getters");
+	},
+	created() {
+		if( this.$store.state.audits ){
 			this.$store.dispatch("audits/getAudit", {id: this.$route.params.id, withIssues: true})
 			this.$store.dispatch("audits/getArticlesTechniquesRecommendations")
 			this.$store.dispatch("audits/getAuditStates")
-		}
-	},
-	created() {
-		if( this.$store.state.audits && this.license ){
-			this.fireMountedGetters()
 		}
 		let that = this
 		EventBus.$on('toolbarEmit', (payload)=>{

@@ -117,13 +117,15 @@ export default {
     },
     methods: {
         checkDeleteSoftware(software, $event){
-
+            if( software.attachments === 0 ){
+                this.$store.dispatch("properties/destroySoftware", {id: software.id})
+            }
         },
         checkDeleteDomain(domain, $event){
             //Needs to check ALL audits across the entire license, not just those loaded in this project
 
-            if( !this.attachedAudits.length ){
-                this.$store.dispatch("domains/deleteDomain", {domain_id: domain.id})
+            if( domain.attachments === 0 ){
+                this.$store.dispatch("domains/deleteDomain", {id: domain.id})
             }
         },
         successCallback(data){

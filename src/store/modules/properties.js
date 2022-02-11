@@ -94,6 +94,22 @@ export default {
 				// }
 			})
 			.then( ()=> state.loading = false)
+		},
+		destroySoftware({state, rootState}, args){
+			state.loading = true
+			Request.destroyPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/properties/${args.id}`)
+			.then( re => {
+				if( args.successCallback ){
+					args.successCallback(re.data.details)
+				}
+			})
+			.catch( re => {
+				console.log( re );
+				if( args.failCallback ){
+					args.failCallback(re)
+				}
+			} )
+			.then( ()=> state.loading.articles = false)
 		}
 	},
 	getters: { 
