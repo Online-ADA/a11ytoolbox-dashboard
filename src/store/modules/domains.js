@@ -27,27 +27,15 @@ export default {
 			resetState({commit}) {
 				commit('resetState')
 			},
-			// getProject({state, rootState}, args){
-			// 	state.loading = true
-				
-			// 	Request.getPromise(`${rootState.auth.API}/${args.account_id}/projects/${args.id}`)
-			// 	.then( re => {
-			// 		state.project = re.data.project[0]
-			// 	})
-			// 	.catch( re=> {
-			// 		console.log(re);
-			// 	})
-			// 	.then( ()=>{
-			// 		state.loading = false
-			// 	})
-			// },
 			deleteDomain({state, rootState}, args){
 				state.loading = true
 				Request.destroyPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}`)
 				.then( re => {
 					state.loading = false
 					state.all = re.data.details
+					rootState.properties.all.domains = re.data.details
 					rootState.projects.project.domains = re.data.details
+
 					if( !Request.muted() ){
 						Vue.notify({
 							title: "Success",
@@ -77,10 +65,8 @@ export default {
 				})
 				.then( re=>{
 					//Add the new domain to the selected project, NOT THE GLOBAL PROJECT
-					// rootState.projects.all.find(p=>p.id == args.domain.project_id).domains.push(re.data.details)
-					// rootState.projects.project.domains = [];
-					// rootState.projects.project.domains.push(re.data.details);
-					
+					rootState.properties.all.domains.push(re.data.details)
+
 					if( args.callback ){
 						args.callback(re.data.details)
 					}

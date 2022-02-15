@@ -293,7 +293,7 @@ img.avatar{
     width: 100%;
     left: 0;
     right: 0;
-    height: 39px;
+    height: 26px;
     top: 22px;
 }
 .dropdown-container.dropdown-w-label:not(.settings-dropdown ) ul  {

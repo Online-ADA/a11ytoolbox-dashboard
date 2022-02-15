@@ -52,7 +52,7 @@
 				</fieldset>
 				
 				<template v-if="propertyType == 'website'">
-					<template v-if="$store.state.projects.project.domains != undefined && $store.state.projects.project.domains.length">
+					<template v-if="projectDomains.length">
 						<h2 id="choose_select_heading" class="pt-4 pb-3 headline-2">Select a Domain</h2>
 						<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('domain') }" id="domain-validation">{{validationMessages["domain"]}}</small>
 						<select 
@@ -63,7 +63,7 @@
 						class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow xs:w-full sm:w-auto" v-model="selectedDomain" 
 						name="choose_domain" 
 						id="choose_select">
-							<option :value="domain.id" v-for="(domain) in $store.state.projects.project.domains" :key="'domain-' + domain.id">
+							<option :value="domain.id" v-for="(domain) in projectDomains" :key="'domain-' + domain.id">
 								{{domain.url}}<template v-if="domain.root">/{{domain.root}}</template>
 							</option>
 						</select>
@@ -72,10 +72,10 @@
 					@click="createDomainSectionOpen = !createDomainSectionOpen" 
 					:aria-expanded="createDomainSectionOpen ? 'true' : 'false'" 
 					class="text-base mt-3">
-						<template v-if="$store.state.projects.project.domains != undefined && $store.state.projects.project.domains.length">
+						<template v-if="projectDomains.length">
 							Or Add a New Domain
 						</template>
-						<template v-if="$store.state.projects.project.domains == undefined || !$store.state.projects.project.domains.length">
+						<template v-if="!projectDomains.length">
 							Create a New Domain
 						</template>
 					</button>
@@ -108,6 +108,60 @@
 						</div>
 						<div class="feedback" role="status" aria-live="polite"> 
 							{{domain_feedback}}
+						</div> 
+					</form>
+				</template>
+
+				<template v-if="propertyType != 'website'">
+					<template v-if="$store.state.projects.project.software != undefined && $store.state.projects.project.software.length">
+						<h2 id="choose_select_heading" class="pt-4 pb-3 headline-2">Select a Software</h2>
+						<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('software') }" id="software-validation">{{validationMessages["software"]}}</small>
+						<select 
+						:data-validation-failed="failedValidation.includes('software') ? 'invalid-3' : false" 
+						required 
+						:aria-describedby="failedValidation.includes('software') ? 'software-validation' : false" 
+						aria-labelledby="choose_select_heading" 
+						class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow xs:w-full sm:w-auto" v-model="selectedSoftware" 
+						name="choose_software" 
+						id="choose_select">
+							<option :value="software.id" v-for="software in $store.state.projects.project.software" :key="'software-' + software.id">
+								{{software.title}}
+							</option>
+						</select>
+					</template>
+					<button 
+					@click="createSoftwareSectionOpen = !createSoftwareSectionOpen" 
+					:aria-expanded="createSoftwareSectionOpen ? 'true' : 'false'" 
+					class="text-base mt-3">
+						<template v-if="$store.state.projects.project.software != undefined && $store.state.projects.project.software.length">
+							Or Add a New Software
+						</template>
+						<template v-if="$store.state.projects.project.software == undefined || !$store.state.projects.project.software.length">
+							Create a New Software
+						</template>
+					</button>
+
+					<form v-if="createSoftwareSectionOpen" action="#" class="flex flex-wrap" @submit.prevent>
+						<div class="px-2 w-full">
+							<Label for="software-existing-title">Title</Label>
+							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('softwareTitle') }" id="softwareTitle-validation">{{validationMessages["softwareTitle"]}}</small>
+							<div class="flex">
+								<TextInput
+								:data-validation-failed="failedValidation.includes('software.title') ? 'invalid-3' : false" 
+								:aria-describedby="failedValidation.includes('software.title') ? 'softwareTitle-validation' : false"
+								required
+								class="w-9/12 ml-1" 
+								id="software-existing-title" 
+								v-model="software.title" />
+							</div>
+						</div>
+
+						<div class="mt-3 w-full">
+							<button v-if="software_loading" disabled class="standard mr-2">Add Software</button>
+							<button v-else class="standard mr-2" @click.prevent="createSoftware">Add Software</button>
+						</div>
+						<div class="feedback" role="status" aria-live="polite"> 
+							{{software_feedback}}
 						</div> 
 					</form>
 				</template>
@@ -166,8 +220,12 @@
 			propertyType: "website",
 			EventBus: EventBus,
 			selectedDomain: false,
+			selectedSoftware: false,
 			createDomainSectionOpen: false,
+			createSoftwareSectionOpen: false,
 			domain_loading: false,
+			software_loading: false,
+			software_feedback: '',
 			domain_feedback: '',
 			protocol: "https://",
 			url: "",
@@ -175,12 +233,18 @@
 				project_id: "",
 				url: "",
 			},
+			software: {
+				project_id: "",
+				title: "",
+			},
 			failedValidation: [],
 			showValidationAlert: false,
 			validationMessages: {
 				"title": "The title field is required",
 				"domainURL": "The domain url is required",
-				"domain": "A domain is required"
+				"domain": "A domain is required",
+				"software.title" : "The software title field is required",
+				"software": "A software is required"
 			},
 			scope_options:[
 				"The whole website/app",
@@ -268,8 +332,30 @@
 				this.scope_other_description = ""
 				this.complete = false
 				this.selectedDomain = false
+
+				this.software = {
+					title: "",
+					project_id: ""
+				}
+				this.selectedSoftware = false		
+				this.software_loading = false,
+				this.software_feedback = '',	
+
 				this.assigned = []
 				this.unassigned = []
+			},
+			createSoftware(){
+				this.software_loading = true
+				this.software_feedback = 'Software is being created.'
+				this.software.project_id = this.project.id
+				let that = this
+				this.$store.dispatch("properties/createSoftware", {software: this.software, callback: ((software)=>{
+					that.selectedSoftware = software.id
+					that.software.title = ""
+					that.software_feedback = 'Software created successfully and added to list.'
+					that.software_loading = false
+					that.createSoftwareSectionOpen = false
+				})})
 			},
 			createDomain(){
 				this.domain_loading = true
@@ -282,11 +368,9 @@
 					that.selectedDomain = domain.id
 					that.domain.url = ""
 					that.url = ""
-					let domains = that.$store.state.projects.project.domains
-					domains.push(domain)
-					that.$store.state.projects.project.domains = domains
 					that.domain_feedback = 'Domain created successfully and added to list.'
 					that.domain_loading = false
+					that.createDomainSectionOpen = false
 				})})
 			},
 			assign(id){
@@ -305,18 +389,35 @@
 				let toValidate = [
 					"title",
 					"domain",
-					// "domainURL"
+					"software.title",
+					"software"
 				]
 				this.failedValidation = []
 				var pass
 
 				for( let prop of toValidate ){
 					switch(prop){
+						case "software.title":
+							if( this.propertyType != 'website' ){
+								pass = (this.createSoftwareSectionOpen && this.software.title) || 
+										!this.createSoftwareSectionOpen
+							}
+							else{
+								pass = true
+							}
+							break
 						case "title":
 							pass = this.audit.title
 							break
+						case "software":
+							pass = this.selectedSoftware
+							break
 						case "domain":
-							pass = this.selectedDomain
+							if( this.propertyType == "website" ){
+								pass = this.selectedDomain
+							}else{
+								pass = true
+							}
 							break
 						case "domainURL":
 							if( this.propertyType == 'website' ){
@@ -336,7 +437,7 @@
 					}
 				}
 				
-
+				console.log("Failed Vaildation:", this.failedValidation);
 				if( this.failedValidation.length !== 0 ){
 					this.showValidationAlert = true
 					setTimeout(()=>{
@@ -355,11 +456,6 @@
 					this.createDomainSectionOpen = false
 				}
 			},
-			// users(newVal){
-			// 	if( this.open && newVal.length ){
-			// 		this.unassigned = newVal.map( o=>o.id)
-			// 	}
-			// },
 			open: function(newVal){
 				if( newVal ){
 					if( !this.project.domains || !this.project.domains.length ){
@@ -368,11 +464,6 @@
 					this.$store.dispatch("user/getUsers", {vm: this})
 				}
 			},
-			propertyType: function(newVal){
-				if( newVal == 'website' ){
-					this.step = 1
-				}
-			}
 		},
 		computed: {
 			isManager(){
@@ -407,6 +498,9 @@
 				let url = this.url.replace(/(?:^https?(:?\/\/?)?)+|(?:\/+|\s$)+/ig, "")
 				return this.protocol + url
 			},
+			projectDomains(){
+				return this.project.domains || []
+			}
 		},
 		components:{
 			Modal,

@@ -2,50 +2,44 @@
     <div>
         <div class="flex w-full">
             <Card class="mb-5 mr-5 w-1/2 relative min-h-[400px]" :center="false" :gutters="false">
-                <LocalLoader v-if="domainsLoading"></LocalLoader>
-                <template v-if="!domainsLoading">
-                    <h2 class="headline">All Domains</h2>
-                    <ul class="flex flex-col " v-if="all.domains.length">
-                        <li class="flex items-center my-2" v-for="(domain, id) in all.domains" :key="'domain-'+id">
-                            <span class="mr-3">
-                                {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template>
-                            </span>
-                            <router-link class="standard mr-3" :to="{path: `/domains/${domain.id}/edit`}">
-                                Edit
-                                <span class="sr-only"> domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span>
-                            </router-link>
-                            
-                            <button class="standard alert" @click.prevent="checkDeleteDomain(domain, $event)">
-                                <!-- <i class="fas fa-trash-alt"></i> -->
-                                Delete
-                                <span class="sr-only"> domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span>
-                            </button>
-                        </li>
-                    </ul>
-                    <template v-else>No Domains</template>
-                </template>
+                <h2 class="headline">All Domains</h2>
+                <ul class="flex flex-col " v-if="allDomains.length">
+                    <li class="flex items-center my-2" v-for="(domain, id) in allDomains" :key="'domain-'+id">
+                        <span class="mr-3">
+                            {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template>
+                        </span>
+                        <router-link class="standard mr-3" :to="{path: `/domains/${domain.id}/edit`}">
+                            Edit
+                            <span class="sr-only"> domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span>
+                        </router-link>
+                        
+                        <button class="standard alert" @click.prevent="checkDeleteDomain(domain, $event)">
+                            <!-- <i class="fas fa-trash-alt"></i> -->
+                            Delete
+                            <span class="sr-only"> domain {{domain.url}}<template v-if="domain.root">/{{domain.root}}</template></span>
+                        </button>
+                    </li>
+                </ul>
+                <template v-else>No Domains</template>
             </Card>
             <Card class="mb-5 w-1/2 relative min-h-[400px]" :center="false" :gutters="false">
-                <LocalLoader v-if="softwareLoading"></LocalLoader>
-                <template v-if="!softwareLoading">
-                    <h2 class="headline">All Software</h2>
-                    <ul class="flex flex-col " v-if="all.software.length">
-                        <li class="flex items-center my-2" v-for="(software, id) in all.software" :key="'software-'+id">
-                            <span class="mr-3">
-                                {{software.title}}
-                            </span>
-                            <router-link class="standard mr-3" :to="{path: `/software/${software.id}/edit`}">
-                                Edit
-                                <span class="sr-only"> software {{software.title}}</span>
-                            </router-link>
-                            <button class="standard alert" @click.prevent="checkDeleteSoftware(software, $event)">
-                                Delete
-                                <span class="sr-only"> software {{software.title}}</span>
-                            </button>
-                        </li>
-                    </ul>
-                    <template v-else>No Software</template>
-                </template>
+                <h2 class="headline">All Software</h2>
+                <ul class="flex flex-col " v-if="allSoftware.length">
+                    <li class="flex items-center my-2" v-for="(software, id) in allSoftware" :key="'software-'+id">
+                        <span class="mr-3">
+                            {{software.title}}
+                        </span>
+                        <router-link class="standard mr-3" :to="{path: `/software/${software.id}/edit`}">
+                            Edit
+                            <span class="sr-only"> software {{software.title}}</span>
+                        </router-link>
+                        <button class="standard alert" @click.prevent="checkDeleteSoftware(software, $event)">
+                            Delete
+                            <span class="sr-only"> software {{software.title}}</span>
+                        </button>
+                    </li>
+                </ul>
+                <template v-else>No Software</template>
             </Card>
         </div>
         
@@ -61,18 +55,26 @@
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                         <h3 class="headline-2" id="modal-title">
-                            Cannot Delete {{attemptingToDelete.url}}
+                            <template v-if="attemptingType === 'software'">
+                                Cannot delete software "{{attemptingToDelete.title}}"
+                            </template>
+                            <template v-if="attemptingType === 'domain'">
+                                Cannot delete domain "{{attemptingToDelete.url}}"
+                            </template>
                         </h3>
                         <div class="mt-2">
-                            <p class="text-sm text-gray-500">
-                                This domain is currently attached to {{attachedAudits.length}} audit<template v-if="attachedAudits.length !== 1">s</template> and cannot be deleted
+                            <p v-if="attemptingType === 'software'" class="text-sm text-gray-500">
+                                This software is currently attached to {{attemptingToDelete.attachments}} audit<template v-if="attemptingToDelete.attachments !== 1">s</template> and cannot be deleted
+                            </p>
+                            <p v-if="attemptingType === 'domain'" class="text-sm text-gray-500">
+                                This domain is currently attached to {{attemptingToDelete.attachments}} audit<template v-if="attemptingToDelete.attachments !== 1">s</template> and cannot be deleted
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="bg-gray-50 px-4 py-3">
-                <button @click="EventBus.closeModal(()=>{ cannotDeleteModalOpen = false; attemptingToDelete = false; attachedAudits = [] })" type="button" class="standard">
+                <button @click="EventBus.closeModal(()=>{ cannotDeleteModalOpen = false; attemptingToDelete = false; attachedAudits = []; attemptingType = '' })" type="button" class="standard">
                 Cancel
                 </button>
             </div>
@@ -91,27 +93,35 @@ export default {
     data: () => ({
         attachedAudits: [],
         attemptingToDelete: false,
+        attemptingType: "",
         cannotDeleteModalOpen: false,
         EventBus: EventBus,
-        all: {
-            software: [],
-            domains: [],
-            media_audits: [],
-            wcag_audits: []
-        },
-        domainsLoading: true,
-        softwareLoading: true,
-        getAllPropsFired: false
     }),
     computed: {
+        allSoftware(){
+            return this.$store.state.properties.all.software
+        },
+        allDomains(){
+            return this.$store.state.properties.all.domains
+        },
+        projectSoftware(){
+            return this.$store.state.projects.project.software || []
+        }
     },
     props: [],
     watch: {
-        "$store.state.auth.license":function(newVal){
-            if( this.getAllPropsFired ){
-                return
+        "projectSoftware":function(newVal){
+            //If this page is loaded while creating a new audit, and a new software is created, add it to the ALL SOFTWARE list
+            if( newVal.length ){
+                for (let x = 0; x < newVal.length; x++) {
+                    const software = newVal[x];
+                    if( !this.$store.state.properties.all.software.some( s=>s.id == software.id) ){
+                        this.$store.state.properties.all.software.push(software)
+                    }
+                }
             }
-
+        },
+        "$store.state.auth.license":function(newVal){
             this.getAllProperties()
         }
     },
@@ -119,6 +129,10 @@ export default {
         checkDeleteSoftware(software, $event){
             if( software.attachments === 0 ){
                 this.$store.dispatch("properties/destroySoftware", {id: software.id})
+            }else{
+                this.attemptingToDelete = software
+                this.cannotDeleteModalOpen = true
+                this.attemptingType = "software"
             }
         },
         checkDeleteDomain(domain, $event){
@@ -126,18 +140,11 @@ export default {
 
             if( domain.attachments === 0 ){
                 this.$store.dispatch("domains/deleteDomain", {id: domain.id})
+            }else{
+                this.attemptingToDelete = domain
+                this.cannotDeleteModalOpen = true
+                this.attemptingType = "domain"
             }
-        },
-        successCallback(data){
-            this.all.domains = data.domains
-            this.all.software = data.software
-
-            this.domainsLoading = false
-            this.softwareLoading = false
-        },
-        failCallback(){
-            this.domainsLoading= false
-            this.softwareLoading= false
         },
         getAllProperties(){
             this.$store.dispatch( "properties/getAllPropertiesForLicense", {license_id: this.license_id, callbacks: {success: this.successCallback, fail: this.failCallback} })
@@ -147,10 +154,7 @@ export default {
     },
     mounted() {
         document.title = "Property Management"
-        if( this.$store.state.auth.license.id ){
-            this.getAllPropsFired = true
-            this.getAllProperties()
-        }
+        this.getAllProperties()
     },
     components: {
       LocalLoader,

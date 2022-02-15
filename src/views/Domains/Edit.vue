@@ -80,7 +80,7 @@
 						<div class="flex items-center flex-1">
 							<span class="flex-1">{{domain.url}}/<span class="break-word" v-if="domain.root">{{domain.root}}/</span>
 								</span>
-							<TextInput style="flex-basis:100%" aria-label="Enter a url path" placeholder="contact" class="w-full flex-1" id="url" v-model="page.url" />
+							<TextInput style="flex-basis:100%" placeholder="contact" class="w-full flex-1" id="url" v-model="page.url" />
 							<button class="ml-2 standard" @click.prevent="addPage">Add</button>
 						</div>
 					</div>
@@ -96,7 +96,7 @@
 							</li>
 						</ul>
 					</Card>
-					<button class="standard alert" @click.prevent="emptySitemap" >Remove all<span class="sr-only"> sample items</span></button>
+					<button class="standard alert" @click.prevent="emptySitemap" >Remove all<span class="sr-only"> pages</span></button>
 				</template>
 
 				<FileInput @input="handleSitemapFile" class="block w-auto pb-3 mt-4" accept=".csv, .xml"></FileInput>
@@ -131,7 +131,7 @@
 							</tbody>
 						</table>
 					</Card>
-					<button class="standard alert mb-3" @click.prevent="emptySample">Remove all</button>
+					<button class="standard alert mb-3" @click.prevent="emptySample">Remove all<span class="sr-only"> sample items</span></button>
 				</template>
 
 				<FileInput @input="handleSampleFile" class="block w-auto pb-3" accept=".csv"></FileInput>
