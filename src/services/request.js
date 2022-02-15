@@ -260,7 +260,10 @@ class Request {
         if(response.data != undefined && response.data.message == 'No Account Access') {
             window.location = window.App.$store.state.auth.accapi+"/signin/?oada_redirect=/"
         }
-        if(response.data != undefined && response.data.success === 0) {
+        if(response.data != undefined && response.data.success === 'error') {
+            return
+        }
+        if(response.data != undefined && response.data.success === 'alert') {
             alert(response.data.message)
         }
         if( response.data.details == "incorrect_permissions" || response.data.details == "incorrect_role" ){

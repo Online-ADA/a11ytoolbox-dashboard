@@ -210,9 +210,47 @@ export default {
         this.$emit('change', this.vsValue)
       }
     },
+    isObject(value){
+      if( typeof value === 'object' &&
+          !Array.isArray(value) &&
+          value !== null ){
+            return true
+      }
+
+      return false
+    },
+    arrayIncludesObject(list, object){
+      return list.some( (val)=>{
+          let keys = Object.keys(val)
+          let values = Object.values(val)
+          
+          for( let x = 0; x < keys.length; x++ ){
+              let key = keys[x]
+
+              if( object[key] !== undefined ){
+                  if( object[key] === values[x] ){
+                      //Same value same key
+                      continue
+                  }
+                  return false
+                  
+              }
+              return false
+          }
+
+          return true
+      })
+    },
     isArrayIncludes() {
       let modelx = this.value
       let value = this.vsValue
+      if( this.isObject(value) ){
+        //Loop over the modelx array, loop over each object within modelx array for the properties. Compare the properties of each item to vsvalue
+        //modelx is the destination array
+        //value is what we are looking for
+        return this.arrayIncludesObject(modelx, value)
+      }
+      
       return modelx.includes(value)
     },
     isArrayx() {

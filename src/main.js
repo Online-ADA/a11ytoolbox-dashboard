@@ -64,11 +64,6 @@ store.state.auth.toolboxapi = apiHost
 store.state.auth.API = `${apiHost}/api`
 store.state.auth.dashboard = dashboard
 async function run(){
-  window.App = new Vue({
-    router,
-    store,
-    render: h => h(App)
-  }).$mount('#app')
   await Request.getPromise(store.state.auth.API+'/state/init',{async:false,params:{license:license_id}})
     .then( response => { 
       //If we are authenticated via the Online ADA SSO server: accounts.onlineada.com
@@ -76,6 +71,7 @@ async function run(){
       store.commit('auth/setState',{key:'license',value:response.data.details.license})
       store.commit('auth/setState',{key:'account',value:parseInt(response.data.details.license.account.id)})
       if( store.state.auth.license ){
+        
         //If the license ID is set, then go get all the clients related to that license
         Request.getPromise(store.state.auth.API+`/l/${store.state.auth.license.id}/clients`)
         .then( response => {
@@ -116,6 +112,13 @@ async function run(){
         }
       }
     })
+
+    window.App = new Vue({
+      router,
+      store,
+      render: h => h(App)
+    }).$mount('#app')
+
     router.beforeEach( (to, from, next) => {
       //Let's do nothing if it's hitting the authentication route. Everything is handled within and will run us back through here once authentication attempt is completed
       if(to.name == 'auth') {

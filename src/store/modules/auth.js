@@ -92,7 +92,7 @@ export default {
     },
   },
   actions: {
-    check({state, rootState,commit}) {
+    check({state, rootState,commit}, args) {
       console.log("Running Auth Check");
       const url_params = new URLSearchParams(window.location.search)
       const license_id = url_params.get('license') ? url_params.get('license') : Cookies.get('toolboxLicense')
@@ -125,6 +125,14 @@ export default {
         }
 
         Cookies.set("loggingIn", false)
+
+        if( state.license ){
+          if(args.payload.redirect) {
+            args.payload.router.push({path: args.payload.redirect})
+          }else{
+            args.payload.router.push({path: state.redirect})
+          }
+        }
       })
       .catch(re => console.log(re.response.data))
       .finally( ()=>{
@@ -154,12 +162,7 @@ export default {
       state.checkTokenExpire(state)
 
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
-      dispatch("check")
-      if(payload.redirect) {
-        payload.router.push({path: payload.redirect})
-      }else{
-        payload.router.push({path: state.redirect})
-      }
+      dispatch("check", {payload: payload})
     },
     logout({state, dispatch}){
       state.token = false

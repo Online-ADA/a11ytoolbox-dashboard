@@ -184,7 +184,7 @@
 			chooseYes(){
 				this.reset()
 				EventBus.closeModal(()=>{ EventBus.$emit('deployMediaAuditModal', false) })
-				this.$router.push({path: `/${this.$route.params.license}/media-audits/${this.$store.state.mediaAudits.all[this.$store.state.mediaAudits.all.length - 1].id}`})
+				this.$router.push({path: `/media-audits/${this.$store.state.mediaAudits.all[this.$store.state.mediaAudits.all.length - 1].id}`})
 			},
 			displayUser(id){
 				let user = this.team_members.find( u => u.id == id )

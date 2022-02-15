@@ -18,10 +18,10 @@
                         </li>
                         <li class="hover:bg-pallette-grey-light" v-for="(child, index) in getClients" :key="index">
                             <template v-if="child.type == 'router-link'">
-                                <router-link class="hover:text-gray-500 block" :to="child.to"><span v-html="child.label"></span></router-link>
+                                <router-link class="block" :to="child.to"><span v-html="child.label"></span></router-link>
                             </template>
                             <template v-if="child.type == 'client'">
-                                <A href="#" @click.native.prevent="setClient(child.to)">{{child.label}}</A>
+                                <a href="#" @click.prevent="setClient(child.to)">{{child.label}}</a>
                             </template>
                         </li>
                     </ul>
@@ -40,24 +40,24 @@
             <ul class="text-left mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <template v-if="isManager">
                     <li class="hover:bg-pallette-grey-light">
-                        <router-link class="hover:text-gray-500 block" :to="'/manage/articles'">
+                        <router-link class="block" :to="'/manage/articles'">
                             <span>Success Criteria</span>
                         </router-link>
                     </li>
                     <li class="hover:bg-pallette-grey-light">
-                        <router-link class="hover:text-gray-500 block" :to="'/manage/users'">
+                        <router-link class="block" :to="'/manage/users'">
                             <span>Users</span>
                         </router-link>
                     </li>
                 </template>
-                <li>
-                    <router-link :to="'/domains'" class="hover:text-gray-500 block"><span>Domains</span></router-link>
+                <li class="hover:bg-pallette-grey-light">
+                    <router-link :to="'/properties'" class="block"><span>Properties</span></router-link>
                 </li>
-                <li>
-                    <router-link :to="'/automations/history'" class="hover:text-gray-500 block"><span>Automated Audits</span></router-link>
+                <li class="hover:bg-pallette-grey-light">
+                    <router-link :to="'/automations/history'" class="block"><span>Automated Audits</span></router-link>
                 </li>
             </ul>
-            <span id="management-label" class="sub-label text-white uppercase">Settings</span>
+            <span id="management-label" class="sub-label text-white uppercase"><div>Global</div>Settings</span>
         </div>
 
         <div ref="userDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('userDropdown')" @click.prevent="expandDropdown('userDropdown')" :aria-expanded="[ dropdownsExpanded.includes('userDropdown') ? 'true' : 'false' ]" :class="[dropdownsExpanded.includes('userDropdown') ? 'expanded' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
@@ -69,14 +69,14 @@
             <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
                     <template v-if="child.type == 'router-link'">
-                        <router-link class="hover:text-gray-500 block" :to="GoToDropdown(child)"><span class="sm:text-right" v-html="child.label"></span></router-link>
+                        <router-link class="block" :to="GoToDropdown(child)"><span class="sm:text-right" v-html="child.label"></span></router-link>
                     </template>
                     <template v-if="child.type == 'logout'">
                         <A href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
                     </template>
                 </li>
             </ul>
-            <span class="sub-label text-white">{{account}}</span>
+            <span class="sub-label text-white">{{license_title}}</span>
         </div>
 
         <router-link aria-label="Go to user profile" :to="profileLink"><img alt="User Avatar" :src="user_avatar" class="avatar" /></router-link>
@@ -108,11 +108,15 @@ export default {
     mounted(){
     },
     computed: {
-        account(){
-            if( this.$store.getters['auth/account'] ){
-                return this.$store.getters['auth/account'].name
+        license_title(){
+            if( this.license ){
+                if(this.license.name && this.license.name.trim() != '') return this.license.name
+                return this.license.id
             }
             return ""
+        },
+        license() {
+            return this.$store.state.auth.license
         },
         getClients() {
             let clients = [];
@@ -165,9 +169,6 @@ export default {
                 this.dropdownsExpanded.push(value)
                 EventBus.$emit("dropdown-expanded", {dropdown: value, ref: this.$refs[value]})
             }
-        },
-        updateAccountName(){
-            if(this.account) this.userDropdown[0].label = this.account.name
         },
         menuClick() {
             this.menuOpen = !this.menuOpen;
@@ -283,7 +284,7 @@ img.avatar{
     z-index:99;
 }
 .dropdown-container.settings-dropdown ul{
-    top:140%;
+    top:119%;
 }
 .dropdown-container:after{
     content: " ";
@@ -292,7 +293,7 @@ img.avatar{
     width: 100%;
     left: 0;
     right: 0;
-    height: 30px;
+    height: 26px;
     top: 22px;
 }
 .dropdown-container.dropdown-w-label:not(.settings-dropdown ) ul  {

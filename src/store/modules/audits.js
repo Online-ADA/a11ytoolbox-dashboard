@@ -361,13 +361,11 @@ export default {
 			},
 			createIssue({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.issue.audit_id}/issues/store`, {params: args.issue})
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.issue.audit_id}/issues/store`, {params: {issue: args.issue, pagination: args.pagination}})
 				.then( re=>{
 					//Don't add the issue to the currently displayed list if its at the page maximum for pagination
-					if( state.audit.issues.length < 100 ){
-						state.audit.issues = re.data.details
-					}
-					state.audit.issue_count = re.data.details.length
+					state.audit.issues = re.data.details.issues
+					state.audit.issue_count = re.data.details.issue_count
 				})
 				.catch( re=>{
 					console.log(re)
@@ -378,9 +376,10 @@ export default {
 			},
 			deleteIssues({state, rootState}, args){
 				state.loading = true
-				Request.patchPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.audit_id}/issues`, {params: { issues: args.issues }})
+				Request.patchPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.audit_id}/issues`, {params: { issues: args.issues, pagination: args.pagination }})
 				.then( re=>{
-					state.audit.issues = re.data.details
+					state.audit.issues = re.data.details.issues
+					state.audit.issue_count = re.data.details.issue_count
 				})
 				.catch( re=>{
 					console.log(re)
@@ -391,7 +390,7 @@ export default {
 			},
 			updateIssue({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.audit_id}/issues/${args.issue.id}`, { params: args.issue })
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.audit_id}/issues/${args.issue.id}`, {params: {issue: args.issue, pagination: args.pagination}})
 				.then( re=>{
 					state.audit.issues = re.data.details
 				})

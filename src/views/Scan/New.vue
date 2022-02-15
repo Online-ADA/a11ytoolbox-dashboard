@@ -106,6 +106,20 @@
                 <div class="flex w-full items-center">
                     <Radio :value="true" class="w-full" v-model="append" :items="[{display:'Append to Current Audit', value:true}, {display: 'Generate as New Audit', value:false}]"></Radio>
                 </div>
+                <div class="flex w-full items-center">
+                    <Radio :value="true" class="w-full" v-model="sitemap" :items="[{display:'Audit Entire Sitemap', value:'sitemap'}, {display: 'Audit Homepage Only', value:'homepage'}, {display: 'Audit Specific Pages', value:'pages'}]"></Radio>
+                </div>
+                <div v-show="sitemap == 'pages'" class="flex flex-col w-full my-4">
+                    <div v-if="!audit.domain || !audit.domain.pages || !audit.domain.pages.length" class="w-full" >
+                        There are no pages in this sitemap.
+                    </div>
+                    <div v-else class="w-full" >
+                        <label for="pages">Select Pages To Audit</label>
+                        <select id="pages" class="m-2 w-1/2" multiple v-model="pages">
+                            <option v-for="(page,i) in audit.domain.pages" :value="page.url" :key="i">{{page.url}}</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="w-full my-2 flex">
                     <button class="standard" @click.prevent="startScan" >Start Automated Audit</button>
                 </div>
@@ -231,9 +245,14 @@ export default {
         custom:false,
         append: true,
         section: "full",
-        showSuccess: false
+        showSuccess: false,
+        sitemap: 'sitemap',
+        pages: [],
     }),
     computed:{
+        audit(){
+            return this.$store.state.audits.audit
+        },
         isManager(){
             return this.$store.getters["auth/isManager"]
         },
@@ -275,8 +294,9 @@ export default {
             }
         },
         startScan(){
-            this.$store.dispatch("scan/initiateScan", {config: this.parseOptionsObject(), id: this.$route.params.id, appends: this.append})
-            this.showSuccess = true
+            this.$store.dispatch("scan/initiateScan", {config: this.parseOptionsObject(), id: this.$route.params.id, appends: this.append, sitemap: this.sitemap, pages: this.pages, callback: (status) => {
+                if(status == 'success') this.showSuccess = true
+            }})
         },
         parseOptionsObject(){
             //if manager, you have custom true/false and simple true/false

@@ -1,9 +1,9 @@
 <template>
     <label class="switch flex items-center">
         <input v-model="checked" @change="$emit('changed', checked)" type="checkbox">
-        <span class="headline-2">{{labelLeft}}</span>
-        <span :class="{'checked':checked}" class="slider round mx-3"></span>
-        <span class="headline-2">{{labelRight}}</span>
+        <span style="font-size:12px;" class="subheadline">{{labelLeft}}</span>
+        <span style="font-size:12px;" :class="{'checked':checked}" class="slider round mx-3"></span>
+        <span style="font-size:12px;" class="subheadline">{{labelRight}}</span>
     </label>
 </template>
 
@@ -60,16 +60,16 @@
         background-color: rgb(0, 68, 88);
         -webkit-transition: .15s;
         transition: .15s;
-        width: 50px;
-        height: 26px;
+        width: 35px;
+        height: 20px;
         display:block;
     }
 
     .slider:before {
         position: absolute;
         content: "";
-        height: 18px;
-        width: 18px;
+        height: 12px;
+        width: 12px;
         left: 4px;
         bottom: 4px;
         background-color: white;
@@ -78,9 +78,9 @@
     }
 
     .slider.checked:before {
-        -webkit-transform: translateX(24px);
-        -ms-transform: translateX(24px);
-        transform: translateX(24px);
+        -webkit-transform: translateX(15px);
+        -ms-transform: translateX(15px);
+        transform: translateX(15px);
     }
 
     /* Rounded sliders */

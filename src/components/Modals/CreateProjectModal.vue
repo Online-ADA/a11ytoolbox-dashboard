@@ -89,7 +89,7 @@
 			},
 			chooseNo(){
 				this.EventBus.closeModal( ()=>{ this.EventBus.$emit('createProjectModal', false)})
-				this.$router.push({path: `/${this.$route.params.license}/projects/${this.$store.state.projects.project.id}`})
+				this.$router.push({path: `/projects/${this.$store.state.projects.project.id}`})
 				this.reset()
 			},
 			reset(){
