@@ -288,6 +288,7 @@
 					this.audit.assigned = this.assigned
 					this.audit.project_id = this.$store.state.projects.project.id
 					this.audit.domain_id = this.selectedDomain
+					this.audit.software_id = this.selectedSoftware
 					this.audit.property_type = this.propertyType
 
 					if( this.audit.scope == "Other" ){

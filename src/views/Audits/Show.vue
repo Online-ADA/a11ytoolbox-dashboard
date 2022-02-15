@@ -56,16 +56,25 @@
 						<div class="pr-2 flex-1 h-[220px]">
 							<div class="flex justify-between">
 								<Label class="text-lg leading-6 w-full subheadline" :stacked="false" for="pages">Pages</Label>
-								<Toggle class="whitespace-nowrap" @changed="((ev)=>{ useSitemap = ev })" :labelLeft="'Working Sample'" :labelRight="'Sitemap'" ></Toggle>
+								<Toggle class="whitespace-nowrap" v-if="audit.property_type == 'website'" @changed="((ev)=>{ useSitemap = ev })" :labelLeft="'Working Sample'" :labelRight="'Sitemap'" ></Toggle>
 							</div>
 							
-							<select id="pages" class="w-full h-full max-h-[180px] min-w-[200px]" v-model="issue.pages" multiple>
-								<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in pagesSrc" :key="'page-'+index">
-									<template v-if="page.title">{{page.title}}</template>
-									<template v-if="page.title && page.url"> - </template>
-									<template v-if="page.url">{{page.url}}</template>
-								</option>
-							</select>
+							<template v-if="audit.property_type == 'website'">
+								<select id="pages" class="w-full h-full max-h-[180px] min-w-[200px]" v-model="issue.pages" multiple>
+									<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in pagesSrc" :key="'page-'+index">
+										<template v-if="page.title">{{page.title}}</template>
+										<template v-if="page.title && page.url"> - </template>
+										<template v-if="page.url">{{page.url}}</template>
+									</option>
+								</select>
+							</template>
+							<template v-if="audit.property_type != 'website'">
+								<select id="pages" class="w-full h-full max-h-[180px] min-w-[200px]" v-model="issue.pages" multiple>
+									<option class="break-words whitespace-normal" :value="screen" v-for="(screen, index) in pagesSrc" :key="'page-'+index">
+										{{screen.name}}
+									</option>
+								</select>
+							</template>
 						</div>
 
 						<div class="mx-2 flex-1">
@@ -430,11 +439,17 @@ export default {
 	computed: {
 		pagesSrc(){
 			if( this.audit ){
-				if( this.useSitemap ){
-					return this.audit.domain.pages
-				}
+				if( this.audit.property_type == "website" ){
+					if( this.useSitemap ){
+						return this.audit.domain.pages
+					}
 
-				return this.audit.domain.sample
+					return this.audit.domain.sample
+				}
+				
+				if( this.audit.property_type != "website" ){
+					return this.audit.software.screens
+				}
 			}
 		},
 		isManager(){
