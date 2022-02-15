@@ -41,7 +41,7 @@ export default {
 				}
 			})
 			.then( re=>{
-				rootState.projects.project.software.push(software)
+				rootState.projects.project.software.push(re.data.details)
 				
 				if( args.callback ){
 					args.callback(re.data.details)
