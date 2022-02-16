@@ -411,7 +411,11 @@
 							pass = this.audit.title
 							break
 						case "software":
-							pass = this.selectedSoftware
+							if( this.propertyType != "website" ){
+								pass = this.selectedSoftware
+							}else{
+								pass = true
+							}
 							break
 						case "domain":
 							if( this.propertyType == "website" ){

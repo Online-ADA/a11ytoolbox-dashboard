@@ -19,7 +19,8 @@
 			:condense="shouldCondense" 
 			:locked="audit.locked" 
 			@selectAll="selectAll" 
-			@deselectAll="deselectAll" 
+			@deselectAll="deselectAll"
+			:audit_id="$route.params.id"
 			ref="issuesTable" 
 			:selected="selectedRows" 
 			@rowClick="selectRow" 
@@ -61,7 +62,7 @@
 							
 							<template v-if="audit.property_type == 'website'">
 								<select id="pages" class="w-full h-full max-h-[180px] min-w-[200px]" v-model="issue.pages" multiple>
-									<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in pagesSrc" :key="'page-'+index">
+									<option class="break-words whitespace-normal" :value="{title: page.title, url: page.url}" v-for="(page, index) in pagesSrc" :key="'page-'+index">
 										<template v-if="page.title">{{page.title}}</template>
 										<template v-if="page.title && page.url"> - </template>
 										<template v-if="page.url">{{page.url}}</template>
@@ -70,7 +71,7 @@
 							</template>
 							<template v-if="audit.property_type != 'website'">
 								<select id="pages" class="w-full h-full max-h-[180px] min-w-[200px]" v-model="issue.pages" multiple>
-									<option class="break-words whitespace-normal" :value="screen" v-for="(screen, index) in pagesSrc" :key="'page-'+index">
+									<option class="break-words whitespace-normal" :value="{title: screen.name}" v-for="(screen, index) in pagesSrc" :key="'page-'+index">
 										{{screen.name}}
 									</option>
 								</select>
