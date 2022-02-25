@@ -39,24 +39,6 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- <Modal class="z-50" :open="showLoginPrompt">
-		<div class="bg-white px-4 pt-5 pb-4 p-6 text-center">
-			<Btn aria-label="Close refresh session modal" @click.native.prevent="showLoginPrompt = false" class="absolute top-4 right-4" hover="true" color="white">X</Btn>
-			<h2 class="text-center pb-3">Your session is about to expire</h2>
-
-			<span class="text-sm">Time Remaining: {{tokenMinutesLeft}} minute<template v-if="tokenMinutesLeft != 1">s</template> and {{tokenSecondsLeft}} second<template v-if="tokenSecondsLeft != 1">s</template></span>
-			<div class="text-sm">When your session ends you will be redirected to the home page</div>
-		</div>
-		<div class="bg-gray-50 px-4 py-3 flex">
-			<button @click.prevent="refreshSession" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
-				Refresh Session
-			</button>
-			<button @click.prevent="showLoginPrompt = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
-				Close
-			</button>
-		</div>
-		</Modal> -->
 	</div>
 </template>
 
@@ -149,42 +131,21 @@ export default {
 		account() {
 			return this.$store.getters["auth/account"]
 		},
-		secondaryHeaderLabel() {
-			if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectList' )
-				return "Projects";
-			else
-				return false;
-		},
-		showSecondaryHeader() {
-			let showRoutes = ["ManageAudits", 'ManageProjects', 'ProjectList', 'ManageClients']
-			if ( showRoutes.includes(this.$route.name) )
-				return this.$route.name;
-			else
-				return false;
-		},
-		// tokenSecondsLeft(){
-		// 	return this.$store.state.auth.token_time_left.seconds
+		// secondaryHeaderLabel() {
+		// 	if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectList' )
+		// 		return "Projects";
+		// 	else
+		// 		return false;
 		// },
-		// tokenMinutesLeft(){
-		// 	return this.$store.state.auth.token_time_left.minutes
-		// },
-		// showLoginPrompt:{
-		// 	get(){
-		// 		return this.$store.state.auth.showLoginPrompt
-		// 	},
-		// 	set(val){
-		// 		this.$store.commit("auth/setState", {key: 'showLoginPrompt', value: false})
-		// 		this.$store.commit("auth/setState", {key: 'showLoginPromptOverride', value: true})
-		// 	}
+		// showSecondaryHeader() {
+		// 	let showRoutes = ["ManageAudits", 'ManageProjects', 'ProjectList', 'ManageClients']
+		// 	if ( showRoutes.includes(this.$route.name) )
+		// 		return this.$route.name;
+		// 	else
+		// 		return false;
 		// },
 	},
 	watch: {
-		// "$store.state.auth.user.meta":function(newVal){
-		// 	console.log("USER META IS CHANGING", newVal);
-		// 	if( Object.keys(newVal).includes("audit") ){
-		// 		Utility.reviveUserAuditMetaFunction(newVal, this)
-		// 	}
-		// },
 		"$store.state.clients.client": function(newVal){
 			this.$store.state.audits.all = []
 			this.$store.state.projects.project = false
@@ -211,6 +172,12 @@ export default {
 			if( this.$route.matched[0].name == 'Audits' ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"audit", info:""}
+					return
+				}
+			}
+			if( this.$route.matched[0].path == 'color-reports' ){
+				if( this.$route.params.id !== undefined ){
+					this.$store.state.projects.tool = {type:"color_swatch", info:""}
 					return
 				}
 			}

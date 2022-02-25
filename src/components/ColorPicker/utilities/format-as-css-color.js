@@ -4,7 +4,6 @@
 /** @typedef {import('../../types/index').VueAccessibleColorPicker.ColorRgb} ColorRgb */
 /** @typedef {import('../../types/index').VueAccessibleColorPicker.VisibleColorFormat} VisibleColorFormat */
 
-import { round } from './round.js'
 
 /**
  * @typedef {Object} Formatters
@@ -29,12 +28,13 @@ const formatters = {
    * @returns {string}
    */
   hsl (hsl) {
-    const h = round(hsl.h * 360)
-    const s = round(hsl.s * 100)
-    const l = round(hsl.l * 100)
-    const a = round(hsl.a)
+    const h = Math.round(hsl.h * 360)
+    const s = Math.round(hsl.s * 100)
+    const l = Math.round(hsl.l * 100)
+    // const a = round(hsl.a)
 
-    return `hsl(${h} ${s}% ${l}% / ${a})`
+    // return `hsl(${h} ${s}% ${l}% / ${a})`
+    return `hsl(${h} ${s}% ${l}%)`
   },
 
   /**
@@ -42,12 +42,13 @@ const formatters = {
    * @returns {string}
    */
   hwb (hwb) {
-    const h = round(hwb.h * 360)
-    const w = round(hwb.w * 100)
-    const b = round(hwb.b * 100)
-    const a = round(hwb.a)
+    const h = Math.round(hwb.h * 360)
+    const w = Math.round(hwb.w * 100)
+    const b = Math.round(hwb.b * 100)
+    // const a = round(hwb.a)
 
-    return `hwb(${h} ${w}% ${b}% / ${a})`
+    // return `hwb(${h} ${w}% ${b}% / ${a})`
+    return `hwb(${h} ${w}% ${b}%)`
   },
 
   /**
@@ -55,12 +56,13 @@ const formatters = {
    * @returns {string}
    */
   rgb (rgb) {
-    const r = round(rgb.r * 255)
-    const g = round(rgb.g * 255)
-    const b = round(rgb.b * 255)
-    const a = round(rgb.a)
+    const r = Math.round(rgb.r * 255)
+    const g = Math.round(rgb.g * 255)
+    const b = Math.round(rgb.b * 255)
+    // const a = round(rgb.a)
 
-    return `rgb(${r} ${g} ${b} / ${a})`
+    //return `rgb(${r} ${g} ${b} / ${a})`
+    return `rgb(${r} ${g} ${b})`
   },
 }
 

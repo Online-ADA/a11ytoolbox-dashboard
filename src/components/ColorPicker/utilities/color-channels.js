@@ -50,10 +50,10 @@ export const colorChannels = {
       from: CssValues.fromPercentage,
     },
 
-    a: {
-      to: CssValues.toAlpha,
-      from: CssValues.fromAlpha,
-    },
+    // a: {
+    //   to: CssValues.toAlpha,
+    //   from: CssValues.fromAlpha,
+    // },
   },
 
   hwb: {
@@ -72,10 +72,10 @@ export const colorChannels = {
       from: CssValues.fromPercentage,
     },
 
-    a: {
-      to: CssValues.toAlpha,
-      from: CssValues.fromAlpha,
-    },
+    // a: {
+    //   to: CssValues.toAlpha,
+    //   from: CssValues.fromAlpha,
+    // },
   },
 
   rgb: {
@@ -94,9 +94,9 @@ export const colorChannels = {
       from: CssValues.from8BitDecimal,
     },
 
-    a: {
-      to: CssValues.toAlpha,
-      from: CssValues.fromAlpha,
-    },
+    // a: {
+    //   to: CssValues.toAlpha,
+    //   from: CssValues.fromAlpha,
+    // },
   },
 }

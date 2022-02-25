@@ -17,7 +17,7 @@ export function convertHslToRgb (hsl) {
     r: hue2rgb(p, q, hsl.h + 1 / 3),
     g: hue2rgb(p, q, hsl.h),
     b: hue2rgb(p, q, hsl.h - 1 / 3),
-    a: hsl.a,
+    // a: hsl.a,
   }
 }
 

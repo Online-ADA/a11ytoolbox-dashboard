@@ -25,6 +25,6 @@ export function parseRgbColor (rgbColorString) {
     r: CssValues.from8BitDecimal(functionValues[0]),
     g: CssValues.from8BitDecimal(functionValues[1]),
     b: CssValues.from8BitDecimal(functionValues[2]),
-    a: functionValues.length === 4 ? CssValues.fromAlpha(functionValues[3]) : 1,
+    // a: functionValues.length === 4 ? CssValues.fromAlpha(functionValues[3]) : 1,
   }
 }

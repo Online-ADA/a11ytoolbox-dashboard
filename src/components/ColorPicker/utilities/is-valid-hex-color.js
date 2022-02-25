@@ -9,9 +9,12 @@ export function isValidHexColor (hexColor) {
     return false
   }
 
-  if (![3, 4, 6, 8].includes(hexColor.length - 1)) {
+  if (![3, 4, 6].includes(hexColor.length - 1)) {
     return false
   }
+  // if (![3, 4, 6, 8].includes(hexColor.length - 1)) {
+  //   return false
+  // }
 
   return /^#[0-9A-Fa-f]+$/.test(hexColor)
 }

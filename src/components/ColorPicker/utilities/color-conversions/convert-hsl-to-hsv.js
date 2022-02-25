@@ -17,6 +17,6 @@ export function convertHslToHsv (hsl) {
     h: hsl.h,
     s,
     v,
-    a: hsl.a,
+    // a: hsl.a,
   }
 }

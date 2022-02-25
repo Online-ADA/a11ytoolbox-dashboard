@@ -9,7 +9,18 @@
  * @param {string} str
  * @returns {boolean}
  */
-export function copyToClipboard (str) {
+
+const copyToClipboard = str => {
+  if(navigator && navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(str)
+  }
+
+  return copyToClipboardLegacy(str)
+}
+export default copyToClipboard
+
+
+function copyToClipboardLegacy (str) {
   if (
     !(typeof document.queryCommandSupported === 'function' && document.queryCommandSupported('copy'))
   ) {

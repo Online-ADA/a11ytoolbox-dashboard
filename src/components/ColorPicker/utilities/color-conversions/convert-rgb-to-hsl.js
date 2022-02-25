@@ -41,6 +41,6 @@ export function convertRgbToHsl (rgb) {
     h,
     s,
     l,
-    a: rgb.a,
+    // a: rgb.a,
   }
 }

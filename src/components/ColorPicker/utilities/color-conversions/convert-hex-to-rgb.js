@@ -1,6 +1,8 @@
 /** @typedef {import('../../../types/index').VueAccessibleColorPicker.ColorHex} ColorHex */
 /** @typedef {import('../../../types/index').VueAccessibleColorPicker.ColorRgb} ColorRgb */
 
+import { round } from '../round.js'
+
 /**
  * Converts a HEX color string to an RGB color object.
  *
@@ -26,13 +28,12 @@ export function convertHexToRgb (hex) {
   if (channels.length === 3) {
     channels.push('ff')
   }
-
   const rgbChannels = channels.map(channel => parseInt(channel, 16) / 255)
 
   return {
-    r: rgbChannels[0],
-    g: rgbChannels[1],
-    b: rgbChannels[2],
-    a: rgbChannels[3],
+    r: round(rgbChannels[0]),
+    g: round(rgbChannels[1]),
+    b: round(rgbChannels[2]),
+    // a: rgbChannels[3],
   }
 }

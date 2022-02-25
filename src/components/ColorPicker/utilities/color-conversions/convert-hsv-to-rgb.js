@@ -14,7 +14,7 @@ export function convertHsvToRgb (hsv) {
     r: fn(5, hsv),
     g: fn(3, hsv),
     b: fn(1, hsv),
-    a: hsv.a,
+    // a: hsv.a,
   }
 }
 

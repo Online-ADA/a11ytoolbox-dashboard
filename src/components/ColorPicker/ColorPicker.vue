@@ -41,7 +41,7 @@
       >
     </label>
 
-    <label
+    <!-- <label
       class="vacp-range-input-label vacp-range-input-label--alpha"
       :for="`${id}-alpha-slider`"
     >
@@ -60,24 +60,10 @@
         @keydown.passive="changeInputValue"
         @input="updateAlpha"
       >
-    </label>
-
-    <button
-      class="vacp-copy-button"
-      type="button"
-      @click="copyColor"
-    >
-      <slot name="copy-button">
-        <span class="sr-only">Copy color</span>
-        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" ><path d="M5 0v2H1v13h12v-3h-1v2H2V5h10v3h1V2H9V0zm1 1h2v2h3v1H3V3h3z" fill="currentColor" ></path><path d="M10 7v2h5v2h-5v2l-3-3zM3 6h5v1H3zm0 2h3v1H3zm0 2h3v1H3zm0 2h5v1H3z" fill="currentColor"></path></svg>
-      </slot>
-    </button>
+    </label> -->
 
     <div class="vacp-color-inputs">
-      <div
-        v-if="activeFormat === 'hsl'"
-        class="vacp-color-input-group"
-      >
+      <div v-if="activeFormat === 'hsl'" class="vacp-color-input-group" >
         <label
           class="vacp-color-input-label"
           :for="`${id}-color-hsl-h`"
@@ -123,7 +109,7 @@
           >
         </label>
 
-        <label
+        <!-- <label
           class="vacp-color-input-label"
           :for="`${id}-color-hsl-a`"
         >
@@ -136,13 +122,10 @@
             :value="getChannelAsCssValue('hsl', 'a')"
             @input="updateColorValue($event, 'hsl', 'a')"
           >
-        </label>
+        </label> -->
       </div>
 
-      <div
-        v-else-if="activeFormat === 'hwb'"
-        class="vacp-color-input-group"
-      >
+      <div v-else-if="activeFormat === 'hwb'" class="vacp-color-input-group" >
         <label
           class="vacp-color-input-label"
           :for="`${id}-color-hwb-h`"
@@ -188,7 +171,7 @@
           >
         </label>
 
-        <label
+        <!-- <label
           class="vacp-color-input-label"
           :for="`${id}-color-hwb-a`"
         >
@@ -201,13 +184,10 @@
             :value="getChannelAsCssValue('hwb', 'a')"
             @input="updateColorValue($event, 'hwb', 'a')"
           >
-        </label>
+        </label> -->
       </div>
 
-      <div
-        v-else-if="activeFormat === 'rgb'"
-        class="vacp-color-input-group"
-      >
+      <div v-else-if="activeFormat === 'rgb'" class="vacp-color-input-group" >
         <label
           class="vacp-color-input-label"
           :for="`${id}-color-rgb-r`"
@@ -253,7 +233,7 @@
           >
         </label>
 
-        <label
+        <!-- <label
           class="vacp-color-input-label"
           :for="`${id}-color-rgb-a`"
         >
@@ -266,13 +246,10 @@
             :value="getChannelAsCssValue('rgb', 'a')"
             @input="updateColorValue($event, 'rgb', 'a')"
           >
-        </label>
+        </label> -->
       </div>
 
-      <div
-        v-else-if="activeFormat === 'hex'"
-        class="vacp-color-input-group"
-      >
+      <div v-else-if="activeFormat === 'hex'" class="vacp-color-input-group" >
         <label
           class="vacp-color-input-label"
           :for="`${id}-color-hex`"
@@ -288,10 +265,23 @@
           >
         </label>
       </div>
+    </div>
+
+    <div class="flex items-center">
+      <button
+        class="vacp-copy-button p-1.5"
+        type="button"
+        @click="copyColor"
+      >
+        <slot name="copy-button">
+          <span class="sr-only">Copy color</span>
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" ><path d="M5 0v2H1v13h12v-3h-1v2H2V5h10v3h1V2H9V0zm1 1h2v2h3v1H3V3h3z" fill="#000" ></path><path d="M10 7v2h5v2h-5v2l-3-3zM3 6h5v1H3zm0 2h3v1H3zm0 2h3v1H3zm0 2h5v1H3z" fill="#000"></path></svg>
+        </slot>
+      </button>
 
       <button
         v-if="visibleFormats.length > 1"
-        class="vacp-format-switch-button"
+        class="vacp-format-switch-button px-5 mx-1"
         type="button"
         @click="switchFormat"
       >
@@ -300,6 +290,8 @@
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15"><path d="M8 15l5-5-1-1-4 2-4-2-1 1zm4-9l1-1-5-5-5 5 1 1 4-2z" fill="currentColor"></path></svg>
         </slot>
       </button>
+
+      <button class="remove-button" type="button" @click="$emit('removePicker')"><i class="far fa-trash-alt"></i></button>
     </div>
   </div>
 </template>
@@ -319,7 +311,7 @@ import { clamp } from './utilities/clamp.js'
 import { colorsAreValueEqual } from './utilities/colors-are-value-equal.js'
 import { colorChannels } from './utilities/color-channels.js'
 import { convertColor } from './utilities/convert-color.js'
-import { copyToClipboard } from './utilities/copy-to-clipboard.js'
+import copyToClipboard from './utilities/copy-to-clipboard.js'
 import { detectFormat } from './utilities/detect-format.js'
 import { formatAsCssColor } from './utilities/format-as-css-color.js'
 import { getCssColorAsRgbString } from './utilities/get-css-color-as-rgb-string.js'
@@ -327,7 +319,8 @@ import { isValidHexColor } from './utilities/is-valid-hex-color.js'
 import { parseRgbColor } from './utilities/parse-rgb-color.js'
 
 const STEP_FACTOR = 10
-/** @type {SupportedColorFormat[]} */ const ALLOWED_VISIBLE_FORMATS = ['hex', 'hsl', 'hwb', 'rgb']
+// const ALLOWED_VISIBLE_FORMATS = ['hex', 'hsl', 'hwb', 'rgb']
+/** @type {SupportedColorFormat[]} */ const ALLOWED_VISIBLE_FORMATS = ['hex', 'rgb']
 
 export default {
   name: 'ColorPicker',
@@ -337,7 +330,7 @@ export default {
       /** @type {import('vue').PropType<ColorHex | ColorHsl | ColorHsv | ColorHwb | ColorRgb>} */
       type: [String, Object],
       required: false,
-      default: null,
+      default: '#ffffff',
     },
 
     id: {
@@ -360,13 +353,13 @@ export default {
   data () {
     return {
       /** @type {boolean} */ pointerOriginatedInColorSpace: false,
-      /** @type {VisibleColorFormat} */ activeFormat: /** @type {VisibleColorFormat} */  ('rgb'),
+      /** @type {VisibleColorFormat} */ activeFormat: /** @type {VisibleColorFormat} */  ('hex'),
       /** @type {Colors} */ colors: {
-        hex: '#ffffffff',
-        hsl: { h: 0, s: 0, l: 1, a: 1 },
-        hsv: { h: 0, s: 0, v: 1, a: 1 },
-        hwb: { h: 0, w: 1, b: 0, a: 1 },
-        rgb: { r: 1, g: 1, b: 1, a: 1 },
+        hex: '#000',
+        hsl: { h: 0, s: 0, l: 1 },
+        hsv: { h: 0, s: 0, v: 1 },
+        hwb: { h: 0, w: 1, b: 0 },
+        rgb: { r: 1, g: 1, b: 1 },
       },
     }
   },
@@ -533,7 +526,9 @@ export default {
       this.setCssProps(this.$el, this.colors)
 
       const eventData = this.getEventData(this.colors, this.activeFormat)
-      this.$emit('color-change', eventData)
+      // this.$emit('color-change', eventData)
+      // this.$emit('input', eventData)
+      this.$emit('input', eventData["cssColor"])
     },
 
     /**
@@ -583,8 +578,10 @@ export default {
       // Make a copy of the color object to avoid writing to it multiple times before the calculations are done.
       // This is done to avoid Vue’s reactivity kicking in more than once.
       const newColors = { ...this.colors }
+      
       for (const targetFormat of targetFormats) {
         const color = convertColor(sourceColor, sourceFormat, targetFormat)
+        
         newColors[targetFormat] = color
       }
 
@@ -600,6 +597,7 @@ export default {
     copyColor () {
       const activeColor = this.colors[this.activeFormat]
       const cssColor = formatAsCssColor(activeColor, this.activeFormat)
+      
       copyToClipboard(cssColor)
     },
 
@@ -663,7 +661,8 @@ export default {
      */
     getChannelAsCssValue (format, channel) {
       const value = this.colors[format][channel]
-      return colorChannels[format][channel].to(value)
+      
+      return Math.round(colorChannels[format][channel].to(value))
     },
 
     /**
@@ -706,7 +705,7 @@ export default {
       element.style.setProperty('--vacp-hsl-h', String(colors.hsl.h))
       element.style.setProperty('--vacp-hsl-s', String(colors.hsl.s))
       element.style.setProperty('--vacp-hsl-l', String(colors.hsl.l))
-      element.style.setProperty('--vacp-hsl-a', String(colors.hsl.a))
+      element.style.setProperty('--vacp-hsl-a', '1')
 
       this.$refs.colorSpace.style = `
         position: relative;
@@ -766,17 +765,17 @@ while the specifcitity for `.vacp-color-space` is 10.
     )
   ;
 
-  max-width: var(--vacp-color-space-width);
+  /* max-width: var(--vacp-color-space-width); */
   padding: var(--vacp-spacing);
-  display: grid;
-  grid-gap: var(--vacp-spacing);
-  grid-template-columns: 1fr min-content;
-  grid-template-areas:
+  /* display: grid; */
+  /* grid-gap: var(--vacp-spacing); */
+  /* grid-template-columns: 1fr min-content; */
+  /* grid-template-areas:
     "color-space  color-space"
-    "hue-input    copy-button"
-    "alpha-input  copy-button"
+    "hue-input               "
+    "alpha-input             "
     "color-inputs color-inputs"
-  ;
+  ; */
   font-size: 0.8em;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
   background-color: #fff;
@@ -1001,7 +1000,6 @@ Range input: thumbs
 }
 
 .vacp-copy-button {
-  grid-area: copy-button;
   justify-self: center;
   align-self: center;
   border:1px solid black;
@@ -1010,25 +1008,24 @@ Range input: thumbs
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(var(--vacp-spacing) * 6);
-  height: calc(var(--vacp-spacing) * 6);
+  /* width: calc(var(--vacp-spacing) * 6);
+  height: calc(var(--vacp-spacing) * 6); */
   border: 1px solid transparent;
-  border-radius: 50%;
+  /* border-radius: 50%; */
   color: #fff;
 
   /* Tiled background */
-  background-color: #fff;
-  background-image:
+  /* background-image:
     linear-gradient(var(--vacp-color), var(--vacp-color)),
     var(--vacp-tiled-background-image)
-  ;
-  background-size: calc(var(--vacp-spacing) * 2) calc(var(--vacp-spacing) * 2);
-  background-position: 0 0, var(--vacp-spacing) var(--vacp-spacing);
+  ; */
+  /* background-size: calc(var(--vacp-spacing) * 2) calc(var(--vacp-spacing) * 2);
+  background-position: 0 0, var(--vacp-spacing) var(--vacp-spacing); */
 }
 
-.vacp-copy-button:enabled:not(:hover):not(:focus) svg{
+/* .vacp-copy-button:enabled:not(:hover):not(:focus) svg{
   display: none;
-}
+} */
 
 /*
 1. Justification for removing the outline:
@@ -1037,16 +1034,26 @@ Range input: thumbs
    which would be lost with a combination of `outline: none` and a box shadow
    because box shadows are removed in high contrast mode.
 */
-.vacp-copy-button:enabled:focus {
+.vacp-copy-button:enabled:focus,
+.vacp-copy-button:enabled:hover,
+.vacp-format-switch-button:enabled:hover,
+.vacp-format-switch-button:enabled:focus{
   outline: none; /* 1. */
   box-shadow: 0 0 0 2px var(--vacp-focus-color);
   border-color: var(--vacp-focus-color);
 }
 
-.vacp-copy-button:enabled:hover {
+.remove-button:focus, 
+.remove-button:hover{
+  outline: none; /* 1. */
+  box-shadow: 0 0 0 3px var(--vacp-focus-color);
+  border-color: var(--vacp-focus-color);
+}
+
+/* .vacp-copy-button:enabled:hover {
   background-color: var(--vacp-color);
   background-image: linear-gradient(rgb(0 0 0 / 0.25), rgb(0 0 0 / 0.25));
-}
+} */
 
 .vacp-color-inputs {
   grid-area: color-inputs;
@@ -1097,14 +1104,20 @@ Range input: thumbs
   border: 1px solid transparent;
   font: inherit;
   color: inherit;
-  background-color: #fff;
+  /* background-color: #fff; */
 }
 
 .vacp-format-switch-button:enabled:focus {
   border-color: var(--vacp-focus-color);
 }
 
-.vacp-format-switch-button:enabled:hover {
-  background-color: #eee;
+.remove-button{
+  width: 27px;
+  height: 27px;
+  font-size: 15px;
 }
+
+/* .vacp-format-switch-button:enabled:hover {
+  background-color: #eee;
+} */
 </style>
