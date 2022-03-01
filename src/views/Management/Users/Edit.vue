@@ -24,7 +24,7 @@
 					</div>
 				</div>
 				<!-- Row -->
-				<div class="flex w-full mt-3">
+				<!-- <div class="flex w-full mt-3">
 					<div class="flex-1">
 						<h2 class="headline-2">Accounts</h2>
 						
@@ -37,7 +37,7 @@
 						</ul>
 						
 					</div>
-				</div>
+				</div> -->
 			</form>
 		
 			<Label class="headline-2 mt-3" for="role">Role</Label>
@@ -86,9 +86,6 @@ export default {
 		},
 		account(){
 			return this.$store.getters["auth/account"]
-		},
-		accounts(){
-			return this.$store.state.auth.accounts
 		},
 		iAmExecutive(){
 			if( this.account ){

@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div class="container flex">
     <div class="w-full flex flex-col" v-if="users.length">
-      <h1 class="headline">Users on this account:</h1>
+      <h1 class="headline">Users on this License:</h1>
       <DT 
       :searchOverride="searchOverride" 
       :searchableProps="searchableProps"
@@ -10,7 +10,7 @@
         <template v-slot:cells-main>
           <td class="hidden"></td>
         </template>
-        <template v-slot:cells-extra="row">
+        <template :class="[{'me':row.data.id == $store.state.auth.user.id}]" v-slot:cells-extra="row">
           <th class="px-6 py-4 whitespace-nowrap">
             <div class="text-sm text-gray-900">
               {{row.data.first_name}}
@@ -44,6 +44,11 @@
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="text-sm text-gray-900">
               <router-link :to="{path: `user/${row.data.id}`}">Edit</router-link>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900 flex justify-center">
+              <button>Remove</button>
             </div>
           </td>
         </template>
@@ -92,7 +97,8 @@ export default {
           link: "team",
           sort: true
         },
-        "Edit"
+        "Edit",
+        "Remove Access From License"
       ],
       searchableProps: [ "role", "team", "first_name", "last_name", "email", "phone" ],
       searchOverride: {
@@ -115,7 +121,6 @@ export default {
         if( this.account.pivot.team_id === 1 ){
           return this.$store.state.user.all
         }
-
         let users = []
         for (let x = 0; x < this.$store.state.user.byTeam[this.account.pivot.team_id].length; x++) {
           const user_id = this.$store.state.user.byTeam[this.account.pivot.team_id][x]
