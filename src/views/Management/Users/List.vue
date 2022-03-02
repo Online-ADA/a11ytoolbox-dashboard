@@ -2,6 +2,9 @@
   <div class="container flex">
     <div class="w-full flex flex-col" v-if="users.length">
       <h1 class="headline">Users on this License:</h1>
+      <div v-if="isExecutive" >
+        <button @click="EventBus.openModal('AddUsersToLicenseModal', $event)" class="ml-1 text-sm standard" :hover="true">Add Users</button>
+      </div>
       <DT 
       :searchOverride="searchOverride" 
       :searchableProps="searchableProps"
@@ -46,9 +49,9 @@
               <router-link :to="{path: `user/${row.data.id}`}">Edit</router-link>
             </div>
           </td>
-          <td class="px-6 py-4 whitespace-nowrap">
+          <td v-if="isExecutive" class="px-6 py-4 whitespace-nowrap">
             <div class="text-sm text-gray-900 flex justify-center">
-              <button>Remove</button>
+              <button @click="RemoveUser(row.data)">Remove</button>
             </div>
           </td>
         </template>
@@ -62,10 +65,11 @@
 
 <script>
 import DT from '../../../components/DynamicTable.vue'
+import {EventBus} from '../../../services/eventBus'
 export default {
     name: 'ManageUsers',
     data: () => ({
-      // headers:["First Name", "Last Name", "Email", "Phone", "Role", "Edit"],
+      EventBus: EventBus,
       headers:[
         {
           display: "First Name",
@@ -98,7 +102,6 @@ export default {
           sort: true
         },
         "Edit",
-        "Remove Access From License"
       ],
       searchableProps: [ "role", "team", "first_name", "last_name", "email", "phone" ],
       searchOverride: {
@@ -111,6 +114,9 @@ export default {
       }
     }),
     computed: {
+      isExecutive() {
+        return this.$store.getters['auth/account'].pivot.team_id == 1
+      },
       loading(){
         return this.$store.state.user.loading
       },
@@ -139,7 +145,6 @@ export default {
         if( newVal && newVal.length ){
           for (let x = 0; x < newVal.length; x++) {
             let user = newVal[x];
-            
             user.role = this.role(user.roleInfo.role_id)
             user.team = this.team(user.roleInfo.team_id)
           }
@@ -147,6 +152,12 @@ export default {
       }
     },
     methods: {
+      RemoveUser(user) {
+        this.$store.dispatch('admin/removeUser',{user:user,Success:this.UserRemoved})
+      },
+      UserRemoved() {
+        this.$store.dispatch("user/getUsers")
+      },
       role(id){
         switch(id){
           case 1:
@@ -172,7 +183,9 @@ export default {
         }
       }
     },
-    created() {},
+    created() {
+      if(this.isExecutive) this.headers.push("Remove Access From License")
+    },
     mounted() {
       this.$store.dispatch("user/getUsers")
       document.title = "Users Management"

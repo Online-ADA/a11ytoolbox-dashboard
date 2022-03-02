@@ -44,7 +44,7 @@
 			<select v-model="selectedRole" class="p-1 mb-3" @change="modifyRole" id="role" name="role">
 				<option value="2">Manager</option>
 				<option value="3">Standard</option>
-				<option value="4">Limited</option>
+				<option value="4">Client</option>
 			</select>
 			
 			<div v-if="iAmExecutive">

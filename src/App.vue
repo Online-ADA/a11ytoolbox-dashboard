@@ -29,6 +29,7 @@
 							<DeployToolModal style="z-index:999" :open="showToolDeployModal"></DeployToolModal>
 							<CreateWCAGAuditModal style="z-index:999" :open="showDeployWCAGAuditModal"></CreateWCAGAuditModal>
 							<CreateMediaAuditModal style="z-index:999" :open="showDeployMediaAuditModal"></CreateMediaAuditModal>
+							<AddUsersToLicenseModal style="z-index:999" v-if="showAddUsersToLicenseModal" :open="showAddUsersToLicenseModal"></AddUsersToLicenseModal>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
 							<span v-html="tool.info"></span>
@@ -76,6 +77,8 @@ import CreateProjectModal from "./components/Modals/CreateProjectModal"
 import CreateWCAGAuditModal from "./components/Modals/CreateWCAGAuditModal"
 import DeployToolModal from "./components/Modals/DeployToolModal"
 import CreateMediaAuditModal from './components/Modals/CreateMediaAuditModal'
+import AddUsersToLicenseModal from './components/Modals/AddUsersToLicenseModal'
+
 export default {
   data(){
 		return {
@@ -86,6 +89,7 @@ export default {
 			showToolDeployModal: false,
 			showDeployWCAGAuditModal: false,
 			showDeployMediaAuditModal: false,
+			showAddUsersToLicenseModal: false,
 			EventBus: EventBus,
 			openDropdowns:[],
 			semaphore: false
@@ -159,29 +163,8 @@ export default {
 			else
 				return false;
 		},
-		// tokenSecondsLeft(){
-		// 	return this.$store.state.auth.token_time_left.seconds
-		// },
-		// tokenMinutesLeft(){
-		// 	return this.$store.state.auth.token_time_left.minutes
-		// },
-		// showLoginPrompt:{
-		// 	get(){
-		// 		return this.$store.state.auth.showLoginPrompt
-		// 	},
-		// 	set(val){
-		// 		this.$store.commit("auth/setState", {key: 'showLoginPrompt', value: false})
-		// 		this.$store.commit("auth/setState", {key: 'showLoginPromptOverride', value: true})
-		// 	}
-		// },
 	},
 	watch: {
-		// "$store.state.auth.user.meta":function(newVal){
-		// 	console.log("USER META IS CHANGING", newVal);
-		// 	if( Object.keys(newVal).includes("audit") ){
-		// 		Utility.reviveUserAuditMetaFunction(newVal, this)
-		// 	}
-		// },
 		"$store.state.clients.client": function(newVal){
 			this.$store.state.audits.all = []
 			this.$store.state.projects.project = false
@@ -257,6 +240,9 @@ export default {
 		EventBus.$on("deployMediaAuditModal", (payload)=>{
 			that.showDeployMediaAuditModal = payload
 		});
+		EventBus.$on("AddUsersToLicenseModal", (payload)=>{
+			that.showAddUsersToLicenseModal = payload
+		})
 		EventBus.$on("dropdown-expanded", (payload)=>{
 			this.semaphore = true
 			this.openDropdowns.push(payload)
@@ -285,7 +271,8 @@ export default {
 		CreateProjectModal,
 		CreateWCAGAuditModal,
 		DeployToolModal,
-		CreateMediaAuditModal
+		CreateMediaAuditModal,
+		AddUsersToLicenseModal
 	}
 }
 </script>
