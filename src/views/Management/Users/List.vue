@@ -13,8 +13,8 @@
         <template v-slot:cells-main>
           <td class="hidden"></td>
         </template>
-        <template :class="[{'me':row.data.id == $store.state.auth.user.id}]" v-slot:cells-extra="row">
-          <th class="px-6 py-4 whitespace-nowrap">
+        <template v-slot:cells-extra="row">
+          <th :class="[{'me':row.data.id == $store.state.auth.user.id}]" class="px-6 py-4 whitespace-nowrap">
             <div class="text-sm text-gray-900">
               {{row.data.first_name}}
             </div>
@@ -105,12 +105,6 @@ export default {
       ],
       searchableProps: [ "role", "team", "first_name", "last_name", "email", "phone" ],
       searchOverride: {
-        // role_id: function(context, term, prop, caseSensitive){
-        //   if( !caseSensitive ){
-        //     return context.$parent.role(prop).toLowerCase().includes( term.toLowerCase() )
-        //   }
-        //   return context.$parent.role(prop).includes( term )
-        // },
       }
     }),
     computed: {

@@ -22,7 +22,8 @@ const getDefaultState = () => {
 			projects: false,
 			audits: false,
 			clients: false,
-			domains: false
+			domains: false,
+			import_criteria: false,
 		}
 	}
 }
@@ -50,7 +51,8 @@ export default {
 			projects: false,
 			audits: false,
 			clients: false,
-			domains: false
+			domains: false,
+			import_criteria: false,
 		}
 	},
 	mutations: {
@@ -69,6 +71,33 @@ export default {
 	actions: {
 		resetState({commit}) {
 			commit('resetState')
+		},
+		importSuccessCriteria({state,rootState},args){
+			state.loading.import_criteria = true
+			Request.get(`${rootState.auth.API}/l/${rootState.auth.license.id}/success-criteria/import`, {
+				onSuccess: {
+					title:'Success',
+					text:'Criteria Imported',
+					callback: function(response){
+						state.loading.import_criteria = false
+						if(args.Success) args.Success()
+					}
+				},
+				onError: {
+					title:'Error',
+					text: "There was a problem while importing criteria",
+					callback: function(){
+						state.loading.import_criteria = false
+					}
+				},
+				onWarn: {
+					title: "Warning",
+					text: "There was a problem while importing criteria",
+					callback: function(){
+						state.loading.import_criteria= false
+					}
+				}
+			})
 		},
 		getClient({state, rootState}, args){
 			state.loading.clients = true
