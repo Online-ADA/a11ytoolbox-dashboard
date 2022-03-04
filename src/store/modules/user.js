@@ -13,7 +13,8 @@ const getDefaultState = () => {
 			4: []
 		},
 		user: false,
-		loading: false
+		loading: false,
+		user_limit: 1,
 	}
 }
 
@@ -31,7 +32,8 @@ export default {
 			4: []
 		},
 		user: false,
-		loading: false
+		loading: false,
+		user_limit: 1,
 	},
 	mutations: {
 		setState(state,payload) {
@@ -68,6 +70,7 @@ export default {
 			Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/users`)
 			.then( re=>{
 				state.all = Object.values(re.data.details)
+				state.user_limit = re.data.limit
 				for (let i = 0; i < re.data.details.length; i++) {
 					const user = re.data.details[i];
 					if( user.roleInfo.team_id != null ){

@@ -3,7 +3,8 @@
     <div class="w-full flex flex-col" v-if="users.length">
       <h1 class="headline">Users on this License:</h1>
       <div v-if="isExecutive" >
-        <button @click="EventBus.openModal('AddUsersToLicenseModal', $event)" class="ml-1 text-sm standard" :hover="true">Add Users</button>
+        <button @click="EventBus.openModal('AddUsersToLicenseModal', $event)" :disabled="$store.state.user.user_limit == users.length" class="ml-1 text-sm standard" :hover="true">Add Users</button>
+        <p>License is limited to {{$store.state.user.user_limit}} user<span v-if="$store.state.user.user_limit > 1">s</span></p>
       </div>
       <DT 
       :searchOverride="searchOverride" 
@@ -59,6 +60,9 @@
     </div>
     <template v-if="!loading && !users.length">
       <h2>There are no users</h2>
+      <div v-if="isExecutive" >
+        <button @click="EventBus.openModal('AddUsersToLicenseModal', $event)" class="ml-1 text-sm standard" :hover="true">Add Users</button>
+      </div>
     </template>
   </div>
 </template>
