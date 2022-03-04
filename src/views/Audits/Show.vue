@@ -806,15 +806,25 @@ export default {
 		getIssuesCSV(){
 			this.$store.state.audits.loading = true
 			Request.postPromise(`${this.$store.state.auth.API}/l/${this.$store.state.auth.license.id}/audits/${this.$route.params.id}/meta`, {params: {key: "sort", value: this.$refs.issuesTable.columnData.map( o=> o.id)}})
-			.then( ()=> {
+			.then( (re)=> {
 				this.$store.state.audits.loading = false
-				window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.account}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues`
+				if(re.data.success == '1') {
+					window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.license.id}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues`
+				}
+				if(re.data.success == 'error') {
+					this.$notify({
+						title:"Warning",
+						text:re.data.error,
+						type: "warning",
+						position: 'bottom right'
+					})
+				}
 			})
 			.catch()
 			.then( ()=> this.$store.state.audits.loading = false )
 		},
 		getSampleCSV(){
-			window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.account}/audits/${this.$route.params.id}/csv/sample`
+			window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.license.id}/audits/${this.$route.params.id}/csv/sample`
 		},
 		getDefault(){
 			return JSON.parse( JSON.stringify(this.issueDefaults) )
