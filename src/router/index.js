@@ -314,6 +314,21 @@ const routes = [
     ]
   },
   {
+    path: '/license',
+    name: 'License',
+    meta: {
+      team: 1
+    },
+    component: () => import(/* webpackChunkName: "license" */ '../views/License/Index.vue'),
+    children:[
+      {
+        path: "upgrade",
+        name: "Upgrade",
+        component: () => import(/* webpackChunkName: "license" */ '../views/License/Upgrade.vue')
+      },
+    ]
+  },
+  {
     path: "/auth",
     name: "auth",
     component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue')

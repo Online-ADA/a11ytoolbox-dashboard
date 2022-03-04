@@ -30,6 +30,7 @@
 							<CreateWCAGAuditModal style="z-index:999" :open="showDeployWCAGAuditModal"></CreateWCAGAuditModal>
 							<CreateMediaAuditModal style="z-index:999" :open="showDeployMediaAuditModal"></CreateMediaAuditModal>
 							<AddUsersToLicenseModal style="z-index:999" v-if="showAddUsersToLicenseModal" :open="showAddUsersToLicenseModal"></AddUsersToLicenseModal>
+							<UpgradeLicenseModal style="z-index:999" v-if="showUpgradeLicenseModal" :open="showUpgradeLicenseModal"></UpgradeLicenseModal>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
 							<span v-html="tool.info"></span>
@@ -78,6 +79,7 @@ import CreateWCAGAuditModal from "./components/Modals/CreateWCAGAuditModal"
 import DeployToolModal from "./components/Modals/DeployToolModal"
 import CreateMediaAuditModal from './components/Modals/CreateMediaAuditModal'
 import AddUsersToLicenseModal from './components/Modals/AddUsersToLicenseModal'
+import UpgradeLicenseModal from './components/Modals/UpgradeLicenseModal'
 
 export default {
   data(){
@@ -90,6 +92,7 @@ export default {
 			showDeployWCAGAuditModal: false,
 			showDeployMediaAuditModal: false,
 			showAddUsersToLicenseModal: false,
+			showUpgradeLicenseModal: false,
 			EventBus: EventBus,
 			openDropdowns:[],
 			semaphore: false
@@ -251,7 +254,9 @@ export default {
 			this.infoSidebarExpanded = !this.infoSidebarExpanded
 			that.checkMobileNoOverflow()
 		})
-
+		EventBus.$on("UpgradeLicenseModal",(payload)=>{
+			this.showUpgradeLicenseModal = payload
+		})
 		//Meta Events
 		EventBus.$on("metaEvent", (payload)=>{
 			this.$store.dispatch("user/storeUserMeta", {key: payload.key, subKeys: payload.path, value: payload.value})
@@ -272,7 +277,8 @@ export default {
 		CreateWCAGAuditModal,
 		DeployToolModal,
 		CreateMediaAuditModal,
-		AddUsersToLicenseModal
+		AddUsersToLicenseModal,
+		UpgradeLicenseModal,
 	}
 }
 </script>
