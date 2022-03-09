@@ -112,7 +112,7 @@
 					</template>
 				</div>
 			</div>
-			<button class="standard mr-2" @click.prevent="deployTool">Deploy</button>
+			<button class="standard mr-2" :disabled="creating_audit" @click.prevent="deployTool">Deploy</button>
 			<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployMediaAuditModal', false)})" class="standard mt-3">Cancel</button>
 		</template>
 		
@@ -136,6 +136,7 @@
 			},
 		},
 		data: () => ({
+			creating_audit: false,
 			EventBus: EventBus,
 			failedValidation: [],
 			showValidationAlert: false,
@@ -160,15 +161,13 @@
                 title: '',
             },
 		}),
-		name: 'CreateWCAGAuditModal',
+		name: 'CreateMediaAuditModal',
 		methods:{
 			createDomain(){
 				this.domain.url = this.protocol+this.url
 				this.domain.project_id = this.project.id
 				let that = this
-				
 				this.$store.dispatch("domains/createDomain", {domain: this.domain, callback: ((domain)=>{
-					
 					that.selectedDomain = domain.id
 					that.domain.url = ""
 					that.url = ""
@@ -187,10 +186,11 @@
 				this.$router.push({path: `/media-audits/${this.$store.state.mediaAudits.all[this.$store.state.mediaAudits.all.length - 1].id}`})
 			},
 			displayUser(id){
-				let user = this.team_members.find( u => u.id == id )
+				let user = this.users.find( u => u.id == id )
 				return user != undefined ? `${user.first_name} ${user.last_name}` : false
 			},
 			deployTool(){
+				this.creating_audit = true
 				if( this.validate() ){
 					this.audit.assigned = this.assigned
 					this.audit.project_id = this.$store.state.projects.project.id
@@ -198,6 +198,7 @@
 					this.$store.dispatch("mediaAudits/createAudit", {audit: this.audit, vm: this})
 					this.reset()
 					this.rootModal.scrollTop = 0
+					this.creating_audit = false
 				}else{
 					let self = this
 					this.$nextTick( ()=>{
@@ -214,6 +215,7 @@
 							type: "warn"
 						})
 					})
+					this.creating_audit = false
 				}
 			},
 			reset(){
@@ -276,11 +278,6 @@
 					this.createDomainSectionOpen = false
 				}
 			},
-			team_members(newVal){
-				if( this.open && newVal.length ){
-					this.unassigned = newVal.map( o=>o.id)
-				}
-			},
 			open: function(newVal){
 				if( newVal ){
 					if( !this.project.domains.length ){
@@ -288,7 +285,7 @@
 					}
 
 					if( this.isManager ){ //Get the team members each time modal is opened
-						this.$store.dispatch("user/getUsers")
+						this.$store.dispatch("user/getUsers", {vm: this})
 					}
 				}
 			}
@@ -298,13 +295,17 @@
 				return this.$store.getters["auth/isManager"]
 			},
 			team_members(){
-				return this.$store.state.user.team_members
+				let myTeam = this.$store.getters["auth/account"].pivot.team_id
+				return this.$store.state.user.byTeam[myTeam]
 			},
 			currentDomain(){
 				return this.domains.find(d=>d.id == this.selectedDomain)
 			},
 			project(){
 				return this.$store.state.projects.project
+			},
+			users() {
+				return this.$store.state.user.all
 			},
 			client(){
 				return this.$store.state.clients.client
