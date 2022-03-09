@@ -11,7 +11,7 @@ import userModule from './modules/user.js'
 import overviewModule from './modules/overview.js'
 import mediaAuditsModule from './modules/mediaAudits.js'
 import propertiesModule from './modules/properties.js'
-
+import upgradeModule from './modules/upgrade.js'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -26,6 +26,7 @@ export default new Vuex.Store({
         admin: adminModule,
         user: userModule,
         overview: overviewModule,
-        properties: propertiesModule
+        properties: propertiesModule,
+        upgrade: upgradeModule,
     }
 })

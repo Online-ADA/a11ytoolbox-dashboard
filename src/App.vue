@@ -24,13 +24,13 @@
 						id="main-content"
 						>
 							<router-view></router-view>
-							<CreateClientModal style="z-index:999" :open="showClientCreationModal"></CreateClientModal>
-							<CreateProjectModal style="z-index:999" :open="showProjectCreationModal"></CreateProjectModal>
-							<DeployToolModal style="z-index:999" :open="showToolDeployModal"></DeployToolModal>
-							<CreateWCAGAuditModal style="z-index:999" :open="showDeployWCAGAuditModal"></CreateWCAGAuditModal>
-							<CreateMediaAuditModal style="z-index:999" :open="showDeployMediaAuditModal"></CreateMediaAuditModal>
-							<AddUsersToLicenseModal style="z-index:999" v-if="showAddUsersToLicenseModal" :open="showAddUsersToLicenseModal"></AddUsersToLicenseModal>
-							<UpgradeLicenseModal style="z-index:999" v-if="showUpgradeLicenseModal" :open="showUpgradeLicenseModal"></UpgradeLicenseModal>
+							<CreateClientModal style="z-index:999" :open="show.ClientCreationModal" v-if="show.ClientCreationModal"></CreateClientModal>
+							<CreateProjectModal style="z-index:999" :open="show.ProjectCreationModal"></CreateProjectModal>
+							<DeployToolModal style="z-index:999" :open="show.ToolDeployModal"></DeployToolModal>
+							<CreateWCAGAuditModal style="z-index:999" :open="show.DeployWCAGAuditModal"></CreateWCAGAuditModal>
+							<CreateMediaAuditModal style="z-index:999" :open="show.DeployMediaAuditModal"></CreateMediaAuditModal>
+							<AddUsersToLicenseModal style="z-index:999" v-if="show.AddUsersToLicenseModal" :open="show.AddUsersToLicenseModal"></AddUsersToLicenseModal>
+							<UpgradeLicenseModal style="z-index:999" v-if="show.UpgradeLicenseModal" :open="show.UpgradeLicenseModal"></UpgradeLicenseModal>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
 							<span v-html="tool.info"></span>
@@ -86,13 +86,15 @@ export default {
 		return {
 			sidebarExpanded: true,
 			infoSidebarExpanded: false,
-			showClientCreationModal: false,
-			showProjectCreationModal: false,
-			showToolDeployModal: false,
-			showDeployWCAGAuditModal: false,
-			showDeployMediaAuditModal: false,
-			showAddUsersToLicenseModal: false,
-			showUpgradeLicenseModal: false,
+			show: {
+				ClientCreationModal: false,
+				ProjectCreationModal: false,
+				ToolDeployModal: false,
+				DeployWCAGAuditModal: false,
+				DeployMediaAuditModal: false,
+				AddUsersToLicenseModal: false,
+				UpgradeLicenseModal: false,
+			},
 			EventBus: EventBus,
 			openDropdowns:[],
 			semaphore: false
@@ -133,7 +135,12 @@ export default {
 					content.classList.add("hidden")
 				}
 			}
-		}
+		},
+		CloseModals() {
+			for(let i in this.show) {
+				if(this.show[i]) this.show[i] = false
+			}
+		},
 	},
   	computed: {
 		tool(){
@@ -214,6 +221,14 @@ export default {
 		if( window.screen.width < 1024 ){
 			this.sidebarExpanded = false
 		}
+		const urlSearchParams = new URLSearchParams(window.location.search);
+		if(urlSearchParams.get('pop')) {
+			switch(urlSearchParams.get('pop')) {
+				case 'upgrade': {
+					this.show.UpgradeLicenseModal = true
+				}
+			}
+		}
 	},
 	mounted() {
 		this.$root.$on('menuClick', (menuOpen) => {
@@ -229,22 +244,22 @@ export default {
 		let that = this
 		//Payload is true or false
 		EventBus.$on("createClientModal", (payload)=>{
-			that.showClientCreationModal = payload
+			that.show.ClientCreationModal = payload
 		})
 		EventBus.$on("createProjectModal", (payload)=>{
-			that.showProjectCreationModal = payload
+			that.show.ProjectCreationModal = payload
 		})
 		EventBus.$on("deployToolModal", (payload)=>{
-			that.showToolDeployModal = payload
+			that.show.ToolDeployModal = payload
 		})
 		EventBus.$on("deployWCAGAuditModal", (payload)=>{
-			that.showDeployWCAGAuditModal = payload
+			that.show.DeployWCAGAuditModal = payload
 		})
 		EventBus.$on("deployMediaAuditModal", (payload)=>{
-			that.showDeployMediaAuditModal = payload
+			that.show.DeployMediaAuditModal = payload
 		});
 		EventBus.$on("AddUsersToLicenseModal", (payload)=>{
-			that.showAddUsersToLicenseModal = payload
+			that.show.AddUsersToLicenseModal = payload
 		})
 		EventBus.$on("dropdown-expanded", (payload)=>{
 			this.semaphore = true
@@ -255,7 +270,8 @@ export default {
 			that.checkMobileNoOverflow()
 		})
 		EventBus.$on("UpgradeLicenseModal",(payload)=>{
-			this.showUpgradeLicenseModal = payload
+			this.CloseModals()
+			this.show.UpgradeLicenseModal = payload
 		})
 		//Meta Events
 		EventBus.$on("metaEvent", (payload)=>{
