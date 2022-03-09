@@ -84,7 +84,11 @@ module.exports = {
           button:{
             DEFAULT: "#004458",
             hover: "#005e86"
-          }
+          },
+          white:{
+            DEFAULT: '#ffffff',
+            hover: '#ffffff'
+          },
         },
       },
       fontSize:{

@@ -8,6 +8,7 @@ const getDefaultState = () => {
         license: false,
         tier: false,
         tier_data: false,
+        payments: [],
 	}
 }
 export default {
@@ -19,6 +20,7 @@ export default {
         license: false,
         tier: false,
         tier_data: false,
+        payments: [],
 	},
 	mutations: {
 		setState(state,payload) {
@@ -31,6 +33,22 @@ export default {
 	actions: {
 		resetState({commit}) {
          commit('resetState')
+        },
+        GetPayments({state,rootState},args) {
+            state.loading = true
+            Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/upgrade/payment`)
+            .then( re=>{
+                if(re.data.success =='1') {
+                    state.payments = re.data.details.payments
+                    if(args.Success) args.Success(re.data)
+                }else if(re.data.success == '0' && ( re.data.details == 'incorrect_team' || re.data.details == 'incorrect_role' )) {
+                    state.message = "You do not have proper permissions to upgrade this license."
+                }
+            })
+            .catch( re=>{
+                console.log(re);
+            })
+            .then( ()=> state.loading = false)
         },
         GetLicense({state,rootState}) {
             state.loading = true
@@ -49,14 +67,21 @@ export default {
             })
             .then( ()=> state.loading = false)
         },
-        UpgradeLicense({state},args) {
+        UpgradeLicense({state,rootState},args) {
             state.loading = true
             Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/upgrade/license`,{params:{
                 upgrade: args.upgrade
             }})
             .then( re=>{
                 if(re.data.success =='1') {
-                    console.log(re.data)
+                    if(args.Success) args.Success(re.data)
+                }else if(re.data.success == '0' && ( re.data.details == 'incorrect_role' || re.data.details == 'incorrect_team' ) ) {
+                    Vue.notify({
+                        title: "ERROR",
+                        text: "You are not allowed to do perform this action.",
+                        type: "error",
+                        position: 'bottom right'
+                    })
                 }else{
                     Vue.notify({
                         title: "ERROR",

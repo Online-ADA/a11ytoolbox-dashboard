@@ -1,7 +1,7 @@
 <template>
 	<Modal style="z-index:999" :valign="'top'" :size="'creation'" :open="open">
 		<div v-if="!complete">
-			<Loader v-if="loading"></Loader>
+			<Loader v-if="loading" :local="true"></Loader>
 			<h1 class="headline">Create New Client</h1>
 			<Form @submit.native.prevent>
 				<Label class="subheadline text-lg" for="client-name">Client Name</Label>

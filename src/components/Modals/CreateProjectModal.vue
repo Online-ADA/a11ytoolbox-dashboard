@@ -1,7 +1,7 @@
 <template>
 	<Modal :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
 		<template v-if="!complete">
-			<Loader v-if="loading"></Loader>
+			<Loader v-if="loading" :local="true"></Loader>
 				<h1 class="headline">Create New Project</h1>
 				
 				<Label for="project-name">Name</Label>

@@ -1,6 +1,6 @@
 <template>
 	<Modal @initialized="getRootModal" :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
-		<Loader v-if="loading"></Loader>
+		<Loader v-if="loading" :local="true"></Loader>
 		<template v-if="complete">
 			<h1 class="headline">Go to Audit?</h1>
 			<button @click.prevent="EventBus.closeModal( ()=>{ chooseYes() })" class="standard mr-3">Yes</button>

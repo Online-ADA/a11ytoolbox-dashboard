@@ -26,7 +26,7 @@
 							<router-view></router-view>
 							<CreateClientModal style="z-index:999" :open="show.ClientCreationModal" v-if="show.ClientCreationModal"></CreateClientModal>
 							<CreateProjectModal style="z-index:999" :open="show.ProjectCreationModal"></CreateProjectModal>
-							<DeployToolModal style="z-index:999" :open="show.ToolDeployModal"></DeployToolModal>
+							<DeployToolModal style="z-index:999" :open="show.ToolDeployModal" v-if="show.ToolDeployModal"></DeployToolModal>
 							<CreateWCAGAuditModal style="z-index:999" :open="show.DeployWCAGAuditModal"></CreateWCAGAuditModal>
 							<CreateMediaAuditModal style="z-index:999" :open="show.DeployMediaAuditModal"></CreateMediaAuditModal>
 							<AddUsersToLicenseModal style="z-index:999" v-if="show.AddUsersToLicenseModal" :open="show.AddUsersToLicenseModal"></AddUsersToLicenseModal>
