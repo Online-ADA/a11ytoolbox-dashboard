@@ -43,6 +43,21 @@ const routes = [
     ]
   },
   {
+    path: "/color-reports",
+    component: () => import(/* webpackChunkName: "swatches" */ '../views/Swatches/Index.vue'),
+    children:[
+      {
+        path: "/",
+        component: () => import(/* webpackChunkName: "swatches" */ '../views/Swatches/List.vue'),
+      },
+      {
+        path: ":id/edit",
+        name: "SwatchEdit",
+        component: () => import(/* webpackChunkName: "swatches" */ '../views/Swatches/Edit.vue')
+      },
+    ]
+  },
+  {
     path: "/domains",
     component: () => import(/* webpackChunkName: "domains" */ '../views/Domains/Index.vue'),
     children:[
@@ -70,12 +85,12 @@ const routes = [
   },
   {
     path: "/software",
-    component: () => import(/* webpackChunkName: "domains" */ '../views/Software/Index.vue'),
+    component: () => import(/* webpackChunkName: "software" */ '../views/Software/Index.vue'),
     children:[
       {
         path: ":id/edit",
         name: "SoftwareEdit",
-        component: () => import(/* webpackChunkName: "domains" */ '../views/Software/Edit.vue')
+        component: () => import(/* webpackChunkName: "software" */ '../views/Software/Edit.vue')
       },
     ]
   },

@@ -22,7 +22,7 @@
 			
 			<button 
 			class="font-bold text-center text-pallette-button hover:text-pallette-button-hover" 
-			@click.prevent>
+			@click.prevent="EventBus.transitionModal( 'deployToolModal', 'deployColorSwatchModal')">
 				<div class="mb-5 text-6xl"><i class="far fa-palette"></i></div>
 				<span class="barlow text-xl">
 					<div>Color Swatch</div>
