@@ -31,9 +31,9 @@ export function convertHexToRgb (hex) {
   const rgbChannels = channels.map(channel => parseInt(channel, 16) / 255)
 
   return {
-    r: round(rgbChannels[0]),
-    g: round(rgbChannels[1]),
-    b: round(rgbChannels[2]),
+    r: rgbChannels[0],
+    g: rgbChannels[1],
+    b: rgbChannels[2],
     // a: rgbChannels[3],
   }
 }

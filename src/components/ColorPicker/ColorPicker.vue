@@ -291,7 +291,7 @@
         </slot>
       </button>
 
-      <button class="remove-button" type="button" @click="$emit('removePicker')"><i class="far fa-trash-alt"></i></button>
+      <button v-if="remove_button" class="remove-button" type="button" @click="$emit('removePicker')"><i class="far fa-trash-alt"></i></button>
     </div>
   </div>
 </template>
@@ -326,6 +326,10 @@ export default {
   name: 'ColorPicker',
 
   props: {
+    remove_button: {
+      type: Boolean,
+      default: true
+    },
     color: {
       /** @type {import('vue').PropType<ColorHex | ColorHsl | ColorHsv | ColorHwb | ColorRgb>} */
       type: [String, Object],
@@ -380,6 +384,14 @@ export default {
   mounted () {
     this.initThumbPointerNavigation()
     this.setColorValueFromProp(this.color)
+    
+    //Simulates changing the input. This is necessary because the color picker image doesn't render until an input value is entered.
+    this.$nextTick(()=>{
+      console.log(this.color);
+      
+      this.updateColorValue({ target: { value: "#fff" } }, "hex")
+      this.updateColorValue({ target: { value: this.color } }, "hex")
+    })
   },
 
   beforeDestroy () {
@@ -605,6 +617,7 @@ export default {
      * @param {Event} event
      */
     updateHue (event) {
+      console.log("this fired", event.currentTarget.value);
       this.setColorValue(parseInt(event.currentTarget.value) / 360, 'hsv', 'h')
     },
 

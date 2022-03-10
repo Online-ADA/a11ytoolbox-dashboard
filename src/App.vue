@@ -30,6 +30,7 @@
 							<CreateWCAGAuditModal style="z-index:999" :open="showDeployWCAGAuditModal"></CreateWCAGAuditModal>
 							<CreateColorSwatchModal style="z-index:999" :open="showCreateColorSwatchModal"></CreateColorSwatchModal>
 							<CreateMediaAuditModal style="z-index:999" :open="showDeployMediaAuditModal"></CreateMediaAuditModal>
+							<ColorContrastQuickToolModal style="z-index:999" :open="showColorContrastModal"></ColorContrastQuickToolModal>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
 							<span v-html="tool.info"></span>
@@ -60,6 +61,8 @@ import CreateWCAGAuditModal from "./components/Modals/CreateWCAGAuditModal"
 import DeployToolModal from "./components/Modals/DeployToolModal"
 import CreateMediaAuditModal from './components/Modals/CreateMediaAuditModal'
 import CreateColorSwatchModal from './components/Modals/CreateColorSwatchModal'
+import ColorContrastQuickToolModal from './components/Modals/ColorContrastModal.vue'
+
 export default {
   data(){
 		return {
@@ -71,6 +74,7 @@ export default {
 			showDeployWCAGAuditModal: false,
 			showCreateColorSwatchModal: false,
 			showDeployMediaAuditModal: false,
+			showColorContrastModal: false,
 			EventBus: EventBus,
 			openDropdowns:[],
 			semaphore: false
@@ -169,15 +173,17 @@ export default {
 			}
 		},
 		"$route.path": function(){
+			
 			if( this.$route.matched[0].name == 'Audits' ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"audit", info:""}
 					return
 				}
 			}
-			if( this.$route.matched[0].path == 'color-reports' ){
+			
+			if( this.$route.matched[0].path == '/color-reports' ){
 				if( this.$route.params.id !== undefined ){
-					this.$store.state.projects.tool = {type:"color_swatch", info:""}
+					this.$store.state.projects.tool = {type:"color_swatch", info:"<div>Using the w3.org wiki for Relative Luminance as a guide, our forumal for determining color contrast between 2 relative luminances is calculated using the threshold for piecewise equation of 0.04045 for better accuracy rather than the older accepted threshold of 0.03928, as per the official IEC standard for the sRGB color space.</div><div class='break-all mt-3'><small>Source: <a class='block' href='https://www.w3.org/WAI/GL/wiki/Relative_luminance' target='_blank'>https://www.w3.org/WAI/GL/wiki/Relative_luminance</a></small></div>"}
 					return
 				}
 			}
@@ -230,6 +236,9 @@ export default {
 		EventBus.$on("deployMediaAuditModal", (payload)=>{
 			that.showDeployMediaAuditModal = payload
 		});
+		EventBus.$on("colorContrastModal", (payload)=>{
+			that.showColorContrastModal = payload
+		});
 		EventBus.$on("dropdown-expanded", (payload)=>{
 			this.semaphore = true
 			this.openDropdowns.push(payload)
@@ -259,7 +268,8 @@ export default {
 		CreateWCAGAuditModal,
 		DeployToolModal,
 		CreateMediaAuditModal,
-		CreateColorSwatchModal
+		CreateColorSwatchModal,
+		ColorContrastQuickToolModal
 	}
 }
 </script>

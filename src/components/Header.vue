@@ -31,7 +31,26 @@
             <div class="border mx-3 divider"></div>
             <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
         </div>
-        <div ref="settingsDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('settingsDropdown')" @click.prevent="expandDropdown('settingsDropdown')" :aria-expanded="[ dropdownsExpanded.includes('settingsDropdown') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('settingsDropdown')}" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
+        
+        <template v-if="false">
+            <!-- Quick Tools does not currently dropdown, only 1 tool -->
+        </template>
+
+        <div ref="quickToolsDropdown" role="button" tabindex="0" @click.prevent="EventBus.openModal('colorContrastModal', $event)" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
+            <div class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
+                <span aria-labelledby="quicktools-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
+                    <i class="fas fa-pencil-paintbrush"></i>
+                </span>
+            </div>
+            <!-- <ul class="text-left mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
+                <li class="hover:bg-pallette-grey-light">
+                    <router-link :to="'/properties'" class="block"><span>Properties</span></router-link>
+                </li>
+            </ul> -->
+            <span id="quicktools-label" class="sub-label text-white uppercase"><div>Quick Contrast</div>Checker</span>
+        </div>
+
+        <div ref="settingsDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('settingsDropdown')" @click.prevent="expandDropdown('settingsDropdown')" :aria-expanded="[ dropdownsExpanded.includes('settingsDropdown') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('settingsDropdown')}" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col mr-10 items-end">
             <div id="settings" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
                 <span aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     <i class="fas fa-tools"></i>
@@ -93,6 +112,7 @@ export default {
     props:{},
     data() {
         return {
+            EventBus: EventBus,
             userDropdown: [
                 {
                     type: 'logout',
