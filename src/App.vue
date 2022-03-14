@@ -24,13 +24,15 @@
 						id="main-content"
 						>
 							<router-view></router-view>
-							<CreateClientModal style="z-index:999" :open="showClientCreationModal"></CreateClientModal>
-							<CreateProjectModal style="z-index:999" :open="showProjectCreationModal"></CreateProjectModal>
-							<DeployToolModal style="z-index:999" :open="showToolDeployModal"></DeployToolModal>
-							<CreateWCAGAuditModal style="z-index:999" :open="showDeployWCAGAuditModal"></CreateWCAGAuditModal>
-							<CreateColorSwatchModal style="z-index:999" :open="showCreateColorSwatchModal"></CreateColorSwatchModal>
-							<CreateMediaAuditModal style="z-index:999" :open="showDeployMediaAuditModal"></CreateMediaAuditModal>
-							<ColorContrastQuickToolModal style="z-index:999" :open="showColorContrastModal"></ColorContrastQuickToolModal>
+							<CreateClientModal style="z-index:999" :open="show.ClientCreationModal"></CreateClientModal>
+							<CreateProjectModal style="z-index:999" :open="show.ProjectCreationModal"></CreateProjectModal>
+							<DeployToolModal style="z-index:999" :open="show.ToolDeployModal"></DeployToolModal>
+							<CreateWCAGAuditModal style="z-index:999" :open="show.DeployWCAGAuditModal"></CreateWCAGAuditModal>
+							<CreateColorSwatchModal style="z-index:999" :open="show.CreateColorSwatchModal"></CreateColorSwatchModal>
+							<CreateMediaAuditModal style="z-index:999" :open="show.DeployMediaAuditModal"></CreateMediaAuditModal>
+							<AddUsersToLicenseModal style="z-index:999" v-if="show.AddUsersToLicenseModal" :open="show.AddUsersToLicenseModal"></AddUsersToLicenseModal>
+							<ColorContrastQuickToolModal style="z-index:999" :open="show.ColorContrastModal"></ColorContrastQuickToolModal>
+							<UpgradeLicenseModal style="z-index:999" :open="show.UpgradeLicenseModal"/>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
 							<span v-html="tool.info"></span>
@@ -60,6 +62,8 @@ import CreateProjectModal from "./components/Modals/CreateProjectModal"
 import CreateWCAGAuditModal from "./components/Modals/CreateWCAGAuditModal"
 import DeployToolModal from "./components/Modals/DeployToolModal"
 import CreateMediaAuditModal from './components/Modals/CreateMediaAuditModal'
+import AddUsersToLicenseModal from './components/Modals/AddUsersToLicenseModal'
+import UpgradeLicenseModal from './components/Modals/UpgradeLicenseModal'
 import CreateColorSwatchModal from './components/Modals/CreateColorSwatchModal'
 import ColorContrastQuickToolModal from './components/Modals/ColorContrastModal.vue'
 
@@ -68,13 +72,17 @@ export default {
 		return {
 			sidebarExpanded: true,
 			infoSidebarExpanded: false,
-			showClientCreationModal: false,
-			showProjectCreationModal: false,
-			showToolDeployModal: false,
-			showDeployWCAGAuditModal: false,
-			showCreateColorSwatchModal: false,
-			showDeployMediaAuditModal: false,
-			showColorContrastModal: false,
+			show: {
+				ClientCreationModal: false,
+				ProjectCreationModal: false,
+				ToolDeployModal: false,
+				DeployWCAGAuditModal: false,
+				DeployMediaAuditModal: false,
+				AddUsersToLicenseModal: false,
+				UpgradeLicenseModal: false,
+				CreateColorSwatchModal: false,
+				ColorContrastModal: false,
+			},
 			EventBus: EventBus,
 			openDropdowns:[],
 			semaphore: false
@@ -115,7 +123,12 @@ export default {
 					content.classList.add("hidden")
 				}
 			}
-		}
+		},
+		CloseModals() {
+			for(let i in this.show) {
+				if(this.show[i]) this.show[i] = false
+			}
+		},
 	},
   	computed: {
 		tool(){
@@ -204,6 +217,14 @@ export default {
 		if( window.screen.width < 1024 ){
 			this.sidebarExpanded = false
 		}
+		const urlSearchParams = new URLSearchParams(window.location.search);
+		if(urlSearchParams.get('pop')) {
+			switch(urlSearchParams.get('pop')) {
+				case 'upgrade': {
+					this.show.UpgradeLicenseModal = true
+				}
+			}
+		}
 	},
 	mounted() {
 		this.$root.$on('menuClick', (menuOpen) => {
@@ -219,25 +240,29 @@ export default {
 		let that = this
 		//Payload is true or false
 		EventBus.$on("createClientModal", (payload)=>{
-			that.showClientCreationModal = payload
+			that.show.ClientCreationModal = payload
 		})
 		EventBus.$on("createProjectModal", (payload)=>{
-			that.showProjectCreationModal = payload
+			that.show.ProjectCreationModal = payload
 		})
 		EventBus.$on("deployToolModal", (payload)=>{
-			that.showToolDeployModal = payload
+			that.show.ToolDeployModal = payload
 		})
 		EventBus.$on("deployWCAGAuditModal", (payload)=>{
-			that.showDeployWCAGAuditModal = payload
+			that.show.DeployWCAGAuditModal = payload
 		})
 		EventBus.$on("deployColorSwatchModal", (payload)=>{
-			that.showCreateColorSwatchModal = payload
+			that.show.CreateColorSwatchModal = payload
 		})
 		EventBus.$on("deployMediaAuditModal", (payload)=>{
-			that.showDeployMediaAuditModal = payload
+			that.show.DeployMediaAuditModal = payload
 		});
+		EventBus.$on("AddUsersToLicenseModal", (payload)=>{
+			that.show.AddUsersToLicenseModal = payload
+		})
 		EventBus.$on("colorContrastModal", (payload)=>{
-			that.showColorContrastModal = payload
+			console.log(payload)
+			that.show.ColorContrastModal = payload
 		});
 		EventBus.$on("dropdown-expanded", (payload)=>{
 			this.semaphore = true
@@ -247,7 +272,10 @@ export default {
 			this.infoSidebarExpanded = !this.infoSidebarExpanded
 			that.checkMobileNoOverflow()
 		})
-
+		EventBus.$on("UpgradeLicenseModal",(payload)=>{
+			this.CloseModals()
+			this.show.UpgradeLicenseModal = payload
+		})
 		//Meta Events
 		EventBus.$on("metaEvent", (payload)=>{
 			this.$store.dispatch("user/storeUserMeta", {key: payload.key, subKeys: payload.path, value: payload.value})
@@ -268,6 +296,8 @@ export default {
 		CreateWCAGAuditModal,
 		DeployToolModal,
 		CreateMediaAuditModal,
+		AddUsersToLicenseModal,
+		UpgradeLicenseModal,
 		CreateColorSwatchModal,
 		ColorContrastQuickToolModal
 	}

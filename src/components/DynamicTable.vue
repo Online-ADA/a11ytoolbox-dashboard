@@ -34,7 +34,7 @@
 							</tr>
 						</thead>
 						<tbody class="bg-white divide-y divide-gray-200">
-							<tr v-for="(item, index) in rows" :key="`row-${index}`">
+							<tr :tabindex="selectable ? 0 : -1"  @keyup.enter="$emit('item:clicked',{item:item,index:index})" @keyup.space="$emit('item:clicked',{item:item,index:index})" @click="$emit('item:clicked',{item:item,index:index})" v-for="(item, index) in rows" :key="`row-${index}`" :class="[{'cursor-pointer':selectable}]">
 								<slot v-bind:data="item" name="cells-main">
 									<template v-for="(value, key) in item">
 										<td v-if="!hiddenProps.includes(key)" class="px-6 py-4 whitespace-nowrap" :key="`row-${key}`">
@@ -139,7 +139,11 @@ export default {
 			default: function(){
 				return {}
 			}
-		}
+		},
+		selectable: {
+			type:Boolean,
+			default: false,
+		},
 	},
 	methods: {
 		sort( header ){
@@ -183,7 +187,7 @@ export default {
 					
 					while (x < l) {
 						let property = Object.keys(self.items[0])[x]
-						let term = self.searchOpts.term.toLowerCase()
+						let term = self.searchOpts.caseSensitive ? self.searchOpts.term :self.searchOpts.term.toLowerCase()
 						
 						if( self.searchableProps.length ){
 							property = self.searchableProps[x]

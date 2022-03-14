@@ -33,6 +33,7 @@ if( Cookies.get("loggingIn") == undefined ){
 const params = new URLSearchParams(window.location.search)
 const license_id = params.get('license') ? params.get('license') : Cookies.get('toolboxLicense')
 Cookies.set('toolboxLicense',license_id)
+
 if( Cookies.get("toolboxAccount")  ){
   Vue.prototype.$http.defaults.headers.common['oadatbaccount'] = Cookies.get("toolboxAccount") 
 }
@@ -40,10 +41,10 @@ if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }
 
-if( window.location.hostname == "auditortools.onlineada.com" ){
-  apiHost = "https://auditortoolsapi.onlineada.com"
+if( window.location.hostname == "app.a11ytoolbox.io" ){
+  apiHost = "https://api.a11ytoolbox.io"
   accountHost = "https://accounts.onlineada.com"
-  site = "auditortools.onlineada.com"
+  site = "app.a11ytoolbox.io"
   dashboard = "https://dashboard.onlineada.com"
 }
 if( window.location.hostname == "dashboardtoolbox.ngrok.io" ){

@@ -28,7 +28,7 @@
 			</div>
 		</div>
 		
-		<button @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('ColorContrastModal', false)})" class="standard mt-2">Close</button>
+		<button @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('colorContrastModal', false)})" class="standard mt-2">Close</button>
 	</Modal>
 </template>
 

@@ -2,7 +2,7 @@
 	<div class="flex flex-col relative table-container-container" :class="{'px-5': $route.name != 'AuditShow'}">
 		
 		<div :class="{'pagination': showPagination}" tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black table-container">
-			<a v-if="rows.length" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
+			<a v-if="rows.length" :class="`skip-headers-row-${audit_id}`" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
 			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense, 'issues-table':issuesTable}">
 				<thead>
 					<tr>
@@ -290,10 +290,15 @@
 			importingRows(){
 				return this.rows.filter( r=>r.hasOwnProperty('unique') )
 			},
+			audit(){
+				let that = this
+				
+				return this.$store.state.projects.project.audits.find( a=>a.id == that.audit_id )
+			}
 		},
 		methods: {
 			changePage($event){
-				if(this.$route.name == 'AuditShow') {
+				if(this.$route.name == 'AuditShow' || this.$route.name == 'AuditImport') {
 					if( this.importing ){
 						this.$store.dispatch("audits/getIssuesOffset", {
 							audit_id: this.audit_id, 
@@ -457,7 +462,7 @@
 								toSearch = c[column].map( a=>a.display)
 							}
 							if( column == "pages" ){
-								toSearch = c[column].map( a=>a.title )
+								toSearch = c[column].map( p=>p.title + " " + p.url )
 							}
 							if( !self.search.caseSensitive ){
 								return toSearch.join("").toLowerCase().includes(self.search.term)
@@ -512,9 +517,10 @@
 						if( key == "pages"){
 							for (let index = 0; index < data.length; index++) {
 								let content = ""
-								const element = data[index];
+								let element = data[index];
+								
 								if(typeof element === 'string') {
-									element = {url:element}
+									element = {url:element, title:""}
 								}
 								if( element.title ){
 									content += element.title
@@ -523,11 +529,11 @@
 									content += " - "
 								}
 								if( element.url ){
-									let url;
+									let url
 									if(this.$route.name == 'MediaAuditShow') {
 										url = element.url 
 									}
-									if(this.$route.name == 'AuditShow') {
+									if(this.$route.name == 'AuditShow' || this.$route.name == 'AuditImport') {
 										let domain = this.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
 										
 										if( this.$store.state.audits.audit.domain.root ){
@@ -549,6 +555,8 @@
 									}
 									content += '<a target="_blank" href="'+url+'">' + url + '</a>'
 								}
+								
+								
 								output += content
 								output += "</li>"
 								if( index !== data.length - 1 ){
@@ -757,7 +765,7 @@
 		watch:{
 			rows(val){
 				if( this.rows.length ){
-					document.querySelector('.skip-headers-row').addEventListener( "click", function(e){
+					document.querySelector(`.skip-headers-row-${this.audit_id}`).addEventListener( "click", function(e){
 						let firstRow = document.querySelector('#a'+val[0].issue_number)
 						firstRow.focus()
 						firstRow.scrollIntoView({behavior: "smooth", inline:"start", block:"center"})

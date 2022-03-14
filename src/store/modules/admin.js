@@ -22,7 +22,8 @@ const getDefaultState = () => {
 			projects: false,
 			audits: false,
 			clients: false,
-			domains: false
+			domains: false,
+			import_criteria: false,
 		}
 	}
 }
@@ -50,12 +51,18 @@ export default {
 			projects: false,
 			audits: false,
 			clients: false,
-			domains: false
+			domains: false,
+			import_criteria: false,
 		}
 	},
 	mutations: {
 		setState(state,payload) {
 			Vue.set(state,payload.key,payload.value)
+		},
+		setUserKey(state,payload) {
+			if(payload.index > -1){
+				state.users[payload.index][payload.key] = payload.value
+			}
 		},
 		resetState (state) {
 			Object.assign(state, getDefaultState())
@@ -64,6 +71,33 @@ export default {
 	actions: {
 		resetState({commit}) {
 			commit('resetState')
+		},
+		importSuccessCriteria({state,rootState},args){
+			state.loading.import_criteria = true
+			Request.get(`${rootState.auth.API}/l/${rootState.auth.license.id}/success-criteria/import`, {
+				onSuccess: {
+					title:'Success',
+					text:'Criteria Imported',
+					callback: function(response){
+						state.loading.import_criteria = false
+						if(args.Success) args.Success()
+					}
+				},
+				onError: {
+					title:'Error',
+					text: "There was a problem while importing criteria",
+					callback: function(){
+						state.loading.import_criteria = false
+					}
+				},
+				onWarn: {
+					title: "Warning",
+					text: "There was a problem while importing criteria",
+					callback: function(){
+						state.loading.import_criteria= false
+					}
+				}
+			})
 		},
 		getClient({state, rootState}, args){
 			state.loading.clients = true
@@ -93,7 +127,6 @@ export default {
 				}
 			})
 		},
-		
 		getAsstTechnologies({state, rootState}){
 			state.loading.articles = true
 			Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/technologies`)
@@ -548,7 +581,7 @@ export default {
 				}
 			})
 		},
-		getUsers({state, rootState}){
+		getUsers({state,rootState}){
 			state.loading.users = true
 			Request.get(`${rootState.auth.API}/a/${rootState.auth.account}/users`, {
 				onSuccess: {
@@ -564,6 +597,99 @@ export default {
 				onError: {
 					silent: true,
 					callback: function(){
+						state.loading.users = false
+					}
+				}
+			})
+		},
+		removeUser({state,rootState},args) {
+			state.loading.users = true
+			Request.get(`${rootState.auth.API}/l/${rootState.auth.license.id}/users/${args.user.id}/remove`, {
+				onSuccess: {
+					silent: true,
+					callback: function(){
+						state.loading.users = false
+						args.Success()
+					}
+				},
+				onWarns: {
+					silent: true,
+				},
+				onError: {
+					silent: true,
+					callback: function(){
+						state.loading.users = false
+					}
+				}
+			})
+		},
+		inviteUsers({state,rootState},args) {
+			state.loading.users = true;
+			Request.post(`${rootState.auth.accapi}/api/accounts/users/invite`, {
+				params: {
+					account_id: rootState.auth.account,
+					emails: [
+						{
+							email: args.invite.email,
+							team: args.invite.team,
+							role: args.invite.role,
+						}
+					],
+					details: {
+						access: {
+							licenses: [rootState.auth.license.id]
+						}
+					},
+				},
+				onSuccess: {
+					title:'Success',
+					text:'Users have been given access to this license',
+					callback: function(response){
+						state.loading.users = false
+						args.Success()
+					}
+				},
+				onError: {
+					title:'Error',
+					text:'Inviting user casued an error',
+					callback: function(){
+						state.loading.users = false
+					}
+				},
+				onWarn: {
+					title: "Warning",
+					text: "There was a problem inviting the user",
+					callback: function(response){
+						state.loading.users = false
+					}
+				}
+			})
+		},
+		addUsers({state,rootState},args) {
+			state.loading.users = true;
+			Request.post(`${rootState.auth.API}/l/${rootState.auth.license.id}/users/add`, {
+				params: {
+					users: args.users
+				},
+				onSuccess: {
+					title:'Success',
+					text:'Users have been given access to this license',
+					callback: function(response){
+						state.loading.users = false
+						args.Success()
+					}
+				},
+				onError: {
+					title:'Error',
+					text:'Adding users casued an error',
+					callback: function(){
+						state.loading.users = false
+					}
+				},
+				onWarn: {
+					title: "Warning",
+					text: "There was a problem adding the users",
+					callback: function(response){
 						state.loading.users = false
 					}
 				}

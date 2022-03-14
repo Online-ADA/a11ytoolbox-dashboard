@@ -307,6 +307,15 @@ export default {
         }
     },
     methods: {
+        // Import() {
+        //     this.$store.dispatch('admin/importSuccessCriteria',{Success:this.ReloadSuccessCriteria})
+        // },
+        // ReloadSuccessCriteria() {
+        //     this.$store.dispatch("admin/getArticles")
+        //     this.$store.dispatch("audits/getAuditStates")
+        //     this.$store.dispatch("admin/getAsstTechnologies")
+        //     this.$store.dispatch("admin/getSoftwareUsed")
+        // },
         getSingular( identifier ){
             if( identifier == "audit_state" ){
                 return "audit state"

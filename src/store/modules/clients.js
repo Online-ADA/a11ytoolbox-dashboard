@@ -109,10 +109,19 @@ export default {
 			})
 			.then(re=>{
 				state.loading = false
-				state.client = re.data.created
-				state.all = re.data.details
-				if( args.callback ){
-					args.callback()
+				if(re.data.success == '1') {
+					state.client = re.data.created
+					state.all = re.data.details
+					if( args.callback ){
+						args.callback()
+					}
+				}
+				if(re.data.success == 'error') {
+					Vue.notify({
+						title: 'Warning',
+						text: re.data.error,
+						type: 'warning'
+					})
 				}
 			})
 			.catch(re=>{

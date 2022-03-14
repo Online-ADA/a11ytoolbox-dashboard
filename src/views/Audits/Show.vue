@@ -19,7 +19,8 @@
 			:condense="shouldCondense" 
 			:locked="audit.locked" 
 			@selectAll="selectAll" 
-			@deselectAll="deselectAll" 
+			@deselectAll="deselectAll"
+			:audit_id="$route.params.id"
 			ref="issuesTable" 
 			:selected="selectedRows" 
 			@rowClick="selectRow" 
@@ -61,7 +62,7 @@
 							
 							<template v-if="audit.property_type == 'website'">
 								<select id="pages" class="w-full h-full max-h-[180px] min-w-[200px]" v-model="issue.pages" multiple>
-									<option class="break-words whitespace-normal" :value="page" v-for="(page, index) in pagesSrc" :key="'page-'+index">
+									<option class="break-words whitespace-normal" :value="{title: page.title, url: page.url}" v-for="(page, index) in pagesSrc" :key="'page-'+index">
 										<template v-if="page.title">{{page.title}}</template>
 										<template v-if="page.title && page.url"> - </template>
 										<template v-if="page.url">{{page.url}}</template>
@@ -70,7 +71,7 @@
 							</template>
 							<template v-if="audit.property_type != 'website'">
 								<select id="pages" class="w-full h-full max-h-[180px] min-w-[200px]" v-model="issue.pages" multiple>
-									<option class="break-words whitespace-normal" :value="screen" v-for="(screen, index) in pagesSrc" :key="'page-'+index">
+									<option class="break-words whitespace-normal" :value="{title: screen.name}" v-for="(screen, index) in pagesSrc" :key="'page-'+index">
 										{{screen.name}}
 									</option>
 								</select>
@@ -805,15 +806,25 @@ export default {
 		getIssuesCSV(){
 			this.$store.state.audits.loading = true
 			Request.postPromise(`${this.$store.state.auth.API}/l/${this.$store.state.auth.license.id}/audits/${this.$route.params.id}/meta`, {params: {key: "sort", value: this.$refs.issuesTable.columnData.map( o=> o.id)}})
-			.then( ()=> {
+			.then( (re)=> {
 				this.$store.state.audits.loading = false
-				window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.account}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues`
+				if(re.data.success == '1') {
+					window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.license.id}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues`
+				}
+				if(re.data.success == 'error') {
+					this.$notify({
+						title:"Warning",
+						text:re.data.error,
+						type: "warning",
+						position: 'bottom right'
+					})
+				}
 			})
 			.catch()
 			.then( ()=> this.$store.state.audits.loading = false )
 		},
 		getSampleCSV(){
-			window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.account}/audits/${this.$route.params.id}/csv/sample`
+			window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.license.id}/audits/${this.$route.params.id}/csv/sample`
 		},
 		getDefault(){
 			return JSON.parse( JSON.stringify(this.issueDefaults) )

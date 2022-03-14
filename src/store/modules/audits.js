@@ -18,7 +18,6 @@ const CheckAuditState = (state,id,api,license) => {
 		if(state.intervals[id]) clearInterval(state.intervals[id])
 	})
 }
-
 const getDefaultState = () => {
 	return {
 		all: [],
@@ -37,7 +36,6 @@ const getDefaultState = () => {
 		intervals: {},
 	}
 }
-
 const generateUniqueID = (existing) => {
 	let id = Math.random().toString(36).substring(5)
 	

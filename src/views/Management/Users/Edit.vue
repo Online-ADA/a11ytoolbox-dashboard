@@ -24,7 +24,7 @@
 					</div>
 				</div>
 				<!-- Row -->
-				<div class="flex w-full mt-3">
+				<!-- <div class="flex w-full mt-3">
 					<div class="flex-1">
 						<h2 class="headline-2">Accounts</h2>
 						
@@ -37,14 +37,14 @@
 						</ul>
 						
 					</div>
-				</div>
+				</div> -->
 			</form>
 		
 			<Label class="headline-2 mt-3" for="role">Role</Label>
 			<select v-model="selectedRole" class="p-1 mb-3" @change="modifyRole" id="role" name="role">
 				<option value="2">Manager</option>
 				<option value="3">Standard</option>
-				<option value="4">Limited</option>
+				<option value="4">Client</option>
 			</select>
 			
 			<div v-if="iAmExecutive">
@@ -86,9 +86,6 @@ export default {
 		},
 		account(){
 			return this.$store.getters["auth/account"]
-		},
-		accounts(){
-			return this.$store.state.auth.accounts
 		},
 		iAmExecutive(){
 			if( this.account ){

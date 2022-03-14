@@ -1,6 +1,6 @@
 <template>
 	<Modal @initialized="getRootModal" :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
-		<Loader v-if="loading"></Loader>
+		<Loader v-if="loading" :local="true"></Loader>
 		<template v-if="complete">
 			<h1 class="headline">Go to Audit?</h1>
 			<button @click.prevent="EventBus.closeModal( ()=>{ chooseYes() })" class="standard mr-3">Yes</button>
@@ -411,7 +411,11 @@
 							pass = this.audit.title
 							break
 						case "software":
-							pass = this.selectedSoftware
+							if( this.propertyType != "website" ){
+								pass = this.selectedSoftware
+							}else{
+								pass = true
+							}
 							break
 						case "domain":
 							if( this.propertyType == "website" ){

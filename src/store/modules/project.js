@@ -76,39 +76,49 @@ export default {
 					}
 				})
 				.then( re=>{
-					Vue.notify({
-						title:"Success",
-						text:"Project created",
-						type: "success",
-						position: 'bottom right'
-					})
-					if( !args.vm.independent ){
-						args.vm.assigned = []
-						args.vm.unassigned = rootState.user.all
-						args.vm.project = {
-							name: "",
-							status: "active",
-							created_by: rootState.auth.user.id,
-							account_id: rootState.auth.account,
-							client_id: rootState.clients.client.id,
+					if(re.data.success == 'error') {
+						Vue.notify({
+							title:"Warning",
+							text:re.data.error,
+							type: "warning",
+							position: 'bottom right'
+						})
+					}
+					if(re.data.success == '1') {
+						Vue.notify({
+							title:"Success",
+							text:"Project created",
+							type: "success",
+							position: 'bottom right'
+						})
+						if( !args.vm.independent ){
+							args.vm.assigned = []
+							args.vm.unassigned = rootState.user.all
+							args.vm.project = {
+								name: "",
+								status: "active",
+								created_by: rootState.auth.user.id,
+								account_id: rootState.auth.account,
+								client_id: rootState.clients.client.id,
+							}
+							args.vm.complete = true
 						}
-						args.vm.complete = true
+	
+						//If the client this project was created for is the same as the current global, trigger an update to the projects list in the sidebar
+						if( rootState.clients.client.id === re.data.details.client_id ){
+							dispatch("getProjects", false)
+						}
+	
+						//If the client this project was created for was not the same as the current client, switch global client to new value
+						//This will trigger an update of the projects because of the watcher on App.vue
+						if( rootState.clients.client.id !== re.data.details.client_id ){
+							rootState.projects.project = false
+							rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
+							rootState.clients.clientID = rootState.clients.client.id
+						}
+						
+						state.project = re.data.details
 					}
-
-					//If the client this project was created for is the same as the current global, trigger an update to the projects list in the sidebar
-					if( rootState.clients.client.id === re.data.details.client_id ){
-						dispatch("getProjects", false)
-					}
-
-					//If the client this project was created for was not the same as the current client, switch global client to new value
-					//This will trigger an update of the projects because of the watcher on App.vue
-					if( rootState.clients.client.id !== re.data.details.client_id ){
-						rootState.projects.project = false
-						rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
-						rootState.clients.clientID = rootState.clients.client.id
-					}
-					
-					state.project = re.data.details
 				})
 				.catch( re=>{
 					console.log(re);

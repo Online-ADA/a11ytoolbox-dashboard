@@ -1,7 +1,8 @@
 .DS_Store
 node_modules
 /dist
-
+/public/tailwind.css
+.firebaserc
 
 # local env files
 .env.local

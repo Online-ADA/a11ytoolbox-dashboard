@@ -2,6 +2,9 @@ import Vue from 'vue'
 
 const getDefaultState = () => {
 	return {
+		account_users: {
+			all: [],
+		},
 		all:[],
 		byTeam: {
 			1: [],
@@ -10,13 +13,17 @@ const getDefaultState = () => {
 			4: []
 		},
 		user: false,
-		loading: false
+		loading: false,
+		user_limit: 1,
 	}
 }
 
 export default {
 	namespaced:true,
 	state: {
+		account_users: {
+			all: [],
+		},
 		all:[],
 		byTeam: {
 			1: [],
@@ -25,7 +32,8 @@ export default {
 			4: []
 		},
 		user: false,
-		loading: false
+		loading: false,
+		user_limit: 1,
 	},
 	mutations: {
 		setState(state,payload) {
@@ -59,9 +67,10 @@ export default {
 			//prevent this method from being called multiple times while still loading previous request
 			if(state.loading) return
 			state.loading = true
-			Request.getPromise(`${rootState.auth.API}/a/${rootState.auth.account}/users`)
+			Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/users`)
 			.then( re=>{
 				state.all = Object.values(re.data.details)
+				state.user_limit = re.data.limit
 				for (let i = 0; i < re.data.details.length; i++) {
 					const user = re.data.details[i];
 					if( user.roleInfo.team_id != null ){
@@ -83,7 +92,6 @@ export default {
 			.catch( re=> console.log(re))
 			.then( ()=> state.loading = false)
 		},
-		
 		getUser({state, rootState}, args){
 			state.loading = true
 			Request.get(`${rootState.auth.API}/a/${rootState.auth.account}/manage/users/${args.user_id}`, {

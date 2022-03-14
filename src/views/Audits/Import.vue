@@ -15,32 +15,6 @@
             <Btn v-for="(audit, index) in temporary_audits" :key="'showTempAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'orange' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
     </div>
-    <!-- <button v-show="!showImportingIssues" @click.prevent="showImportingIssues = true">Show Issues to Import</button> -->
-    <!-- <div class="w-1/3 border border-black ml-1.5 p-5" v-show="showImportingIssues">
-        <div class="flex justify-between">
-            <h2>Issues to Import</h2>
-            <button @click.prevent="showImportingIssues = false">Close</button>
-        </div>
-        <div>
-            <DT :search="false" :headers="['Issue Number', 'Status', 'Target']" :items="importing">
-                <template v-slot:cells-main>
-                    <div class="hidden"></div>
-                </template>
-                <template v-slot:cells-extra="row">
-                    <th class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{{row.data.issue_number}}{{row}}</div>
-                    </th>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="capitalize text-sm text-gray-900">{{row.data.status}}{{row}}</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="capitalize text-sm text-gray-900">{{row.data.target}}{{row}}</div>
-                    </td>
-                    
-                </template>
-            </DT>
-        </div>
-    </div> -->
 
     <div class="w-full flex flex-wrap items-center mb-14">
         <div
@@ -378,6 +352,15 @@ export default {
                     key: "audit_id",
                     display: "audit id",
                     show: false,
+                    sticky: false,
+                    style: {},
+                    width: "150px",
+                    hidePermanent: false
+                },
+                {
+                    key: "issue_description",
+                    display: "issue description",
+                    show: true,
                     sticky: false,
                     style: {},
                     width: "150px",

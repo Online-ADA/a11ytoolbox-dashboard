@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import store from '../store'
 import Cookies from '../services/cookies'
+import { EventBus } from './eventBus'
 class Request {
     /* Args to pass:
         - params ~ Object: additional data to be sent with the request
@@ -259,6 +260,12 @@ class Request {
         }
         if(response.data != undefined && response.data.message == 'No Account Access') {
             window.location = window.App.$store.state.auth.accapi+"/signin/?oada_redirect=/"
+        }
+        if(response.data != undefined && response.data.success === 'upgrade') {
+            store.commit("upgrade/setState",{key:'trigger',value: response.data.trigger})
+            store.commit("upgrade/setState",{key:'message',value: response.data.message})
+            EventBus.openModal('UpgradeLicenseModal',false)
+            return
         }
         if(response.data != undefined && response.data.success === 'error') {
             return
