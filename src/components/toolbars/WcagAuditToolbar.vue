@@ -59,11 +59,15 @@
                             </button>
                         </div>
                         <div v-if="!audit.locked">
-                            <button class="text-lg leading-none mx-3.5 xs:mx-2 pointer-only" title="Deselect All Rows" @click.prevent="toolbarEmit('deselectAll', $event)">
+                            <button :class="[$store.state.audits.audit && $store.state.audits.audit.issues.length ? 'mx-3.5' : 'ml-3.5']"
+                            class="text-lg leading-none xs:mx-2 pointer-only"
+                            title="Deselect All Rows"
+                            @click.prevent="toolbarEmit('deselectAll', $event)">
                                 <i class="fal fa-grip-horizontal"></i>
                             </button>
                         </div>
-                        <div>
+                        
+                        <div v-show="$store.state.audits.audit && $store.state.audits.audit.issues.length">
                             <button class="text-base leading-none pointer-only" title="Open Show or Hide Columns Modal" @click.prevent="toolbarEmit('columnPicker', $event)" >
                                 <i class="far fa-thumbtack"></i>
                             </button>
