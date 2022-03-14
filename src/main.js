@@ -33,6 +33,7 @@ if( Cookies.get("loggingIn") == undefined ){
 const params = new URLSearchParams(window.location.search)
 const license_id = params.get('license') ? params.get('license') : Cookies.get('toolboxLicense')
 Cookies.set('toolboxLicense',license_id)
+
 if( Cookies.get("toolboxAccount")  ){
   Vue.prototype.$http.defaults.headers.common['oadatbaccount'] = Cookies.get("toolboxAccount") 
 }
