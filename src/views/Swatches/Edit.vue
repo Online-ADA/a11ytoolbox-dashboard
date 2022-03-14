@@ -58,7 +58,7 @@
 								<td class="p-3 w-[250px] min-w-[250px] border-0" scope="col"></td>
 								<td class="p-3 w-[230px] min-w-[230px] border-0" scope="col" v-for="(color, index) in colors" :key="`matrix-header-${index+1}`">
 									<div class="text-center">
-										<div class="text-xl flex-1">{{color}}</div>
+										<!-- <div class="text-xl flex-1">{{color}}</div> -->
 										<div class="text-2xl font-extrabold" :style="`-webkit-text-stroke: 1px black;color:${color}`">Aa</div>
 									</div>
 								</td>
@@ -68,19 +68,17 @@
 
 							<tr v-for="(background_color, index) in colors" :key="`matrix-row-${index+1}`" >
 								<td class="p-3 border-0" scope="row">
-									<div class="flex items-center">
-										<div class="flex-1">{{background_color}}</div>
-										<div class="w-[125px] h-[125px] ml-5 border border-black" :style="`background-color:${background_color}`"></div>
-									</div>
+									<div class="text-center">{{background_color}}</div>
+									<div class="w-[125px] h-[125px] mx-auto border border-black" :style="`background-color:${background_color}`"></div>
 								</td>
 
 								<td class="p-3 border-0" v-for="(foreground_color, index) in colors" :set="ratio = Utility.computeRatio(foreground_color, background_color)" :key="`comparison-column-${index}`" role="presentation">
-									<div :class="{ 'border border-black' : ratio >= 4.5 }" class="w-[125px] h-[125px] mx-auto" :title="`The combination of ${foreground_color} on top of ${background_color} is ${ratio}:1`">
+									<div :class="{ 'border border-black' : ratio >= 4.5 }" class="w-[125px] mx-auto mt-[21px]" :title="`The combination of ${foreground_color} on top of ${background_color} is ${ratio}:1`">
 										<!-- Showing the background and foreground color combinations -->
-										<div v-show="ratio >= 4.5" class="text-lg font-bold flex items-center justify-center h-full w-full" :style="`color:${foreground_color}; background-color:${background_color}`" aria-hiddden="true">{{ratio}}</div>
+										<div v-show="ratio >= 4.5" class="text-lg font-bold flex items-center justify-center h-[125px] w-full" :style="`color:${foreground_color}; background-color:${background_color}`" aria-hiddden="true">{{ratio}}</div>
 										
 										<!-- Showing the Inaccessible SVG -->
-										<img v-show="ratio < 4.5" alt="Inaccessible color combination" :src="badContrastIcon"/>
+										<img class="mt-[21px]" v-show="ratio < 4.5" alt="Inaccessible color combination" :src="badContrastIcon"/>
 									</div>
 								</td>
 							</tr>

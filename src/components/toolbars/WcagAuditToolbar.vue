@@ -4,7 +4,10 @@
             <!-- Audit Toolbar -->
             <div class="flex items-center justify-between xs:flex-wrap">
                 <div class="flex items-center text-13 xs:basis-full xs:flex-wrap">
-                    <span class="xs:basis-full xs:max-w-full xs:break-all " v-if="audit.domain">{{audit.domain.url}}<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
+                    <span class="xs:basis-full xs:max-w-full xs:break-all" v-if="audit.domain">
+                        <router-link title="Edit domain" :to="`/domains/${audit.domain.id}/edit`">
+                            {{audit.domain.url}}<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
+                        </router-link>
                     </span>
                     <template v-if="isAuditShowPage">
                         <div class="border border-black mx-3.5 divider xs:hidden"></div>
@@ -20,31 +23,31 @@
                         </select>
                         
                         <!-- Edit Issue -->
-                        <button v-if="auditRowsSelected === 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-edit-issue', $event)">
-                            <span title="Edit Issue" ><i class="far fa-file-edit"></i></span>
+                        <button title="Edit Issue" v-if="auditRowsSelected === 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-edit-issue', $event)">
+                            <i class="far fa-file-edit"></i>
                         </button>
                         <!-- Copy Issue -->
-                        <button v-if="auditRowsSelected === 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-copy-issue', $event)">
-                            <span title="Copy Issue" ><i class="far fa-copy"></i></span>
+                        <button title="Copy Issue" v-if="auditRowsSelected === 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-copy-issue', $event)">
+                            <i class="far fa-copy"></i>
                         </button>
                         <!-- Delete Selected Issue -->
-                        <button v-if="auditRowsSelected > 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-delete-many', $event)">
-                            <span title="Delete All Selected Issues" ><i class="far fa-minus-hexagon"></i></span>
+                        <button title="Delete All Selected Issues" v-if="auditRowsSelected > 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-delete-many', $event)">
+                            <i class="far fa-minus-hexagon"></i>
                         </button>
                         <!-- Add Issue -->
-                        <button v-if="auditRowsSelected < 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-add-issue', $event)">
-                            <span title="Add Issue" ><i class="far fa-plus-square"></i></span>
+                        <button title="Add Issue" v-if="auditRowsSelected < 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-add-issue', $event)">
+                            <i class="far fa-plus-square"></i>
                         </button>
                         <!-- Locked Icon -->
                         <span title="This Audit is Locked and Cannot be Modified" v-if="audit.locked"><i class="fas fa-lock" aria-hidden="true"></i></span>
                         <!-- Condense Table -->
-                        <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-condense', $event)">
-                            <span title="Compress Table" v-if="!toggled.includes('audit-condense')"><i class="far fa-compress-alt"></i></span>
-                            <span title="Decompress Table" v-else><i class="fas fa-expand-alt"></i></span>
+                        <button :title="!toggled.includes('audit-condense') ? 'Compress Table' : 'Decompress Table'" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-condense', $event)">
+                            <span v-if="!toggled.includes('audit-condense')"><i class="far fa-compress-alt"></i></span>
+                            <span v-else><i class="fas fa-expand-alt"></i></span>
                         </button>
                         <!-- Search Audit -->
-                        <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="searchBarOpen = !searchBarOpen">
-                            <span title="Search Audit" ><i class="far fa-search"></i></span>
+                        <button title="Search Audit" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="searchBarOpen = !searchBarOpen">
+                            <i class="far fa-search"></i>
                         </button>
                         <div class="border border-black mx-3.5 xs:mx-2 divider"></div>
                     </template>

@@ -3,7 +3,7 @@
         <Loader v-if="loading"></Loader>
         
         <div class="w-full flex flex-col mt-10" v-if="scans && scans.length">
-            <h2 class="headline">Automated Audits Report</h2>
+            <h2 class="headline">Automated Audit Logs</h2>
             <DT :searchableProps="['title', 'url']" :items="scans" :headers="headers">
                 <template v-slot:cells-main>
                     <div class="hidden"></div>
@@ -57,7 +57,7 @@
             </DT>
         </div>
         <div class="text-center" v-if="!loading && !scans.length">
-            <h2>There are no automated audits for this project</h2>
+            <h2>There are no automated audits for this license</h2>
         </div>
         
         <Modal :open="deleteModalOpen">
@@ -139,11 +139,11 @@ export default {
     },
     props: [],
     watch: {
-        "$store.state.projects.project": function(newVal){
-            if( newVal ){
-                this.$store.dispatch("scan/getProjectScans", {project_id: newVal.id})
-            }
-        },
+        // "$store.state.projects.project": function(newVal){
+        //     if( newVal ){
+        //         this.$store.dispatch("scan/getProjectScans", {project_id: newVal.id})
+        //     }
+        // },
     },
     methods: {
         showLog($ev, data){
@@ -195,9 +195,10 @@ export default {
     },
     mounted() {
         document.title = "Automated Audits Management"
-        if( this.$store.state.projects.project ){
-            this.$store.dispatch("scan/getProjectScans", {project_id: this.$store.state.projects.project.id})
-        }
+        this.$store.dispatch("scan/getAccountScans")
+        // if( this.$store.state.projects.project ){
+        //     this.$store.dispatch("scan/getProjectScans", {project_id: this.$store.state.projects.project.id})
+        // }
     },
     components: {
         Label,

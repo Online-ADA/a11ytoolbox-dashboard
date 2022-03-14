@@ -4,9 +4,11 @@
             <!-- Audit Toolbar -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center text-13">
+                    
                     <span v-if="audit.domain">
-                        {{audit.domain.url}}
-                        <template v-if="audit.domain.root">/{{audit.domain.root}}</template>
+                        <router-link :to="`/domains/${audit.domain.id}/edit`">
+                            {{audit.domain.url}}<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
+                        </router-link>
                     </span>
                     <template v-if="isAuditShowPage">
                         <div class="border border-black mx-3.5 divider"></div>

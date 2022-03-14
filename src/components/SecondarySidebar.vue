@@ -2,7 +2,7 @@
     <div class="flex shadow-lg transition-all sub-sidebar secondary relative">
         <div class="fixed">
             <div class="flex sub-nav-container" >
-                <button @click.prevent="EventBus.openModal('deployToolModal', $event)" aria-label="Deploy New Tool" class="deploy-tool text-white absolute">
+                <button title="Deploy a tool" @click.prevent="EventBus.openModal('deployToolModal', $event)" aria-label="Deploy New Tool" class="deploy-tool text-white absolute">
                     <div class="bg-pallette-button hover:bg-pallette-button-hover oswald pointer-events-none">
                         +
                     </div>
@@ -12,8 +12,7 @@
                     <li class="py-1 tool-container text-white" :class="[expanded.includes('audit') ? 'expanded' : '']">
                         <span class="flex items-center">
                             <button @click.prevent="expand('audit')" class="">
-                                <i v-if="!expanded.includes('audit')" class="fas fa-caret-right"></i>
-                                <i v-else class="fas fa-caret-down"></i>
+                                <i class="fas fa-caret-right" ></i>
                                 <span class="ml-2">WCAG Audits</span>
                             </button>
                         </span>
@@ -30,8 +29,7 @@
                     <li class="py-1 tool-container text-white" :class="[expanded.includes('media_audit') ? 'expanded' : '']">
                         <span class="flex items-center">
                             <button @click.prevent="expand('media_audit')" class="">
-                                <i v-if="!expanded.includes('media_audit')" class="fas fa-caret-right"></i>
-                                <i v-else class="fas fa-caret-down"></i>
+                                <i class="fas fa-caret-right"></i>
                                 <span class="ml-2">Media Audits</span>
                             </button>
                         </span>
@@ -46,8 +44,9 @@
                     <li class="py-1 tool-container text-white" :class="[expanded.includes('color_swatch') ? 'expanded' : '']">
                         <span class="flex items-center">
                             <button @click.prevent="expand('color_swatch')" class="">
-                                <i v-if="!expanded.includes('color_swatch')" class="fas fa-caret-right"></i>
-                                <i v-else class="fas fa-caret-down"></i>
+                                <i class="fas fa-caret-right"></i>
+                                <!-- <i v-if="!expanded.includes('color_swatch')" class="fas fa-caret-right"></i>
+                                <i v-else class="fas fa-caret-down"></i> -->
                                 <span class="ml-2">Color Swatches</span>
                             </button>
                         </span>
@@ -198,12 +197,15 @@ button.deploy-tool{
     right:-10px;
 }
 button.deploy-tool > div{
+    -webkit-clip-path: circle(50% at 50% 50%);
     clip-path: circle(50% at 50% 50%);
     font-size: 40px;
     height: 34px;
     width: 34px;
-    line-height: 0.8;
-    padding-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 3px;
 }
 .tool-container button{
     width:100%;
@@ -227,6 +229,12 @@ button.deploy-tool > div{
     /* max-height:100%; */
     display:block;
     min-height:30px;
+}
+.tool-container i{
+    transition:transform .2s ease;
+}
+.tool-container.expanded i{
+    transform:rotate(90deg);
 }
 .tool-container ul li:hover,
 .tool-container ul li:focus{
