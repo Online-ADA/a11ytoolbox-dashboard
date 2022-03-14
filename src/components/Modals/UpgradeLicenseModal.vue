@@ -21,7 +21,7 @@
 					</div>
 				</template>
 			</div>
-			<div :class="[{'translate-x-0':tab == 'payment','translate-x-[250%] invisible absolute': tab != 'payment'},'min-w-full bg-pallette-white  w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
+			<!-- <div :class="[{'translate-x-0':tab == 'payment','translate-x-[250%] invisible absolute': tab != 'payment'},'min-w-full bg-pallette-white  w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
 				<div >
 					<h1 class="headline text-center">Payment Information</h1>
 				</div>
@@ -40,7 +40,7 @@
 						<button @click.prevent="chooseYes" class="standard mr-2" :disabled="!selected_option || selected_option == tier">Upgrade Now</button>
 					</div>
 				</template>
-			</div>
+			</div> -->
 		</div>
 	</Modal>
 </template>

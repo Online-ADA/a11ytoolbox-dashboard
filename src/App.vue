@@ -32,6 +32,7 @@
 							<CreateMediaAuditModal style="z-index:999" :open="show.DeployMediaAuditModal"></CreateMediaAuditModal>
 							<AddUsersToLicenseModal style="z-index:999" v-if="show.AddUsersToLicenseModal" :open="show.AddUsersToLicenseModal"></AddUsersToLicenseModal>
 							<ColorContrastQuickToolModal style="z-index:999" :open="show.ColorContrastModal"></ColorContrastQuickToolModal>
+							<UpgradeLicenseModal style="z-index:999" :open="show.UpgradeLicenseModal"/>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
 							<span v-html="tool.info"></span>
@@ -260,6 +261,7 @@ export default {
 			that.show.AddUsersToLicenseModal = payload
 		})
 		EventBus.$on("colorContrastModal", (payload)=>{
+			console.log(payload)
 			that.show.ColorContrastModal = payload
 		});
 		EventBus.$on("dropdown-expanded", (payload)=>{
