@@ -360,7 +360,7 @@ export default {
 		issueModalOpen: false,
 		selectRecommendationsModalOpen: false,
 		selectedDescriptions: [],
-		selectedReference: { audit: null, issue: null, issues: [], linkText: "" },
+		// selectedReference: { audit: null, issue: null, issues: [], linkText: "" },
 		selectedRecommendations: [],
 		issueDefaults: {
 			issue_description: "",
@@ -639,23 +639,23 @@ export default {
 				this.$refs.recommendationEditor.querySelector(".ql-editor").removeAttribute("aria-describedby")
 			}
 		},
-		addIssueReferenceLinkModalOpen(newVal){
-			if( newVal ){
-				this.selectedReference.audit = null
-			}
-		},
-		"selectedReference.audit": function(newVal){
-			if( newVal ){
-				this.$store.state.audits.loading = true
-				Request.getPromise( `${this.$store.state.audits.API}/${this.$store.state.auth.account}/audits/${newVal}/issues` )
-				.then( response=>{
-					this.selectedReference.issues = response.data.details
-					this.selectedReference.issue = response.data.details[0]
-				})
-				.catch( response=>{console.log(response)})
-				.then( () => this.$store.state.audits.loading = false )
-			}
-		},
+		// addIssueReferenceLinkModalOpen(newVal){
+		// 	if( newVal ){
+		// 		this.selectedReference.audit = null
+		// 	}
+		// },
+		// "selectedReference.audit": function(newVal){
+		// 	if( newVal ){
+		// 		this.$store.state.audits.loading = true
+		// 		Request.getPromise( `${this.$store.state.audits.API}/${this.$store.state.auth.account}/audits/${newVal}/issues` )
+		// 		.then( response=>{
+		// 			this.selectedReference.issues = response.data.details
+		// 			this.selectedReference.issue = response.data.details[0]
+		// 		})
+		// 		.catch( response=>{console.log(response)})
+		// 		.then( () => this.$store.state.audits.loading = false )
+		// 	}
+		// },
 	},
 	beforeDestroy(){
 		EventBus.$off('toolbarEmit')
@@ -882,13 +882,13 @@ export default {
 			this.selectedRows = []
 			EventBus.$emit('auditSelectedRowsUpdated', this.selectedRows.length)
 		},
-		createReferenceLink(){
-			let builder = `<a href="https://toolboxdashboard.ngrok.io/audits/${this.selectedReference.audit}/overview#${this.selectedReference.issue.issue_number}" target="_blank" rel="nofollow">${this.selectedReference.linkText}</a>`
+		// createReferenceLink(){
+		// 	let builder = `<a href="https://toolboxdashboard.ngrok.io/audits/${this.selectedReference.audit}/overview#${this.selectedReference.issue.issue_number}" target="_blank" rel="nofollow">${this.selectedReference.linkText}</a>`
 
-			this.descriptionsQuill.root.innerHTML += builder
-			EventBus.closeModal(()=>{this.addIssueReferenceLinkModalOpen = false})
-			this.selectedReference = { audit: null, issue: null, issues: [], linkText: "" }
-		},
+		// 	this.descriptionsQuill.root.innerHTML += builder
+		// 	EventBus.closeModal(()=>{this.addIssueReferenceLinkModalOpen = false})
+		// 	this.selectedReference = { audit: null, issue: null, issues: [], linkText: "" }
+		// },
 		selectRow(issue){
 			if( this.selectedRows.includes( issue.id ) ){
 				let index = this.selectedRows.indexOf( issue.id )

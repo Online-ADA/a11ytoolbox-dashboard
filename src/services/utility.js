@@ -223,6 +223,72 @@ class Utility {
 
         return data
     }
+    convertHexToRgb(hex){
+        let r = 0, g = 0, b = 0;
+
+        // 3 digits
+        if (hex.length == 4) {
+            r = "0x" + hex[1] + hex[1];
+            g = "0x" + hex[2] + hex[2];
+            b = "0x" + hex[3] + hex[3];
+        }
+
+        // 6 digits
+        if (hex.length == 7) {
+            r = "0x" + hex[1] + hex[2];
+            g = "0x" + hex[3] + hex[4];
+            b = "0x" + hex[5] + hex[6];
+        }
+
+        return `${r} ${g} ${b}`
+    }
+    formatRGB(color){
+        let formatted = {r: "", g: "", b: ""}
+        if( color.includes("#") ){
+            color = this.convertHexToRgb(color)
+        }
+        else if( color.includes("rgb") ){
+            //Color is in format rgb(255 255 255)
+            color = color.replace("rgb(", "")
+            color = color.replace(")", "")
+        }
+
+        let parts = color.split(" ")
+        formatted.r = parseInt(parts[0], 16)
+        formatted.g = parseInt(parts[1], 16)
+        formatted.b = parseInt(parts[2], 16)
+
+        return formatted
+    }
+    computeRatio(fore, back){
+        let foreRGB = this.formatRGB(fore)
+        let backRGB = this.formatRGB(back)
+        //rgb = { r: "255" ... }
+
+        let L1 = this.calculateLuminance(foreRGB.r, foreRGB.g, foreRGB.b)
+        let L2 = this.calculateLuminance(backRGB.r, backRGB.g, backRGB.b)
+
+        let brightest = Math.max(L1, L2)
+        let darkest = Math.min(L1, L2)
+        
+        let ratio = (brightest + 0.05) / (darkest + 0.05)
+        
+        return parseFloat(ratio.toFixed(2))
+    }
+    calculateLuminance(R8bit, G8bit, B8bit){
+        var RsRGB = R8bit/255;
+        var GsRGB = G8bit/255;
+        var BsRGB = B8bit/255;
+
+        var R = (RsRGB <= 0.03928) ? RsRGB/12.92 : Math.pow((RsRGB+0.055)/1.055, 2.4);
+        var G = (GsRGB <= 0.03928) ? GsRGB/12.92 : Math.pow((GsRGB+0.055)/1.055, 2.4);
+        var B = (BsRGB <= 0.03928) ? BsRGB/12.92 : Math.pow((BsRGB+0.055)/1.055, 2.4);
+
+        // For the sRGB colorspace, the relative luminance of a color is defined as: 
+        var L = 0.2126 * R + 0.7152 * G + 0.0722 * B;
+
+        return L;
+    }
 }
 
 export default new Utility()

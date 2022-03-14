@@ -43,6 +43,22 @@
                             </ul>
                         </div>
                     </li>
+                    <li class="py-1 tool-container text-white" :class="[expanded.includes('color_swatch') ? 'expanded' : '']">
+                        <span class="flex items-center">
+                            <button @click.prevent="expand('color_swatch')" class="">
+                                <i v-if="!expanded.includes('color_swatch')" class="fas fa-caret-right"></i>
+                                <i v-else class="fas fa-caret-down"></i>
+                                <span class="ml-2">Color Swatches</span>
+                            </button>
+                        </span>
+                        <div class="block">
+                            <ul>
+                                <li :class="[(colorSwatches.length && $route.params.id && $route.params.id == swatch.id) ? 'selected' : '']" class="text-sm py-2 text-white" v-for="swatch in colorSwatches" :key="'swatch-'+swatch.id">
+                                    <button class="capitalize" @click="updateColorSwatch(swatch)">{{swatch.title}}</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -66,9 +82,11 @@ export default {
     name: 'secondary-sidebar',
     computed: {
         mediaAudits() {
-            return this.$store.state.mediaAudits;
+            return this.$store.state.mediaAudits
         },
-        console: () => console
+        colorSwatches(){
+            return this.$store.state.projects.project.swatches || []
+        },
     },
     components:{
     },
@@ -86,6 +104,14 @@ export default {
                 name: 'AuditShow',
                 params: {
                     id: item.id
+                }
+            })
+        },
+        updateColorSwatch(swatch){
+            this.$router.push({
+                name: 'SwatchEdit',
+                params: {
+                    id: swatch.id
                 }
             })
         },
@@ -150,13 +176,16 @@ export default {
                 this.expanded.push(newVal)
             }
         },
-        // "$store.state.auth.user.meta": function(newVal){
-            
-        // }
     },
     mounted() {
         if( this.$store.state.projects.tool.type === 'audit' ){
             this.expanded.push('audit')
+        }
+        if( this.$store.state.projects.tool.type === 'media_audit' ){
+            this.expanded.push('media_audit')
+        }
+        if( this.$store.state.projects.tool.type === 'color_swatch' ){
+            this.expanded.push('color_swatch')
         }
     }
 }

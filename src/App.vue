@@ -24,13 +24,14 @@
 						id="main-content"
 						>
 							<router-view></router-view>
-							<CreateClientModal style="z-index:999" :open="show.ClientCreationModal" v-if="show.ClientCreationModal"></CreateClientModal>
+							<CreateClientModal style="z-index:999" :open="show.ClientCreationModal"></CreateClientModal>
 							<CreateProjectModal style="z-index:999" :open="show.ProjectCreationModal"></CreateProjectModal>
-							<DeployToolModal style="z-index:999" :open="show.ToolDeployModal" v-if="show.ToolDeployModal"></DeployToolModal>
+							<DeployToolModal style="z-index:999" :open="show.ToolDeployModal"></DeployToolModal>
 							<CreateWCAGAuditModal style="z-index:999" :open="show.DeployWCAGAuditModal"></CreateWCAGAuditModal>
+							<CreateColorSwatchModal style="z-index:999" :open="show.CreateColorSwatchModal"></CreateColorSwatchModal>
 							<CreateMediaAuditModal style="z-index:999" :open="show.DeployMediaAuditModal"></CreateMediaAuditModal>
 							<AddUsersToLicenseModal style="z-index:999" v-if="show.AddUsersToLicenseModal" :open="show.AddUsersToLicenseModal"></AddUsersToLicenseModal>
-							<UpgradeLicenseModal style="z-index:999" v-if="show.UpgradeLicenseModal" :open="show.UpgradeLicenseModal"></UpgradeLicenseModal>
+							<ColorContrastQuickToolModal style="z-index:999" :open="show.ColorContrastModal"></ColorContrastQuickToolModal>
 						</div>
 						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
 							<span v-html="tool.info"></span>
@@ -40,24 +41,6 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- <Modal class="z-50" :open="showLoginPrompt">
-		<div class="bg-white px-4 pt-5 pb-4 p-6 text-center">
-			<Btn aria-label="Close refresh session modal" @click.native.prevent="showLoginPrompt = false" class="absolute top-4 right-4" hover="true" color="white">X</Btn>
-			<h2 class="text-center pb-3">Your session is about to expire</h2>
-
-			<span class="text-sm">Time Remaining: {{tokenMinutesLeft}} minute<template v-if="tokenMinutesLeft != 1">s</template> and {{tokenSecondsLeft}} second<template v-if="tokenSecondsLeft != 1">s</template></span>
-			<div class="text-sm">When your session ends you will be redirected to the home page</div>
-		</div>
-		<div class="bg-gray-50 px-4 py-3 flex">
-			<button @click.prevent="refreshSession" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
-				Refresh Session
-			</button>
-			<button @click.prevent="showLoginPrompt = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
-				Close
-			</button>
-		</div>
-		</Modal> -->
 	</div>
 </template>
 
@@ -80,6 +63,8 @@ import DeployToolModal from "./components/Modals/DeployToolModal"
 import CreateMediaAuditModal from './components/Modals/CreateMediaAuditModal'
 import AddUsersToLicenseModal from './components/Modals/AddUsersToLicenseModal'
 import UpgradeLicenseModal from './components/Modals/UpgradeLicenseModal'
+import CreateColorSwatchModal from './components/Modals/CreateColorSwatchModal'
+import ColorContrastQuickToolModal from './components/Modals/ColorContrastModal.vue'
 
 export default {
   data(){
@@ -94,6 +79,8 @@ export default {
 				DeployMediaAuditModal: false,
 				AddUsersToLicenseModal: false,
 				UpgradeLicenseModal: false,
+				CreateColorSwatchModal: false,
+				ColorContrastModal: false,
 			},
 			EventBus: EventBus,
 			openDropdowns:[],
@@ -160,19 +147,19 @@ export default {
 		account() {
 			return this.$store.getters["auth/account"]
 		},
-		secondaryHeaderLabel() {
-			if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectList' )
-				return "Projects";
-			else
-				return false;
-		},
-		showSecondaryHeader() {
-			let showRoutes = ["ManageAudits", 'ManageProjects', 'ProjectList', 'ManageClients']
-			if ( showRoutes.includes(this.$route.name) )
-				return this.$route.name;
-			else
-				return false;
-		},
+		// secondaryHeaderLabel() {
+		// 	if ( this.$route.name=='ManageProjects' || this.$route.name=='ProjectList' )
+		// 		return "Projects";
+		// 	else
+		// 		return false;
+		// },
+		// showSecondaryHeader() {
+		// 	let showRoutes = ["ManageAudits", 'ManageProjects', 'ProjectList', 'ManageClients']
+		// 	if ( showRoutes.includes(this.$route.name) )
+		// 		return this.$route.name;
+		// 	else
+		// 		return false;
+		// },
 	},
 	watch: {
 		"$store.state.clients.client": function(newVal){
@@ -198,9 +185,17 @@ export default {
 			}
 		},
 		"$route.path": function(){
+			
 			if( this.$route.matched[0].name == 'Audits' ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"audit", info:""}
+					return
+				}
+			}
+			
+			if( this.$route.matched[0].path == '/color-reports' ){
+				if( this.$route.params.id !== undefined ){
+					this.$store.state.projects.tool = {type:"color_swatch", info:"<div>Using the w3.org wiki for Relative Luminance as a guide, our forumal for determining color contrast between 2 relative luminances is calculated using the threshold for piecewise equation of 0.04045 for better accuracy rather than the older accepted threshold of 0.03928, as per the official IEC standard for the sRGB color space.</div><div class='break-all mt-3'><small>Source: <a class='block' href='https://www.w3.org/WAI/GL/wiki/Relative_luminance' target='_blank'>https://www.w3.org/WAI/GL/wiki/Relative_luminance</a></small></div>"}
 					return
 				}
 			}
@@ -255,12 +250,18 @@ export default {
 		EventBus.$on("deployWCAGAuditModal", (payload)=>{
 			that.show.DeployWCAGAuditModal = payload
 		})
+		EventBus.$on("deployColorSwatchModal", (payload)=>{
+			that.show.CreateColorSwatchModal = payload
+		})
 		EventBus.$on("deployMediaAuditModal", (payload)=>{
 			that.show.DeployMediaAuditModal = payload
 		});
 		EventBus.$on("AddUsersToLicenseModal", (payload)=>{
 			that.show.AddUsersToLicenseModal = payload
 		})
+		EventBus.$on("colorContrastModal", (payload)=>{
+			that.show.ColorContrastModal = payload
+		});
 		EventBus.$on("dropdown-expanded", (payload)=>{
 			this.semaphore = true
 			this.openDropdowns.push(payload)
@@ -295,6 +296,8 @@ export default {
 		CreateMediaAuditModal,
 		AddUsersToLicenseModal,
 		UpgradeLicenseModal,
+		CreateColorSwatchModal,
+		ColorContrastQuickToolModal
 	}
 }
 </script>
