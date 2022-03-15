@@ -73,7 +73,8 @@ export default {
         "executive": [],
         "development": [],
         "design":[],
-        "customer_service":[]
+        "customer_service":[],
+        "unassigned":[]
       }
 
       if( !this.$store.state.user.all.length ){
@@ -82,7 +83,11 @@ export default {
       }
 
       for (let x = 0; x < this.$store.state.user.all.length; x++) {
-        let user = this.$store.state.user.all[x];
+        let user = this.$store.state.user.all[x]
+        if( !user.roleInfo ){
+          data.unassigned.push(user)
+          continue
+        }
         switch(user.roleInfo.team_id){
           case 1:
             data.executive.push(user)

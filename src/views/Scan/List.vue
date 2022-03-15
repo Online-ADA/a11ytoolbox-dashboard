@@ -4,7 +4,7 @@
         
         <div class="w-full flex flex-col mt-10" v-if="scans && scans.length">
             <h2 class="headline">Automated Audit Logs</h2>
-            <DT :searchableProps="['title', 'url']" :items="scans" :headers="headers">
+            <DT width="500px" :fixed="true" :searchableProps="['title', 'url']" :items="scans" :headers="headers">
                 <template v-slot:cells-main>
                     <div class="hidden"></div>
                 </template>
@@ -15,9 +15,12 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">{{row.data.total_issues}}</div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-6 py-4 break-all">
                         <div class="text-sm text-gray-900">
-                            {{row.data.domain.url}}<template v-if="row.data.domain.root">/{{row.data.domain.root}}</template>
+                            <template v-if="row.data.domain && row.data.domain.url">
+                                {{row.data.domain.url}}<template v-if="row.data.domain.root">/{{row.data.domain.root}}</template>
+                            </template>
+                            <template v-else>Domain Deleted</template>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -122,7 +125,17 @@ export default {
     data: () => ({
         deleteModalOpen: false,
         deleteID: false,
-        headers: ["Title", "Number of issues", "Domain", "Number of Pages", "Appended or New", "Associated Audit", "Finished", "Errors", "Delete Automation"],
+        headers: [
+            {display: "Title", width:"200px"}, 
+            {display:"Number of issues", width:"100px"}, 
+            {display:"Domain", width:"300px"}, 
+            {display:"Number of Pages", width:"100px"}, 
+            "Appended or New", 
+            "Associated Audit", 
+            "Finished", 
+            "Errors", 
+            "Delete Automation"
+        ],
         failData: false,
         logModalOpen: false
     }),

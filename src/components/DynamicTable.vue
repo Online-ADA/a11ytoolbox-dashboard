@@ -10,13 +10,14 @@
 						<Checkbox size="small" class="mx-1" name="case" id="case" v-model="searchOpts.caseSensitive"></Checkbox>
 						<button @click.prevent="submitSearch" class="ml-1 text-sm standard" :hover="true">Submit</button>
 					</div>
-					<table class="min-w-full divide-y divide-gray-200 border-collapse">
+					<table :style="`width:${width}`" :class="[{'table-fixed': fixed}]" class="divide-y divide-gray-200 border-collapse">
 						<thead class="bg-gray-50">
 							<tr>
 								<th 
 								:key="`header-${index}`" 
 								v-for="(header, index) in headers" 
-								scope="col" 
+								scope="col"
+								:width="header.width ? header.width : '150px'"
 								class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 									<div class="flex items-stretch">
 										<span class="pr-3">{{header.display ? header.display : header}}</span>
@@ -86,6 +87,14 @@ export default {
 		}
 	},
 	props:{
+		width:{
+			type: String,
+			default: "100%"
+		},
+		fixed: {
+			type: Boolean,
+			default:false
+		},
 		headers:{
 			default:function(){
 				return ["Header 1", "Header 2", "Header 3"]
