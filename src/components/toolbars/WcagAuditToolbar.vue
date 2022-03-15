@@ -4,8 +4,10 @@
             <!-- Audit Toolbar -->
             <div class="flex items-center justify-between xs:flex-wrap">
                 <div class="flex items-center text-13 xs:basis-full xs:flex-wrap">
-                    <span class="xs:basis-full xs:max-w-full xs:break-all " v-if="audit.domain">{{audit.domain.url}}<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
-                    </span>
+                    <router-link title="Edit Domain" :to="`/domains/${audit.domain.id}/edit`" target="_blank" class="xs:basis-full xs:max-w-full xs:break-all underline " v-if="audit.domain">
+                        {{audit.domain.url}}
+                        <template v-if="audit.domain.root">/{{audit.domain.root}}</template>
+                    </router-link>
                     <template v-if="isAuditShowPage">
                         <div class="border border-black mx-3.5 divider xs:hidden"></div>
                         <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>

@@ -4,10 +4,10 @@
             <!-- Audit Toolbar -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center text-13">
-                    <span v-if="audit.domain">
+                    <router-link title="Edit Domain" :to="`/domains/${audit.domain.id}/edit`" target="_blank" class="xs:basis-full xs:max-w-full xs:break-all underline " v-if="audit.domain">
                         {{audit.domain.url}}
                         <template v-if="audit.domain.root">/{{audit.domain.root}}</template>
-                    </span>
+                    </router-link>
                     <template v-if="isAuditShowPage">
                         <div class="border border-black mx-3.5 divider"></div>
                         <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>

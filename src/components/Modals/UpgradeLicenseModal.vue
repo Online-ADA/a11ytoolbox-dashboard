@@ -1,9 +1,9 @@
 <template>
 	<Modal style="z-index:999" :valign="'top'" :size="'wide'" :open="open">
-		<div class="h-24" v-if="loading" >
+		<div class="h-24" v-show="loading" >
 			<Loader v-if="loading" :local="true"></Loader>
 		</div>
-		<div v-else class="w-full min-h-[500px]">
+		<div v-show="!loading" class="w-full min-h-[500px]">
 			<div :class="[{'translate-x-0':tab == 'options','translate-x-[250%] invisible absolute': tab != 'options'},'min-w-full bg-pallette-white w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
 				<div >
 					<h1 class="headline text-center">Upgrade License</h1>
@@ -21,16 +21,52 @@
 					</div>
 				</template>
 			</div>
-			<!-- <div :class="[{'translate-x-0':tab == 'payment','translate-x-[250%] invisible absolute': tab != 'payment'},'min-w-full bg-pallette-white  w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
+			<div :class="[{'translate-x-0':tab == 'payment','translate-x-[250%] invisible absolute': tab != 'payment'},'min-w-full bg-pallette-white  w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
 				<div >
 					<h1 class="headline text-center">Payment Information</h1>
 				</div>
-				<div class="my-10">
-					<div class="flex flex-col">
-						<label for="select_payment_method">Select Payment Method</label>
-						<select id="select_payment_method" v-model="selected_payment">
-							<option v-for="(payment,i) in payments" :key="i">{{payment.card_type}} - {{payment.card_number}} - {{payment.expiration_date}}</option>
-						</select>
+				<div class="flex">
+					<div class="my-10 flex justify-center basis-1/2 px-2 relative">
+						<div class="h-24" v-show="loading_payment_method" >
+							<Loader v-if="loading_payment_method" :local="true"></Loader>
+						</div>
+						<div class="flex flex-wrap w-full">
+							<p>Add A New Payment Method</p>
+							<div class="flex flex-col w-full">
+								<label for="payment_method-number">Card Number</label>
+								<input class="border px-4 py-2" id="payment_method-number" type="text">
+							</div>
+							<div class="flex flex-col w-1/2">
+								<label for="payment_method-exp">Card Expiration</label>
+								<input class="border px-4 py-2" id="payment_method-exp" type="month">
+							</div>
+							<div class="flex flex-col w-1/2">
+								<label for="payment_method-code">Card Code</label>
+								<input class="border px-4 py-2" id="payment_method-code" type="text">
+							</div>
+							<div class="flex basis-full">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="#f9a51a">
+								<path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+								</svg>
+								<span>Fully Encrypted & Secure</span>
+							</div>
+							<div class="flex basis-full mb-12 mt-6">
+								<button @click.prevent="MaybeAddPaymentMethod" class="standard mr-2" :disabled="false">Add</button>
+							</div>
+						</div>
+					</div>
+					<div class="my-10 flex justify-center basis-1/2 px-2">
+						<div class="flex flex-col w-full">
+							<p>Select An Existing Payment Method</p>
+							<div v-for="(payment,i) in payments" :key="i" class="border my-2 w-full">
+								<label :for="`payment-method-${payment.id}`" :class="[{'bg-pallette-blue text-white':selected_payment==payment.id},'w-full flex items-center  py-2 px-6']">
+									<div class="basis-3/4">
+										{{payment.card_type}} - {{payment.card_number}} - {{payment.expiration_date}}
+									</div>
+									<input class="basis-1/4" type="radio" :id="`payment-method-${payment.id}`" name="payment_method" :value="payment.id" v-model="selected_payment">
+								</label>
+							</div>
+						</div>
 					</div>
 				</div>
 				<template>
@@ -40,7 +76,7 @@
 						<button @click.prevent="chooseYes" class="standard mr-2" :disabled="!selected_option || selected_option == tier">Upgrade Now</button>
 					</div>
 				</template>
-			</div> -->
+			</div>
 		</div>
 	</Modal>
 </template>
@@ -66,9 +102,13 @@
 				selected_option: false,
 				selected_payment: false,
 				tab: 'options',
+				loading_payment_method: false,
 			}
 		},
 		methods:{
+			MaybeAddPaymentMethod() {
+
+			},
 			OptionSelected(option) {
 				this.selected_option = option
 			},
