@@ -53,7 +53,7 @@
 				this.reset()
 				
 				let id = this.$store.state.projects.project.swatches[this.$store.state.projects.project.swatches - 1].id
-				this.$router.push({path: `/color-reports/${id}`})
+				this.$router.push({path: `/color-reports/${id}/edit`})
 			},
 			createSwatch(){
 				this.swatch.project_id = this.$store.state.projects.project.id
