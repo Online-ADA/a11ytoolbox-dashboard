@@ -52,7 +52,7 @@
 				EventBus.$emit('deployColorSwatchModal', false)
 				this.reset()
 				
-				let id = this.$store.state.swatch.all[this.$store.state.swatch.all.length - 1].id
+				let id = this.$store.state.projects.project.swatches[this.$store.state.projects.project.swatches - 1].id
 				this.$router.push({path: `/color-reports/${id}`})
 			},
 			createSwatch(){

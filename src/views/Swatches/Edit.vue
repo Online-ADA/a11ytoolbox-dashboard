@@ -121,8 +121,23 @@
 			}
 		},
 		props: [],
-		watch: {},
+		watch: {
+			"$route.params.id": function(){
+				this.setSwatch()
+			},
+		},
 		methods: {
+			setSwatch(){
+				let that = this
+				this.$store.dispatch("swatch/getSwatch", {id: this.$route.params.id, callback: (data)=>{
+					that.swatch = data
+					if( data.data ){
+						that.colors = data.data
+					}else{
+						that.colors = ["#000"]
+					}
+				}})
+			},
 			removePicker(index){
 				this.colors.splice(index, 1)
 			},
@@ -144,13 +159,7 @@
 		mounted() {
 			document.title = "Edit Color Report"
 			
-			let that = this
-			this.$store.dispatch("swatch/getSwatch", {id: this.$route.params.id, callback: (data)=>{
-				that.swatch = data
-				if( data.data ){
-					that.colors = data.data
-				}
-			}})
+			this.setSwatch()
 		},
 		components: {
 			TextInput,
