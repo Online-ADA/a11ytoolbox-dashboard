@@ -122,7 +122,7 @@
 		
 		<Modal style="z-index:71" :open="columnPickerOpen">
 			<div class="w-full p-3">
-				<h2 class="subheadline">Show or Hide Columns</h2>
+				<h2 class="subheadline">Choose Columns to Display</h2>
 				<button aria-label="Close column selector modal" @click.prevent="EventBus.closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4 px-2 standard">X</button>
 				<ul class="flex flex-wrap xs:mt-10 mt-0">
 					<template v-for="(header, index) in headers">

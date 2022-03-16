@@ -68,20 +68,23 @@
                         </div>
                         
                         <div v-show="$store.state.audits.audit && $store.state.audits.audit.issues.length">
-                            <button class="text-base leading-none pointer-only" title="Open Show or Hide Columns Modal" @click.prevent="toolbarEmit('columnPicker', $event)" >
+                            <button class="text-base leading-none pointer-only" title="Choose Columns" @click.prevent="toolbarEmit('columnPicker', $event)" >
                                 <i class="far fa-thumbtack"></i>
                             </button>
                         </div>
                         <div class="border border-black mx-3.5 xs:mx-2 divider"></div>
                     </template>
                     <!-- Audit Tools -->
-                    <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
-                    <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
-                    <router-link class="xs:ml-0 ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues to This Audit"><i class="far fa-file-import"></i></router-link>
+                    <router-link v-if="!isAuditEditPage" :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
+                    <button v-if="isAuditShowPage" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
+
+                    <router-link class="xs:ml-0 ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues"><i class="far fa-file-import"></i></router-link>
+
                     <router-link class="xs:ml-0 ml-3.5" :to="{path: `/automations/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
 
-                    <button title="Mark Audit Complete" v-if="!audit.locked" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-complete', $event)"><i class="fas fa-lock-open-alt"></i></button>
-                    <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-next', $event)"><i class="far fa-hand-point-right"></i></button>
+                    <button title="Mark Audit Complete" v-if="!audit.locked && isAuditShowPage" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-complete', $event)"><i class="fas fa-lock-open-alt"></i></button>
+                    
+                    <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3 && isAuditShowPage" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-next', $event)"><i class="far fa-hand-point-right"></i></button>
                     
                     <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="EventBus.$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
                 </span>

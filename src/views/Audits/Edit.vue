@@ -1,14 +1,14 @@
 <template>
 	<div class="container">
 		<Loader v-if="loading"></Loader>
-		<h1 class="headline px-2">Edit Audit {{audit.title}}</h1>
+		<h1 class="headline px-2">Edit Audit</h1>
 		<button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="mt-3 standard alert" >
 			Delete
 		</button>
 		<div class="flex flex-wrap">
 			<div class="xs:w-full px-2">
 				<Label class="subheadline text-lg" for="locked">Audit Locked</Label>
-				<select v-model="audit.locked" id="locked" class="" name="status">
+				<select v-model="audit.locked" id="locked" class="px-4 py-2 text-base" style="height:42px;" name="status">
 					<option :value="false">False</option>
 					<option :value="true">True</option>
 				</select>
@@ -25,7 +25,7 @@
 			<div class="w-full flex xs:flex-wrap">
 				<div class="px-2 xs:w-1/2">
 					<Label class="subheadline text-lg" for="status">Status</Label>
-					<select v-model="audit.status" id="status" class="p-1" name="status">
+					<select v-model="audit.status" id="status" class="px-4 py-2 text-base" style="height:42px;" name="status">
 						<option :value="status.value" v-for="(status, index) in statusSrc" :key="`status-${index}`">{{status.name}}</option>
 					</select>
 				</div>
@@ -35,7 +35,7 @@
 				</div>
 				<div class="px-2 xs:w-1/2">
 					<Label class="whitespace-nowrap subheadline text-lg" for="audit_num">Audit #</Label>
-					<select v-model="audit.number" id="audit_num" name="audit_num" class="">
+					<select v-model="audit.number" id="audit_num" name="audit_num" class="px-4 py-2 text-base" style="height:42px;">
 						<option :value="option" v-for="option in [1, 2, 3]" :key="'audit_num-'+option">{{option}}</option>
 					</select>
 				</div>
@@ -47,7 +47,7 @@
 
 			<div class="xs:w-full w-1/2 text-left px-2">
 				<Label class="subheadline text-lg" for="scope">Scope of the Audit</Label>
-				<Textarea class="w-full" id="scope" name="scope" v-model="audit.scope" rows="4"></Textarea>
+				<Textarea style="min-height:71px;" class="w-full" id="scope" name="scope" v-model="audit.scope" rows="2"></Textarea>
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
@@ -66,7 +66,7 @@
 
 			<div class="xs:w-full w-1/2 text-left px-2">
 				<Label class="subheadline text-lg" for="additional_requirements">Additional Requirements</Label>
-				<Textarea class="w-full" id="additional_requirements" name="additional_requirements" v-model="audit.additional_requirements" rows="4"></Textarea>
+				<Textarea style="min-height:71px;" class="w-full" id="additional_requirements" name="additional_requirements" v-model="audit.additional_requirements" rows="2"></Textarea>
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
