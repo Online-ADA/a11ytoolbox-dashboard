@@ -9,9 +9,9 @@
                 </button>
                 <ul class="pt-2.5 flex-1 px-5">
                     <!-- Tools Level -->
-                    <li class="py-1 tool-container text-white" :class="[expanded.includes('audit') ? 'expanded' : '']">
+                    <li v-show="$store.state.audits.all.length" class="py-1 tool-container text-white" :class="[expanded.includes('audit') ? 'expanded' : '']">
                         <span class="flex items-center">
-                            <button @click.prevent="expand('audit')" class="">
+                            <button @click.prevent="expand('audit')">
                                 <i class="fas fa-caret-right" ></i>
                                 <span class="ml-2">WCAG Audits</span>
                             </button>
@@ -26,9 +26,9 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="py-1 tool-container text-white" :class="[expanded.includes('media_audit') ? 'expanded' : '']">
+                    <li v-show="mediaAudits.length" class="py-1 tool-container text-white" :class="[expanded.includes('media_audit') ? 'expanded' : '']">
                         <span class="flex items-center">
-                            <button @click.prevent="expand('media_audit')" class="">
+                            <button @click.prevent="expand('media_audit')">
                                 <i class="fas fa-caret-right"></i>
                                 <span class="ml-2">Media Audits</span>
                             </button>
@@ -41,7 +41,7 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="py-1 tool-container text-white" :class="[expanded.includes('color_swatch') ? 'expanded' : '']">
+                    <li v-show="colorSwatches.length" class="py-1 tool-container text-white" :class="[expanded.includes('color_swatch') ? 'expanded' : '']">
                         <span class="flex items-center">
                             <button @click.prevent="expand('color_swatch')" class="">
                                 <i class="fas fa-caret-right"></i>
@@ -84,7 +84,10 @@ export default {
             return this.$store.state.mediaAudits
         },
         colorSwatches(){
-            return this.$store.state.projects.project.swatches || []
+            if( this.$store.state.projects.project ){
+                return this.$store.state.projects.project.swatches || []
+            }
+            return []
         },
     },
     components:{

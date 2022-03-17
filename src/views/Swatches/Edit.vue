@@ -2,10 +2,10 @@
 	<div class="pb-24">
 		<Loader v-if="loading"></Loader>
 
-		<h2 class="mb-1 headline">{{swatch.title}}</h2>
+		<h2 class="mb-1 headline">Color Swatch Analysis</h2>
 		<div class="flex items-center mb-3">
 			<h3 class="pr-2 headline-2">{{swatch.title}}</h3>
-			<button class="standard" aria-label="Edit color report title" @click.prevent="editSwatchOpen = true"><i class="far fa-edit"></i></button>
+			<!-- <button class="standard" aria-label="Edit color report title" @click.prevent="editSwatchOpen = true"><i class="far fa-edit"></i></button> -->
 		</div>
 		<button @click="saveSwatch" class="standard">Save</button>
 
@@ -31,13 +31,6 @@
 		<div class="w-full flex xs:flex-wrap sm:flex-wrap">
 			
 			<Card :gutters="false" :center="false" class="w-full my-3">
-				<div>
-					<h2 class="subheadline mb-8">Accessible Color Combinations</h2>
-					<div class="flex items-center mb-3">
-						<span class="w-[70px] mr-3"><img alt="Inaccessible color combination" :src="badContrastIcon"/></span>
-						<p>This color combination does not meet the WCAG 2.1 standards for accessible color contrast ratio of 4.5:1. This means that they could be difficult to read for some users.</p>
-					</div>
-				</div>
 				<div class="matrix overflow-x-auto relative">
 					<div class="flex ml-[250px] items-center">
 						<ColorPicker 
@@ -75,10 +68,10 @@
 								<td class="p-3 border-0" v-for="(foreground_color, index) in colors" :set="ratio = Utility.computeRatio(foreground_color, background_color)" :key="`comparison-column-${index}`" role="presentation">
 									<div :class="{ 'border border-black' : ratio >= 4.5 }" class="w-[125px] mx-auto mt-[21px]" :title="`The combination of ${foreground_color} on top of ${background_color} is ${ratio}:1`">
 										<!-- Showing the background and foreground color combinations -->
-										<div v-show="ratio >= 4.5" class="text-lg font-bold flex items-center justify-center h-[125px] w-full" :style="`color:${foreground_color}; background-color:${background_color}`" aria-hiddden="true">{{ratio}}</div>
+										<div class="text-lg font-bold flex items-center justify-center h-[125px] w-full" :style="`color:${foreground_color}; background-color:${background_color}`" aria-hiddden="true">{{ratio}}:1</div>
 										
 										<!-- Showing the Inaccessible SVG -->
-										<img class="mt-[21px]" v-show="ratio < 4.5" alt="Inaccessible color combination" :src="badContrastIcon"/>
+										<!-- <img class="mt-[21px]" v-show="ratio < 4.5" alt="Inaccessible color combination" :src="badContrastIcon"/> -->
 									</div>
 								</td>
 							</tr>
@@ -101,9 +94,11 @@
 	import Card from '../../components/Card'
 	import ColorPicker from '../../components/ColorPicker/ColorPicker.vue'
 	import Utility from "../../services/utility"
+	import { EventBus } from '../../services/eventBus'
 
 	export default {
 		data: () => ({
+			EventBus: EventBus,
 			badContrastIcon: require('../../assets/badContrast.svg'),
 			editSwatchOpen: false,
 			swatch: {
@@ -112,6 +107,7 @@
 			},
 			colors: [
 				"#000",
+				"#FFFFFF"
 			],
 			Utility: Utility
 		}),
@@ -134,12 +130,14 @@
 					if( data.data ){
 						that.colors = data.data
 					}else{
-						that.colors = ["#000"]
+						that.colors = ["#000", "#FFFFFF"]
 					}
 				}})
 			},
 			removePicker(index){
-				this.colors.splice(index, 1)
+				if( this.colors.length > 2 ){
+					this.colors.splice(index, 1)
+				}
 			},
 			saveSwatch(){
 				this.editSwatchOpen = false
@@ -160,6 +158,10 @@
 			document.title = "Edit Color Report"
 			
 			this.setSwatch()
+			let that = this
+			EventBus.$on("editSwatchOpen", (payload)=>{
+				that.editSwatchOpen = true
+			})
 		},
 		components: {
 			TextInput,

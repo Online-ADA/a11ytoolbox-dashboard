@@ -1,5 +1,5 @@
 <template>
-  <div class="p-5">
+  <div>
     <h1 class="mb-5 headline">Client Overview</h1>
     <div class="flex">
       <div class="w-1/2 flex flex-col mr-5">

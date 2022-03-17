@@ -1,5 +1,5 @@
 <template>
-    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed xs:absolute sm:absolute z-50 w-full xs:h-auto sm:h-auto h-12" v-if="showToolbar">
+    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed xs:absolute sm:absolute z-50 w-full xs:h-auto sm:h-auto" v-if="showToolbar">
         <div id="toolbar" class="w-full pl-4 p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
             <div class="flex items-center justify-between xs:flex-wrap">

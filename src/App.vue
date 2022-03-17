@@ -20,7 +20,7 @@
 						<CanvasToolbar :tool="tool"></CanvasToolbar>
 						<div
 						class="flex-1"
-						:class="{'info-sidebar-expanded':infoSidebarExpanded, 'px-5': $route.name != 'AuditShow', 'audit-show': $route.name == 'AuditShow'}"
+						:class="{'info-sidebar-expanded':infoSidebarExpanded, 'px-6': $route.name != 'AuditShow', 'audit-show': $route.name == 'AuditShow'}"
 						id="main-content"
 						>
 							<router-view></router-view>
@@ -405,7 +405,7 @@ export default {
 	transition:margin 150ms ease;
 	margin-right:0px;
 	max-width:100%;
-	margin-top:50px;
+	margin-top:63px;
 }
 #main-content.audit-show{
 	margin-top:46px;

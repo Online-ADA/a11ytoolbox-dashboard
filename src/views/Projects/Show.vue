@@ -1,5 +1,5 @@
 <template>
-  <div class="p-5">
+  <div>
     <Loader v-if="loading"></Loader>
     <template v-if="project">
       <h1 class="mb-5 headline">Project Overview</h1>

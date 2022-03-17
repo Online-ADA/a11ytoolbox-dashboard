@@ -3,7 +3,7 @@
         <div 
         class="flex w-full items-center" 
         :class="[align=='center' ? 'justify-center' : align == 'left' ? 'justify-start' : align=='right' ? 'justify-flex-end' : '']" >
-            <div class="radio relative mx-2" v-for="(item, index) in items" :key="`${groupName} - ${index}`">
+            <div :class="[ {'mr-2':index == 0} ]" class="radio relative" v-for="(item, index) in items" :key="`${groupName} - ${index}`">
                 <input 
                 :aria-labelledby="groupName + '-' + index + '-label'" 
                 class="absolute top-0 left-0 z-0" 

@@ -5,7 +5,7 @@
     <div class="mb-5 w-full flex">
         <div class="w-full flex flex-wrap">
             <h3 class="text-base font-bold w-full">Choose which audits to compare</h3>
-            <Btn @click.native.prevent="showingAudits.includes(primaryAudit.id) ? showingAudits.splice(showingAudits.indexOf(primaryAudit.id), 1) : showingAudits.push(primaryAudit.id)" class="mx-2" :color="showingAudits.includes(primaryAudit.id) ? 'orange' : 'white'" :hover="true">{{primaryAudit.title}}</Btn>
+            <Btn @click.native.prevent="showingAudits.includes(primaryAudit.id) ? showingAudits.splice(showingAudits.indexOf(primaryAudit.id), 1) : showingAudits.push(primaryAudit.id)" class="mr-2" :color="showingAudits.includes(primaryAudit.id) ? 'orange' : 'white'" :hover="true">{{primaryAudit.title}}</Btn>
             <Btn v-for="(audit, index) in audits" :key="'showAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'orange' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
     </div>
