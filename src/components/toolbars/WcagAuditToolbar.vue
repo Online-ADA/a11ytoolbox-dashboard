@@ -74,8 +74,12 @@
                         </div>
                         <div class="border border-black mx-3.5 xs:mx-2 divider"></div>
                     </template>
+
                     <!-- Audit Tools -->
+                    <router-link class="mr-3.5" v-if="(isAuditEditPage || isAuditShowPage) && ($store.state.audits.audit && $store.state.audits.audit.automations.length)" :to="{name: 'ScanHistory', params: {automations: $store.state.audits.audit.automations } }"><i class="fas fa-book-alt"></i></router-link>
+
                     <router-link v-if="!isAuditEditPage" :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
+
                     <button v-if="isAuditShowPage" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
 
                     <router-link class="xs:ml-0 ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues"><i class="far fa-file-import"></i></router-link>
