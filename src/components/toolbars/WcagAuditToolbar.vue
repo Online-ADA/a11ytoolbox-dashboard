@@ -76,7 +76,11 @@
                     </template>
 
                     <!-- Audit Tools -->
-                    <router-link class="mr-3.5" v-if="(isAuditEditPage || isAuditShowPage) && ($store.state.audits.audit && $store.state.audits.audit.automations.length)" :to="{name: 'ScanHistory', params: {automations: $store.state.audits.audit.automations } }"><i class="fas fa-book-alt"></i></router-link>
+                    <router-link :class="{ 'mr-3.5': isAuditShowPage }"
+                        v-if="(isAuditEditPage || isAuditShowPage) &&
+                         ($store.state.audits.audit && $store.state.audits.audit.automations && $store.state.audits.audit.automations.length)" 
+                        :to="{name: 'ScanHistory', params: {automations: $store.state.audits.audit.automations } }"
+                    ><i class="far fa-scroll"></i></router-link>
 
                     <router-link v-if="!isAuditEditPage" :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
 

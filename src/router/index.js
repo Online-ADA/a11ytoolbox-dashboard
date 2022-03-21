@@ -51,6 +51,11 @@ const routes = [
         component: () => import(/* webpackChunkName: "swatches" */ '../views/Swatches/List.vue'),
       },
       {
+        path: ":id",
+        name: "SwatchShow",
+        component: () => import(/* webpackChunkName: "swatches" */ '../views/Swatches/Show.vue')
+      },
+      {
         path: ":id/edit",
         name: "SwatchEdit",
         component: () => import(/* webpackChunkName: "swatches" */ '../views/Swatches/Edit.vue')

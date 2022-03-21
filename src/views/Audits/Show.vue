@@ -146,11 +146,11 @@
 							</div>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('descriptions') }" id="descriptions-validation">{{validationMessages["descriptions"]}}</small>
 							
-							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor1"></div>
+							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:324px;min-height:324px;overflow-y:auto;" id="editor1"></div>
 						</div>
 						<div class="flex flex-col px-2 flex-1">
 							<Label :stacked="false" class="text-lg leading-6 w-full subheadline" for="issue_description">Issue Description</Label>
-							<textarea style="max-height:392px;min-height:392px;overflow-y:auto;" class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" rows="16" v-model="issue.issue_description"></textarea>
+							<textarea style="max-height:392px;min-height:392px;overflow-y:auto;" class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" rows="14" v-model="issue.issue_description"></textarea>
 						</div>
 						<div class="flex flex-col px-2 flex-1">
 							<div class="flex justify-between items-center">
@@ -159,7 +159,7 @@
 							</div>
 							<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('recommendations') }" id="recommendations-validation">{{validationMessages["recommendations"]}}</small>
 							
-							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:296px;min-height:296px;overflow-y:auto;" id="editor2" ></div>
+							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="recommendationEditor" style="max-height:324px;min-height:324px;overflow-y:auto;" id="editor2" ></div>
 						</div>
 					</div>
 					<!-- Row 4 -->
@@ -198,7 +198,7 @@
 					<div class="flex w-full flex-wrap mt-2">
 						<div class="flex-1 pr-2 max-w-full">
 							<Label class="text-lg leading-6 subheadline">
-								Links to Screenshots
+								Screenshots
 								<Card :gutters="false" :center="false" class="xs:shadow-none xs:p-0 overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.screenshots" :key="`screen-${i}`">
 										<TextInput class="flex-1" name="screenshots" id="screenshots" v-model="issue.screenshots[i]"></TextInput>
@@ -214,7 +214,7 @@
 						</div>
 						<div class="flex-1 mx-2 max-w-full">
 							<Label class="text-lg leading-6 subheadline">
-								Links to Outside Resources
+								Outside Resources
 								<Card :gutters="false" :center="false" class="xs:shadow-none xs:p-0 overflow-y-auto w-full text-left max-h-80 my-2">
 									<div class="flex mb-3" v-for="(input, i) in issue.resources" :key="`resource-${i}`">
 										<TextInput class="flex-1" name="resources" id="resources" v-model="issue.resources[i]"></TextInput>
@@ -235,11 +235,11 @@
 							<Label class="text-lg leading-6 w-full subheadline" for="auditor_notes">Auditor Notes</Label>
 							<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
 						</div>
-						<div v-if="audit.number == 2">
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2" v-if="audit.number == 2">
 							<Label class="text-lg leading-6 w-full subheadline" for="second_audit_comments">Second Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="second_audit_comments" v-model="issue.second_audit_comments"></TextArea>
 						</div>
-						<div v-else-if="audit.number == 3">
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-else-if="audit.number == 3">
 							<Label class="text-lg leading-6 w-full subheadline" for="third_audit_comments">Third Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="third_audit_comments" v-model="issue.third_audit_comments"></TextArea>
 						</div>

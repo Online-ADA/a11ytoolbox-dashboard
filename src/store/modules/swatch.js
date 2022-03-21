@@ -100,6 +100,7 @@ export default {
 				state.all = re.data.details
 				let index = rootState.projects.project.swatches.findIndex( s=>s.id === args.id )
 				rootState.projects.project.swatches.splice( index, 1 )
+				args.vm.$router.push( {path: `/projects/${rootState.projects.project.id}`} )
 			})
 			.catch( re => {
 				console.log( re );

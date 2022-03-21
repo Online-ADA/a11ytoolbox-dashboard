@@ -12,7 +12,7 @@
                 <div class="flex items-center justify-end">
                     <div class="flex items-center text-13">
                         <span class="w-auto mr-2 flex justify-end items-center">
-                            <button @click.prevent="EventBus.$emit('editSwatchOpen', true)"><i class="far fa-edit"></i></button>
+                            <router-link v-if="!isEditSwatch" title="Edit Color Swatch" :to="{name: 'SwatchEdit', id: $route.params.id}"><i class="far fa-cog"></i></router-link>
                             <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="EventBus.$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
                         </span>
                     </div>
@@ -27,10 +27,7 @@
 <script>
 import { EventBus } from '../../services/eventBus'
 export default {
-    name: 'OverviewToolbar',
-    props:{
-        tool: '',
-    },
+    name: 'ColorSwatchToolbar',
     data() {
         return {
             EventBus: EventBus,
@@ -49,27 +46,8 @@ export default {
         }
     },
     computed: {
-        link_title() {
-            if(this.object_id && this.route_name){
-                switch (this.route_name) {
-                    case 'ProjectShow':
-                        return 'Project Settings'
-                    case 'ClientShow':
-                        return 'Client Settings'
-                }
-            }
-            return ''
-        },
-        base_url() {
-            if(this.object_id && this.route_name){
-                switch (this.route_name) {
-                    case 'ProjectShow':
-                        return `/projects/${this.object_id}/edit`
-                    case 'ClientShow':
-                        return `/clients/${this.object_id}/edit`
-                }
-            }
-            return ''
+        isEditSwatch(){
+            return this.$route.name === "SwatchEdit"
         },
     },
     methods: {

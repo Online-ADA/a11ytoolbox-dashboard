@@ -10,10 +10,10 @@
 		@apply text-headline font-headline font-bold uppercase;
 	}
 	.subheadline {
-		@apply text-subheadline font-subheadline font-semibold uppercase;
+		@apply text-subheadline font-subheadline font-semibold uppercase pb-0;
 	}
 	.headline-2 {
-		@apply text-headline-2 font-semibold font-headline-2 uppercase pt-4 pb-3;
+		@apply text-headline-2 font-semibold font-headline-2 uppercase pt-0 pb-3;
 	}
 	h2 {
     	@apply text-3xl;

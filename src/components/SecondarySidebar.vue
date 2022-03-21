@@ -111,7 +111,7 @@ export default {
         },
         updateColorSwatch(swatch){
             this.$router.push({
-                name: 'SwatchEdit',
+                name: 'SwatchShow',
                 params: {
                     id: swatch.id
                 }

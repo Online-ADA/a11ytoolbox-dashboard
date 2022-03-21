@@ -1,6 +1,6 @@
 <template>
     <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full fixed px-4 py-2 shadow-custom overflow-visible">
-        <router-link class="block" :to="{path:'/'}"><img alt="Ally Toolbox by ABILITY" src="../assets/logo-toolbox.png" /></router-link>
+        <router-link class="block" :to="{path:'/'}"><img style="width:145px;height:47px;" alt="Ally Toolbox by ABILITY" src="/assets/logo-toolbox.png" /></router-link>
         <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
         <div class="flex items-center">
