@@ -25,8 +25,8 @@
 				<div >
 					<h1 class="headline text-center">Payment Information</h1>
 				</div>
-				<div class="flex">
-					<div class="my-10 flex justify-center basis-1/2 px-2 relative">
+				<div class="flex p-12">
+					<div v-show="payment_screen == 'method'" class="my-10 flex justify-center w-full px-2 relative">
 						<div class="h-24" v-show="loading_payment_method" >
 							<Loader v-if="loading_payment_method" :local="true"></Loader>
 						</div>
@@ -34,15 +34,15 @@
 							<p>Add A New Payment Method</p>
 							<div class="flex flex-col w-full">
 								<label for="payment_method-number">Card Number</label>
-								<input class="border px-4 py-2" id="payment_method-number" type="text">
+								<input class="border px-4 py-2  h-[44px]" id="payment_method-number" type="text">
 							</div>
 							<div class="flex flex-col w-1/2">
 								<label for="payment_method-exp">Card Expiration</label>
-								<input class="border px-4 py-2" id="payment_method-exp" type="month">
+								<input class="border px-4 py-2  h-[44px]" id="payment_method-exp" type="month">
 							</div>
 							<div class="flex flex-col w-1/2">
 								<label for="payment_method-code">Card Code</label>
-								<input class="border px-4 py-2" id="payment_method-code" type="text">
+								<input class="border px-4 py-2 h-[44px]" id="payment_method-code" type="text">
 							</div>
 							<div class="flex basis-full">
 								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="#f9a51a">
@@ -50,12 +50,9 @@
 								</svg>
 								<span>Fully Encrypted & Secure</span>
 							</div>
-							<div class="flex basis-full mb-12 mt-6">
-								<button @click.prevent="MaybeAddPaymentMethod" class="standard mr-2" :disabled="false">Add</button>
-							</div>
 						</div>
 					</div>
-					<div class="my-10 flex justify-center basis-1/2 px-2">
+					<div v-show="payment_screen == 'methods'" class="my-10 flex justify-center w-full px-2">
 						<div class="flex flex-col w-full">
 							<p>Select An Existing Payment Method</p>
 							<div v-for="(payment,i) in payments" :key="i" class="border my-2 w-full">
@@ -72,8 +69,9 @@
 				<template>
 					<div class="w-full flex justify-center items-center">
 						<button @click.prevent="chooseNo" class="standard mr-2">Cancel</button>
-						<button @click.prevent="tab = 'options'" class="standard mr-2">Back</button>
-						<button @click.prevent="chooseYes" class="standard mr-2" :disabled="!selected_option || selected_option == tier">Upgrade Now</button>
+						<button @click.prevent="GoBackWithin" class="standard mr-2">Back</button>
+						<button v-if="payments.length && payment_screen == 'methods'"  @click.prevent="chooseYes" class="standard mr-2" :disabled="!selected_option || selected_option == tier">Upgrade Now</button>
+						<button v-if="payment_screen == 'method'" @click.prevent="MaybeAddPaymentMethod" class="standard mr-2" :disabled="false">Add Payment Method</button>
 					</div>
 				</template>
 			</div>
@@ -102,10 +100,18 @@
 				selected_option: false,
 				selected_payment: false,
 				tab: 'options',
+				payment_screen: 'methods',
 				loading_payment_method: false,
 			}
 		},
 		methods:{
+			GoBackWithin() {
+				if(this.payment_screen == 'method' && this.payments.length){
+					this.payment_screen = 'methods'
+				}else{
+					this.tab = 'options'
+				}
+			},
 			MaybeAddPaymentMethod() {
 
 			},
@@ -144,6 +150,9 @@
 				if(val == 'payment' && !this.payments.length) {
 					this.loading = true
 					this.$store.dispatch('upgrade/GetPayments',{Success:()=>{
+						if(!this.payments.length) {
+							this.payment_screen = 'method'
+						}
 						this.loading = false
 					}})
 				}
