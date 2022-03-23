@@ -3,6 +3,14 @@
 		<div class="h-24" v-show="loading" >
 			<Loader v-if="loading" :local="true"></Loader>
 		</div>
+		<button @click.prevent="chooseNo" class="absolute right-2 top-2 w-6 h-6 z-50 text-pallette-blue" aria-label="Close Modal">
+			<i class="fas fa-times-circle"></i>
+		</button>
+		<div class="sr-only" role="status">
+			<p v-for="(message,i) in validation_errors" :key="i">
+				{{message}}
+			</p>
+		</div>
 		<div v-show="!loading" class="w-full min-h-[500px]">
 			<div :class="[{'translate-x-0':tab == 'options','translate-x-[250%] invisible absolute': tab != 'options'},'min-w-full bg-pallette-white w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
 				<div >
@@ -16,8 +24,7 @@
 				</div>
 				<template>
 					<div class="w-full flex justify-center items-center">
-						<button @click.prevent="chooseNo" class="standard mr-2">Cancel</button>
-						<button @click.prevent="tab = 'payment'" :disabled="!selected_option || selected_option == tier" class="standard mr-2">Payment Information</button>
+						<button @click.prevent="tab = 'payment'" :disabled="!selected_option || selected_option == tier" class="standard mr-2">Continue</button>
 					</div>
 				</template>
 			</div>
@@ -26,23 +33,71 @@
 					<h1 class="headline text-center">Payment Information</h1>
 				</div>
 				<div class="flex p-12">
-					<div v-show="payment_screen == 'method'" class="my-10 flex justify-center w-full px-2 relative">
+					<div v-show="payment_screen == 'method'" class="my-10 flex flex-col justify-center w-full px-2 relative">
 						<div class="h-24" v-show="loading_payment_method" >
 							<Loader v-if="loading_payment_method" :local="true"></Loader>
 						</div>
 						<div class="flex flex-wrap w-full">
-							<p>Add A New Payment Method</p>
+							<div class="flex w-full justify-between">
+								<p>Add A New Payment Method</p>
+								<button v-if="payments.length" @click.prevent="payment_screen = 'methods'" class="standard">Use an existing payment method</button>
+							</div>
+							<div class="flex flex-col w-1/2">
+								<label for="payment_method-first_name">First Name</label>
+								<input class="border px-4 py-2  h-[44px]" id="payment_method-first_name" type="text" v-model="card.first_name" required aria-describedby="payment_method-first_name-description">
+								<small v-show="validation_errors['payment_method-first_name']" id="payment_method-first_name-description" class="form-error">
+									{{validation_errors['payment_method-first_name']}}
+								</small>
+							</div>
+							<div class="flex flex-col w-1/2">
+								<label for="payment_method-last_name">Last Name</label>
+								<input class="border px-4 py-2  h-[44px]" id="payment_method-last_name" type="text" v-model="card.last_name" required aria-describedby="payment_method-last_name-description">
+								<small v-show="validation_errors['payment_method-number']" id="payment_method-last_name-description" class="form-error">
+									{{validation_errors['payment_method-last_name']}}
+								</small>
+							</div>
 							<div class="flex flex-col w-full">
 								<label for="payment_method-number">Card Number</label>
-								<input class="border px-4 py-2  h-[44px]" id="payment_method-number" type="text">
+								<input class="border px-4 py-2  h-[44px]" id="payment_method-number" type="text" v-model="card.number" required aria-describedby="payment_method-number-description">
+								<small v-show="validation_errors['payment_method-number']" id="payment_method-number-description" class="form-error">
+									{{validation_errors['payment_method-number']}}
+								</small>
 							</div>
-							<div class="flex flex-col w-1/2">
-								<label for="payment_method-exp">Card Expiration</label>
-								<input class="border px-4 py-2  h-[44px]" id="payment_method-exp" type="month">
+							<div class="flex flex-col w-4/12">
+								<label for="payment_method-exp_month">Card Expiration Month</label>
+								<select id="payment_method-exp_month" class="border px-4 py-2  h-[44px]" v-model="card.exp_month" required aria-describedby="payment_method-exp_month-description">
+                                    <option value="01">January ( 01 ) </option>
+                                    <option value="02">February ( 02 ) </option>
+                                    <option value="03">March ( 03 ) </option>
+                                    <option value="04">April ( 04 ) </option>
+                                    <option value="05">May ( 05 ) </option>
+                                    <option value="06">June ( 06 ) </option>
+                                    <option value="07">July ( 07 ) </option>
+                                    <option value="08">August ( 08 ) </option>
+                                    <option value="09">September ( 09 ) </option>
+                                    <option value="10">October ( 10 ) </option>
+                                    <option value="11">November ( 11 ) </option>
+                                    <option value="12">December ( 12 ) </option>
+								</select>
+								<small v-show="validation_errors['payment_method-exp_month']" id="payment_method-exp_month-description" class="form-error">
+									{{validation_errors['payment_method-exp_month']}}
+								</small>
 							</div>
-							<div class="flex flex-col w-1/2">
+							<div class="flex flex-col w-4/12">
+								<label for="payment_method-exp_year">Card Expiration Year</label>
+								<select id="payment_method-exp_year" class="border px-4 py-2  h-[44px]" v-model="card.exp_year" aria-describedby="payment_method-exp_year-description" required>
+									<option v-for="i in year_options" :key="i" :value="i">{{i}}</option>
+								</select>
+								<small v-show="validation_errors['payment_method-exp_year']" id="payment_method-exp_year-description" class="form-error">
+									{{validation_errors['payment_method-exp_year']}}
+								</small>
+							</div>
+							<div class="flex flex-col w-4/12">
 								<label for="payment_method-code">Card Code</label>
-								<input class="border px-4 py-2 h-[44px]" id="payment_method-code" type="text">
+								<input class="border px-4 py-2 h-[44px]" id="payment_method-code" type="text" v-model="card.code" aria-describedby="payment_method-code-description" required>
+								<small v-show="validation_errors['payment_method-code']" id="payment_method-code-description" class="form-error">
+									{{validation_errors['payment_method-code']}}
+								</small>
 							</div>
 							<div class="flex basis-full">
 								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="#f9a51a">
@@ -51,10 +106,35 @@
 								<span>Fully Encrypted & Secure</span>
 							</div>
 						</div>
+						<div v-if="selected_option" class="flex flex-wrap w-full my-4">
+							<div class="text-black flex my-2 p-4 relative">
+								<div v-if="selected_option == 'PAP'" class="product-name ml-6 text-[20px]">
+									Partner Agency Program
+								</div>
+								<div v-else class="product-name ml-6 text-[20px]">
+									{{selected_option}}
+								</div>
+								<div class="ml-6 text-[20px]">
+									<span>$</span>
+									<span>{{GetPrice(tier_data[selected_option].product.price)}}</span>
+									<span> / Month</span>
+								</div>
+							</div>
+						</div>
+						<div class="flex flex-wrap w-full">
+							<div class="" role="status">
+								<p v-for="(message,i) in auth_messages" :key="i" class="text-pallette-red">
+									{{message}}
+								</p>
+							</div>
+						</div>
 					</div>
 					<div v-show="payment_screen == 'methods'" class="my-10 flex justify-center w-full px-2">
 						<div class="flex flex-col w-full">
-							<p>Select An Existing Payment Method</p>
+							<div class="flex w-full  justify-between">
+								<p>Select An Existing Payment Method</p>
+								<button @click.prevent="payment_screen = 'method'" class="standard mr-2">Add a new payment method</button>
+							</div>
 							<div v-for="(payment,i) in payments" :key="i" class="border my-2 w-full">
 								<label :for="`payment-method-${payment.id}`" :class="[{'bg-pallette-blue text-white':selected_payment==payment.id},'w-full flex items-center  py-2 px-6']">
 									<div class="basis-3/4">
@@ -68,10 +148,9 @@
 				</div>
 				<template>
 					<div class="w-full flex justify-center items-center">
-						<button @click.prevent="chooseNo" class="standard mr-2">Cancel</button>
 						<button @click.prevent="GoBackWithin" class="standard mr-2">Back</button>
 						<button v-if="payments.length && payment_screen == 'methods'"  @click.prevent="chooseYes" class="standard mr-2" :disabled="!selected_option || selected_option == tier">Upgrade Now</button>
-						<button v-if="payment_screen == 'method'" @click.prevent="MaybeAddPaymentMethod" class="standard mr-2" :disabled="false">Add Payment Method</button>
+						<button v-if="payment_screen == 'method'" @click.prevent="MaybeAddPaymentMethod" class="standard mr-2" :disabled="false">Upgrade Now</button>
 					</div>
 				</template>
 			</div>
@@ -85,6 +164,9 @@
 	import Modal from "../Modal.vue"
 	import { EventBus } from "../../services/eventBus"
 	import Loader from "../Loader.vue"
+	import moment from 'moment'
+	import CheckCircle from '../icons/CheckCircle'
+
 	export default {
         name: 'UpgradeLicenseModal',
 		props:{
@@ -96,15 +178,32 @@
 		data(){
 			return {
 				loading: false,
+				current_year: false,
 				EventBus: EventBus,
 				selected_option: false,
 				selected_payment: false,
 				tab: 'options',
 				payment_screen: 'methods',
 				loading_payment_method: false,
+				auth_response: false,
+				card: {
+					first_name: '',
+					last_name: '',
+					number: '',
+					exp_year: '',
+					exp_month: '',
+					code: '',
+				},
+				validation_errors: {},
+				auth_messages: [],
 			}
 		},
 		methods:{
+			GetPrice(price) {
+				price = parseInt(price)
+				if(price == 0) return price
+				return parseInt(price)/12
+			},
 			GoBackWithin() {
 				if(this.payment_screen == 'method' && this.payments.length){
 					this.payment_screen = 'methods'
@@ -113,7 +212,63 @@
 				}
 			},
 			MaybeAddPaymentMethod() {
-
+				let valid = true
+				this.validation_errors = {}
+				this.auth_messages = []
+				if(!this.card.first_name || !this.card.first_name.length) {
+					valid = false
+					this.validation_errors['payment_method-first_name'] = 'Please provide you first name'
+				}
+				if(!this.card.last_name || !this.card.last_name.length) {
+					valid = false
+					this.validation_errors['payment_method-last_name'] = 'Please provide your last name'
+				}
+				if(!this.card.number || !this.card.number.length) {
+					valid = false
+					this.validation_errors['payment_method-number'] = 'Please provide a card number'
+				}
+				if(!this.card.exp_month || !this.card.exp_month.length) {
+					valid = false
+					this.validation_errors['payment_method-exp_month'] = 'Please provide an expiration month'
+				}
+				if(!this.card.exp_year || !this.card.exp_year.length) {
+					valid = false
+					this.validation_errors['payment_method-exp_year'] = 'Please provide an expiration year'
+				}
+				if(!this.card.code || !this.card.code.length) {
+					valid = false
+					this.validation_errors['payment_method-code'] = 'Please provide a card code'
+				}
+				if(valid) {
+					this.loading = true
+                    let cardData = {
+                        cardNumber: this.card.number.trim(),
+                        month: this.card.exp_month.trim(),
+                        year: this.card.exp_year.trim(),
+                        cardCode: this.card.code,
+                    }
+                    let secureData = {
+                        authData: this.authdotnet,
+                        cardData: cardData,
+                    }
+                    Accept.dispatchData(secureData, this.authResponseHandler);
+				}
+			},
+			authResponseHandler(response) {
+				if (response.messages.resultCode === "Error") {
+					for(let i in response.messages.message) {
+						this.auth_messages.push(response.messages.message[i].text)
+					}
+					this.loading = false
+				}else{
+					this.resetCard();
+					this.auth_response = response
+					this.chooseYes()
+				}
+			},
+			resetCard() {
+				this.card.number = ''
+				this.card.code = ''
 			},
 			OptionSelected(option) {
 				this.selected_option = option
@@ -123,7 +278,14 @@
 			},
 			chooseYes(){
 				this.loading = true
-				this.$store.dispatch('upgrade/UpgradeLicense',{upgrade:this.tier_data[this.selected_option],Failure: this.Failure,Success:this.Success})
+				this.$store.dispatch('upgrade/UpgradeLicense',{upgrade:{
+					tier: this.tier_data[this.selected_option],
+					card: this.card,
+					selected_payment: this.selected_payment,
+					payment_screen: this.payment_screen,
+					auth_response: this.auth_response,
+					accounts_api: this.$store.state.auth.accapi,
+				},Failure: this.Failure,Success:this.Success})
 			},
 			Success(data) {
 				console.log('Success: ',data)
@@ -146,20 +308,16 @@
 			},
 		},
 		watch:{
-			tab(val) {
-				if(val == 'payment' && !this.payments.length) {
-					this.loading = true
-					this.$store.dispatch('upgrade/GetPayments',{Success:()=>{
-						if(!this.payments.length) {
-							this.payment_screen = 'method'
-						}
-						this.loading = false
-					}})
-				}
-			},
 		},
 		created(){
+			this.current_year = parseInt(moment().format('YYYY'))
 			this.$store.dispatch('upgrade/GetLicense')
+			this.$store.dispatch('upgrade/AuthDotNet')
+			this.$store.dispatch('upgrade/GetPayments',{Success:()=>{
+				if(!this.payments.length) {
+					this.payment_screen = 'method'
+				}
+			}})
 		},
 		computed: {
 			trigger() {
@@ -179,12 +337,24 @@
 			},
 			payments() {
 				return this.$store.state.upgrade.payments
-			}
+			},
+			authdotnet() {
+				return this.$store.state.upgrade.authdotnet
+			},
+			year_options() {
+				let years = [];
+				if(!this.current_year) return years
+				for(let year = this.current_year;year <= this.current_year+10;year++) {
+					years.push(year+'')
+				}
+				return years
+			},
 		},
 		components:{
 			Modal,
 			Loader,
-			PricingOptions
+			PricingOptions,
+			CheckCircle
 		}
 	}
 </script>

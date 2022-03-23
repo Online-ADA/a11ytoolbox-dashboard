@@ -9,6 +9,7 @@ const getDefaultState = () => {
         tier: false,
         tier_data: false,
         payments: [],
+        authdotnet: {},
 	}
 }
 export default {
@@ -21,6 +22,7 @@ export default {
         tier: false,
         tier_data: false,
         payments: [],
+        authdotnet: {},
 	},
 	mutations: {
 		setState(state,payload) {
@@ -76,6 +78,7 @@ export default {
                 if(re.data.success =='1') {
                     if(args.Success) args.Success(re.data)
                 }else if(re.data.success == '0' && ( re.data.details == 'incorrect_role' || re.data.details == 'incorrect_team' ) ) {
+                    if(args.Failure) args.Failure(re)
                     Vue.notify({
                         title: "ERROR",
                         text: "You are not allowed to do perform this action.",
@@ -83,6 +86,7 @@ export default {
                         position: 'bottom right'
                     })
                 }else{
+                    if(args.Failure) args.Failure(re)
                     Vue.notify({
                         title: "ERROR",
                         text: re.data.message,
@@ -92,12 +96,46 @@ export default {
                 }
             })
             .catch( re=>{
+                if(args.Failure) args.Failure(re)
                 Vue.notify({
                     title: "ERROR",
                     text: re,
                     type: "error",
                     position: 'bottom right'
                 })
+            })
+            .then( ()=> state.loading = false)
+        },
+        AuthDotNet({state,commit,rootState}) {
+            Request.getPromise(`${rootState.auth.accapi}/api/authdotnet`)
+            .then( re=>{
+                if(re.data.success == '1'){                  
+                    commit('setState',{
+                        key: 'authdotnet',
+                        value: {
+                            clientKey: re.data.client_key,
+                            apiLoginID: re.data.api_login,
+                    }})
+                }
+            })
+            .catch( re=>{
+                console.log(re);
+            })
+            .then( ()=> state.loading = false)
+        },
+        CreatePaymentMethod({state,commit,rootState}) {
+            Request.postPromise(`${rootState.auth.accapi}/api/methods/create`,{
+                params: {
+
+                },
+            })
+            .then( re=>{
+                if(re.data.success == '1'){                  
+
+                }
+            })
+            .catch( re=>{
+                console.log(re);
             })
             .then( ()=> state.loading = false)
         },

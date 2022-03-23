@@ -622,6 +622,11 @@ button.standard.alert:hover {
   background-color: rgb(200 10 0 / var(--tw-bg-opacity));
 }
 
+.form-error {
+  --tw-text-opacity: 1;
+  color: rgb(200 10 0 / var(--tw-text-opacity));
+}
+
 *, ::before, ::after {
   --tw-translate-x: 0;
   --tw-translate-y: 0;
@@ -890,6 +895,11 @@ button.standard.alert:hover {
   margin-bottom: 2.5rem;
 }
 
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 .mx-3\.5 {
   margin-left: 0.875rem;
   margin-right: 0.875rem;
@@ -898,11 +908,6 @@ button.standard.alert:hover {
 .my-5 {
   margin-top: 1.25rem;
   margin-bottom: 1.25rem;
-}
-
-.my-4 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
 }
 
 .ml-auto {
@@ -991,14 +996,6 @@ button.standard.alert:hover {
 
 .mr-5 {
   margin-right: 1.25rem;
-}
-
-.mb-12 {
-  margin-bottom: 3rem;
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
 }
 
 .ml-3\.5 {
@@ -1129,6 +1126,10 @@ button.standard.alert:hover {
   height: 6rem;
 }
 
+.h-\[44px\] {
+  height: 44px;
+}
+
 .h-5 {
   height: 1.25rem;
 }
@@ -1155,10 +1156,6 @@ button.standard.alert:hover {
 
 .h-\[125px\] {
   height: 125px;
-}
-
-.h-\[44px\] {
-  height: 44px;
 }
 
 .max-h-60 {
@@ -1227,6 +1224,10 @@ button.standard.alert:hover {
 
 .w-9\/12 {
   width: 75%;
+}
+
+.w-4\/12 {
+  width: 33.333333%;
 }
 
 .w-5 {
@@ -2107,6 +2108,16 @@ button.standard.alert:hover {
 .text-pallette-button {
   --tw-text-opacity: 1;
   color: rgb(0 68 88 / var(--tw-text-opacity));
+}
+
+.text-pallette-blue {
+  --tw-text-opacity: 1;
+  color: rgb(0 68 88 / var(--tw-text-opacity));
+}
+
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
 }
 
 .text-pallette-red {

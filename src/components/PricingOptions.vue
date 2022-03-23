@@ -25,8 +25,8 @@
                     </div>
                     <div class="ml-6 text-[20px]">
                         <span>$</span>
-                        <span>{{parseInt(tier_data.product.price)}}</span>
-                        <span>/Year</span>
+                        <span>{{GetPrice(tier_data.product.price)}}</span>
+                        <span> / Month</span>
                     </div>
                     <div v-if="tier == i" class="px-2 text-[16px] italic absolute right-[-10px] top-[-15px] bg-pallette-blue text-white">
                         Your License
@@ -53,6 +53,11 @@ export default {
         }
     },
     methods: {
+        GetPrice(price) {
+            price = parseInt(price)
+            if(price == 0) return price
+            return parseInt(price)/12
+        },
         GetFeatures(custom_fields) {
             let features =  custom_fields.find((field)=>{return field.name == 'Features'})
             if(features.value && features.value.length) return features.value
