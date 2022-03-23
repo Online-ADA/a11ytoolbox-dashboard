@@ -7,7 +7,7 @@
     <div class="flex xs:flex-wrap sm:flex-nowrap">
       <div class="md:w-1/2 sm:w-full flex flex-col md:mr-5">
         <Card class="mb-5" :center="false" :gutters="false">
-          <h2 class="headline-2">Stats</h2>
+          <h2 class="subheadline">Stats</h2>
           <div class="text-lg">{{totalClients}} Client<template v-if="totalClients !== 1">s</template></div>
           <div class="text-lg">{{totalProjects}} Project<template v-if="totalProjects !== 1">s</template></div>
           <div class="text-lg">{{totalWCAGAudits}} WCAG Audit<template v-if="totalWCAGAudits !== 1">s</template></div>
@@ -18,13 +18,13 @@
         </Card>
 
         <Card class="xs:mb-5" :center="false" :gutters="false">
-          <h2 class="headline-2">Alerts</h2>
+          <h2 class="subheadline">Alerts</h2>
           <div class="text-lg">There are no alerts at this time</div>
         </Card>
       </div>
       <div class="md:w-1/2 sm:w-full flex flex-col sm:flex-wrap">
         <Card :center="false" :gutters="false">
-          <h2 class="headline-2">Recommendations</h2>
+          <h2 class="subheadline">Recommendations</h2>
           <template v-if="domainRecommendations.length">
             <div class="text-lg">
               {{domainRecommendations.length}} of your domains <template v-if="domainRecommendations.length !== 1">do</template><template v-else>does</template> not have a sitemap yet

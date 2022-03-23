@@ -1,9 +1,11 @@
 <template>
     <div>
-        <WcagAuditToolbar v-if="tool.type === 'audit'" v-on:classupdate="UpdateClasses"/>
+        <WcagAuditToolbar v-if="tool.type === 'audit' || $route.name == 'NewScan'" v-on:classupdate="UpdateClasses"/>
         <ColorSwatchToolbar v-if="tool.type === 'color_swatch'" v-on:classupdate="UpdateClasses"/>
         <MediaAuditToolbar v-if="tool.type === 'media-audit'" v-on:classupdate="UpdateClasses"/>
         <OverviewToolbar v-if="$route.name == 'ProjectShow' || $route.name == 'ClientShow'" v-on:classupdate="UpdateClasses"/>
+        <ProjectToolbar v-if="$route.name == 'ProjectEdit'" v-on:classupdate="UpdateClasses" />
+        <ClientToolbar v-if="$route.name == 'ClientEdit'" v-on:classupdate="UpdateClasses" />
     </div>
 </template>
 
@@ -14,6 +16,8 @@ import WcagAuditToolbar from './toolbars/WcagAuditToolbar'
 import MediaAuditToolbar from './toolbars/MediaAuditToolbar'
 import OverviewToolbar from './toolbars/OverviewToolbar'
 import ColorSwatchToolbar from './toolbars/ColorSwatchToolbar'
+import ProjectToolbar from './toolbars/ProjectToolbar'
+import ClientToolbar from './toolbars/ClientToolbar'
 
 export default {
     props:{
@@ -44,7 +48,9 @@ export default {
         WcagAuditToolbar,
         MediaAuditToolbar,
         OverviewToolbar,
-        ColorSwatchToolbar
+        ColorSwatchToolbar,
+        ProjectToolbar,
+        ClientToolbar
     },
     created() {
     },

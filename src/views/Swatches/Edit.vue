@@ -1,16 +1,19 @@
 <template>
-	<div class="pb-24">
+	<div class="container">
 		<Loader v-if="loading"></Loader>
-
-		<h2 class="headline">Edit Color Swatch Analysis</h2>
-		<h3 class="headline-2">{{swatch.title}}</h3>
-		<button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="standard alert" >
-			Delete
-		</button>
+		<div class="flex justify-between items-center">
+			<h1 class="headline">Edit Color Swatch Analysis</h1>
+			<button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="standard alert" >
+				Delete
+			</button>
+		</div>
+		
+		<h2 class="subheadline">{{swatch.title}}</h2>
+		
 
 		<Modal class="adjust-with-sidebars" :open="confirmModalOpen">
 			<div class="bg-white">
-				<h3 class="headline-2" id="modal-title">Delete Color Swatch</h3>
+				<h3 class="subheadline" id="modal-title">Delete Color Swatch</h3>
 				<div class="mb-2">
 					<p class="">
 						Are you sure you want to delete this color swatch?
@@ -28,8 +31,8 @@
 		</Modal>
 				
 		<div class="mb-2 w-full">
-			<Label class="text-lg subheadline" for="edit-title">Edit Title</Label>
-			<TextInput class="w-full" v-model="swatch.title" id="edit-title"></TextInput>
+			<Label class="label" for="edit-title">Edit Title</Label>
+			<TextInput class="w-full max-w-[50%]" v-model="swatch.title" id="edit-title"></TextInput>
 		</div>
 		
 		<button @click="save" class="standard">Save</button>

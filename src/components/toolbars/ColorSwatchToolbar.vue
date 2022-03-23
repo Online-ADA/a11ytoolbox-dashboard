@@ -31,19 +31,13 @@ export default {
     data() {
         return {
             EventBus: EventBus,
-            object_id: false,
-            route_name: false,
+            
         }
     },
     mounted(){
     },
     watch:{
-        $route(val) {
-            if(val) {
-                this.object_id = val.params.id
-                this.route_name = val.name
-            }
-        }
+        
     },
     computed: {
         isEditSwatch(){
@@ -55,14 +49,7 @@ export default {
     components:{
     },
     created() {
-        if(this.$route) {
-            if(this.$route.params.id) {
-                this.object_id = this.$route.params.id
-            }
-            if(this.$route.name) {
-                this.route_name = this.$route.name
-            }
-        }
+        
     },
 }
 

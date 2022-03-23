@@ -12,9 +12,6 @@
 	.subheadline {
 		@apply text-subheadline font-subheadline font-semibold uppercase pb-0;
 	}
-	.headline-2 {
-		@apply text-headline-2 font-semibold font-headline-2 uppercase pt-0 pb-3;
-	}
 	h2 {
     	@apply text-3xl;
 	}
@@ -40,18 +37,21 @@
 		@apply focus:outline-black;
 	}
 	button.standard{
-		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover text-base font-button transition-colors text-white px-2;
+		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover font-button transition-colors text-white font-bold text-xs tracking-wider leading-none py-2.5 px-5;
 	}
 	a.standard{
-		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover text-base font-button transition-colors text-white px-2;
+		@apply uppercase bg-pallette-button hover:bg-pallette-button-hover font-button transition-colors text-white font-bold text-xs tracking-wider leading-none py-2.5 px-5;
 	}
 	a.standard.inverted{
-		@apply uppercase bg-white hover:bg-pallette-button text-base font-button transition-colors text-pallette-button hover:text-white border border-pallette-button hover:border-0 px-2;
+		@apply uppercase bg-white hover:bg-pallette-button font-button transition-colors text-pallette-button hover:text-white border border-pallette-button hover:border-0 font-bold text-xs tracking-wider leading-none py-2.5 px-5;
 	}
 	button.standard.inverted{
-		@apply uppercase bg-white hover:bg-pallette-button text-base font-button transition-colors text-pallette-button hover:text-white border border-pallette-button hover:border-0 px-2;
+		@apply uppercase bg-white hover:bg-pallette-button font-button transition-colors text-pallette-button hover:text-white border border-pallette-button hover:border-0 font-bold text-xs tracking-wider leading-none py-2.5 px-5;
 	}
 	button.standard.alert{
 		@apply bg-pallette-alert hover:bg-pallette-alert-hover;
+	}
+	.label{
+		@apply font-semibold text-base pt-4 pb-0;
 	}
 }

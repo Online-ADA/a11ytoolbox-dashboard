@@ -4,9 +4,9 @@
 			<div class="py-2 align-middle inline-block min-w-full">
 				<div class="shadow overflow-hidden border-b border-gray-200 xs:w-full sm:w-auto">
 					<div v-if="search" class="py-1 px-2 w-full flex items-center flex-wrap">
-						<label class="text-sm" for="search">Search</label>
+						<label class="label text-sm" for="search">Search</label>
 						<input name="search" id="search" v-model="searchOpts.term" class="border m-1 p-1" />
-						<label class="text-sm" for="case">Case Sensitive</label>
+						<label class="label text-sm" for="case">Case Sensitive</label>
 						<Checkbox size="small" class="mx-1" name="case" id="case" v-model="searchOpts.caseSensitive"></Checkbox>
 						<button @click.prevent="submitSearch" class="ml-1 text-sm standard" :hover="true">Submit</button>
 					</div>

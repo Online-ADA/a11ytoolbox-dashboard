@@ -14,6 +14,10 @@
                         <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
                         <span>Total Issues: {{totalRows}}</span>
                     </template>
+                    <template v-else>
+                        <div class="border border-black mx-3.5 xs:mx-2 divider"></div>
+                        <router-link title="Go to Audit" :to="{name:'AuditShow', params:{id:$route.params.id}}"><i class="far fa-arrow-left"></i></router-link>
+                    </template>
                 </div>
                 <span class="w-auto xs:mr-0 mr-2 flex items-center xs:basis-full xs:justify-evenly">
                     <template v-if="isAuditShowPage">
@@ -59,7 +63,7 @@
                             </button>
                         </div>
                         <div v-if="!audit.locked">
-                            <button :class="[$store.state.audits.audit && $store.state.audits.audit.issues.length ? 'mx-3.5' : 'ml-3.5']"
+                            <button :class="[$store.state.audits.audit && $store.state.audits.audit.issues && $store.state.audits.audit.issues.length ? 'mx-3.5' : 'ml-3.5']"
                             class="text-lg leading-none xs:mx-2 pointer-only"
                             title="Deselect All Rows"
                             @click.prevent="toolbarEmit('deselectAll', $event)">
@@ -67,7 +71,7 @@
                             </button>
                         </div>
                         
-                        <div v-show="$store.state.audits.audit && $store.state.audits.audit.issues.length">
+                        <div v-show="$store.state.audits.audit && $store.state.audits.audit.issues && $store.state.audits.audit.issues.length">
                             <button class="text-base leading-none pointer-only" title="Choose Columns" @click.prevent="toolbarEmit('columnPicker', $event)" >
                                 <i class="far fa-thumbtack"></i>
                             </button>
@@ -76,6 +80,8 @@
                     </template>
 
                     <!-- Audit Tools -->
+                    <router-link class="xs:ml-0 mr-3.5" :to="{path: `/automations/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
+
                     <router-link :class="{ 'mr-3.5': isAuditShowPage }"
                         v-if="(isAuditEditPage || isAuditShowPage) &&
                          ($store.state.audits.audit && $store.state.audits.audit.automations && $store.state.audits.audit.automations.length)" 
@@ -87,8 +93,6 @@
                     <button v-if="isAuditShowPage" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
 
                     <router-link class="xs:ml-0 ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues"><i class="far fa-file-import"></i></router-link>
-
-                    <router-link class="xs:ml-0 ml-3.5" :to="{path: `/automations/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
 
                     <button title="Mark Audit Complete" v-if="!audit.locked && isAuditShowPage" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-complete', $event)"><i class="fas fa-lock-open-alt"></i></button>
                     
@@ -103,13 +107,13 @@
                 <span class="pr-1">Case Sensitive:</span>
                 <Checkbox v-model="searchData.caseSensitive"></Checkbox>
             </label> -->
-            <label class="flex mx-5 items-center">
+            <label class="label flex mx-5 items-center">
                 <span class="pr-2">Search Column:</span>
                 <select class="p-0 border-black border-l-0 border-r-0 border-t-0 shadow-none rounded-none" v-model="searchData.column" name="search-column">
                     <option v-for="(column, index) in searchColumns" :value="column.value" :key="'search-columns-'+index">{{column.display}}</option>
                 </select>
             </label>
-            <label for="search-criteria mr-5 items-center">
+            <label class="label mr-5 items-center" for="search-criteria">
                 <span class="pr-2">Keyword:</span>
                 <input class="px-1 border border-black border-l-0 border-r-0 border-t-0" style="max-height:39px;font-size:12px;" v-model="searchData.term" name="search-criteria" />
             </label>

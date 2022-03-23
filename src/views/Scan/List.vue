@@ -105,7 +105,7 @@
                 <h2 class="subheadline">Failed Url Log</h2>
                 <ul class="max-h-[600px] overflow-y-auto">
                     <li v-for="(failure, index) in failData" :key="`failure-${index}`">
-                        <h3 class="headline-2">{{failure.page}}</h3>
+                        <h3 class="subheadline">{{failure.page}}</h3>
                         <ul class="pl-4">
                             <li style="list-style-type: square;" class="text-sm" v-for="(item, subIndex) in failure.log" :key="`failureData-${subIndex}`">
                                 {{item}}

@@ -1,35 +1,39 @@
 <template>
   <div>
     <Loader v-if="loading"></Loader>
-    <h1 class="headline">{{project.name}}</h1>
-    <button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Project" class="standard alert mt-3" >
-      Delete
-    </button>
+    
+    <div class="flex justify-between items-center">
+      <h1 class="headline">Edit Project</h1>
+      <button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Project" class="standard alert mt-3" >
+        Delete
+      </button>
+    </div>
+    
     <form>
-      <Label class="subheadline text-lg" for="name">Name</Label>
+      <Label for="name">Name</Label>
       <TextInput id="name" name="name" v-model="project.name" />
 
-      <Label class="subheadline text-lg" for="status">Status</Label>
+      <Label for="status">Status</Label>
       <Select :options="statusSrc" v-model="project.status"></Select>
       
         <template v-if="$store.getters['auth/isManager']">
-          <Label class="subheadline text-lg" for="status">Client</Label>
+          <Label for="status">Client</Label>
           <Select :options="clientList" v-model="project.client_id"></Select>
         </template>
 
       <template v-if="$store.getters['auth/isManager']">
         <div class="flex my-3">
-          <Card class="w-1/2">
+          <Card :gutters="false" class="w-1/2 mr-2">
 
-            <h3 class="headline-2">Users</h3>
+            <h3 class="subheadline">Users</h3>
             <ul v-if="unassigned.length">
               <li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
                 <span>{{displayUser(id)}}</span><Button :title="`Assign ${displayUser(id)}`" hover="true" class="text-lg leading-4 ml-2" @click.prevent="assign(id)">&gt;</Button>
               </li>
             </ul>
           </Card>
-          <Card class="w-1/2">
-            <h3 class="headline-2">Assignees</h3>
+          <Card :gutters="false" class="w-1/2 ml-2">
+            <h3 class="subheadline">Assignees</h3>
             <ul v-if="assigned.length">
               <li class="my-2" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
                 <Button hover="true" :title="`Unassign ${displayUser(id)}`" class="text-lg leading-4 mr-2" @click.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
@@ -53,7 +57,7 @@
                   </svg>
               </div>
               <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <h3 class="text-lg leading-6 font-medium text-gray-900 headline-2" id="modal-title">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900 subheadline" id="modal-title">
                   Delete Project
                   </h3>
                   <div class="mt-2">
@@ -171,7 +175,7 @@ export default {
       },
       saveProject(){
         this.project["assigned"] = this.assigned
-        this.$store.dispatch("projects/updateProject", {project: this.project, id: this.$route.params.id})
+        this.$store.dispatch("projects/updateProject", {project: this.project, router: this.$router, id: this.$route.params.id})
       }
     },
     created() {},

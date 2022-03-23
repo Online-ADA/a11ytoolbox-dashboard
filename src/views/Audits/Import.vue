@@ -1,18 +1,18 @@
 <template>
   <div>
     <Loader v-if="loading"></Loader>
-    <h1 class="mb-3">Import Issues for {{primaryAudit.title}}</h1>
+    <h1 class="headline mb-3">Import Issues</h1>
     <div class="mb-5 w-full flex">
         <div class="w-full flex flex-wrap">
-            <h3 class="text-base font-bold w-full">Choose which audits to compare</h3>
-            <Btn @click.native.prevent="showingAudits.includes(primaryAudit.id) ? showingAudits.splice(showingAudits.indexOf(primaryAudit.id), 1) : showingAudits.push(primaryAudit.id)" class="mr-2" :color="showingAudits.includes(primaryAudit.id) ? 'orange' : 'white'" :hover="true">{{primaryAudit.title}}</Btn>
-            <Btn v-for="(audit, index) in audits" :key="'showAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'orange' : 'white'" :hover="true">{{audit.title}}</Btn>
+            <h2 class="subheadline pb-3 w-full">Choose which audits to compare</h2>
+            <Btn @click.native.prevent="showingAudits.includes(primaryAudit.id) ? showingAudits.splice(showingAudits.indexOf(primaryAudit.id), 1) : showingAudits.push(primaryAudit.id)" class="font-semibold mr-2" :color="showingAudits.includes(primaryAudit.id) ? 'yellow' : 'white'" :hover="true">{{primaryAudit.title}}</Btn>
+            <Btn v-for="(audit, index) in audits" :key="'showAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="font-semibold mx-2" :color="showingAudits.includes(audit.id) ? 'yellow' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
     </div>
     <div class="mb-5 w-full flex">
         <div class="w-full flex flex-wrap">
-            <h3 class="text-base font-bold w-full">Choose which temporary audits to compare</h3>
-            <Btn v-for="(audit, index) in temporary_audits" :key="'showTempAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'orange' : 'white'" :hover="true">{{audit.title}}</Btn>
+            <h3 class="subheadline pb-3 w-full">Choose which temporary audits to compare</h3>
+            <Btn v-for="(audit, index) in temporary_audits" :key="'showTempAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'yellow' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
     </div>
 
@@ -26,8 +26,8 @@
             class="bg-white border border-pallette-grey h-auto p-4 text-center mx-1.5">
                 <div class="flex pr-2 items-center">
                     <h2 class="text-medium font-bold flex-1">{{audit.title}}</h2>
-                    <Btn v-if="auditFullscreen !== audit.id" aria-label="Expand this audit to full screen" @click.native.prevent="setFullscreen(audit.id)" hover="true" color="white"><i class="fas fa-expand"></i></Btn>
-                    <Btn v-if="auditFullscreen === audit.id" aria-label="Compress this audit back down" @click.native.prevent="setFullscreen(false)" hover="true" color="white"><i class="fas fa-compress"></i></Btn>
+                    <Btn v-if="auditFullscreen !== audit.id" aria-label="Expand this audit to full screen" @click.native.prevent="setFullscreen(audit.id)" :hover="true" color="white"><i class="fas fa-expand"></i></Btn>
+                    <Btn v-if="auditFullscreen === audit.id" aria-label="Compress this audit back down" @click.native.prevent="setFullscreen(false)" :hover="true" color="white"><i class="fas fa-compress"></i></Btn>
                 </div>
                 
                 <Table 
@@ -70,39 +70,39 @@
                 @rowClick="selectImportRow" 
                 :selected="selectedImportRows"></Table>
 
-                <Btn v-if="selectedImportRows.length > 0 && audit.id === primaryAudit.id" @click.native.prevent="removeFromImport(selectedImportRows)" class="mx-2" color="red" hover="true">Remove selected</Btn>
+                <button v-if="selectedImportRows.length > 0 && audit.id === primaryAudit.id" @click.prevent="removeFromImport(selectedImportRows)" class="alert standard mx-2" >Remove selected</button>
             </div>
         </div>
     </div>
     <div class="w-full flex fixed bottom-0 left-0 right-0 px-3 py-3 bg-white border-t" style="z-index:25;max-width:calc(100% - 400px);margin-left:auto;">
         <div class="w-1/3">
-            <Btn v-if="selectedAuditRows.length > 0" @click.native.prevent="addSelectedToAudit()" class="mx-2" color="red" hover="true">Import selected</Btn>
+            <button v-if="selectedAuditRows.length > 0" @click.prevent="addSelectedToAudit()" class="standard mx-2">Import selected</button>
         </div>
         <div class="w-1/3">
-            <Btn @click.native.prevent="uploadCSVModalOpen = true" class="mx-2" color="red" hover="true">Upload CSV</Btn>
+            <button @click.prevent="uploadCSVModalOpen = true" class="standard mx-2">Upload CSV</button>
         </div>
         <div class="w-1/3">
-            <Btn @click.native.prevent="finishImport" class="mx-2" color="red" hover="true">Finish and go to audit</Btn>
+            <button @click.prevent="finishImport" class="standard mx-2" >Finish and go to audit</button>
         </div>
     </div>
     <Modal class="z-50" :open="uploadCSVModalOpen">
         <div class="bg-white px-4 pt-5 pb-4 p-6">
-            <Btn aria-label="Close upload CSV modal" @click.native.prevent="uploadCSVModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Btn>
-            <h2 class="text-center pb-3">Choose a CSV of issues to load</h2>
-            <FileInput @input="handleUploadFile" class="block w-auto mx-auto pb-3" accept=".csv"></FileInput>
+            <button aria-label="Close upload CSV modal" @click.prevent="uploadCSVModalOpen = false" class="absolute top-4 right-4 standard">X</button>
+            <h2 class="subheadline pb-3">Choose a CSV of issues to load</h2>
+            <FileInput @input="handleUploadFile" class="block w-auto pb-3" accept=".csv"></FileInput>
         </div>
-        <div class="bg-gray-50 px-4 py-3 flex">
-            <button @click.prevent="uploadCSV" type="button" class="mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium hover:bg-pallette-orange hover:text-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
+        <div class="px-4 py-3 flex">
+            <button @click.prevent="uploadCSV" type="button" class="mr-2 standard">
                 Upload
             </button>
-            <button @click.prevent="compareIssuesModalOpen = false" type="button" class="hover:bg-pallette-orange-light mx-2 justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-auto">
+            <button @click.prevent="compareIssuesModalOpen = false" type="button" class="standard alert">
                 Cancel
             </button>
         </div>
     </Modal>
     <Modal size="full" class="z-50" :open="compareIssuesModalOpen">
         <div class="bg-white px-4 pt-5 pb-4 p-6">
-            <Btn aria-label="Close compare issues modal" @click.native.prevent="compareIssuesModalOpen = false" class="absolute top-4 right-4" hover="true" color="white">X</Btn>
+            <button aria-label="Close compare issues modal" @click.prevent="compareIssuesModalOpen = false" class="standard absolute top-4 right-4">X</button>
             <h2 class="text-center">Compare Issues for Importing</h2>
             <!-- <Table :issuesTable="true" :importing="true" :condense="true" ref="compareTable" :selected="selectedCompareRows" @rowClick="selectCompareRow" :rowsData="issuesCompare" :headersData="headers"></Table> -->
         </div>

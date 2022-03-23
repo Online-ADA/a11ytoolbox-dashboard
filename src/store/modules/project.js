@@ -160,41 +160,35 @@ export default {
 			},
 			updateProject({state, rootState}, args){
 				state.loading = true
-				// let requestArgs = {
-				// 	params: {
-				// 		project_id: args.id,
-				// 		data: args.project
-				// 	},
-				// 	onSuccess: {
-				// 		title: "Success",
-				// 		text: "Project updated",
-				// 		callback: function(re){
-				// 			state.loading = false
-				// 			if( rootState.clients.client.id !== re.data.details.client_id ){
-				// 				rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
-				// 				rootState.clients.clientID = rootState.clients.client.id
-				// 			}
-				// 		}
-				// 	},
-				// 	onWarn:{
-				// 		callback: function(){
-				// 			state.loading = false
-				// 		}
-				// 	},
-				// 	onError: {
-				// 		title: "Error",
-				// 		text: "Failed updating project",
-				// 		callback: function(){
-				// 			state.loading = false
-				// 		}
-				// 	}
-				// };
-				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.id}`, {
+				let requestArgs = {
 					params: {
 						project_id: args.id,
 						data: args.project
-					}
-				})
+					},
+					onSuccess: {
+						title: "Success",
+						text: "Project updated",
+						type:'success',
+						position: 'bottom right',
+						callback: function(re){
+							state.loading = false
+							args.router.push({path: `/projects/${args.id}`})
+						}
+					},
+					// onWarn:{
+					// 	callback: function(){
+					// 		state.loading = false
+					// 	}
+					// },
+					// onError: {
+					// 	title: "Error",
+					// 	text: "Failed updating project",
+					// 	callback: function(){
+					// 		state.loading = false
+					// 	}
+					// }
+				};
+				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.id}`, requestArgs)
 				.then( re=>{
 					if( rootState.clients.client.id !== re.data.details.client_id ){
 						rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)

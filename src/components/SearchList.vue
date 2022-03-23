@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col">
         <div class="flex pb-3 xs:flex-wrap flex-nowrap">
-            <label class="mr-3.5">
+            <label class="label mr-3.5">
                 <span class="pr-2 subheadline text-lg">Search {{display}}:</span>
                 <TextInput v-model="search" :placeholder="placeholder"></TextInput>
             </label>

@@ -4,7 +4,7 @@
 
 		<h2 class="mb-1 headline">Color Swatch Analysis</h2>
 		<div class="flex items-center mb-3">
-			<h3 class="pr-2 headline-2">{{swatch.title}}</h3>
+			<h3 class="pr-2 subheadline">{{swatch.title}}</h3>
 			<!-- <button class="standard" aria-label="Edit color report title" @click.prevent="editSwatchOpen = true"><i class="far fa-edit"></i></button> -->
 		</div>
 

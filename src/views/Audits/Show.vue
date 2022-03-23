@@ -263,7 +263,7 @@
 		<Modal style="z-index:72;" :open="selectRecommendationsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close select recommendations modal" @click.prevent="selectRecommendationsModalOpen = false" class="absolute top-4 right-4 standard" >X</button>
-				<h2 class="headline-2">Which recommendations would you like to add?</h2>
+				<h2 class="subheadline">Which recommendations would you like to add?</h2>
 				<select aria-label="Select recommendations" class="m-2 w-full" multiple v-model="selectedRecommendations">
 					<option :value="option" v-for="(option, index) in filteredRecommendations" :key="'recommendations-'+index">{{option.description}}</option>
 				</select>
@@ -278,7 +278,7 @@
 		<Modal style="z-index:73;" :open="confirmDeleteModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close select descriptions modal" @click.prevent="confirmDeleteModalOpen = false" class="absolute top-4 right-4 standard">X</button>
-				<h2 class="headline-2">Are you sure you want to delete {{ selectedRows.length === 1 ? 'this issue' : 'these issues' }}?</h2>
+				<h2 class="subheadline">Are you sure you want to delete {{ selectedRows.length === 1 ? 'this issue' : 'these issues' }}?</h2>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
 				<button @click="confirmDeleteModalOpen = false" class="standard mr-3">
@@ -293,7 +293,7 @@
 		<Modal style="z-index:72;" :open="whichCSVModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close select descriptions modal" @click.prevent="EventBus.closeModal(()=>{whichCSVModalOpen = false})" class="absolute top-4 right-4 standard">X</button>
-				<h2 class="headline-2">Which item do you want to export?</h2>
+				<h2 class="subheadline">Which item do you want to export?</h2>
 				<div class="flex my-4 justify-center">
 					<button @click.prevent="getIssuesCSV" class="mx-2 standard">Issues (.xlsx spreadsheet)</button>
 					<button @click.prevent="getSampleCSV" class="mx-2 standard">Working Sample (CSV)</button>

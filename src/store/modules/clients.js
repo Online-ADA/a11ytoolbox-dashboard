@@ -179,9 +179,12 @@ export default {
 				},
 				onSuccess: {
 					title: "Success",
+					type: 'success',
 					text: "Client updated",
+					position: 'bottom right',
 					callback: function(){
 						state.loading = false
+						args.router.push({path: `/clients/${args.id}`})
 					}
 				},
 				onWarn:{

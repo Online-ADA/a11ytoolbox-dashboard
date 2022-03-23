@@ -54,7 +54,7 @@
                         </svg>
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="headline-2" id="modal-title">
+                        <h3 class="subheadline" id="modal-title">
                             <template v-if="attemptingType === 'software'">
                                 Cannot delete software "{{attemptingToDelete.title}}"
                             </template>

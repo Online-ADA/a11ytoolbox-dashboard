@@ -32,7 +32,7 @@
 				</div>
 
 				<fieldset role="radiogroup" class="w-full">
-					<legend class="pt-7 headline-2">Choose a Property</legend>
+					<legend class="pt-7 subheadline">Choose a Property</legend>
 					<div class="flex items-center">
 						<Label class="pr-3" :stacked="false" for="property-type-website">
 							Website
@@ -53,7 +53,7 @@
 				
 				<template v-if="propertyType == 'website'">
 					<template v-if="projectDomains.length">
-						<h2 id="choose_select_heading" class="pt-4 pb-3 headline-2">Select a Domain</h2>
+						<h2 id="choose_select_heading" class="pt-4 pb-3 subheadline">Select a Domain</h2>
 						<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('domain') }" id="domain-validation">{{validationMessages["domain"]}}</small>
 						<select 
 						:data-validation-failed="failedValidation.includes('domain') ? 'invalid-3' : false" 
@@ -114,7 +114,7 @@
 
 				<template v-if="propertyType != 'website'">
 					<template v-if="$store.state.projects.project.software != undefined && $store.state.projects.project.software.length">
-						<h2 id="choose_select_heading" class="pt-4 pb-3 headline-2">Select a Software</h2>
+						<h2 id="choose_select_heading" class="pt-4 pb-3 subheadline">Select a Software</h2>
 						<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('software') }" id="software-validation">{{validationMessages["software"]}}</small>
 						<select 
 						:data-validation-failed="failedValidation.includes('software') ? 'invalid-3' : false" 
@@ -169,7 +169,7 @@
 				<div class="w-full">
 
 					<template v-if="isManager">
-						<h2 class="headline-2 pt-7 pb-3">Assign Users</h2>
+						<h2 class="subheadline pt-7 pb-3">Assign Users</h2>
 						<div class="flex w-full xs:flex-wrap">
 							<Card :gutters="false" class="xs:w-full w-1/2 md:mr-5 sm:mr-5 xs:mb-5">
 								<h3 v-if="isExecutive" class="subheadline">Assign Account Users</h3>
