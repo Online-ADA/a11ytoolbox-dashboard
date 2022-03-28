@@ -36,7 +36,7 @@
                         </svg>
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="headline-2" id="modal-title">
+                        <h3 class="subheadline" id="modal-title">
                             Cannot Delete {{attemptingToDelete.url}}
                         </h3>
                         <div class="mt-2">

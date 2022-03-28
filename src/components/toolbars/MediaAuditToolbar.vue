@@ -1,13 +1,15 @@
 <template>
-    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full h-12" v-if="showToolbar">
+    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed z-50 w-full" v-if="showToolbar">
         <div id="toolbar" class="w-full pl-4 p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center text-13">
-                    <router-link title="Edit Domain" :to="`/domains/${audit.domain.id}/edit`" target="_blank" class="xs:basis-full xs:max-w-full xs:break-all underline " v-if="audit.domain">
-                        {{audit.domain.url}}
-                        <template v-if="audit.domain.root">/{{audit.domain.root}}</template>
-                    </router-link>
+                    
+                    <span v-if="audit.domain">
+                        <router-link :to="`/domains/${audit.domain.id}/edit`">
+                            {{audit.domain.url}}<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
+                        </router-link>
+                    </span>
                     <template v-if="isAuditShowPage">
                         <div class="border border-black mx-3.5 divider"></div>
                         <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>

@@ -308,6 +308,7 @@ export default {
 					},
 					onSuccess: {
 						title: "Success",
+						type: "success",
 						text: "Audit updated",
 						callback: function(){
 							state.loading = false

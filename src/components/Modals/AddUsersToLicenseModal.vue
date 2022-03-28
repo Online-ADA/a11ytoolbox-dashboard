@@ -2,16 +2,16 @@
 	<Modal :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
 		<h1 class="headline">Add Users</h1>
 		<div class="mt-2">
-			<span class="headline-2">Invite a new user</span>
+			<span class="subheadline">Invite a new user</span>
 		</div>
 		<div class="flex items-start">
             <div class="flex flex-col">
-                <label for="invite-user-to-license">Email Address</label>
+                <label class="label" for="invite-user-to-license">Email Address</label>
                 <input type="email" class="border m-1 p-1" v-model="invite_user.email">
                 <button @click.prevent="InviteUser" :disabled="!invite_user.email.length" class="standard mt-2 mr-2">Invite User</button>
             </div>
             <div class="flex flex-col ml-4">
-				<label class="" for="invite_team">Team</label>
+				<label class="label" for="invite_team">Team</label>
 				<select v-model="invite_user.team" class="p-1" id="invite_team" name="invite_team">
 					<option value="1">Executive</option>
 					<option value="2">Development</option>
@@ -20,7 +20,7 @@
 				</select>
             </div>
             <div class="flex flex-col ml-4">
-                <label class="" for="invite_role">Role</label>
+                <label class="label" for="invite_role">Role</label>
                 <select v-model="invite_user.role" class="p-1 mb-3" id="invite_role" name="invite_role">
                     <option value="2">Manager</option>
                     <option value="3">Standard</option>
@@ -29,7 +29,7 @@
             </div>
         </div>
 		<div class="mt-10">
-			<span class="headline-2">Add an exiting user from your account</span>
+			<span class="subheadline">Add an exiting user from your account</span>
 		</div>
 		<div class="flex items-start">
             <DT 

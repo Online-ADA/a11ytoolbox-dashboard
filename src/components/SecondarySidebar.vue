@@ -2,18 +2,17 @@
     <div class="flex shadow-lg transition-all sub-sidebar secondary relative">
         <div class="fixed">
             <div class="flex sub-nav-container" >
-                <button @click.prevent="EventBus.openModal('deployToolModal', $event)" aria-label="Deploy New Tool" class="deploy-tool text-white absolute">
+                <button title="Deploy a tool" @click.prevent="EventBus.openModal('deployToolModal', $event)" aria-label="Deploy New Tool" class="deploy-tool text-white absolute">
                     <div class="bg-pallette-button hover:bg-pallette-button-hover oswald pointer-events-none">
                         +
                     </div>
                 </button>
                 <ul class="pt-2.5 flex-1 px-5">
                     <!-- Tools Level -->
-                    <li class="py-1 tool-container text-white" :class="[expanded.includes('audit') ? 'expanded' : '']">
+                    <li v-show="$store.state.audits.all.length" class="py-1 tool-container text-white" :class="[expanded.includes('audit') ? 'expanded' : '']">
                         <span class="flex items-center">
-                            <button @click.prevent="expand('audit')" class="">
-                                <i v-if="!expanded.includes('audit')" class="fas fa-caret-right"></i>
-                                <i v-else class="fas fa-caret-down"></i>
+                            <button @click.prevent="expand('audit')">
+                                <i class="fas fa-caret-right" ></i>
                                 <span class="ml-2">WCAG Audits</span>
                             </button>
                         </span>
@@ -27,11 +26,10 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="py-1 tool-container text-white" :class="[expanded.includes('media_audit') ? 'expanded' : '']">
+                    <li v-show="mediaAudits.length" class="py-1 tool-container text-white" :class="[expanded.includes('media_audit') ? 'expanded' : '']">
                         <span class="flex items-center">
-                            <button @click.prevent="expand('media_audit')" class="">
-                                <i v-if="!expanded.includes('media_audit')" class="fas fa-caret-right"></i>
-                                <i v-else class="fas fa-caret-down"></i>
+                            <button @click.prevent="expand('media_audit')">
+                                <i class="fas fa-caret-right"></i>
                                 <span class="ml-2">Media Audits</span>
                             </button>
                         </span>
@@ -43,11 +41,12 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="py-1 tool-container text-white" :class="[expanded.includes('color_swatch') ? 'expanded' : '']">
+                    <li v-show="colorSwatches.length" class="py-1 tool-container text-white" :class="[expanded.includes('color_swatch') ? 'expanded' : '']">
                         <span class="flex items-center">
                             <button @click.prevent="expand('color_swatch')" class="">
-                                <i v-if="!expanded.includes('color_swatch')" class="fas fa-caret-right"></i>
-                                <i v-else class="fas fa-caret-down"></i>
+                                <i class="fas fa-caret-right"></i>
+                                <!-- <i v-if="!expanded.includes('color_swatch')" class="fas fa-caret-right"></i>
+                                <i v-else class="fas fa-caret-down"></i> -->
                                 <span class="ml-2">Color Swatches</span>
                             </button>
                         </span>
@@ -85,7 +84,10 @@ export default {
             return this.$store.state.mediaAudits
         },
         colorSwatches(){
-            return this.$store.state.projects.project.swatches || []
+            if( this.$store.state.projects.project ){
+                return this.$store.state.projects.project.swatches || []
+            }
+            return []
         },
     },
     components:{
@@ -109,7 +111,7 @@ export default {
         },
         updateColorSwatch(swatch){
             this.$router.push({
-                name: 'SwatchEdit',
+                name: 'SwatchShow',
                 params: {
                     id: swatch.id
                 }
@@ -198,12 +200,15 @@ button.deploy-tool{
     right:-10px;
 }
 button.deploy-tool > div{
+    -webkit-clip-path: circle(50% at 50% 50%);
     clip-path: circle(50% at 50% 50%);
     font-size: 40px;
     height: 34px;
     width: 34px;
-    line-height: 0.8;
-    padding-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 3px;
 }
 .tool-container button{
     width:100%;
@@ -227,6 +232,12 @@ button.deploy-tool > div{
     /* max-height:100%; */
     display:block;
     min-height:30px;
+}
+.tool-container i{
+    transition:transform .2s ease;
+}
+.tool-container.expanded i{
+    transform:rotate(90deg);
 }
 .tool-container ul li:hover,
 .tool-container ul li:focus{

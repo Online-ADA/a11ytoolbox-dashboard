@@ -23,7 +23,7 @@
 				</div>
                 
                 <template v-if="domains.length">
-                    <h2 id="choose_select_heading" class="pt-4 pb-3 headline-2">Select a Domain</h2>
+                    <h2 id="choose_select_heading" class="pt-4 pb-3 subheadline">Select a Domain</h2>
                     <small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('domain') }" id="domain-validation">{{validationMessages["domain"]}}</small>
                     <select 
                     :data-validation-failed="failedValidation.includes('domain') ? 'invalid-3' : false" 
@@ -71,12 +71,12 @@
                     </div>
 
                     <div class="flex flex-col items-start">
-                        <label class="block font-semibold pr-3" :stacked="false" for="generate-sitemap">
+                        <label class="label block pr-3" :stacked="false" for="generate-sitemap">
                             <input v-model="domain.sitemap_option" type="radio" id="generate-sitemap" name="domain-sitemap" value="generate" class="mt-3" />
                             Generate sitemap
                         </label>
                         
-                        <label class="block font-semibold" :stacked="false" for="sitemap-manual">
+                        <label class="label block" :stacked="false" for="sitemap-manual">
                             <input  v-model="domain.sitemap_option" type="radio" id="sitemap-manual" name="domain-sitemap" value="manual" class="mt-3" />
                             Manually enter/upload sitemap OR use working sample
                         </label>
@@ -89,7 +89,7 @@
 				<div class="w-full">
 
 					<template v-if="isManager">
-						<h2 class="headline-2 pt-7 pb-3">Assign Users</h2>
+						<h2 class="subheadline pt-7 pb-3">Assign Users</h2>
 						<div class="flex w-full xs:flex-wrap">
 							<Card :gutters="false" class="xs:w-full w-1/2 md:mr-5 sm:mr-5 xs:mb-5">
 								<h3 class="subheadline">Team Members</h3>

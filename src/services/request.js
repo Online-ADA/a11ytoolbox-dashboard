@@ -90,6 +90,9 @@ class Request {
             return await new Promise( (resolve, reject)=> {
                 Vue.prototype.$http.post(url, args.params || {}).then(response =>{
                     this.checkForRedirect(response)
+                    if( args.onSuccess ){
+                        this.parseArgs(args.onSuccess, response)
+                    }
                     resolve(response)
                 }).catch( response => {
                     this.checkForRedirect(response)
@@ -101,6 +104,9 @@ class Request {
             return new Promise( (resolve, reject)=> {
                 Vue.prototype.$http.post(url, args.params || {}).then(response =>{
                     this.checkForRedirect(response)
+                    if( args.onSuccess ){
+                        this.parseArgs(args.onSuccess, response)
+                    }
                     resolve(response)
                 }).catch( response => {
                     this.checkForRedirect(response)

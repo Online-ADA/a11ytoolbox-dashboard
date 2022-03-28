@@ -26,7 +26,7 @@
 				<!-- Row -->
 				<!-- <div class="flex w-full mt-3">
 					<div class="flex-1">
-						<h2 class="headline-2">Accounts</h2>
+						<h2 class="subheadline">Accounts</h2>
 						
 						<ul>
 							<li class="border border-black p-2 my-3" v-for="(account, index) in accounts" :key="'account-index-'+index">
@@ -40,7 +40,7 @@
 				</div> -->
 			</form>
 		
-			<Label class="headline-2 mt-3" for="role">Role</Label>
+			<Label class="subheadline mt-3" for="role">Role</Label>
 			<select v-model="selectedRole" class="p-1 mb-3" @change="modifyRole" id="role" name="role">
 				<option value="2">Manager</option>
 				<option value="3">Standard</option>
@@ -48,7 +48,7 @@
 			</select>
 			
 			<div v-if="iAmExecutive">
-				<Label class="headline-2" for="team">Team</Label>
+				<Label class="subheadline" for="team">Team</Label>
 				<select v-model="selectedTeam" class="p-1" @change="modifyTeam" id="team" name="team">
 					<option value="1">Executive</option>
 					<option value="2">Development</option>
@@ -57,7 +57,7 @@
 				</select>
 			</div>
 			<div v-else>
-				<Label class="headline-2" for="team">Team</Label>
+				<Label class="subheadline" for="team">Team</Label>
 				<span class="text-lg">{{team(selectedTeam)}}</span>
 			</div>
 		</template>

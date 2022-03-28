@@ -1,9 +1,9 @@
 <template>
-    <div class="w-full mb-2">
+    <div class="w-full">
         <div 
-        class="flex w-full items-center" 
+        class="flex w-full items-stretch" 
         :class="[align=='center' ? 'justify-center' : align == 'left' ? 'justify-start' : align=='right' ? 'justify-flex-end' : '']" >
-            <div class="radio relative mx-2" v-for="(item, index) in items" :key="`${groupName} - ${index}`">
+            <div :class="[ {'mr-2': index != Object.entries(items).length -1} ]" class="radio relative" v-for="(item, index) in items" :key="`${groupName} - ${index}`">
                 <input 
                 :aria-labelledby="groupName + '-' + index + '-label'" 
                 class="absolute top-0 left-0 z-0" 
@@ -13,7 +13,7 @@
                 :id="groupName + '-' + index" 
                 :value="item.value" 
                 />
-                <button @click="select(index)" tabindex="-1" class="standard z-[1] relative">
+                <button @click="select(index)" tabindex="-1" class="standard z-[1] relative h-full">
                     <span :id="groupName + '-' + index + '-label'">{{item.display}}</span>
                 </button>
             </div>

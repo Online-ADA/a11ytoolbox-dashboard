@@ -34,11 +34,10 @@
                     classes.push("bg-white");
                     classes.push("text-red-600");
                 }
-                if( this.color == "orange" ){
-                    classes.push("bg-pallette-orange");
-                    classes.push("text-white");
+                if( this.color == "yellow" ){
+                    classes.push("bg-pallette-yellow");
                     if( this.hover ){
-                        classes.push("hover:bg-pallette-orange-dark");
+                        // classes.push("hover:bg-pallette-orange-dark");
                     }
                 }
                 if( this.color == "red" ){

@@ -61,6 +61,16 @@ export default {
 			})
 			.then( ()=> state.loading = false)
 		},
+		getAccountScans({state, rootState}, args){
+			state.loading = true
+			
+			Request.getPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/scan/all` )
+			.then( re => state.all = re.data.details )
+			.catch( re => {
+				console.log(re)
+			})
+			.then( ()=> state.loading = false)
+		},
 		deleteScan({state, rootState}, args){
 			state.loading = true
 			Request.destroyPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/scan/${args.scan_id}`)

@@ -1,17 +1,22 @@
 <template>
-    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed xs:absolute sm:absolute z-50 w-full xs:h-auto sm:h-auto h-12" v-if="showToolbar">
+    <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed xs:absolute sm:absolute z-50 w-full xs:h-auto sm:h-auto" v-if="showToolbar">
         <div id="toolbar" class="w-full pl-4 p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
             <div class="flex items-center justify-between xs:flex-wrap">
                 <div class="flex items-center text-13 xs:basis-full xs:flex-wrap">
-                    <router-link title="Edit Domain" :to="`/domains/${audit.domain.id}/edit`" target="_blank" class="xs:basis-full xs:max-w-full xs:break-all underline " v-if="audit.domain">
-                        {{audit.domain.url}}
-                        <template v-if="audit.domain.root">/{{audit.domain.root}}</template>
-                    </router-link>
+                    <span class="xs:basis-full xs:max-w-full xs:break-all" v-if="audit.domain">
+                        <router-link title="Edit domain" :to="`/domains/${audit.domain.id}/edit`">
+                            {{audit.domain.url}}<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
+                        </router-link>
+                    </span>
                     <template v-if="isAuditShowPage">
                         <div class="border border-black mx-3.5 divider xs:hidden"></div>
                         <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
                         <span>Total Issues: {{totalRows}}</span>
+                    </template>
+                    <template v-else>
+                        <div class="border border-black mx-3.5 xs:mx-2 divider"></div>
+                        <router-link title="Go to Audit" :to="{name:'AuditShow', params:{id:$route.params.id}}"><i class="far fa-arrow-left"></i></router-link>
                     </template>
                 </div>
                 <span class="w-auto xs:mr-0 mr-2 flex items-center xs:basis-full xs:justify-evenly">
@@ -22,31 +27,31 @@
                         </select>
                         
                         <!-- Edit Issue -->
-                        <button v-if="auditRowsSelected === 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-edit-issue', $event)">
-                            <span title="Edit Issue" ><i class="far fa-file-edit"></i></span>
+                        <button title="Edit Issue" v-if="auditRowsSelected === 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-edit-issue', $event)">
+                            <i class="far fa-file-edit"></i>
                         </button>
                         <!-- Copy Issue -->
-                        <button v-if="auditRowsSelected === 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-copy-issue', $event)">
-                            <span title="Copy Issue" ><i class="far fa-copy"></i></span>
+                        <button title="Copy Issue" v-if="auditRowsSelected === 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-copy-issue', $event)">
+                            <i class="far fa-copy"></i>
                         </button>
                         <!-- Delete Selected Issue -->
-                        <button v-if="auditRowsSelected > 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-delete-many', $event)">
-                            <span title="Delete All Selected Issues" ><i class="far fa-minus-hexagon"></i></span>
+                        <button title="Delete All Selected Issues" v-if="auditRowsSelected > 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-delete-many', $event)">
+                            <i class="far fa-minus-hexagon"></i>
                         </button>
                         <!-- Add Issue -->
-                        <button v-if="auditRowsSelected < 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-add-issue', $event)">
-                            <span title="Add Issue" ><i class="far fa-plus-square"></i></span>
+                        <button title="Add Issue" v-if="auditRowsSelected < 1 && !audit.locked" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-add-issue', $event)">
+                            <i class="far fa-plus-square"></i>
                         </button>
                         <!-- Locked Icon -->
                         <span title="This Audit is Locked and Cannot be Modified" v-if="audit.locked"><i class="fas fa-lock" aria-hidden="true"></i></span>
                         <!-- Condense Table -->
-                        <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-condense', $event)">
-                            <span title="Compress Table" v-if="!toggled.includes('audit-condense')"><i class="far fa-compress-alt"></i></span>
-                            <span title="Decompress Table" v-else><i class="fas fa-expand-alt"></i></span>
+                        <button :title="!toggled.includes('audit-condense') ? 'Compress Table' : 'Decompress Table'" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-condense', $event)">
+                            <span v-if="!toggled.includes('audit-condense')"><i class="far fa-compress-alt"></i></span>
+                            <span v-else><i class="fas fa-expand-alt"></i></span>
                         </button>
                         <!-- Search Audit -->
-                        <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="searchBarOpen = !searchBarOpen">
-                            <span title="Search Audit" ><i class="far fa-search"></i></span>
+                        <button title="Search Audit" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click.prevent="searchBarOpen = !searchBarOpen">
+                            <i class="far fa-search"></i>
                         </button>
                         <div class="border border-black mx-3.5 xs:mx-2 divider"></div>
                     </template>
@@ -58,25 +63,40 @@
                             </button>
                         </div>
                         <div v-if="!audit.locked">
-                            <button class="text-lg leading-none mx-3.5 xs:mx-2 pointer-only" title="Deselect All Rows" @click.prevent="toolbarEmit('deselectAll', $event)">
+                            <button :class="[$store.state.audits.audit && $store.state.audits.audit.issues && $store.state.audits.audit.issues.length ? 'mx-3.5' : 'ml-3.5']"
+                            class="text-lg leading-none xs:mx-2 pointer-only"
+                            title="Deselect All Rows"
+                            @click.prevent="toolbarEmit('deselectAll', $event)">
                                 <i class="fal fa-grip-horizontal"></i>
                             </button>
                         </div>
-                        <div>
-                            <button class="text-base leading-none pointer-only" title="Open Show or Hide Columns Modal" @click.prevent="toolbarEmit('columnPicker', $event)" >
+                        
+                        <div v-show="$store.state.audits.audit && $store.state.audits.audit.issues && $store.state.audits.audit.issues.length">
+                            <button class="text-base leading-none pointer-only" title="Choose Columns" @click.prevent="toolbarEmit('columnPicker', $event)" >
                                 <i class="far fa-thumbtack"></i>
                             </button>
                         </div>
                         <div class="border border-black mx-3.5 xs:mx-2 divider"></div>
                     </template>
-                    <!-- Audit Tools -->
-                    <router-link :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
-                    <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
-                    <router-link class="xs:ml-0 ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues to This Audit"><i class="far fa-file-import"></i></router-link>
-                    <router-link class="xs:ml-0 ml-3.5" :to="{path: `/automations/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
 
-                    <button title="Mark Audit Complete" v-if="!audit.locked" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-complete', $event)"><i class="fas fa-lock-open-alt"></i></button>
-                    <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-next', $event)"><i class="far fa-hand-point-right"></i></button>
+                    <!-- Audit Tools -->
+                    <router-link class="xs:ml-0 mr-3.5" :to="{path: `/automations/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
+
+                    <router-link :class="{ 'mr-3.5': isAuditShowPage }"
+                        v-if="(isAuditEditPage || isAuditShowPage) &&
+                         ($store.state.audits.audit && $store.state.audits.audit.automations && $store.state.audits.audit.automations.length)" 
+                        :to="{name: 'ScanHistory', params: {automations: $store.state.audits.audit.automations } }"
+                    ><i class="far fa-scroll"></i></router-link>
+
+                    <router-link v-if="!isAuditEditPage" :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
+
+                    <button v-if="isAuditShowPage" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
+
+                    <router-link class="xs:ml-0 ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues"><i class="far fa-file-import"></i></router-link>
+
+                    <button title="Mark Audit Complete" v-if="!audit.locked && isAuditShowPage" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-complete', $event)"><i class="fas fa-lock-open-alt"></i></button>
+                    
+                    <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3 && isAuditShowPage" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-next', $event)"><i class="far fa-hand-point-right"></i></button>
                     
                     <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="EventBus.$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
                 </span>
@@ -87,13 +107,13 @@
                 <span class="pr-1">Case Sensitive:</span>
                 <Checkbox v-model="searchData.caseSensitive"></Checkbox>
             </label> -->
-            <label class="flex mx-5 items-center">
+            <label class="label flex mx-5 items-center">
                 <span class="pr-2">Search Column:</span>
                 <select class="p-0 border-black border-l-0 border-r-0 border-t-0 shadow-none rounded-none" v-model="searchData.column" name="search-column">
                     <option v-for="(column, index) in searchColumns" :value="column.value" :key="'search-columns-'+index">{{column.display}}</option>
                 </select>
             </label>
-            <label for="search-criteria mr-5 items-center">
+            <label class="label mr-5 items-center" for="search-criteria">
                 <span class="pr-2">Keyword:</span>
                 <input class="px-1 border border-black border-l-0 border-r-0 border-t-0" style="max-height:39px;font-size:12px;" v-model="searchData.term" name="search-criteria" />
             </label>

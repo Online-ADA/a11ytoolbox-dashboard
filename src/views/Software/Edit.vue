@@ -4,7 +4,7 @@
 
 		<h2 class="mb-1 headline">{{software.title}}</h2>
 		<div class="flex items-center mb-3">
-			<h3 class="pr-2 headline-2">{{software.title}}</h3>
+			<h3 class="pr-2 subheadline">{{software.title}}</h3>
 			<button class="standard" aria-label="Edit software title" @click.prevent="editSoftwareOpen = true"><i class="far fa-edit"></i></button>
 		</div> 
 
@@ -41,7 +41,7 @@
 					</div>
 				</div>
 
-				<h3 class="mt-3 mb-1 headline-2">Screens</h3>
+				<h3 class="mt-3 mb-1 subheadline">Screens</h3>
 				<Card style="max-height:400px" :gutters="false" class="block my-4 overflow-y-auto">
 					<ul class="mb-4">
 						<li class="my-1" v-for="screen in software.screens" :key="screen.id">

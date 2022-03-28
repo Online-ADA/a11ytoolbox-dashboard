@@ -73,7 +73,7 @@ export default {
 				state.user_limit = re.data.limit
 				for (let i = 0; i < re.data.details.length; i++) {
 					const user = re.data.details[i];
-					if( user.roleInfo.team_id != null ){
+					if( user.roleInfo != null && user.roleInfo.team_id != null ){
 						state.byTeam[user.roleInfo.team_id].push(user.id)
 					}
 				}

@@ -25,7 +25,7 @@
 			</div>
 			<!-- Row -->
 			<div class="w-full mt-3">
-				<h2 class="headline-2">Accounts</h2>
+				<h2 class="subheadline">Accounts</h2>
 				<ul>
 					<li class="border border-black p-2 my-3" v-for="(account, index) in accounts" :key="'account-index-'+index">
 						<div><h3 class="text-base subheadline pr-3 inline-block">Account Name:</h3><span class="text-base">{{account.name}}</span></div>
@@ -35,7 +35,7 @@
 				</ul>
 			</div>
 			<div class="mt-3">
-				<h2 class="headline-2">Avatar</h2>
+				<h2 class="subheadline">Avatar</h2>
 				<File @input="handleAvatar" class="block w-auto pb-3" accept="image/*,.svg"></File>
 			</div>
 			<button @click.prevent="save" class="standard mt-3">Save</button>

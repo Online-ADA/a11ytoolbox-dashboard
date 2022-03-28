@@ -122,12 +122,13 @@
 		
 		<Modal style="z-index:71" :open="columnPickerOpen">
 			<div class="w-full p-3">
+				<h2 class="subheadline">Choose Columns to Display</h2>
 				<button aria-label="Close column selector modal" @click.prevent="EventBus.closeModal(()=>{columnPickerOpen = false})" class="absolute top-4 right-4 px-2 standard">X</button>
 				<ul class="flex flex-wrap xs:mt-10 mt-0">
 					<template v-for="(header, index) in headers">
 						<li v-if="!header.hidePermanent" class="flex xs:w-1/2 w-5/12 xs:mx-0 mx-2 my-2 items-center" :key="index">
 							<Checkbox v-model="header.show" :id="'showCol'+ (index+1)"></Checkbox>
-							<Label class="xs:break-all break-normal" :for="'showCol'+ (index+1)">Show {{header.display}}</Label>
+							<Label class="xs:break-all break-normal capitalize" :for="'showCol'+ (index+1)">{{header.display}}</Label>
 						</li>
 					</template>
 				</ul>

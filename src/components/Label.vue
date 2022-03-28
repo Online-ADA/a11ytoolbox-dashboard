@@ -1,5 +1,5 @@
 <template>
-    <label :class="display" class="py-2 font-semibold"><slot></slot></label>
+    <label :class="display" class="label"><slot></slot></label>
 </template>
 
 

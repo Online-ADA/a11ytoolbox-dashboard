@@ -62,7 +62,7 @@
       >
     </label> -->
 
-    <div class="vacp-color-inputs">
+    <div class="vacp-color-inputs flex">
       <div v-if="activeFormat === 'hsl'" class="vacp-color-input-group" >
         <label
           class="vacp-color-input-label"
@@ -254,8 +254,7 @@
           class="vacp-color-input-label"
           :for="`${id}-color-hex`"
         >
-          <span class="vacp-color-input-label-text">Hex</span>
-
+          <div class="vacp-color-input-label-text text-left">Hex</div>
           <input
             :id="`${id}-color-hex`"
             class="vacp-color-input"
@@ -265,10 +264,25 @@
           >
         </label>
       </div>
+      <div class="flex">
+        <button
+          v-if="visibleFormats.length > 1"
+          class="vacp-format-switch-button px-5"
+          type="button"
+          @click="switchFormat"
+        >
+          <slot name="format-switch-button">
+            <span class="sr-only">Switch format</span>
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15"><path d="M8 15l5-5-1-1-4 2-4-2-1 1zm4-9l1-1-5-5-5 5 1 1 4-2z" fill="currentColor"></path></svg>
+          </slot>
+        </button>
+
+        <button v-if="remove_button" class="remove-button" type="button" @click="$emit('removePicker')"><i class="far fa-trash-alt"></i></button>
+      </div>
     </div>
 
-    <div class="flex items-center">
-      <button
+    <!-- <div class="flex items-center"> -->
+      <!-- <button
         class="vacp-copy-button p-1.5"
         type="button"
         @click="copyColor"
@@ -277,9 +291,9 @@
           <span class="sr-only">Copy color</span>
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" ><path d="M5 0v2H1v13h12v-3h-1v2H2V5h10v3h1V2H9V0zm1 1h2v2h3v1H3V3h3z" fill="#000" ></path><path d="M10 7v2h5v2h-5v2l-3-3zM3 6h5v1H3zm0 2h3v1H3zm0 2h3v1H3zm0 2h5v1H3z" fill="#000"></path></svg>
         </slot>
-      </button>
+      </button> -->
 
-      <button
+      <!-- <button
         v-if="visibleFormats.length > 1"
         class="vacp-format-switch-button px-5 mx-1"
         type="button"
@@ -291,8 +305,8 @@
         </slot>
       </button>
 
-      <button v-if="remove_button" class="remove-button" type="button" @click="$emit('removePicker')"><i class="far fa-trash-alt"></i></button>
-    </div>
+      <button v-if="remove_button" class="remove-button" type="button" @click="$emit('removePicker')"><i class="far fa-trash-alt"></i></button> -->
+    <!-- </div> -->
   </div>
 </template>
 
@@ -617,7 +631,6 @@ export default {
      * @param {Event} event
      */
     updateHue (event) {
-      console.log("this fired", event.currentTarget.value);
       this.setColorValue(parseInt(event.currentTarget.value) / 360, 'hsv', 'h')
     },
 
@@ -1071,7 +1084,7 @@ Range input: thumbs
 .vacp-color-inputs {
   grid-area: color-inputs;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .vacp-color-inputs > :not(:first-child) {

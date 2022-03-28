@@ -2,9 +2,15 @@
     <div class="">
         <Loader v-if="loading"></Loader>
         
-        <div class="w-full flex flex-col mt-10" v-if="scans && scans.length">
-            <h2 class="headline">Automated Audits Report</h2>
-            <DT :searchableProps="['title', 'url']" :items="scans" :headers="headers">
+        <div class="w-full flex flex-col" v-if="scans && scans.length">
+            <h2 class="headline">Automated Audit Logs</h2>
+            <button v-show="filtering" @click.prevent="filtering=false" class="w-[125px] text-xs flex bg-white rounded-full items-center leading-relaxed">
+                <div class="rounded-full bg-[#a3a3a3] w-3 h-3 text-[9px] flex relative mx-[5px]" >
+                    <span class="absolute left-1 bottom-0.5 leading-none">x</span>
+                </div>
+                Remove Filtering
+            </button>
+            <DT width="500px" :fixed="true" :searchableProps="['title', 'url']" :items="filtering ? filtered : scans" :headers="headers">
                 <template v-slot:cells-main>
                     <div class="hidden"></div>
                 </template>
@@ -15,9 +21,12 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">{{row.data.total_issues}}</div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-6 py-4 break-all">
                         <div class="text-sm text-gray-900">
-                            {{row.data.domain.url}}<template v-if="row.data.domain.root">/{{row.data.domain.root}}</template>
+                            <template v-if="row.data.domain && row.data.domain.url">
+                                {{row.data.domain.url}}<template v-if="row.data.domain.root">/{{row.data.domain.root}}</template>
+                            </template>
+                            <template v-else>Domain Deleted</template>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -28,7 +37,7 @@
                             {{appendedOrNew(row.data)}}
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-6 py-4 break-all">
                         <div class="text-sm text-gray-900">
                             <template v-if="row.data.appends == 0">N/A</template>
                             <template v-else-if="associatedAudit(row.data.appends)">
@@ -57,7 +66,7 @@
             </DT>
         </div>
         <div class="text-center" v-if="!loading && !scans.length">
-            <h2>There are no automated audits for this project</h2>
+            <h2>There are no automated audits for this license</h2>
         </div>
         
         <Modal :open="deleteModalOpen">
@@ -96,7 +105,7 @@
                 <h2 class="subheadline">Failed Url Log</h2>
                 <ul class="max-h-[600px] overflow-y-auto">
                     <li v-for="(failure, index) in failData" :key="`failure-${index}`">
-                        <h3 class="headline-2">{{failure.page}}</h3>
+                        <h3 class="subheadline">{{failure.page}}</h3>
                         <ul class="pl-4">
                             <li style="list-style-type: square;" class="text-sm" v-for="(item, subIndex) in failure.log" :key="`failureData-${subIndex}`">
                                 {{item}}
@@ -122,29 +131,39 @@ export default {
     data: () => ({
         deleteModalOpen: false,
         deleteID: false,
-        headers: ["Title", "Number of issues", "Domain", "Number of Pages", "Appended or New", "Associated Audit", "Finished", "Errors", "Delete Automation"],
+        headers: [
+            {display: "Title", width:"200px"}, 
+            {display:"Number of issues", width:"100px"}, 
+            {display:"Domain", width:"300px"}, 
+            {display:"Number of Pages", width:"100px"}, 
+            "Appended or New", 
+            "Associated Audit", 
+            "Finished", 
+            "Errors", 
+            "Delete Automation"
+        ],
         failData: false,
-        logModalOpen: false
+        logModalOpen: false,
+        filtering: false
     }),
     computed: {
         loading(){
             return this.$store.state.scan.loading
         },
-        scans() {
+        scans(){
             return this.$store.state.scan.all
         },
         audits(){
             return this.$store.state.projects.project.audits
+        },
+        filtered(){
+            let ids = this.$route.params.automations.map((a)=>{ return a.id })
+            
+            return this.scans.filter((scan)=>{ return ids.includes(scan.id) })
         }
     },
     props: [],
-    watch: {
-        "$store.state.projects.project": function(newVal){
-            if( newVal ){
-                this.$store.dispatch("scan/getProjectScans", {project_id: newVal.id})
-            }
-        },
-    },
+    watch: {},
     methods: {
         showLog($ev, data){
             EventBus.openModal(false, $ev.target, ()=>{
@@ -195,8 +214,10 @@ export default {
     },
     mounted() {
         document.title = "Automated Audits Management"
-        if( this.$store.state.projects.project ){
-            this.$store.dispatch("scan/getProjectScans", {project_id: this.$store.state.projects.project.id})
+        this.$store.dispatch("scan/getAccountScans")
+        
+        if( this.$route.params.automations && this.$route.params.automations.length ){
+            this.filtering = true
         }
     },
     components: {

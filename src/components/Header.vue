@@ -1,6 +1,6 @@
 <template>
     <div id="header-container" :class="{ 'menuOpen': menuOpen }" class="items-center flex w-full fixed px-4 py-2 shadow-custom overflow-visible">
-        <router-link class="block" :to="{path:'/'}"><img alt="Ally Toolbox by ABILITY" src="../assets/logo-toolbox.png" /></router-link>
+        <router-link class="block" :to="{path:'/'}"><img style="width:145px;height:47px;" alt="Ally Toolbox by ABILITY" src="/assets/logo-toolbox.png" /></router-link>
         <button class="menu-button" :aria-label="[menuOpen ? 'close menu' : 'open menu']" @click="menuClick"><i class="fas fa-bars fa-2x ml-2 cursor-pointer text-white" ></i></button>
 
         <div class="flex items-center">
@@ -60,32 +60,37 @@
                 <template v-if="isManager">
                     <li class="hover:bg-pallette-grey-light">
                         <router-link class="block" :to="'/manage/articles'">
-                            <span>Success Criteria</span>
+                            Success Criteria
                         </router-link>
                     </li>
                     <li class="hover:bg-pallette-grey-light">
                         <router-link class="block" :to="'/manage/users'">
-                            <span>Users</span>
+                            Users
                         </router-link>
                     </li>
                 </template>
                 <li class="hover:bg-pallette-grey-light">
-                    <router-link :to="'/properties'" class="block"><span>Properties</span></router-link>
+                    <router-link :to="'/properties'" class="block">Properties</router-link>
                 </li>
                 <li class="hover:bg-pallette-grey-light">
-                    <router-link :to="'/automations/history'" class="block"><span>Automated Audits</span></router-link>
+                    <router-link :to="'/automations/history'" class="block">Automated Tool Logs</router-link>
                 </li>
             </ul>
             <span id="management-label" class="sub-label text-white uppercase"><div>Global</div>Settings</span>
         </div>
 
-        <div ref="userDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('userDropdown')" @click.prevent="expandDropdown('userDropdown')" :aria-expanded="[ dropdownsExpanded.includes('userDropdown') ? 'true' : 'false' ]" :class="[dropdownsExpanded.includes('userDropdown') ? 'expanded' : '']" class="dropdown-container dropdown-w-label relative flex flex-col items-end">
+        <div ref="userDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('userDropdown')" @click.prevent="expandDropdown('userDropdown')" :aria-expanded="[ dropdownsExpanded.includes('userDropdown') ? 'true' : 'false' ]" :class="[dropdownsExpanded.includes('userDropdown') ? 'expanded' : '']" class="dropdown-container dropdown-w-label relative flex items-end">
             <div id="login" v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
-                <span @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
+                <div @click.prevent class="whitespace-no-wrap no-underline text-white" href="#">
                     {{$store.state.auth.user.first_name}}
-                </span>
+                </div>
+                <div class="sub-label text-white">{{license_title}}</div>
             </div>
+                
             <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
+                <li class="hover:bg-pallette-grey-light">
+                    <router-link :to="profileLink" class="block">User Profile</router-link>
+                </li>
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
                     <template v-if="child.type == 'router-link'">
                         <router-link class="block" :to="GoToDropdown(child)"><span class="sm:text-right" v-html="child.label"></span></router-link>
@@ -95,10 +100,15 @@
                     </template>
                 </li>
             </ul>
-            <span class="sub-label text-white">{{license_title}}</span>
+                
+            <img alt="User Avatar" :src="user_avatar" class="avatar" />
+            
         </div>
 
-        <router-link aria-label="Go to user profile" :to="profileLink"><img alt="User Avatar" :src="user_avatar" class="avatar" /></router-link>
+        
+        <!-- <router-link aria-label="Go to user profile" :to="profileLink">
+            
+        </router-link> -->
     </div>
 </template>
 
@@ -317,7 +327,7 @@ img.avatar{
     top: 22px;
 }
 .dropdown-container.dropdown-w-label:not(.settings-dropdown ) ul  {
-    top:145%;
+    top:133%;
 }
 .dropdown-container.dropdown-nolabel:not(.settings-dropdown ) ul {
     top:175%;

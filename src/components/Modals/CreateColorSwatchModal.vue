@@ -4,8 +4,8 @@
 		
 		<template v-if="complete">
 			<h1 class="headline">Go to New Color Swatch?</h1>
-			<button @click.prevent="EventBus.closeModal( ()=>{ chooseYes() })" class="standard mr-3">Yes</button>
-			<button @click.prevent="EventBus.closeModal( ()=>{ chooseNo() })" class="standard">No</button>
+			<button @click.prevent="EventBus.closeModal( ()=>{ chooseYes() })" class="standard">Yes</button>
+			<button @click.prevent="EventBus.closeModal( ()=>{ chooseNo() })" class="standard mx-3">No</button>
 		</template>
 		<template v-else>
 			<h1 class="headline">Create Color Swatch</h1>
@@ -51,7 +51,8 @@
 			chooseYes(){
 				EventBus.$emit('deployColorSwatchModal', false)
 				this.reset()
-				let id = this.$store.state.swatches.all[this.$store.state.swatches.all.length - 1].id
+				
+				let id = this.$store.state.projects.project.swatches[this.$store.state.projects.project.swatches.length - 1].id
 				this.$router.push({path: `/color-reports/${id}`})
 			},
 			createSwatch(){

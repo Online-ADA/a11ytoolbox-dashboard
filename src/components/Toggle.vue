@@ -1,5 +1,5 @@
 <template>
-    <label class="switch flex items-center">
+    <label class="label switch flex items-center">
         <input v-model="checked" @change="$emit('changed', checked)" type="checkbox">
         <span style="font-size:12px;" class="subheadline">{{labelLeft}}</span>
         <span style="font-size:12px;" :class="{'checked':checked}" class="slider round mx-3"></span>

@@ -25,7 +25,7 @@
         <Modal style="z-index:73;" :open="confirmDeleteModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close confirm delete color report modal" @click.prevent="confirmDeleteModalOpen = false" class="absolute top-4 right-4 standard">X</button>
-				<h2 class="headline-2">Are you sure you want to delete {{ deleting.title }}?</h2>
+				<h2 class="subheadline">Are you sure you want to delete {{ deleting.title }}?</h2>
 			</div>
 			<div class="bg-gray-50 px-4 py-3 flex">
 				<button @click="confirmDeleteModalOpen = false" class="standard mr-3">

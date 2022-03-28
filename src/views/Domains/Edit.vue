@@ -6,7 +6,7 @@
 		
 		<h2 class="mb-1 headline">{{domain.url}}</h2>
 		<div class="flex items-center mb-3">
-			<h3 class="pr-2 headline-2">{{domain.url}}</h3>
+			<h3 class="pr-2 subheadline">{{domain.url}}</h3>
 			<button class="standard" aria-label="Edit domain title" @click.prevent="editDomainOpen = true"><i class="far fa-edit"></i></button>
 		</div>
 		<Modal style="z-index:71;" :open="editDomainOpen">
@@ -57,10 +57,10 @@
 
 		<div class="w-full flex xs:flex-wrap sm:flex-wrap">
 			<Card :center="false" class="flex-1 p-4 mx-2">
-				<h3 class="mt-3 mb-1 headline-2">Sitemap</h3>
+				<h3 class="mt-3 mb-1 subheadline">Sitemap</h3>
 
 				<div class="flex w-full">
-					<label class="py-2 font-semibold block" for="specifyRoot">Specify Root</label>
+					<label class="py-2 label block" for="specifyRoot">Specify Root</label>
 					<Checkbox v-model="specifyRoot" id="specifyRoot"></Checkbox>
 				</div>
 				
@@ -106,7 +106,7 @@
 			</Card>
 
 			<Card :center="false" class="flex-1 p-4 mx-2 sm:mt-3 xs:mt-3 xs:max-w-full sm:max-w-full">
-				<h3 class="mt-3 mb-1 headline-2">Sample</h3>
+				<h3 class="mt-3 mb-1 subheadline">Sample</h3>
 				<button class="standard" @click.prevent="structuredListModalOpen =true">Add</button>
 				<template v-if="domain && domain.sample.length">
 					<h4 class="my-3 subheadline">Items</h4>

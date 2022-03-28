@@ -2,10 +2,10 @@
 	<Modal :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
 		<h1 class="headline">Deploy A Tool</h1>
 		<div class="mb-10">
-			<span class="headline-2">Select a Tool to Continue</span>
+			<span class="subheadline">Select a Tool to Continue</span>
 		</div>
 		
-		<div class="flex items-start" v-if="myTeam == 1 || myTeam == 2">
+		<div class="flex justify-evenly items-start" v-if="myTeam == 1 || myTeam == 2">
 			<button 
 			class="font-bold text-center text-pallette-button hover:text-pallette-button-hover" 
 			@click.prevent="EventBus.transitionModal( 'deployToolModal', 'deployWCAGAuditModal')">

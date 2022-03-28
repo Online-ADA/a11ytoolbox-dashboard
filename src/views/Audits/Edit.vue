@@ -1,59 +1,62 @@
 <template>
 	<div class="container">
 		<Loader v-if="loading"></Loader>
-		<h1 class="headline px-2">Edit Audit {{audit.title}}</h1>
-		<button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="mt-3 standard alert" >
-			Delete
-		</button>
+		<div class="flex justify-between items-center">
+			<h1 class="headline">Edit Audit</h1>
+			<button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="mt-3 standard alert" >
+				Delete
+			</button>
+		</div>
+		
 		<div class="flex flex-wrap">
-			<div class="xs:w-full px-2">
-				<Label class="subheadline text-lg" for="locked">Audit Locked</Label>
-				<select v-model="audit.locked" id="locked" class="" name="status">
+			<div class="xs:w-full pr-2">
+				<Label for="locked">Audit Locked</Label>
+				<select v-model="audit.locked" id="locked" class="px-4 py-2 text-base" style="height:42px;" name="status">
 					<option :value="false">False</option>
 					<option :value="true">True</option>
 				</select>
 			</div>
 			<div class="xs:w-full px-2">
-				<Label class="subheadline text-lg" for="start_date">Start Date</Label>
+				<Label for="start_date">Start Date</Label>
 				<DatePicker name="start_date" id="start_date" class="" @input="changeStartDate" v-model="audit.start_date"></DatePicker>
 			</div>
 			<div class="xs:w-full px-2">
-				<Label class="subheadline text-lg" for="end_date">End Date</Label>
+				<Label for="end_date">End Date</Label>
 				<DatePicker name="end_date" id="end_date" class="" @input="changeEndDate" v-model="audit.end_date"></DatePicker>
 			</div>
 
 			<div class="w-full flex xs:flex-wrap">
-				<div class="px-2 xs:w-1/2">
-					<Label class="subheadline text-lg" for="status">Status</Label>
-					<select v-model="audit.status" id="status" class="p-1" name="status">
+				<div class="pr-2 xs:w-1/2">
+					<Label for="status">Status</Label>
+					<select v-model="audit.status" id="status" class="px-4 py-2 text-base" style="height:42px;" name="status">
 						<option :value="status.value" v-for="(status, index) in statusSrc" :key="`status-${index}`">{{status.name}}</option>
 					</select>
 				</div>
-				<div class="px-2 w-1/2">
-					<Label class="subheadline text-lg" for="title">Title</Label>
+				<div class="px-2 w-3/4">
+					<Label for="title">Title</Label>
 					<TextInput class="w-full" id="title" name="title" v-model="audit.title" />
 				</div>
 				<div class="px-2 xs:w-1/2">
-					<Label class="whitespace-nowrap subheadline text-lg" for="audit_num">Audit #</Label>
-					<select v-model="audit.number" id="audit_num" name="audit_num" class="">
+					<Label class="whitespace-nowrap" for="audit_num">Audit #</Label>
+					<select v-model="audit.number" id="audit_num" name="audit_num" class="px-4 py-2 text-base" style="height:42px;">
 						<option :value="option" v-for="option in [1, 2, 3]" :key="'audit_num-'+option">{{option}}</option>
 					</select>
 				</div>
 				<div class="px-2 xs:w-1/2">
-					<Label class="subheadline text-lg" for="ctarget">Conformance Target</Label>
+					<Label for="ctarget">Conformance Target</Label>
 					<TextInput class="w-full" id="ctarget" name="ctarget" v-model="audit.conformance_target" />
 				</div>
 			</div>
 
-			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label class="subheadline text-lg" for="scope">Scope of the Audit</Label>
-				<Textarea class="w-full" id="scope" name="scope" v-model="audit.scope" rows="4"></Textarea>
+			<div class="xs:w-full w-1/2 text-left pr-2 h-[108px]">
+				<Label for="scope">Scope of the Audit</Label>
+				<Textarea style="min-height:67px;" class="w-full" id="scope" name="scope" v-model="audit.scope" rows="2"></Textarea>
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label class="subheadline text-lg" for="essential_functionality">
+				<Label for="essential_functionality">
 					Essential Functionality
-					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
+					<Card :gutters="false" :center="false" class="my-0 overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.essential_functionality" :key="`AT-select-${i}`">
 							<TextInput class="mr-1 w-11/12" id="essential_functionality" name="essential_functionality" v-model="audit.essential_functionality[i]"></TextInput>
 							<Button class="ml-1" :hover="true" @click.native.prevent="removeEssentialFunctionality(i)"><i class="fas fa-trash-alt"></i></Button>
@@ -64,15 +67,15 @@
 				</Label>
 			</div>
 
-			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label class="subheadline text-lg" for="additional_requirements">Additional Requirements</Label>
-				<Textarea class="w-full" id="additional_requirements" name="additional_requirements" v-model="audit.additional_requirements" rows="4"></Textarea>
+			<div class="xs:w-full w-1/2 text-left pr-2 h-[108px]">
+				<Label for="additional_requirements">Additional Requirements</Label>
+				<Textarea style="min-height:67px;" class="w-full" id="additional_requirements" name="additional_requirements" v-model="audit.additional_requirements" rows="2"></Textarea>
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label class="subheadline text-lg" for="software">
+				<Label for="software">
 					Software Used
-					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
+					<Card :gutters="false" :center="false" class="my-0 overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.software_used" :key="`SU-select-${i}`">
 							<select v-model="audit.software_used[i]" class="mr-1 w-11/12" id="software" name="software">
 								<option :value="option" v-for="(option, index) in software_used_src" :key="`SU-${index}`">{{option}}</option>
@@ -85,10 +88,10 @@
 				</Label>
 			</div>
 
-			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label class="subheadline text-lg" for="software">
+			<div class="xs:w-full w-1/2 text-left pr-2">
+				<Label for="software">
 					Assistive Tech
-					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
+					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.assistive_tech" :key="`AT-select-${i}`">
 							<select class="mr-1 w-11/12" id="assistive" name="assistive" v-model="audit.assistive_tech[i]">
 								<option :value="option" :key="`AT-${index}`" v-for="(option, index) in assistive_tech_src">{{option}}</option>
@@ -102,9 +105,9 @@
 			</div>
 
 			<div class="xs:w-full w-1/2 text-left px-2">
-				<Label class="subheadline text-lg" for="software">
+				<Label for="software">
 					Tech Requirements
-					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80 my-2">
+					<Card :gutters="false" :center="false" class="overflow-y-scroll w-full text-left max-h-80">
 						<div class="flex mb-3" v-for="(input, i) in audit.tech_requirements" :key="`TR-select-${i}`">
 							<select class="mr-1 w-11/12" id="treqs" name="treqs" v-model="audit.tech_requirements[i]">
 								<option :key="`TR-${index}`" v-for="(option, index) in tech_requirements_src">{{option}}</option>
@@ -120,8 +123,8 @@
 			
 			<template v-if="$store.getters['auth/isManager']">
 				<div class="flex my-3 w-full xs:flex-wrap">
-					<Card class="xs:w-full w-1/2 xs:mb-3">
-					<h3 class="headline-2" >Users</h3>
+					<Card :gutters="false" class="xs:w-full w-1/2 xs:mb-3 mr-2">
+					<h3 class="subheadline" >Users</h3>
 					<ul v-if="unassigned.length">
 						<li class="my-2" v-for="(id, index) in unassigned" :key="`unAssignedKey-${index}`">
 						<span>{{displayUser(id)}}</span>
@@ -129,35 +132,29 @@
 						</li>
 					</ul>
 					</Card>
-					<Card class="xs:w-full w-1/2">
-					<h3 class="headline-2">Assignees</h3>
-					<ul v-if="assigned.length">
-						<li class="my-2 flex justify-center items-center" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
-							<template v-if="!team_members.includes(id)">
-								<i style="padding-top:2px; font-size:12px;" title="Assigned by an executive Team Member" class="far fa-info-circle pr-2 text-sm"></i>{{displayUser(id)}}
-							</template>
-							<template v-else>
-								<Button
-								:aria-label="`Unassign ${displayUser(id)} from the audit`" 
-								hover="true" 
-								class="text-lg leading-4 mr-2"
-								@click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
-								<!-- <Button
-								:aria-label="`Unassign ${displayUser(id)} from the audit`" 
-								:hover="!team_members.includes(id) ? false : true" 
-								class="text-lg leading-4 mr-2"
-								:class="{ 'disabled' : !team_members.includes(id) }"
-								:title="!team_members.includes(id) ? 'Assigned by an executive Team Member' : false"
-								@click.native.prevent="!team_members.includes(id) ? ()=>{} : unassign(id) ">&lt;</Button><span>{{displayUser(id)}}</span> -->
-							</template>
-							
-						</li>
-					</ul>
+					<Card :gutters="false" class="xs:w-full w-1/2 ll-2 ml-2">
+						<h3 class="subheadline">Assignees</h3>
+						<ul v-if="assigned.length">
+							<li class="my-2 flex justify-center items-center" v-for="(id, index) in assigned" :key="`AssignedKey-${index}`">
+								<template v-if="!team_members.includes(id)">
+									<i style="padding-top:2px; font-size:12px;" title="Assigned by an executive Team Member" class="far fa-info-circle pr-2 text-sm"></i>{{displayUser(id)}}
+								</template>
+								<template v-else>
+									<Button
+									:aria-label="`Unassign ${displayUser(id)} from the audit`" 
+									hover="true" 
+									class="text-lg leading-4 mr-2"
+									@click.native.prevent="unassign(id)">&lt;</Button><span>{{displayUser(id)}}</span>
+									
+								</template>
+								
+							</li>
+						</ul>
 					</Card>
 				</div>
 			</template>
 			
-			<button class="standard my-5" @click.prevent="saveAudit">Save</button>
+			<button class="standard my-2" @click.prevent="saveAudit">Save</button>
 			
 		</div>
 		<Modal class="adjust-with-sidebars" :open="confirmModalOpen">
@@ -270,12 +267,6 @@ export default {
 				this.$store.dispatch("audits/getStructuredSample")
 			}
 		},
-		// "$store.state.user.team_members":function(newVal){
-		// 	if( newVal && newVal.length ){
-		// 		let self = this
-		// 		this.unassigned = JSON.parse(JSON.stringify(newVal.filter( o=>!self.assigned.includes(o.id)).map( o=>o.id )))
-		// 	}
-		// }
 	},
 	methods: {
 		deleteAudit(){
