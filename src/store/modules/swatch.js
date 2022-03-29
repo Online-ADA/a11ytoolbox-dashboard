@@ -2,7 +2,8 @@
 const getDefaultState = () => {
 	return {
 		loading: false,
-		all: []
+		all: [],
+		swatch: false
 	}
 }
 
@@ -10,7 +11,8 @@ export default {
 	namespaced:true,
 	state: {
 		loading: false,
-		all: []
+		all: [],
+		swatch: false
 	},
 	mutations: {
 		setState(state,payload) {
@@ -81,6 +83,7 @@ export default {
 			state.loading = true
 			Request.getPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/swatch/${args.id}` )
 			.then( re => {
+				state.swatch = re.data.details
 				if( args.callback ){
 					args.callback(re.data.details)
 				}

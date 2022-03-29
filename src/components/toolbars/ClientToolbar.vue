@@ -13,7 +13,9 @@
 					<div class="flex items-center justify-end">
 						<div class="flex items-center text-13">
 							<span class="w-auto mr-2 flex justify-end items-center">
-								<router-link title="Go to Client Overview" :to="{name:'ClientShow', params:{id:$route.params.id}}" v-if="isClientEdit"><i class="far fa-arrow-left"></i></router-link>
+								<router-link title="Manage Properties" v-if="!isProperties" :to="{name: 'ClientProperties', params:{id:$route.params.id}}"><i class="far fa-atlas"></i></router-link>
+								<router-link title="Go to Client Overview" :to="{name:'ClientShow', params:{id:$route.params.id}}" v-if="isClientEdit || isProperties"><i class="far fa-arrow-left"></i></router-link>
+								<router-link v-if="!isClientEdit" class="ml-3" :to="{path: `/clients/${$route.params.id}/edit`}" title="Client Settings"><i class="far fa-cog"></i></router-link>
 							</span>
 						</div>
 					</div>
@@ -45,6 +47,9 @@ export default {
 		isClientEdit(){
 			return this.$route.name === "ClientEdit"
 		},
+		isProperties(){
+			return this.$route.name === "ClientProperties"
+		}
 	},
 	methods: {
 	},

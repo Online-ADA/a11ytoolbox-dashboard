@@ -69,9 +69,9 @@
                         </router-link>
                     </li>
                 </template>
-                <li class="hover:bg-pallette-grey-light">
+                <!-- <li class="hover:bg-pallette-grey-light">
                     <router-link :to="'/properties'" class="block">Properties</router-link>
-                </li>
+                </li> -->
                 <li class="hover:bg-pallette-grey-light">
                     <router-link :to="'/automations/history'" class="block">Automated Tool Logs</router-link>
                 </li>

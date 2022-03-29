@@ -16,9 +16,9 @@ export default {
     },
     created() {
     },
-    // beforeDestroy(){
-    //   this.$store.dispatch("domains/resetState")
-    // },
+    beforeDestroy(){
+      this.$store.dispatch("swatch/resetState")
+    },
     mounted() {
     },
     components: {

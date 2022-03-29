@@ -107,13 +107,13 @@
                 <span class="pr-1">Case Sensitive:</span>
                 <Checkbox v-model="searchData.caseSensitive"></Checkbox>
             </label> -->
-            <label class="label flex mx-5 items-center">
+            <label class="label pt-0 flex mx-5 items-center">
                 <span class="pr-2">Search Column:</span>
                 <select class="p-0 border-black border-l-0 border-r-0 border-t-0 shadow-none rounded-none" v-model="searchData.column" name="search-column">
                     <option v-for="(column, index) in searchColumns" :value="column.value" :key="'search-columns-'+index">{{column.display}}</option>
                 </select>
             </label>
-            <label class="label mr-5 items-center" for="search-criteria">
+            <label class="label pt-0 mr-5 items-center" for="search-criteria">
                 <span class="pr-2">Keyword:</span>
                 <input class="px-1 border border-black border-l-0 border-r-0 border-t-0" style="max-height:39px;font-size:12px;" v-model="searchData.term" name="search-criteria" />
             </label>
@@ -374,7 +374,7 @@ export default {
         position:relative;
     }
     .search-bar{
-        height:35px;
+        height:45px;
         z-index:0;
         position:relative;
         display:none;

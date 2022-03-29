@@ -38,6 +38,7 @@ const routes = [
     children:[
       {
         path: "/",
+        name: "ClientProperties",
         component: () => import(/* webpackChunkName: "properties" */ '../views/Properties/List.vue'),
       }
     ]
