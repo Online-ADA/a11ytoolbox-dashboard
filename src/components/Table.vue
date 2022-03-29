@@ -231,6 +231,7 @@
 					"created_by",
 					"media_type",
 					"html",
+					"date_created"
 				],
 				specialKeys : ["articles", "techniques"],
 				columnPickerOpen: false,
