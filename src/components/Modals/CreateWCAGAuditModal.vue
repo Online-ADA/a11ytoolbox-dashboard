@@ -166,7 +166,7 @@
 					</form>
 				</template>
 				
-				<div class="w-full">
+				<!-- <div class="w-full">
 
 					<template v-if="isManager">
 						<h2 class="subheadline pt-7 pb-3">Assign Users</h2>
@@ -191,7 +191,7 @@
 						</div>
 						
 					</template>
-				</div>
+				</div> -->
 			</div>
 			<button class="standard mr-2" @click.prevent="deployTool">Deploy</button>
 			<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployWCAGAuditModal', false)})" class="standard mt-3">Cancel</button>

@@ -14,14 +14,14 @@
                     </div>
                     <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                         <li>
-                            <button @click.prevent="launchCreateClientModal">Create Client</button>
+                            <button class="w-full text-left p-2" @click.prevent="launchCreateClientModal">Create Client</button>
                         </li>
                         <li class="hover:bg-pallette-grey-light" v-for="(child, index) in getClients" :key="index">
                             <template v-if="child.type == 'router-link'">
-                                <router-link class="block" :to="child.to"><span v-html="child.label"></span></router-link>
+                                <router-link class="block w-full" :to="child.to"><span v-html="child.label"></span></router-link>
                             </template>
                             <template v-if="child.type == 'client'">
-                                <a href="#" @click.prevent="setClient(child.to)">{{child.label}}</a>
+                                <a class="block w-full" href="#" @click.prevent="setClient(child.to)">{{child.label}}</a>
                             </template>
                         </li>
                     </ul>
@@ -59,19 +59,19 @@
             <ul class="text-left mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <template v-if="isManager">
                     <li class="hover:bg-pallette-grey-light">
-                        <router-link class="block" :to="'/manage/articles'">
+                        <router-link class="block w-full" :to="'/manage/articles'">
                             Success Criteria
                         </router-link>
                     </li>
                     <li class="hover:bg-pallette-grey-light">
-                        <router-link class="block" :to="'/manage/users'">
+                        <router-link class="block w-full" :to="'/manage/users'">
                             Users
                         </router-link>
                     </li>
                 </template>
                 
                 <li class="hover:bg-pallette-grey-light">
-                    <router-link :to="'/automations/history'" class="block">Automated Tool Logs</router-link>
+                    <router-link :to="'/automations/history'" class="block w-full">Automated Tool Logs</router-link>
                 </li>
             </ul>
             <span id="management-label" class="sub-label text-white uppercase"><div>Global</div>Settings</span>
@@ -89,14 +89,14 @@
                 
             <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <li class="hover:bg-pallette-grey-light">
-                    <router-link :to="profileLink" class="block">User Profile</router-link>
+                    <router-link :to="profileLink" class="block w-full">User Profile</router-link>
                 </li>
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
                     <template v-if="child.type == 'router-link'">
-                        <router-link class="block" :to="GoToDropdown(child)"><span class="sm:text-right" v-html="child.label"></span></router-link>
+                        <router-link class="block w-full" :to="GoToDropdown(child)"><span class="sm:text-right" v-html="child.label"></span></router-link>
                     </template>
                     <template v-if="child.type == 'logout'">
-                        <A href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
+                        <A class="block w-full" href="#" @click.native.prevent="$store.dispatch('auth/logout', $router)">Logout</A>
                     </template>
                 </li>
             </ul>
@@ -327,7 +327,7 @@ img.avatar{
 .dropdown-container.dropdown-nolabel:not(.settings-dropdown ) ul {
     top:175%;
 }
-.dropdown-container ul li {
+.dropdown-container ul li a {
     padding: 8px;
 }
 .dropdown-container .right-align ul{
