@@ -3,9 +3,9 @@
         <WcagAuditToolbar v-if="tool.type === 'audit' || $route.name == 'NewScan'" v-on:classupdate="UpdateClasses"/>
         <ColorSwatchToolbar v-if="tool.type === 'color_swatch'" v-on:classupdate="UpdateClasses"/>
         <MediaAuditToolbar v-if="tool.type === 'media-audit'" v-on:classupdate="UpdateClasses"/>
-        <OverviewToolbar v-if="$route.name == 'ProjectShow'" v-on:classupdate="UpdateClasses"/>
-        <ProjectToolbar v-if="$route.name == 'ProjectEdit'" v-on:classupdate="UpdateClasses" />
-        <ClientToolbar v-if="$route.name == 'ClientEdit' || $route.name == 'ClientShow'" v-on:classupdate="UpdateClasses" />
+        <!-- <OverviewToolbar v-if="$route.name == 'ProjectShow'" v-on:classupdate="UpdateClasses"/> -->
+        <ProjectToolbar v-if="projectPages.includes($route.name)" v-on:classupdate="UpdateClasses" />
+        <ClientToolbar v-if="clientPages.includes($route.name)" v-on:classupdate="UpdateClasses" />
     </div>
 </template>
 
@@ -14,7 +14,7 @@
 // import { EventBus } from '../services/eventBus'
 import WcagAuditToolbar from './toolbars/WcagAuditToolbar'
 import MediaAuditToolbar from './toolbars/MediaAuditToolbar'
-import OverviewToolbar from './toolbars/OverviewToolbar'
+// import OverviewToolbar from './toolbars/OverviewToolbar'
 import ColorSwatchToolbar from './toolbars/ColorSwatchToolbar'
 import ProjectToolbar from './toolbars/ProjectToolbar'
 import ClientToolbar from './toolbars/ClientToolbar'
@@ -28,6 +28,15 @@ export default {
         return {
             classes: {
             },
+            projectPages: [
+                'ProjectEdit',
+                'ProjectShow'
+            ],
+            clientPages: [
+                'ClientEdit',
+                'ClientShow',
+                'ClientProperties'
+            ]
         }
     },
     name: 'ada-canvas-toolbar',
@@ -47,7 +56,7 @@ export default {
     components:{
         WcagAuditToolbar,
         MediaAuditToolbar,
-        OverviewToolbar,
+        // OverviewToolbar,
         ColorSwatchToolbar,
         ProjectToolbar,
         ClientToolbar

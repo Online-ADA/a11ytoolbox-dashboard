@@ -4,6 +4,10 @@
             <div class="flex items-center justify-between xs:flex-wrap">
                 <!-- Left side -->
                 <div class="flex items-center text-13 xs:basis-full xs:flex-wrap">
+                    <div class="flex items-center">
+                        <span style="font-size:16px;" class="toolbar-headline">{{pageTitle}}</span>
+                        <div class="border border-black mx-3.5 divider"></div>
+                    </div>
                     <span class="xs:basis-full xs:max-w-full xs:break-all" v-if="$store.state.projects.project">
                         {{$store.state.projects.project.name}}
                     </span>
@@ -12,6 +16,7 @@
                 <div class="flex items-center justify-end">
                     <div class="flex items-center text-13">
                         <span class="w-auto mr-2 flex justify-end items-center">
+                            <router-link v-if="isEditSwatch" title="Go to Audit" :to="{name:'AuditShow', params:{id:$route.params.id}}"><i class="far fa-arrow-left"></i></router-link>
                             <router-link v-if="!isEditSwatch" title="Edit Color Swatch" :to="{name: 'SwatchEdit', id: $route.params.id}"><i class="far fa-cog"></i></router-link>
                             <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="EventBus.$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
                         </span>
@@ -43,6 +48,16 @@ export default {
         isEditSwatch(){
             return this.$route.name === "SwatchEdit"
         },
+        pageTitle(){
+            switch( this.$route.name ){
+                case "SwatchEdit":
+                    return "Edit Color Swatch Analysis"
+                    break;
+                case "SwatchShow":
+                    return "Color Swatch Analysis"
+                    break;
+            }
+        }
     },
     methods: {
     },
@@ -55,5 +70,10 @@ export default {
 
 </script>
 
-<style scoped>    
+<style scoped> 
+    .divider{
+        height: 30px;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
 </style>

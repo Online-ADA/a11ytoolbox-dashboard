@@ -32,17 +32,7 @@ const routes = [
       },
     ]
   },
-  {
-    path: "/properties",
-    component: () => import(/* webpackChunkName: "properties" */ '../views/Properties/Index.vue'),
-    children:[
-      {
-        path: "/",
-        name: "ClientProperties",
-        component: () => import(/* webpackChunkName: "properties" */ '../views/Properties/List.vue'),
-      }
-    ]
-  },
+  
   {
     path: "/color-reports",
     component: () => import(/* webpackChunkName: "swatches" */ '../views/Swatches/Index.vue'),
@@ -121,33 +111,24 @@ const routes = [
         component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Show.vue'),
         meta: {
           role: 2
-          // permissions: {
-          //   entity: "clients",
-          //   action: "view"
-          // }
         },
       },
       {
         path:":id/edit",
         name:"ClientEdit",
         component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Edit.vue'),
-        // meta: {
-        //   permissions: {
-        //     entity: "clients",
-        //     action: "write"
-        //   }
-        // },
+        
       },
       {
         path:"create",
         name:"ClientCreate",
         component:() =>  import(/* webpackChunkName: "clients" */ '../views/Clients/Create.vue'),
-        // meta: {
-        //   permissions: {
-        //     entity: "clients",
-        //     action: "write"
-        //   }
-        // },
+        
+      },
+      {
+        path: ":id/properties",
+        name: "ClientProperties",
+        component: () => import(/* webpackChunkName: "properties" */ '../views/Properties/List.vue'),
       },
     ]
   },

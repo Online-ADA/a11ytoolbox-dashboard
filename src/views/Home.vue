@@ -1,5 +1,5 @@
 <template>
-  <div class="p-5">
+  <div class="mt-[-30px]">
     <Loader v-if="$store.state.clients.loading || !$store.getters['auth/isAuthenticated']"></Loader>
 
     <div v-if="message" class="text-red-600">{{message}}</div>

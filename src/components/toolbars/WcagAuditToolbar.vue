@@ -4,6 +4,11 @@
             <!-- Audit Toolbar -->
             <div class="flex items-center justify-between xs:flex-wrap">
                 <div class="flex items-center text-13 xs:basis-full xs:flex-wrap">
+                    <div class="xs:hidden sm:hidden flex items-center">
+                        <span style="font-size:16px;" class="toolbar-headline">{{pageTitle}}</span>
+                        <div class="border border-black mx-3.5 divider"></div>
+                    </div>
+
                     <span class="xs:basis-full xs:max-w-full xs:break-all" v-if="audit.domain">
                         <router-link title="Edit domain" :to="`/domains/${audit.domain.id}/edit`">
                             {{audit.domain.url}}<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
@@ -13,10 +18,6 @@
                         <div class="border border-black mx-3.5 divider xs:hidden"></div>
                         <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
                         <span>Total Issues: {{totalRows}}</span>
-                    </template>
-                    <template v-else>
-                        <div class="border border-black mx-3.5 xs:mx-2 divider"></div>
-                        <router-link title="Go to Audit" :to="{name:'AuditShow', params:{id:$route.params.id}}"><i class="far fa-arrow-left"></i></router-link>
                     </template>
                 </div>
                 <span class="w-auto xs:mr-0 mr-2 flex items-center xs:basis-full xs:justify-evenly">
@@ -80,6 +81,7 @@
                     </template>
 
                     <!-- Audit Tools -->
+                    <router-link class="mr-3.5" v-if="!isAuditShowPage" title="Go to Audit" :to="{name:'AuditShow', params:{id:$route.params.id}}"><i class="far fa-arrow-left"></i></router-link>
                     <router-link class="xs:ml-0 mr-3.5" :to="{path: `/automations/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
 
                     <router-link :class="{ 'mr-3.5': isAuditShowPage }"
@@ -295,6 +297,22 @@ export default {
         },
         isAuditShowPage(){
             return this.$route.name === "AuditShow"
+        },
+        pageTitle(){
+            switch( this.$route.name ){
+                case "AuditEdit":
+                    return "Edit Audit"
+                    break;
+                case "AuditShow":
+                    return "WCAG Audit"
+                    break;
+                case "NewScan":
+                    return "Initiate A New Automated Audit"
+                    break;
+                case "AuditImport":
+                    return "Import Issues"
+                    break;
+            }
         }
     },
     methods: {

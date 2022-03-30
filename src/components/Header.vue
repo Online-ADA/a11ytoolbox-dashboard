@@ -36,7 +36,7 @@
             <!-- Quick Tools does not currently dropdown, only 1 tool -->
         </template>
 
-        <div ref="quickToolsDropdown" role="button" tabindex="0" @click.prevent="EventBus.openModal('colorContrastModal', $event)" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-10 items-end">
+        <div ref="quickToolsDropdown" role="button" tabindex="0" @click.prevent="EventBus.openModal('colorContrastModal', $event)" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-5 items-end">
             <div class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
                 <span aria-labelledby="quicktools-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     <i class="fas fa-pencil-paintbrush"></i>
@@ -50,7 +50,7 @@
             <span id="quicktools-label" class="sub-label text-white uppercase"><div>Quick Contrast</div>Checker</span>
         </div>
 
-        <div ref="settingsDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('settingsDropdown')" @click.prevent="expandDropdown('settingsDropdown')" :aria-expanded="[ dropdownsExpanded.includes('settingsDropdown') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('settingsDropdown')}" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col mr-10 items-end">
+        <div ref="settingsDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('settingsDropdown')" @click.prevent="expandDropdown('settingsDropdown')" :aria-expanded="[ dropdownsExpanded.includes('settingsDropdown') ? 'true' : 'false' ]" :class="{expanded: dropdownsExpanded.includes('settingsDropdown')}" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col mr-5 items-end">
             <div id="settings" v-if="$store.state.auth.user" class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
                 <span aria-labelledby="management-label" @click.prevent class="block whitespace-no-wrap no-underline text-white" href="#">
                     <i class="fas fa-tools"></i>
@@ -69,15 +69,15 @@
                         </router-link>
                     </li>
                 </template>
-                <!-- <li class="hover:bg-pallette-grey-light">
-                    <router-link :to="'/properties'" class="block">Properties</router-link>
-                </li> -->
+                
                 <li class="hover:bg-pallette-grey-light">
                     <router-link :to="'/automations/history'" class="block">Automated Tool Logs</router-link>
                 </li>
             </ul>
             <span id="management-label" class="sub-label text-white uppercase"><div>Global</div>Settings</span>
         </div>
+
+        <div class="border mx-3 divider"></div>
 
         <div ref="userDropdown" role="button" tabindex="0" @keyup.enter.space="expandDropdown('userDropdown')" @click.prevent="expandDropdown('userDropdown')" :aria-expanded="[ dropdownsExpanded.includes('userDropdown') ? 'true' : 'false' ]" :class="[dropdownsExpanded.includes('userDropdown') ? 'expanded' : '']" class="dropdown-container dropdown-w-label relative flex items-end">
             <div id="login" v-if="$store.state.auth.user" class="dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
@@ -104,11 +104,6 @@
             <img alt="User Avatar" :src="user_avatar" class="avatar" />
             
         </div>
-
-        
-        <!-- <router-link aria-label="Go to user profile" :to="profileLink">
-            
-        </router-link> -->
     </div>
 </template>
 

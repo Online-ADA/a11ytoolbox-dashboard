@@ -263,17 +263,22 @@
 		<Modal style="z-index:72;" :open="selectRecommendationsModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
 				<button aria-label="Close select recommendations modal" @click.prevent="selectRecommendationsModalOpen = false" class="absolute top-4 right-4 standard" >X</button>
-				<h2 class="subheadline">Which recommendations would you like to add?</h2>
-				<select aria-label="Select recommendations" class="m-2 w-full" multiple v-model="selectedRecommendations">
-					<option :value="option" v-for="(option, index) in filteredRecommendations" :key="'recommendations-'+index">{{option.description}}</option>
-				</select>
-				<button @click.prevent="addSelectedRecommendations" class="mx-2 standard">Add</button>
+				<h2 class="subheadline pr-8">Which recommendations would you like to add?</h2>
+				<template v-if="filteredRecommendations.length" >
+					<select aria-label="Select recommendations" class="m-2 w-full" multiple v-model="selectedRecommendations">
+						<option :value="option" v-for="(option, index) in filteredRecommendations" :key="'recommendations-'+index">{{option.description}}</option>
+					</select>
+					<button @click.prevent="addSelectedRecommendations" class="mx-2 standard">Add</button>
+				</template>
+				<template v-else>
+					<p>Select a success criteria first</p>
+				</template>
 			</div>
-			<div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
+			<!-- <div class="bg-gray-50 px-4 py-3 flex flex-row-reverse">
 				<button @click="selectRecommendationsModalOpen = false" class="standard">
 				Cancel
 				</button>
-			</div>
+			</div> -->
 		</Modal>
 		<Modal style="z-index:73;" :open="confirmDeleteModalOpen">
 			<div class="bg-white px-4 pt-5 pb-4 p-6">
@@ -299,11 +304,11 @@
 					<button @click.prevent="getSampleCSV" class="mx-2 standard">Working Sample (CSV)</button>
 				</div>
 			</div>
-			<div class="bg-gray-50 px-4 py-3 flex">
+			<!-- <div class="bg-gray-50 px-4 py-3 flex">
 				<button @click="EventBus.closeModal(()=>{whichCSVModalOpen = false})" class="standard">
 					Cancel
 				</button>
-			</div>
+			</div> -->
 			
 		</Modal>
 	</div>

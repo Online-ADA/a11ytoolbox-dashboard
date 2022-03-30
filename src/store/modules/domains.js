@@ -29,7 +29,7 @@ export default {
 			},
 			deleteDomain({state, rootState}, args){
 				state.loading = true
-				Request.destroyPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}`)
+				Request.destroyPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}/${args.client_id}`)
 				.then( re => {
 					state.loading = false
 					state.all = re.data.details

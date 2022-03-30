@@ -12,6 +12,9 @@
 	.subheadline {
 		@apply text-subheadline font-subheadline font-semibold uppercase pb-0;
 	}
+	.toolbar-headline {
+		@apply leading-none text-base font-headline font-bold uppercase;
+	}
 	h2 {
     	@apply text-3xl;
 	}
