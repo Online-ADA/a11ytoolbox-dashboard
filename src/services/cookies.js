@@ -11,7 +11,6 @@ class Cookies {
         this._license = false
     }
     set(name,value,expires_in_days = false) {
-        console.log(name,value)
         if(name == 'toolboxLicense') this._license = value
         if(Prefix[name]) name = `${this._license}-${name}`
         let expires = 'Session'

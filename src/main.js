@@ -30,6 +30,7 @@ Vue.prototype.$http.defaults.headers.common['Accept'] = "application/json"
 if( Cookies.get("loggingIn") == undefined ){
   Cookies.set("loggingIn", false)
 }
+
 const params = new URLSearchParams(window.location.search)
 const license_id = params.get('license') ? params.get('license') : Cookies.get('toolboxLicense')
 Cookies.set('toolboxLicense',license_id)

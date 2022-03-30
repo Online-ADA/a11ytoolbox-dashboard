@@ -38,7 +38,16 @@ export default {
 							type: "error",
 							position: 'bottom right'
 						})
-					}else{
+					}else if(re.data.success == 'upgrade') {
+						args.callback('upgrade')
+						Vue.notify({
+							title: "Warning",
+							text: re.data.message,
+							type: "warn",
+							position: 'bottom right'
+						})
+					}
+					else{
 						args.callback('success')
 						Vue.notify({
 							title: "Success",
