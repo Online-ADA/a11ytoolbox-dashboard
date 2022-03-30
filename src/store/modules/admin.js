@@ -623,7 +623,14 @@ export default {
 				}
 			})
 		},
-		inviteUsers({state,rootState},args) {
+		inviteUsers({state,rootState,commit},args) {
+			if(rootState.user.user_limit >= rootState.user.all.length){
+				commit("upgrade/setState",{key:'trigger',value: 'AddUsers'},{root:true})
+				let plural = rootState.user.user_limit > 1 ? 's' : ''
+				commit("upgrade/setState",{key:'message',value: `You have reached the maximum of ${rootState.user.user_limit} user${plural} for this license.`},{root:true})
+				this.EventBus.openModal('UpgradeLicenseModal',false)
+				return	
+			}
 			state.loading.users = true;
 			Request.post(`${rootState.auth.accapi}/api/accounts/users/invite`, {
 				params: {
@@ -666,6 +673,13 @@ export default {
 			})
 		},
 		addUsers({state,rootState},args) {
+			if(rootState.user.user_limit >= rootState.user.all.length){
+				commit("upgrade/setState",{key:'trigger',value: 'AddUsers'},{root:true})
+				let plural = rootState.user.user_limit > 1 ? 's' : ''
+				commit("upgrade/setState",{key:'message',value: `You have reached the maximum of ${rootState.user.user_limit} user${plural} for this license.`},{root:true})
+				this.EventBus.openModal('UpgradeLicenseModal',false)
+				return	
+			}
 			state.loading.users = true;
 			Request.post(`${rootState.auth.API}/l/${rootState.auth.license.id}/users/add`, {
 				params: {

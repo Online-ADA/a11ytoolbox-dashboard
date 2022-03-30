@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="flex flex-col w-1/2">
-                <div v-for="(tier_data,i) in tiers" :key="i" tabindex="0" role="button" @click="TierSelected(i)" :class="[{'bg-pallette-blue text-white': i == selected_tier},'flex border my-2 p-4 relative']">
+                <div v-for="(tier_data,i) in tiers" :key="i" tabindex="0" role="button" @click="TierSelected(i)" :class="[{'bg-pallette-yellow': i == selected_tier},'flex border my-2 p-4 relative']">
                     <div class="check justify-center items-center flex" v-if="i == selected_tier" >
                         <CheckCircle size="30" />
                     </div>
@@ -28,8 +28,8 @@
                         <span>{{GetPrice(tier_data.product.price)}}</span>
                         <span> / Month</span>
                     </div>
-                    <div v-if="tier == i" class="px-2 text-[16px] italic absolute right-[-10px] top-[-15px] bg-pallette-blue text-white">
-                        Your License
+                    <div v-if="tier == i" class="px-2 text-[16px] absolute right-[-10px] top-[-15px] bg-pallette-white border">
+                        Current License
                     </div>
                 </div>
             </div>

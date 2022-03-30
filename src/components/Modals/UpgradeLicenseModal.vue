@@ -17,22 +17,35 @@
 					<h1 class="headline text-center">Upgrade License</h1>
 				</div>
 				<div >
-					<p>{{message}}</p>
+					<p class="text-center">{{message}}</p>
+				</div>
+				<div v-if="error_message" class="flex justify-center items-center text-pallette-red">
+					<p>{{error_message}}</p>
 				</div>
 				<div class="my-10">
 					<PricingOptions :tiers="tier_data" :tier="tier" @option:update="OptionSelected"/>
 				</div>
 				<template>
-					<div class="w-full flex justify-center items-center">
+					<div v-if="license.type == 'Subscription' && license.subscription_id" class="w-full flex justify-center items-center">
+						<button @click.prevent="chooseYes" :disabled="!selected_option || selected_option == tier" class="standard mr-2">Upgrade Now</button>
+					</div>
+					<div v-else class="w-full flex justify-center items-center">
 						<button @click.prevent="tab = 'payment'" :disabled="!selected_option || selected_option == tier" class="standard mr-2">Continue</button>
 					</div>
 				</template>
 			</div>
 			<div :class="[{'translate-x-0':tab == 'payment','translate-x-[250%] invisible absolute': tab != 'payment'},'min-w-full bg-pallette-white  w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
-				<div >
+				<div v-if="payment_screen != 'success'" >
 					<h1 class="headline text-center">Payment Information</h1>
+				</div>				
+				<div v-if="payment_screen == 'success'" >
+					<h1 class="headline text-center">Thank You!</h1>
 				</div>
 				<div class="flex p-12">
+					<div v-show="payment_screen == 'success'" class="my-10 flex flex-col justify-center w-full px-2 relative">
+						<p>Congratulations!</p>
+						<p>License has been upgraded successfully</p>
+					</div>
 					<div v-show="payment_screen == 'method'" class="my-10 flex flex-col justify-center w-full px-2 relative">
 						<div class="h-24" v-show="loading_payment_method" >
 							<Loader v-if="loading_payment_method" :local="true"></Loader>
@@ -135,20 +148,60 @@
 								<p>Select An Existing Payment Method</p>
 								<button @click.prevent="payment_screen = 'method'" class="standard mr-2">Add a new payment method</button>
 							</div>
-							<div v-for="(payment,i) in payments" :key="i" class="border my-2 w-full">
-								<label :for="`payment-method-${payment.id}`" :class="[{'bg-pallette-blue text-white':selected_payment==payment.id},'w-full flex items-center  py-2 px-6']">
-									<div class="basis-3/4">
-										{{payment.card_type}} - {{payment.card_number}} - {{payment.expiration_date}}
+
+							<div class="flex flex-col w-full">
+								<div v-for="(payment,i) in payments" :key="i" tabindex="0" role="button" @keyup.enter="PaymentSelected(payment)" @click="PaymentSelected(payment)" :class="[{'bg-pallette-yellow': selected_payment == payment.id},'flex border my-2 p-4 relative w-full']">
+									<div class="check justify-center items-center flex" v-if="selected_payment == payment.id" >
+										<CheckCircle size="30" />
 									</div>
-									<input class="basis-1/4" type="radio" :id="`payment-method-${payment.id}`" name="payment_method" :value="payment.id" v-model="selected_payment">
-								</label>
+									<div class="product-name ml-6 text-[20px] flex flex-col w-full">
+										<div class="flex w-full">
+											<div class="basis-4/12">
+												Card Type
+											</div>
+											<div class="basis-4/12">
+												Card Ends In
+											</div>
+											<div class="basis-4/12">
+												Card Expiration
+											</div>
+										</div>
+										<div class="flex w-full">
+											<div class="basis-4/12">
+												{{payment.card_type}}
+											</div>
+											<div class="basis-4/12">
+												{{payment.card_number}}
+											</div>
+											<div class="basis-4/12">
+												{{payment.expiration_date}}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div v-if="selected_option" class="flex flex-wrap w-full my-4">
+								<div class="text-black flex my-2 p-4 relative">
+									<div v-if="selected_option == 'PAP'" class="product-name ml-6 text-[20px]">
+										Partner Agency Program
+									</div>
+									<div v-else class="product-name ml-6 text-[20px]">
+										{{selected_option}}
+									</div>
+									<div class="ml-6 text-[20px]">
+										<span>$</span>
+										<span>{{GetPrice(tier_data[selected_option].product.price)}}</span>
+										<span> / Month</span>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 				<template>
 					<div class="w-full flex justify-center items-center">
-						<button @click.prevent="GoBackWithin" class="standard mr-2">Back</button>
+						<button v-if="payment_screen != 'success'" @click.prevent="GoBackWithin" class="standard mr-2">Back</button>
+						<button v-if="payment_screen == 'success'" @click.prevent="chooseNo" class="standard mr-2">Close</button>
 						<button v-if="payments.length && payment_screen == 'methods'"  @click.prevent="chooseYes" class="standard mr-2" :disabled="!selected_option || selected_option == tier">Upgrade Now</button>
 						<button v-if="payment_screen == 'method'" @click.prevent="MaybeAddPaymentMethod" class="standard mr-2" :disabled="false">Upgrade Now</button>
 					</div>
@@ -196,9 +249,13 @@
 				},
 				validation_errors: {},
 				auth_messages: [],
+				error_message: false,
 			}
 		},
 		methods:{
+			PaymentSelected(payment) {
+				this.selected_payment = payment.id
+			},
 			GetPrice(price) {
 				price = parseInt(price)
 				if(price == 0) return price
@@ -213,6 +270,7 @@
 			},
 			MaybeAddPaymentMethod() {
 				let valid = true
+				this.error_message = false
 				this.validation_errors = {}
 				this.auth_messages = []
 				if(!this.card.first_name || !this.card.first_name.length) {
@@ -278,6 +336,7 @@
 			},
 			chooseYes(){
 				this.loading = true
+				this.error_message = false
 				this.$store.dispatch('upgrade/UpgradeLicense',{upgrade:{
 					tier: this.tier_data[this.selected_option],
 					card: this.card,
@@ -287,19 +346,33 @@
 					accounts_api: this.$store.state.auth.accapi,
 				},Failure: this.Failure,Success:this.Success})
 			},
-			Success(data) {
-				console.log('Success: ',data)
+			Success(response) {
 				this.loading = false
-				// this.GoBack()
+				this.payment_screen = 'success'
 			},
-			Failure(data) {
-				console.log('Failure: ',data)
+			Failure(response) {
+				if(response.data.success == '0') {
+					this.error_message = response.data.error
+				}
 				this.loading = false
 			},
 			GoBack() {
 				switch(this.trigger) {
 					case 'CreateClient': 
 						EventBus.transitionModal('UpgradeLicenseModal', 'createClientModal')
+					break;
+					case 'CreateProject': 
+						EventBus.transitionModal('UpgradeLicenseModal', 'createProjectModal')
+					break;
+					// case 'Download': 
+					// 	EventBus.transitionModal('UpgradeLicenseModal', '')
+					// break;
+					case 'AddUsers': 
+						if(this.payment_screen == 'sucess') {
+							EventBus.transitionModal('UpgradeLicenseModal', 'AddUsersToLicenseModal')
+						}else{
+							EventBus.closeModal( ()=>{ EventBus.$emit('UpgradeLicenseModal', false)})
+						}
 					break;
 					default:
 						EventBus.closeModal( ()=>{ EventBus.$emit('UpgradeLicenseModal', false)})

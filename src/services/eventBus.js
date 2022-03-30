@@ -36,7 +36,8 @@ export const EventBus = new Vue({
 			if( this.originElements.length ){
 				let origin = this.originElements[this.originElements.length - 1]
 				this.originElements.splice(this.originElements.length - 1, 1)
-				origin.focus()
+				//Looks like there are instances for creating a modal where the "origin" is never defined
+				if(origin) origin.focus()
 			}
 			
 			callback()

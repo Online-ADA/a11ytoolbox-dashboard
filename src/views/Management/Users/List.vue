@@ -3,8 +3,8 @@
     <div class="w-full flex flex-col" v-if="users.length">
       <h1 class="headline">Users on this License:</h1>
       <div v-if="isExecutive" >
-        <button @click="EventBus.openModal('AddUsersToLicenseModal', $event)" :disabled="$store.state.user.user_limit == users.length" class="ml-1 text-sm standard" :hover="true">Add Users</button>
-        <p>License is limited to {{$store.state.user.user_limit}} user<span v-if="$store.state.user.user_limit > 1">s</span></p>
+        <button @click="MaybeAddUsers" class="ml-1 text-sm standard" :hover="true">Add Users</button>
+        <p>License is using {{users.length}} of it's {{$store.state.user.user_limit}} user<span v-if="$store.state.user.user_limit > 1">s</span> limit</p>
       </div>
       <DT 
       :searchOverride="searchOverride" 
@@ -150,6 +150,16 @@ export default {
       }
     },
     methods: {
+      MaybeAddUsers(evt) {
+        if(this.$store.state.user.user_limit == this.users.length) {
+            this.$store.commit("upgrade/setState",{key:'trigger',value: 'AddUsers'})
+            let plural = this.$store.state.user.user_limit > 1 ? 's' : ''
+            this.$store.commit("upgrade/setState",{key:'message',value: `You have reached the maximum of ${this.$store.state.user.user_limit} user${plural} for this license.`})
+            this.EventBus.openModal('UpgradeLicenseModal',evt)
+        }else{
+          this.EventBus.openModal('AddUsersToLicenseModal', evt)
+        }
+      },
       RemoveUser(user) {
         this.$store.dispatch('admin/removeUser',{user:user,Success:this.UserRemoved})
       },

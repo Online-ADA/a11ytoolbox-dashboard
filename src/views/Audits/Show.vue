@@ -809,13 +809,13 @@ export default {
 			.then( (re)=> {
 				this.$store.state.audits.loading = false
 				if(re.data.success == '1') {
-					window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.license.id}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues`
+					window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.license.id}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/issues/?app_origin=${window.location.href}`
 				}
 				if(re.data.success == 'error') {
 					this.$notify({
 						title:"Warning",
 						text:re.data.error,
-						type: "warning",
+						type: "warn",
 						position: 'bottom right'
 					})
 				}
@@ -824,7 +824,7 @@ export default {
 			.then( ()=> this.$store.state.audits.loading = false )
 		},
 		getSampleCSV(){
-			window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.license.id}/audits/${this.$route.params.id}/csv/sample`
+			window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.license.id}/audits/${this.$route.params.id}/csv/sample/?app_origin=${window.location.href}`
 		},
 		getDefault(){
 			return JSON.parse( JSON.stringify(this.issueDefaults) )

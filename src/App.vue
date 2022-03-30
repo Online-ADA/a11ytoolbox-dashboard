@@ -221,6 +221,8 @@ export default {
 		if(urlSearchParams.get('pop')) {
 			switch(urlSearchParams.get('pop')) {
 				case 'upgrade': {
+					if(urlSearchParams.get('trigger')) this.$store.commit("upgrade/setState",{key:'trigger',value: urlSearchParams.get('trigger')})
+					if(urlSearchParams.get('message')) this.$store.commit("upgrade/setState",{key:'message',value: urlSearchParams.get('message')})
 					this.show.UpgradeLicenseModal = true
 				}
 			}

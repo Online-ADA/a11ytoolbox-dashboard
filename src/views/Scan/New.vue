@@ -1,5 +1,8 @@
 <template>
     <div class="container">
+		<div v-show="loading" >
+			<Loader v-if="loading"></Loader>
+		</div>
         <h1 class="mb-3 headline">Initiate a New Automated Audit</h1>
 
         <div class="flex w-full flex-wrap my-4">
@@ -119,7 +122,9 @@
                     </div>
                 </div>
 
-                <div><button class="standard w-auto" @click.prevent="startScan" >Start Automated Audit</button></div>
+                <div>
+                    <button class="standard w-auto" @click.prevent="startScan" >Start Automated Audit</button>
+                </div>
             </div>
         </div>
         
@@ -133,10 +138,12 @@ import Checkbox from "../../components/Checkbox.vue";
 import Button from "../../components/Button.vue";
 import Label from '../../components/Label.vue';
 import Card from '../../components/Card.vue';
+import Loader from '../../components/Loader.vue';
 import Utility from '../../services/utility.js'
 
 export default {
     data: () => ({
+        loading:false,
         src: {
             tags: [
                 {
@@ -291,8 +298,12 @@ export default {
             }
         },
         startScan(){
+            this.loading = true
             this.$store.dispatch("scan/initiateScan", {config: this.parseOptionsObject(), id: this.$route.params.id, appends: this.append, sitemap: this.sitemap, pages: this.pages, callback: (status) => {
-                if(status == 'success') this.showSuccess = true
+                if(status == 'success') {
+                    this.showSuccess = true
+                }
+                this.loading = false
             }})
         },
         parseOptionsObject(){
@@ -386,7 +397,8 @@ export default {
         Button,
         Checkbox,
         Label,
-        Card
+        Card,
+        Loader
     }, 
 }
 </script>
