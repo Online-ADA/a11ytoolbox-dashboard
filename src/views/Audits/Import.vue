@@ -9,12 +9,12 @@
             <Btn v-for="(audit, index) in audits" :key="'showAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="font-semibold mx-2" :color="showingAudits.includes(audit.id) ? 'yellow' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
     </div>
-    <div class="mb-5 w-full flex">
+    <!-- <div class="mb-5 w-full flex">
         <div class="w-full flex flex-wrap">
             <h3 class="subheadline pb-3 w-full">Choose which temporary audits to compare</h3>
             <Btn v-for="(audit, index) in temporary_audits" :key="'showTempAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'yellow' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
-    </div>
+    </div> -->
 
     <div class="w-full flex flex-wrap items-center mb-14">
         <div
@@ -78,14 +78,14 @@
         <div class="w-1/3">
             <button v-if="selectedAuditRows.length > 0" @click.prevent="addSelectedToAudit()" class="standard mx-2">Import selected</button>
         </div>
-        <div class="w-1/3">
+        <!-- <div class="w-1/3">
             <button @click.prevent="uploadCSVModalOpen = true" class="standard mx-2">Upload CSV</button>
-        </div>
+        </div> -->
         <div class="w-1/3">
             <button @click.prevent="finishImport" class="standard mx-2" >Finish and go to audit</button>
         </div>
     </div>
-    <Modal class="z-50" :open="uploadCSVModalOpen">
+    <!-- <Modal class="z-50" :open="uploadCSVModalOpen">
         <div class="bg-white px-4 pt-5 pb-4 p-6">
             <button aria-label="Close upload CSV modal" @click.prevent="uploadCSVModalOpen = false" class="absolute top-4 right-4 standard">X</button>
             <h2 class="subheadline pb-3">Choose a CSV of issues to load</h2>
@@ -99,7 +99,7 @@
                 Cancel
             </button>
         </div>
-    </Modal>
+    </Modal> -->
     <Modal size="full" class="z-50" :open="compareIssuesModalOpen">
         <div class="bg-white px-4 pt-5 pb-4 p-6">
             <button aria-label="Close compare issues modal" @click.prevent="compareIssuesModalOpen = false" class="standard absolute top-4 right-4">X</button>

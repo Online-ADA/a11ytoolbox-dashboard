@@ -7,16 +7,16 @@
 			<span class="inline-block align-middle h-screen" aria-hidden="true">&#8203;</span>
 			
 			<div :class="{'max-w-lg': size == 'compact', 'max-w-4xl': size == 'wide', 'max-w-full': size == 'full', 'creation-max-w': size == 'creation'}" class="modal-main relative inline-block bg-white text-left overflow-hidden shadow-xl transform align-middle p-4 w-full">
-				<div v-if="sizeButtons" class="flex ml-3 mt-2 absolute">
-					<button @click="changeSize('compact')" aria-label="Change the size of this modal to be compact" class="standard mx-2">
+				<div v-if="sizeButtons" class="flex">
+					<button @click="changeSize('compact')" aria-label="Change the size of this modal to be compact" class="standard mr-2">
 						Compact
 					</button>
-					<button @click="changeSize('wide')"  aria-label="Change the size of this modal to be wide" class="standard mx-2">
+					<button @click="changeSize('wide')"  aria-label="Change the size of this modal to be wide" class="standard mr-2">
 						Wide
 					</button>
-					<button @click="changeSize('full')"  aria-label="Change the size of this modal to be full width" class="standard mx-2">
+					<!-- <button @click="changeSize('full')"  aria-label="Change the size of this modal to be full width" class="standard">
 						Full
-					</button>
+					</button> -->
 				</div>
 				<slot></slot>
 			</div>

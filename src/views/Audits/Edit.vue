@@ -121,7 +121,7 @@
 				
 			</div>
 			
-			<template v-if="$store.getters['auth/isManager']">
+			<!-- <template v-if="$store.getters['auth/isManager']">
 				<div class="flex my-3 w-full xs:flex-wrap">
 					<Card :gutters="false" class="xs:w-full w-1/2 xs:mb-3 mr-2">
 					<h3 class="subheadline" >Users</h3>
@@ -152,7 +152,7 @@
 						</ul>
 					</Card>
 				</div>
-			</template>
+			</template> -->
 			
 			<button class="standard my-2" @click.prevent="saveAudit">Save</button>
 			

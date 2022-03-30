@@ -76,7 +76,7 @@ export default {
             }})
             .then( re=>{
                 if(re.data.success =='1') {
-                    if(args.Success) args.Success(re.data)
+                    if(args.Success) args.Success(re)
                 }else if(re.data.success == '0' && ( re.data.details == 'incorrect_role' || re.data.details == 'incorrect_team' ) ) {
                     if(args.Failure) args.Failure(re)
                     Vue.notify({

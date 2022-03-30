@@ -3,14 +3,13 @@
 		<div v-show="loading" >
 			<Loader v-if="loading"></Loader>
 		</div>
-        <h1 class="mb-3 headline">Initiate a New Automated Audit</h1>
 
         <div class="flex w-full flex-wrap my-4">
             <template v-if="showSuccess">
                 <p class="text-base w-full">Your audit has been queued. An email will be sent to the address on your account when it has finished.</p>
             </template>
             <div class="flex flex-col" v-if="!showSuccess">
-                <h2 class="subheadline mb-3">Automated Audit Options</h2>
+                <h1 class="mb-3 headline">Automated Audit Options</h1>
                 
                 <template v-if="isManager">
                     <Radio class="mb-3" :value="false"  v-model="custom" :items="[{display:'Default', value:false}, {display: 'Custom', value:true}]" ></Radio>

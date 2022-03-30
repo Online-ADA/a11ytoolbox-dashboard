@@ -84,7 +84,7 @@
                     <router-link class="mr-3.5" v-if="!isAuditShowPage" title="Go to Audit" :to="{name:'AuditShow', params:{id:$route.params.id}}"><i class="far fa-arrow-left"></i></router-link>
                     <router-link class="xs:ml-0 mr-3.5" :to="{path: `/automations/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
 
-                    <router-link :class="{ 'mr-3.5': isAuditShowPage }"
+                    <router-link title="Automated Audits History" :class="{ 'mr-3.5': isAuditShowPage }"
                         v-if="(isAuditEditPage || isAuditShowPage) &&
                          ($store.state.audits.audit && $store.state.audits.audit.automations && $store.state.audits.audit.automations.length)" 
                         :to="{name: 'ScanHistory', params: {automations: $store.state.audits.audit.automations } }"
