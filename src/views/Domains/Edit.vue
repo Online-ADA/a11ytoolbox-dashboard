@@ -89,9 +89,9 @@
 					<h4 class="subheadline pt-3 pb-4">Pages</h4>
 					<Card style="max-height:400px" :gutters="false" class="block my-4 overflow-y-auto">
 						<ul class="mb-4">
-							<li class="my-1" v-for="page in domain.pages" :key="page.id">
+							<li class="my-1 break-all" v-for="page in domain.pages" :key="page.id">
 								{{page.url}}
-								<button aria-label="delete this page" @click.prevent="deletePage(page.id)" class="ml-4 standard alert">X</button>
+								<button aria-label="delete this page" @click.prevent="deletePage(page.id)" class="ml-4 standard alert"><i class="far fa-trash-alt"></i></button>
 							</li>
 						</ul>
 					</Card>

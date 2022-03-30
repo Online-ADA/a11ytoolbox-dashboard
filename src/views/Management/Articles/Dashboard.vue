@@ -62,42 +62,42 @@
             </Card>
         </div>
         <Modal :open="articleModalOpen" :sizeButtons="articleEditItem.identifier == 'recommendation'">
-            <div class="bg-white px-4 pt-5 pb-4 p-6">
+            <div class="bg-white">
                 <div class="flex items-start">
                     <div class="mt-3 text-left w-full">
                         <template v-if="articleEditItem.identifier == 'article'">
                             <div class="w-full">
-                                <Label class="text-lg leading-6 w-full subheadline" for="article-title">Title<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                <Label class="" for="article-title">Title<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                 <TextInput required class="w-full" id="article-title" v-model="articleEditItem.title"></TextInput>
                             </div>
                             <div class="flex w-full mr-3.5 mt-2">
                                 <div class="mr-3.5 w-1/3">
-                                    <Label class="text-lg leading-6 w-full subheadline" for="article-level">Level<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                    <Label class="" for="article-level">Level<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                     <TextInput required class="w-full" id="article-level" v-model="articleEditItem.level"></TextInput>
                                 </div>
                                 <div class="w-1/3">
-                                    <Label class="text-lg leading-6 w-full subheadline" for="article-number">Number<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                    <Label class="" for="article-number">Number<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                     <TextInput required class="w-full" id="article-number" v-model="articleEditItem.number"></TextInput>
                                 </div>
                             </div>
                             <div class="mt-2 w-full">
-                                <Label class="text-lg leading-6 w-full subheadline" for="article-desc">Description<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                <Label class="" for="article-desc">Description<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                 <TextArea required rows="6" id="article-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
                             </div>
                             <div class="w-full mt-2">
-                                <Label class="text-lg leading-6 w-full subheadline" for="article-url">Internal URL</Label>
+                                <Label class="" for="article-url">Internal URL</Label>
                                 <TextInput class="w-full" id="article-url" v-model="articleEditItem.url"></TextInput>
                             </div>
                             <div class="w-full mt-2">
-                                <Label class="text-lg leading-6 w-full subheadline" for="article-ext_url">External URL</Label>
+                                <Label class="" for="article-ext_url">External URL</Label>
                                 <TextInput class="w-full" id="article-ext_url" v-model="articleEditItem.ext_url"></TextInput>
                             </div>
                         </template>
                         <template v-else-if="articleEditItem.identifier == 'technique'">
                             <div class="w-full">
-                                <Label class="text-lg leading-6 subheadline" for="tech-article">Select success criteria</Label>
-                                <button class="standard inverted mx-2" @click="changeTechArticleDisplay('title')" aria-label="Change the display of the articles within the select to show the articles' title" aria-controls="tech-article">Title</button>
-                                <button class="standard inverted" @click="changeTechArticleDisplay('number')" aria-label="Change the display of the articles within the select to show the articles' number" aria-controls="tech-article">Number</button>
+                                <Label class="" for="tech-article">Select success criteria</Label>
+                                <button class="standard inverted mx-2 mb-2" @click="changeTechArticleDisplay('title')" aria-label="Change the display of the articles within the select to show the articles' title" aria-controls="tech-article">Title</button>
+                                <button class="standard inverted mb-2" @click="changeTechArticleDisplay('number')" aria-label="Change the display of the articles within the select to show the articles' number" aria-controls="tech-article">Number</button>
                                 <!-- <Select @input="test" multiple name="tech-article" id="tech-article" class="mx-auto w-full" :options="articles" :displayProp="displayTechArticlesBy" valueProp="id" v-model="articleEditItem.article_ids"></Select> -->
                                 <select name="tech-article" id="tech-article" multiple v-model="articleEditItem.article_ids" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-red p-2 rounded shadow w-full">
                                     <option :value="option.id" v-for="(option, index) in articles" :key="index">{{option[displayTechArticlesBy]}}</option>
@@ -105,21 +105,21 @@
                             </div>
 
                             <div class="w-full mt-2">
-                                <Label class="text-lg leading-6 w-full subheadline" for="tech-title">Title<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                <Label class="" for="tech-title">Title<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                 <TextInput required class="w-full" id="tech-title" v-model="articleEditItem.title"></TextInput>
                             </div>
                             <div class="flex w-full mt-2">
                                 <div class="w-1/3">
-                                    <Label class="text-lg leading-6 w-full subheadline" for="tech-number">Number<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                    <Label class="" for="tech-number">Number<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                     <TextInput required class="w-full" id="tech-number" v-model="articleEditItem.number"></TextInput>
                                 </div>
                             </div>
                             <div class="mt-2 w-full">
-                                <Label class="text-lg leading-6 w-full subheadline" for="tech-desc">Description<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                <Label class="" for="tech-desc">Description<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                 <TextArea required rows="6" id="tech-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
                             </div>
                             <div class="w-full mt-2">
-                                <Label class="text-lg leading-6 w-full subheadline" for="tech-ext_url">External URL</Label>
+                                <Label class="" for="tech-ext_url">External URL</Label>
                                 <TextInput class="w-full" id="tech-ext_url" v-model="articleEditItem.ext_url"></TextInput>
                             </div>
                         </template>
@@ -128,7 +128,7 @@
                                 <h2 class="mb-6 headline">Create new audit state</h2>
                             </div> -->
                             <div class="w-full mt-2">
-                                <Label class="text-lg leading-6 w-full subheadline" for="state-title">Audit State<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                <Label class="" for="state-title">Audit State<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                 <TextInput required class="w-full" id="state-title" v-model="articleEditItem.content"></TextInput>
                             </div>
                         </template>
@@ -137,7 +137,7 @@
                                 <h2 class="mb-6 headline">Create new software used</h2>
                             </div> -->
                             <div class="w-full mt-2">
-                                <Label class="text-lg leading-6 w-full subheadline" for="state-title">Software Used<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                <Label class="" for="state-title">Software Used<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                 <TextInput required class="w-full" id="state-title" v-model="articleEditItem.content"></TextInput>
                             </div>
                         </template>
@@ -146,15 +146,15 @@
                                 <h2 class="mb-6 headline">Create new assistive technology</h2>
                             </div> -->
                             <div class="w-full mt-2">
-                                <Label class="text-lg leading-6 w-full subheadline" for="asst-title">Assistive Technology<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                <Label class="" for="asst-title">Assistive Technology<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                 <TextInput required class="w-full" id="asst-title" v-model="articleEditItem.content"></TextInput>
                             </div>
                         </template>
                         <template v-else-if="articleEditItem.identifier == 'failure'">
                             <div class="w-full">
-                                <Label class="text-lg leading-6 subheadline" for="fail-article">Select success criteria</Label>
-                                <button class="standard inverted mx-2" @click="changeFailArticleDisplay('title')" aria-label="Change the display of the articles within the select to show the articles' title" aria-controls="fail-article">Title</button>
-                                <button class="standard inverted" @click="changeFailArticleDisplay('number')" aria-label="Change the display of the articles within the select to show the articles' number" aria-controls="fail-article">Number</button>
+                                <Label class="" for="fail-article">Select success criteria</Label>
+                                <button class="standard inverted mx-2 mb-2" @click="changeFailArticleDisplay('title')" aria-label="Change the display of the articles within the select to show the articles' title" aria-controls="fail-article">Title</button>
+                                <button class="standard inverted mb-2" @click="changeFailArticleDisplay('number')" aria-label="Change the display of the articles within the select to show the articles' number" aria-controls="fail-article">Number</button>
                                 <!-- <Select @input="test" multiple name="fail-article" id="fail-article" class="mx-auto w-full" :options="articles" :displayProp="displayTechArticlesBy" valueProp="id" v-model="articleEditItem.article_ids"></Select> -->
                                 <select name="fail-article" id="fail-article" multiple v-model="articleEditItem.article_ids" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-red p-2 rounded shadow w-full">
                                     <option :value="option.id" v-for="(option, index) in articles" :key="index">{{option[displayFailArticlesBy]}}</option>
@@ -162,36 +162,36 @@
                             </div>
 
                             <div class="w-full mt-2">
-                                <Label class="text-lg leading-6 w-full subheadline" for="fail-title">Title<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                <Label class="" for="fail-title">Title<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                 <TextInput required class="w-full" id="fail-title" v-model="articleEditItem.title"></TextInput>
                             </div>
                             <div class="flex w-full mt-2">
                                 <div class="w-1/3">
-                                    <Label class="text-lg leading-6 w-full subheadline" for="fail-number">Number<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                    <Label class="" for="fail-number">Number<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                     <TextInput required class="w-full" id="fail-number" v-model="articleEditItem.number"></TextInput>
                                 </div>
                             </div>
                             <div class="mt-2 w-full">
-                                <Label class="text-lg leading-6 w-full subheadline" for="tech-desc">Description<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                <Label class="" for="tech-desc">Description<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                 <TextArea required rows="6" id="tech-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
                             </div>
                             <div class="w-full mt-2">
-                                <Label class="text-lg leading-6 w-full subheadline" for="tech-ext_url">External URL</Label>
+                                <Label class="" for="tech-ext_url">External URL</Label>
                                 <TextInput class="w-full" id="tech-ext_url" v-model="articleEditItem.ext_url"></TextInput>
                             </div>
                         </template>
                         <template v-else-if="articleEditItem.identifier == 'recommendation'">
                             <div class="w-full">
-                                <Label class="text-lg leading-6 subheadline" for="recc-article">Select success criteria</Label>
-                                <button class="standard inverted mx-2" @click="changeReccArticleDisplay('title')" aria-label="Change the display of the articles within the select to show the articles' title" aria-controls="recc-article">Title</button>
-                                <button class="standard inverted " @click="changeReccArticleDisplay('number')" aria-label="Change the display of the articles within the select to show the articles' number" aria-controls="recc-article">Number</button>
+                                <Label class="" for="recc-article">Select success criteria</Label>
+                                <button class="standard inverted mx-2 mb-2" @click="changeReccArticleDisplay('title')" aria-label="Change the display of the articles within the select to show the articles' title" aria-controls="recc-article">Title</button>
+                                <button class="standard inverted mb-2" @click="changeReccArticleDisplay('number')" aria-label="Change the display of the articles within the select to show the articles' number" aria-controls="recc-article">Number</button>
                                 <!-- <Select multiple name="recc-article" id="recc-article" class="mx-auto w-full" :options="articles" :displayProp="displayReccArticlesBy" valueProp="id" v-model="articleEditItem.article_ids"></Select> -->
                                 <select name="recc-article" id="recc-article" multiple v-model="articleEditItem.article_ids" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-red p-2 rounded shadow w-full">
                                     <option :value="option.id" v-for="(option, index) in articles" :key="index">{{option[displayReccArticlesBy]}}</option>
                                 </select>
                             </div>
                             <div class="mt-2 w-full">
-                                <Label class="text-lg leading-6 w-full subheadline" for="recc-desc">Description<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
+                                <Label class="" for="recc-desc">Description<small class="pl-1 text-pallette-red" aria-hidden="true">*</small></Label>
                                 <TextArea required rows="6" id="recc-desc" v-model="articleEditItem.description" class="text-sm text-pallette-grey w-full"></TextArea>
                             </div>
                         </template>
