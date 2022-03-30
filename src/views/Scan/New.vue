@@ -104,7 +104,7 @@
                     </template>
                     
                 </div>
-                <div class="flex w-full items-center">
+                <div class="flex w-full items-center hidden">
                     <Radio :value="true" class="w-full mb-3" v-model="append" :items="[{display:'Append to Current Audit', value:true}, {display: 'Generate as New Audit', value:false}]"></Radio>
                 </div>
                 <div class="flex w-full items-center">

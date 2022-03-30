@@ -15,11 +15,11 @@
           <td class="hidden"></td>
         </template>
         <template v-slot:cells-extra="row">
-          <th :class="[{'me':row.data.id == $store.state.auth.user.id}]" class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm text-gray-900">
+          <td :class="[{'me':row.data.id == $store.state.auth.user.id}]" class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900 font-bold">
               {{row.data.first_name}}
             </div>
-          </th>
+          </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="text-sm text-gray-900">
               {{row.data.last_name}}

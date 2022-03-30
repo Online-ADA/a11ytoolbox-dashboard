@@ -56,7 +56,7 @@ export default {
         return total
       },
       totalWCAGAudits(){
-        return this.$store.state.audits.all.length || 0
+        return this.$store.state.audits.all && this.$store.state.audits.all.length || 0
       },
     },
     props: [],

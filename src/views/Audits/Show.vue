@@ -528,7 +528,8 @@ export default {
 				"updated_at",
 				"actrs",
 				"created_by",
-				"how_discovered"
+				"how_discovered",
+				"date_created"
 			]
 
 			let stickied = [

@@ -52,7 +52,7 @@
                         </span>
                         <div class="block">
                             <ul>
-                                <li :class="[(colorSwatches.length && $route.params.id && $route.params.id == swatch.id) ? 'selected' : '']" class="text-sm py-2 text-white" v-for="swatch in colorSwatches" :key="'swatch-'+swatch.id">
+                                <li :class="[($store.state.swatch.swatch.id === swatch.id) ? 'selected' : '']" class="text-sm py-2 text-white" v-for="swatch in colorSwatches" :key="'swatch-'+swatch.id">
                                     <button class="capitalize" @click="updateColorSwatch(swatch)">{{swatch.title}}</button>
                                 </li>
                             </ul>
