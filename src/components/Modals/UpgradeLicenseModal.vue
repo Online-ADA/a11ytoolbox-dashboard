@@ -3,7 +3,7 @@
 		<div class="h-24" v-show="loading" >
 			<Loader v-if="loading" :local="true"></Loader>
 		</div>
-		<button @click.prevent="chooseNo" class="absolute right-4 top-4 z-50 standard" aria-label="Close Modal">
+		<button @click.prevent="chooseNo" class="absolute right-4 top-4 standard" aria-label="Close Modal">
 			X
 		</button>
 		<div class="sr-only" role="status">
@@ -349,6 +349,12 @@
 			Success(response) {
 				this.loading = false
 				this.payment_screen = 'success'
+				if(response.data.free_upgrade) {
+					gtag('event', 'conversion', {
+						'send_to': 'AW-343018477/7tx5CKnS860DEO2XyKMB',
+						'transaction_id': ''
+					});
+				}
 			},
 			Failure(response) {
 				if(response.data.success == '0') {
