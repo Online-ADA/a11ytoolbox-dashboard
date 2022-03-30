@@ -135,7 +135,7 @@ export default {
             //Needs to check ALL audits across the entire license, not just those loaded in this project
 
             if( domain.attachments === 0 ){
-                this.$store.dispatch("domains/deleteDomain", {id: domain.id})
+                this.$store.dispatch("domains/deleteDomain", {id: domain.id, client_id: this.$route.params.id})
             }else{
                 this.attemptingToDelete = domain
                 this.cannotDeleteModalOpen = true
@@ -143,7 +143,7 @@ export default {
             }
         },
         getAllProperties(){
-            this.$store.dispatch( "properties/getAllPropertiesForClient", {client_id: this.$store.state.clients.client.id, callbacks: {success: this.successCallback, fail: this.failCallback} })
+            this.$store.dispatch( "properties/getAllPropertiesForClient", { client_id: this.$route.params.id })
         }
     },
     created() {

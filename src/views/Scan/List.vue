@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div class="mt-[-30px]">
         <Loader v-if="loading"></Loader>
         
         <div class="w-full flex flex-col" v-if="scans && scans.length">

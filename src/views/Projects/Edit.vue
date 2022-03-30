@@ -3,7 +3,7 @@
     <Loader v-if="loading"></Loader>
     
     <div class="flex justify-between items-center">
-      <h1 class="headline">Edit Project</h1>
+      <h1 class="headline">{{$store.state.projects.project.name}}</h1>
       <button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Project" class="standard alert mt-3" >
         Delete
       </button>

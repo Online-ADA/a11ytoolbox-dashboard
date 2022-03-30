@@ -2,17 +2,19 @@
 	<div>
 		<Loader v-if="loading"></Loader>
 		<h1 class="headline">{{client.name}}</h1>
-		<form @submit.prevent>
-			<Label class="subheadline text-lg" for="name">Client Name</Label>
+		<form class="" @submit.prevent>
+			<Label for="name">Client Name</Label>
 			<TextInput class="mb-2" id="name" name="name" v-model="client.name" />
 
-			<Label class="subheadline text-lg" for="email">Client Email</Label>
+			<Label for="email">Client Email</Label>
 			<TextInput id="email" name="email" v-model="client.email" />
 
-			<Label class="subheadline text-lg" for="status">Status</Label>
-			<Select id="status" :options="statusSrc" v-model="client.status"></Select>
+			<!-- <Label class="subheadline text-lg" for="status">Status</Label>
+			<Select id="status" :options="statusSrc" v-model="client.status"></Select> -->
 
-			<button class="standard mt-3" @click.prevent="saveClient">Save</button>
+			<div>
+				<button class="standard mt-3" @click.prevent="saveClient">Save</button>
+			</div>
 		</form>
 	</div>
 </template>

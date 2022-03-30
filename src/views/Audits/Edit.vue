@@ -2,7 +2,7 @@
 	<div class="container">
 		<Loader v-if="loading"></Loader>
 		<div class="flex justify-between items-center">
-			<h1 class="headline">Edit Audit</h1>
+			<h1 class="headline">{{audit.title}}</h1>
 			<button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="mt-3 standard alert" >
 				Delete
 			</button>

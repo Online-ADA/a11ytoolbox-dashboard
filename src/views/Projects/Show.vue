@@ -2,7 +2,7 @@
   <div>
     <Loader v-if="loading"></Loader>
     <template v-if="project">
-      <h1 class="mb-5 headline">Project Overview</h1>
+      <h1 class="mb-5 headline">{{$store.state.projects.project.name}}</h1>
       <div class="flex">
         <div class="w-1/2 flex flex-col mr-5">
           <Card class="mb-5" :center="false" :gutters="false">

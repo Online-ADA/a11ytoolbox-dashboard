@@ -3,8 +3,8 @@
 		<div class="h-24" v-show="loading" >
 			<Loader v-if="loading" :local="true"></Loader>
 		</div>
-		<button @click.prevent="chooseNo" class="absolute right-2 top-2 w-6 h-6 z-50 text-pallette-blue" aria-label="Close Modal">
-			<i class="fas fa-times-circle"></i>
+		<button @click.prevent="chooseNo" class="absolute right-4 top-4 z-50 standard" aria-label="Close Modal">
+			X
 		</button>
 		<div class="sr-only" role="status">
 			<p v-for="(message,i) in validation_errors" :key="i">

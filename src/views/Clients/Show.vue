@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="mb-5 headline">Client Overview</h1>
+    <h1 class="mb-5 headline">{{client.name}}</h1>
     <div class="flex">
       <div class="w-1/2 flex flex-col mr-5">
         <Card class="mb-5" :center="false" :gutters="false">

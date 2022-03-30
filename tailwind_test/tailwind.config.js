@@ -41,7 +41,6 @@ module.exports = {
         button: ['Barlow', 'sans-serif'],
         body: ['Open Sans', 'sans-serif'],
         'headline':['Oswald', 'sans-serif'],
-        'headline-2':['Barlow', 'sans-serif'],
         'subheadline':['Barlow', 'sans-serif'],
         'navigation':['Montserrat', 'sans-serif'],
       },

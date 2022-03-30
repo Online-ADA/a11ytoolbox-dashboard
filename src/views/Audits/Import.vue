@@ -1,7 +1,7 @@
 <template>
   <div>
     <Loader v-if="loading"></Loader>
-    <h1 class="headline mb-3">Import Issues</h1>
+    <!-- <h1 class="headline mb-3">Import Issues</h1> -->
     <div class="mb-5 w-full flex">
         <div class="w-full flex flex-wrap">
             <h2 class="subheadline pb-3 w-full">Choose which audits to compare</h2>
