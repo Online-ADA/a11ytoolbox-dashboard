@@ -28,9 +28,9 @@
 			v-if="issues && issues.length" 
 			:rowsData="issues" 
 			:headersData="headers"></Table>
-			<template v-else>
-				There are no issues currently
-			</template>
+			<div class="flex justify-center items-center mt-14" v-else>
+				There are no issues currently. Add issues <button title="Add Issue" v-if="!audit.locked" class="mx-2 bg-transparent pointer-only" @click.prevent="toolbarEmit('audit-add-issue', $event)"><i class="far fa-plus-square"></i></button> or run an automated audit <router-link class="mx-2" :to="{path: `/automations/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>.
+			</div>
 		</template>
 		
 		<Modal style="z-index:71;" size="full" :open="issueModalOpen">
@@ -667,6 +667,9 @@ export default {
 		EventBus.$off('toolbarEmit')
 	},
 	methods: {
+		toolbarEmit(action, $event){
+			EventBus.$emit('toolbarEmit', {action: action, data: null, $event: $event})
+		},
 		changeArticles(){
 			let newIDs = []
 			let newValIDs = this.issue.articles.map(a => a.id)
