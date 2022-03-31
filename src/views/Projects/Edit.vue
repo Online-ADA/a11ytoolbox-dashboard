@@ -21,7 +21,7 @@
           <Select :options="clientList" v-model="project.client_id"></Select>
         </template>
 
-      <template v-if="$store.getters['auth/isManager']">
+      <!-- <template v-if="$store.getters['auth/isManager']">
         <div class="flex my-3">
           <Card :gutters="false" class="w-1/2 mr-2">
 
@@ -42,7 +42,7 @@
           </Card>
         </div>
         
-      </template>
+      </template> -->
 
       <button class="standard mt-2" hover="true" @click.prevent.stop="saveProject">Save</button>
     </form>
