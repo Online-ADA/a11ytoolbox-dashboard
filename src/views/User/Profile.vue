@@ -1,6 +1,6 @@
 <template>
 	<div class="container px-4 w-full">
-		<!-- <Loader v-if="$store.state.clients.loading"></Loader> -->
+		<Loader v-if="loading"></Loader>
 
 		<h1 class="mb-3 headline">User Profile</h1>
 		<form class="w-full bg-white p-5">
@@ -88,7 +88,10 @@ export default {
 		},
 		account(){
 			return this.$store.getters["auth/account"]
-		}
+		},
+		loading(){
+			return this.$store.state.user.loading
+		},
 	},
 	mounted(){
 		document.title = "User Profile"
