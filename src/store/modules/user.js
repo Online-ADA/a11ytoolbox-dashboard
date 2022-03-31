@@ -47,7 +47,8 @@ export default {
 		resetState({commit}) {
 			commit('resetState')
 		},
-		uploadAvatar({rootState}, args){
+		uploadAvatar({state,rootState}, args){
+			state.loading = true
 			let form_data = new FormData()
 			form_data.append('avatar', args.file)
 			Request.postPromise(`${rootState.auth.API}/a/${rootState.auth.account}/user/avatar`, {params: form_data, headers:{ 'Content-Type': 'multipart/form-data' }})
@@ -61,7 +62,9 @@ export default {
 				rootState.auth.user = re.data.details
 			})
 			.catch( re=>console.log(re))
-			.then()
+			.then(()=>{
+				state.loading = false
+			})
 		},
 		getUsers({state, rootState, rootGetters}, args = {}){
 			//prevent this method from being called multiple times while still loading previous request
