@@ -92,7 +92,7 @@
 
                     <router-link v-if="!isAuditEditPage" :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
 
-                    <button v-if="isAuditShowPage && $store.state.audits.audit.issues.length" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
+                    <button v-if="isAuditShowPage && $store.state.audits.audit && $store.state.audits.audit.issues && $store.state.audits.audit.issues.length" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
 
                     <router-link class="xs:ml-0 ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues"><i class="far fa-file-import"></i></router-link>
 

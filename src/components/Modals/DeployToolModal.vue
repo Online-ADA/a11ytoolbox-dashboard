@@ -1,6 +1,7 @@
 <template>
 	<Modal :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
 		<h1 class="headline">Deploy A Tool</h1>
+		<button aria-label="Close Deploy a tool modal" @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('deployToolModal', false)})" class="absolute top-4 right-4 standard">X</button>
 		<div class="mb-10">
 			<span class="subheadline">Select a Tool to Continue</span>
 		</div>
@@ -30,7 +31,7 @@
 				</span>
 			</button>
 		</div>
-		<button @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('deployToolModal', false)})" class="standard mt-2">Cancel</button>
+		
 	</Modal>
 </template>
 
