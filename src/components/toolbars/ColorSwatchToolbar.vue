@@ -4,13 +4,7 @@
             <div class="flex items-center justify-between xs:flex-wrap">
                 <!-- Left side -->
                 <div class="flex items-center text-13 xs:basis-full xs:flex-wrap">
-                    <div class="flex items-center">
-                        <span style="font-size:16px;" class="toolbar-headline">{{pageTitle}}</span>
-                        <div class="border border-black mx-3.5 divider"></div>
-                    </div>
-                    <span class="xs:basis-full xs:max-w-full xs:break-all" v-if="$store.state.projects.project">
-                        {{$store.state.projects.project.name}}
-                    </span>
+                    <span style="font-size:16px;" class="toolbar-headline">{{pageTitle}}</span>
                 </div>
                 <!-- Right side -->
                 <div class="flex items-center justify-end">

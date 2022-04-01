@@ -9,12 +9,11 @@
 		</template>
 		<template v-else>
 			<h1 class="headline">Create Color Swatch</h1>
+			<button aria-label="Close Create Color Swatch modal" @click.prevent="EventBus.closeModal( ()=>{ chooseNo() })" class="absolute top-4 right-4 standard">X</button>
 			<Label for="swatch">Title</Label>
 			<TextInput required class="w-full" id="swatch-title" name="title" v-model="swatch.title"></TextInput>
 			<button @click.prevent="createSwatch" class="standard mt-2 mr-2">Save</button>
 		</template>
-		
-		<button @click.prevent="EventBus.closeModal( ()=>{ chooseNo() })" class="standard mt-2">Cancel</button>
 	</Modal>
 </template>
 

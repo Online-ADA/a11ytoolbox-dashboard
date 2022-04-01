@@ -9,6 +9,7 @@
 
 		<template v-else>
 			<h1 class="headline">Create New WCAG Audit</h1>
+			<button aria-label="Close Create New WCAG Audit modal" @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('deployWCAGAuditModal', false)})" class="absolute top-4 right-4 standard">X</button>
 		
 			<div v-if="open" class="w-full flex flex-col items-start">
 				<div class="flex">
@@ -193,8 +194,7 @@
 					</template>
 				</div> -->
 			</div>
-			<button class="standard mr-2" @click.prevent="deployTool">Deploy</button>
-			<button @click.prevent="EventBus.closeModal( ()=>{ EventBus.$emit('deployWCAGAuditModal', false)})" class="standard mt-3">Cancel</button>
+			<button class="standard mr-2 mt-2" @click.prevent="deployTool">Deploy</button>
 		</template>
 		
 	</Modal>
