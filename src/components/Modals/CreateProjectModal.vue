@@ -3,6 +3,7 @@
 		<template v-if="!complete">
 			<Loader v-if="loading" :local="true"></Loader>
 				<h1 class="headline">Create New Project</h1>
+				<button aria-label="Close Create New WCAG Audit modal" class="standard absolute top-4 right-4 " @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('createProjectModal', false)})">X</button>
 				
 				<Label for="project-name">Name</Label>
 				<TextInput id="project-name" name="project-name" v-model="project.name" />
@@ -13,7 +14,7 @@
 					<option :value="option.value" v-for="(option, index) in statusSrc" :key="'project-status-'+index">{{option.name}}</option>
 				</select>
 
-				<template v-if="isManager">
+				<!-- <template v-if="isManager">
 					<div class="flex my-3 xs:flex-wrap">
 						<Card :gutters="false" class="xs:w-full xs:mb-3 w-1/2 sm:mr-5 md:mr-5">
 							<h2 class="pb-3 subheadline">Users</h2>
@@ -33,13 +34,12 @@
 							</ul>
 						</Card>
 					</div>
-				</template>
+				</template> -->
 
-				<button class="standard mr-2" @click.prevent="createProject">Create</button>
-				<button class="standard" @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('createProjectModal', false)})">Cancel</button>
+				<button class="standard mr-2 mt-2" @click.prevent="createProject">Create</button>
 		</template>
 		<template v-if="complete">
-			<h1 class="pb-5">Do you want to deploy a tool?</h1>
+			<h1 class="pb-5 headline">Do you want to deploy a tool?</h1>
 			<button @click.prevent="()=>{EventBus.transitionModal( 'createProjectModal', 'deployToolModal'), reset()}" class="standard mr-2">Yes</button>
 			<button @click.prevent="chooseNo" class="standard">No</button>
 		</template>
@@ -133,19 +133,19 @@
 					this.project.account_id = this.$store.state.auth.account
 					this.project.client_id = this.$store.state.clients.client.id
 					
-					if( !this.$store.state.user.all.length ){
-						this.getUsers()
-					}else{
-						this.unassigned = this.$store.state.user.all.map(u=>u.id)
-					}
+					// if( !this.$store.state.user.all.length ){
+					// 	this.getUsers()
+					// }else{
+					// 	this.unassigned = this.$store.state.user.all.map(u=>u.id)
+					// }
 					
 				}
 			}
 		},
 		computed: {
-			users(){
-				return this.$store.state.user.all
-			},
+			// users(){
+			// 	return this.$store.state.user.all
+			// },
 			loading(){
 				return this.$store.state.projects.loading || this.$store.state.user.loading
 			},

@@ -188,7 +188,7 @@ export default {
 					// 	}
 					// }
 				};
-				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.id}`, requestArgs)
+				Request.patchPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.id}`, requestArgs)
 				.then( re=>{
 					if( rootState.clients.client.id !== re.data.details.client_id ){
 						rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
@@ -199,6 +199,17 @@ export default {
 					console.log(re)
 				})
 				.finally( ()=>{ state.loading = false })
+				// Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.id}`, requestArgs)
+				// .then( re=>{
+				// 	if( rootState.clients.client.id !== re.data.details.client_id ){
+				// 		rootState.clients.client = rootState.clients.all.find( c=>c.id == re.data.details.client_id)
+				// 		rootState.clients.clientID = rootState.clients.client.id
+				// 	}
+				// })
+				// .catch( re => {
+				// 	console.log(re)
+				// })
+				// .finally( ()=>{ state.loading = false })
 			},
 			getScansForProject({state, rootState}, args){
 				state.loading = true

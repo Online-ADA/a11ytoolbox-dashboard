@@ -2,18 +2,17 @@
 	<div class="container">
 		<Loader v-if="loading"></Loader>
 		<div class="flex justify-between items-center">
-			<h1 class="headline">Edit Color Swatch Analysis</h1>
+			<h1 class="headline">{{swatch.title}}</h1>
 			<button v-if="$store.getters['auth/isManager']" @click.prevent="confirmModalOpen = true" title="Delete Audit" class="standard alert" >
 				Delete
 			</button>
 		</div>
-		
-		<h2 class="subheadline">{{swatch.title}}</h2>
-		
 
 		<Modal class="adjust-with-sidebars" :open="confirmModalOpen">
 			<div class="bg-white">
-				<h3 class="subheadline" id="modal-title">Delete Color Swatch</h3>
+				<button @click="confirmModalOpen = false" type="button" class="absolute top-5 right-4 standard">X</button>
+				<delete-confirm-icon></delete-confirm-icon>
+				<h3 class="subheadline mt-2" id="modal-title">Delete Color Swatch</h3>
 				<div class="mb-2">
 					<p class="">
 						Are you sure you want to delete this color swatch?
@@ -21,12 +20,7 @@
 				</div>
 			</div>
 			<div class="flex">
-				<button @click="deleteSwatch" type="button" class="standard alert mr-2">
-				Delete
-				</button>
-				<button @click="confirmModalOpen = false" type="button" class="standard">
-				Cancel
-				</button>
+				<button @click="deleteSwatch" type="button" class="standard alert mr-2 mt-2">Delete</button>
 			</div>
 		</Modal>
 				
@@ -44,6 +38,7 @@
 	import TextInput from '../../components/TextInput'
 	import Label from '../../components/Label'
 	import Modal from '../../components/Modal'
+	import DeleteConfirmIcon from '../../components/DeleteConfirmIcon'
 
 	export default {
 		data: () => ({
@@ -96,6 +91,7 @@
 			Loader,
 			Label,
 			Modal,
+			DeleteConfirmIcon,
 		},
 	}
 </script>

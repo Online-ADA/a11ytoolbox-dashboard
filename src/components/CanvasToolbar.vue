@@ -6,6 +6,7 @@
         <!-- <OverviewToolbar v-if="$route.name == 'ProjectShow'" v-on:classupdate="UpdateClasses"/> -->
         <ProjectToolbar v-if="projectPages.includes($route.name)" v-on:classupdate="UpdateClasses" />
         <ClientToolbar v-if="clientPages.includes($route.name)" v-on:classupdate="UpdateClasses" />
+        <PropertyToolbar v-if="propertyPages.includes($route.name)" />
     </div>
 </template>
 
@@ -18,6 +19,7 @@ import MediaAuditToolbar from './toolbars/MediaAuditToolbar'
 import ColorSwatchToolbar from './toolbars/ColorSwatchToolbar'
 import ProjectToolbar from './toolbars/ProjectToolbar'
 import ClientToolbar from './toolbars/ClientToolbar'
+import PropertyToolbar from './toolbars/PropertyToolbar'
 
 export default {
     props:{
@@ -36,7 +38,12 @@ export default {
                 'ClientEdit',
                 'ClientShow',
                 'ClientProperties'
-            ]
+            ],
+            propertyPages: [
+                "SoftwareEdit",
+                "DomainsEdit",
+                "DomainsShow"
+            ],
         }
     },
     name: 'ada-canvas-toolbar',
@@ -59,7 +66,8 @@ export default {
         // OverviewToolbar,
         ColorSwatchToolbar,
         ProjectToolbar,
-        ClientToolbar
+        ClientToolbar,
+        PropertyToolbar
     },
     created() {
     },

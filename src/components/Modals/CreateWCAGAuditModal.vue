@@ -442,7 +442,6 @@
 					}
 				}
 				
-				console.log("Failed Vaildation:", this.failedValidation);
 				if( this.failedValidation.length !== 0 ){
 					this.showValidationAlert = true
 					setTimeout(()=>{
@@ -466,7 +465,7 @@
 					if( !this.project.domains || !this.project.domains.length ){
 						this.createDomainSectionOpen = true
 					}
-					this.$store.dispatch("user/getUsers", {vm: this})
+					// this.$store.dispatch("user/getUsers", {vm: this})
 				}
 			},
 		},

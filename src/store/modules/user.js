@@ -70,6 +70,13 @@ export default {
 			//prevent this method from being called multiple times while still loading previous request
 			if(state.loading) return
 			state.loading = true
+			state.all = []
+			state.byTeam = {
+				1: [],
+				2: [],
+				3: [],
+				4: []
+			},
 			Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/users`)
 			.then( re=>{
 				state.all = Object.values(re.data.details)

@@ -1,19 +1,15 @@
 <template>
-	<div class="text-center mt-32 container mx-auto">
+	<div class="">
 		<Loader v-if="loading"></Loader>
 		
-		<A class="pr-3" type='router-link' :to="{path: `/domains/${$route.params.id}/edit`}">Edit Domain</A>
-		<!-- <A class="pr-3" type='router-link' :to="{path: `/projects/${domain.project_id}`}">View Project</A> -->
-		<A type='router-link' :to="{name: `NewScan`, params: {type:'domain', id: $route.params.id} }">Initiate Scan</A>
-		
-		<h3 class="mb-3">
+		<h1 class="headline mb-3">
 			{{domain.url}}<template v-if="domain.root">/{{domain.root}}</template>
-		</h3>
+		</h1>
 		
 		<div class="flex">
 			<div class="flex-1 flex flex-col">
-				<h3 class="mb-3 w-full">Pages</h3>
-				<Card style="max-height:400px;" class="p-4 flex-1 overflow-y-auto">
+				<h2 class="subheadline mb-3 w-full">Pages</h2>
+				<Card :gutters="false" style="max-height:400px;" class="mr-3 p-4 flex-1 overflow-y-auto">
 					<template v-if="domain && domain.pages.length">
 						<ul class="mb-4 w-full">
 							<li v-for="page in domain.pages" :key="page.id">
@@ -27,8 +23,8 @@
 				</Card>
 			</div>
 			<div class="flex-1 flex flex-col">
-				<h3 class="mb-3 w-full">Structured Sample</h3>
-				<Card style="max-height:400px;" class="p-4 flex-1 overflow-y-auto">
+				<h2 class="subheadline mb-3 w-full">Structured Sample</h2>
+				<Card :gutters="false" style="max-height:400px;" class="p-4 flex-1 overflow-y-auto">
 					<template v-if="domain && domain.sample.length">
 						<ul class="mb-4 w-full">
 							<li v-for="item in domain.sample" :key="item.id">

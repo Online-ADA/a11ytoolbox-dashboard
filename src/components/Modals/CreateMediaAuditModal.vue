@@ -23,70 +23,70 @@
 					<TextInput :data-validation-failed="failedValidation.includes('title') ? 'invalid-3' : false" required :aria-describedby="failedValidation.includes('title') ? 'title-validation' : false" class="w-full" id="audit-title" name="title" v-model="audit.title" />
 				</div>
                 
-                <template v-if="domains.length">
-                    <h2 id="choose_select_heading" class="pt-4 pb-3 subheadline">Select a Domain</h2>
-                    <small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('domain') }" id="domain-validation">{{validationMessages["domain"]}}</small>
-                    <select 
-                    :data-validation-failed="failedValidation.includes('domain') ? 'invalid-3' : false" 
-                    required 
-                    :aria-describedby="failedValidation.includes('domain') ? 'domain-validation' : false" 
-                    aria-labelledby="choose_select_heading" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" 
-                    name="choose_domain" 
-                    id="choose_select">
-                        <option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">
-									{{domain.url}}<template v-if="domain.root">/{{domain.root}}/</template>
-								</option>
-                    </select>
-                </template>
-                <button 
-                @click="createDomainSectionOpen = !createDomainSectionOpen" 
-                :aria-expanded="createDomainSectionOpen ? 'true' : 'false'" 
-                class="text-base mt-3">
-                    <template v-if="domains.length">
-                        Or Add a New Domain
-                    </template>
-                    <template v-if="!domains.length">
-                        Create a New Domain
-                    </template>
-                </button>
-                <form v-if="createDomainSectionOpen" action="#" class="flex flex-wrap" @submit.prevent>
-                    <div class="px-2 w-full">
-                        <Label for="domain-existing-url">Url</Label>
-                        <small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('domainURL') }" id="domainURL-validation">{{validationMessages["domainURL"]}}</small>
-                        <div class="flex">
-                            <select
-                            class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" 
-                            v-model="protocol" 
-                            name="domain-protocol">
-                                <option :value="protocol" v-for="(protocol, index) in ['https://', 'http://']" :key="'domain-protocol-' + index">{{protocol}}</option>
-                            </select>
-                            <TextInput
-                            :data-validation-failed="failedValidation.includes('domainURL') ? 'invalid-3' : false" 
-                            :aria-describedby="failedValidation.includes('domainURL') ? 'domainURL-validation' : false"
-                            required 
-                            placeholder="example.com" 
-                            class="w-9/12 ml-1" 
-                            id="domain-existing-url" 
-                            v-model="url" />
-                        </div>
-                    </div>
+				<template v-if="domains && domains.length">
+					<h2 id="choose_select_heading" class="pt-4 pb-3 subheadline">Select a Domain</h2>
+					<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('domain') }" id="domain-validation">{{validationMessages["domain"]}}</small>
+					<select 
+					:data-validation-failed="failedValidation.includes('domain') ? 'invalid-3' : false" 
+					required 
+					:aria-describedby="failedValidation.includes('domain') ? 'domain-validation' : false" 
+					aria-labelledby="choose_select_heading" class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" v-model="selectedDomain" 
+					name="choose_domain" 
+					id="choose_select">
+						<option :value="domain.id" v-for="(domain) in domains" :key="'domain-' + domain.id">
+							{{domain.url}}<template v-if="domain.root">/{{domain.root}}/</template>
+						</option>
+					</select>
+				</template>
+				<button 
+				@click="createDomainSectionOpen = !createDomainSectionOpen" 
+				:aria-expanded="createDomainSectionOpen ? 'true' : 'false'" 
+				class="text-base mt-3">
+					<template v-if="domains && domains.length">
+						Or Add a New Domain
+					</template>
+					<template v-if="!domains || !domains.length">
+						Create a New Domain
+					</template>
+				</button>
+				<form v-if="createDomainSectionOpen" action="#" class="flex flex-wrap" @submit.prevent>
+					<div class="pr-2 w-full">
+						<Label for="domain-existing-url">Url</Label>
+						<small class="text-red-600" :class="{ 'hidden': !failedValidation.includes('domainURL') }" id="domainURL-validation">{{validationMessages["domainURL"]}}</small>
+						<div class="flex">
+								<select
+								class="block border cursor-pointer focus:ring-1 outline-none ring-pallette-orange p-2 rounded shadow" 
+								v-model="protocol" 
+								name="domain-protocol">
+									<option :value="protocol" v-for="(protocol, index) in ['https://', 'http://']" :key="'domain-protocol-' + index">{{protocol}}</option>
+								</select>
+								<TextInput
+								:data-validation-failed="failedValidation.includes('domainURL') ? 'invalid-3' : false" 
+								:aria-describedby="failedValidation.includes('domainURL') ? 'domainURL-validation' : false"
+								required 
+								placeholder="example.com" 
+								class="w-9/12 ml-1" 
+								id="domain-existing-url" 
+								v-model="url" />
+						</div>
+					</div>
 
-                    <div class="flex flex-col items-start">
-                        <label class="label block pr-3" :stacked="false" for="generate-sitemap">
-                            <input v-model="domain.sitemap_option" type="radio" id="generate-sitemap" name="domain-sitemap" value="generate" class="mt-3" />
-                            Generate sitemap
-                        </label>
-                        
-                        <label class="label block" :stacked="false" for="sitemap-manual">
-                            <input  v-model="domain.sitemap_option" type="radio" id="sitemap-manual" name="domain-sitemap" value="manual" class="mt-3" />
-                            Manually enter/upload sitemap OR use working sample
-                        </label>
-                    </div>
+					<div class="flex flex-col items-start">
+						<label class="label block pr-3" :stacked="false" for="generate-sitemap">
+								<input v-model="domain.sitemap_option" type="radio" id="generate-sitemap" name="domain-sitemap" value="generate" class="mt-3" />
+								Generate sitemap
+						</label>
+						
+						<label class="label block" :stacked="false" for="sitemap-manual">
+								<input  v-model="domain.sitemap_option" type="radio" id="sitemap-manual" name="domain-sitemap" value="manual" class="mt-3" />
+								Manually enter/upload sitemap OR use working sample
+						</label>
+					</div>
 
-                    <div class="mt-3 w-full">
-                        <button class="standard mr-2" @click.prevent="createDomain">Add Domain</button>
-                    </div>
-                </form>
+					<div class="mt-3 w-full">
+						<button class="standard mr-2" @click.prevent="createDomain">Add Domain</button>
+					</div>
+				</form>
 				<!-- <div class="w-full">
 
 					<template v-if="isManager">
@@ -281,13 +281,13 @@
 			},
 			open: function(newVal){
 				if( newVal ){
-					if( !this.project.domains.length ){
+					if( ! this.project.domains || !this.project.domains.length ){
 						this.createDomainSectionOpen = true
 					}
 
-					if( this.isManager ){ //Get the team members each time modal is opened
-						this.$store.dispatch("user/getUsers", {vm: this})
-					}
+					// if( this.isManager ){ //Get the team members each time modal is opened
+					// 	this.$store.dispatch("user/getUsers", {vm: this})
+					// }
 				}
 			}
 		},
