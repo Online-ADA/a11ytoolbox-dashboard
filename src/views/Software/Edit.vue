@@ -3,39 +3,31 @@
 		<Loader v-if="loading"></Loader>
 
 		<h2 class="mb-1 headline">{{software.title}}</h2>
-		<div class="flex items-center mb-3">
-			<h3 class="pr-2 subheadline">{{software.title}}</h3>
-			<button class="standard" aria-label="Edit software title" @click.prevent="editSoftwareOpen = true"><i class="far fa-edit"></i></button>
-		</div> 
 
 		<Modal style="z-index:71;" :open="editSoftwareOpen">
-			<div class="bg-white px-4 pt-5 pb-4">
-				
-				<div class="mt-3 text-left w-full">
-					<h3 class="headline">
-						Edit
-					</h3>
+			<div class="bg-white">
+				<button class="absolute top-4 right-4 standard" @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('editSoftwareModal', false)})">X</button>
+				<div class="text-left w-full">
+					<h3 class="subheadline">Edit</h3>
 					<div class="my-2 w-full">
-						<Label class="text-lg subheadline" for="edit-title">Edit Title</Label>
+						<Label class="" for="edit-title">Edit Title</Label>
 						<TextInput class="w-full" v-model="software.title" id="edit-title"></TextInput>
 					</div>
 				</div>
 
 				<button @click.prevent="saveSoftware" class="standard">Save</button>
-				<button class="ml-3.5 standard" @click.prevent="editSoftwareOpen = false">Cancel</button>
-				
 			</div>
 		</Modal>
 
 		<div class="w-1/2 flex xs:flex-wrap sm:flex-wrap">
 			<Card :center="false" class="flex-1 p-4">
 
-				<h4 class="text-left pt-3 pb-4 subheadline">Add Screen</h4>
+				<h2 class="text-left pt-3 pb-3 subheadline">Add Screen</h2>
 				<div class="w-full flex mb-4">
 					<div class="w-full">
-						<Label :stacked="false" class="subheadline text-lg flex items-center w-full" for="name-input"><span class="pr-3">Name</span></Label>
+						<Label :stacked="false" class="" for="name-input">Name</Label>
 						<div class="flex items-center flex-1">
-							<TextInput style="flex-basis:100%" class="w-full flex-1" id="name-input" v-model="newScreen.name" />
+							<TextInput required style="flex-basis:100%" class="w-full flex-1" id="name-input" v-model="newScreen.name" />
 							<button class="ml-2 standard" @click.prevent="addScreen">Add</button>
 						</div>
 					</div>
@@ -46,7 +38,7 @@
 					<ul class="mb-4">
 						<li class="my-1" v-for="screen in software.screens" :key="screen.id">
 							{{screen.name}}
-							<button aria-label="delete this screen" @click.prevent="deleteScreen(screen.id)" class="ml-4 standard alert">X</button>
+							<button aria-label="delete this screen" @click.prevent="deleteScreen(screen.id)" class="ml-4 standard alert"><i class="fas fa-trash-alt"></i></button>
 						</li>
 					</ul>
 				</Card>
@@ -66,9 +58,11 @@
 	import Button from '../../components/Button'
 	import FileInput from '../../components/FileInput'
 	import Card from '../../components/Card'
+	import {EventBus} from "../../services/eventBus"
 
 	export default {
 		data: () => ({
+			EventBus: EventBus,
 			editSoftwareOpen: false,
 			newScreen: {name: ""},
 			software: {},
@@ -83,6 +77,9 @@
 		watch: {},
 		methods: {
 			addScreen(){
+				if( !this.newScreen.name ){
+					return
+				}
 				this.$store.dispatch("properties/addScreen", {screen: this.newScreen, software: this.software})
 				this.software.screens.push(this.newScreen)
 				this.newScreen = {name:""}
@@ -114,6 +111,9 @@
 				that.software = data
 			}})
 			
+			EventBus.$on("editSoftwareModal", (payload)=>{
+				that.editSoftwareOpen = payload
+			})
 		},
 		components: {
 			TextInput,

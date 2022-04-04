@@ -126,11 +126,13 @@ export default {
           return this.$store.state.user.all
         }
         let users = []
+        
         for (let x = 0; x < this.$store.state.user.byTeam[this.account.pivot.team_id].length; x++) {
           const user_id = this.$store.state.user.byTeam[this.account.pivot.team_id][x]
           let user = this.$store.state.user.all.find( u=>u.id == user_id)
           users.push(user)
         }
+        
         return users
       },
       account(){

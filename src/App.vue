@@ -163,6 +163,12 @@ export default {
 		// },
 	},
 	watch: {
+		"$store.state.projects.project":{
+			deep: true,
+			handler(newVal){
+				console.log("Project changed", newVal);
+			}
+		},
 		"$store.state.clients.client": function(newVal){
 			this.$store.state.audits.all = []
 			this.$store.state.projects.project = false
@@ -173,10 +179,17 @@ export default {
 		},
 		"$store.state.projects.all":function(newVal){
 			//This function triggers when the projects list changes, primarily when switching clients or on initial login
+			
 			if( newVal.length ){
-				if( this.$route.name === "ProjectShow" ){
+				if( this.$route.name === "ProjectShow" || this.$route.name === "ProjectEdit" ){
 					let that = this
 					this.$store.state.projects.project = newVal.find(p=>p.id == that.$route.params.id)
+					return
+				}
+
+				if( this.$route.name === "AuditShow" || this.$route.name === "AuditEdit" ){
+					let that = this
+					this.$store.state.projects.project = newVal.find(p=>p.id == that.$store.state.audits.audit.project_id)
 					return
 				}
 
@@ -186,7 +199,6 @@ export default {
 			}
 		},
 		"$route.path": function(){
-			
 			if( this.$route.matched[0].name == 'Audits' ){
 				if( this.$route.params.id !== undefined ){
 					this.$store.state.projects.tool = {type:"audit", info:""}

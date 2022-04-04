@@ -1,17 +1,14 @@
 <template>
-	<div class="mt-[-30px]">
+	<div>
 		<Loader v-if="loading"></Loader>
 		
 		<h2 class="mb-1 headline">{{domain.url}}</h2>
-		<div class="flex items-center mb-3">
-			<h3 class="pr-2 subheadline">{{domain.url}}</h3>
-			<button class="standard" title="Edit Domain title" aria-label="Edit domain title" @click.prevent="editDomainOpen = true"><i class="far fa-edit"></i></button>
-		</div>
+		
 		<Modal style="z-index:71;" :open="editDomainOpen">
 			<div class="bg-white">
 				<div class="flex items-center justify-between">
-					<h2 class="subheadline">Edit Domain URL</h2>
-					<button class="standard" @click.prevent="editDomainOpen = false" aria-label="Close add modal">X</button>
+					<h2 class="headline">Edit Domain URL</h2>
+					<button class="standard" @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('editDomainModal', false)})" aria-label="Close add modal">X</button>
 				</div>
 				<div class="text-left w-full">
 					
@@ -152,9 +149,11 @@ import A from '../../components/Link'
 import Button from '../../components/Button'
 import FileInput from '../../components/FileInput'
 import Card from '../../components/Card'
+import {EventBus} from "../../services/eventBus"
 
 export default {
 	data: () => ({
+		EventBus: EventBus,
 		domainRoot: "",
 		specifyRoot: false,
 		structuredListModalOpen: false,
@@ -342,6 +341,11 @@ export default {
 	mounted() {
 		this.getDomain()
 		document.title = "Edit Domain"
+
+		let that = this
+		EventBus.$on("editDomainModal", (payload)=>{
+			that.editDomainOpen = payload
+		})
 	},
 	components: {
 		TextInput,

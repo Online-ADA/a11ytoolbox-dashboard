@@ -99,7 +99,7 @@
 							<Button aria-label="remove this assistive technology from the audit" class="ml-1" :hover="true" @click.native.prevent="removeAssistiveTech(i)"><i class="fas fa-trash-alt"></i></Button>
 						</div>
 						
-						<Button :hover="true" @click.native.prevent="addNewAssistiveTech">Add New</Button>
+						<button class="standard" @click.prevent="addNewAssistiveTech">Add New</button>
 					</Card>
 				</Label>
 			</div>
@@ -112,10 +112,10 @@
 							<select class="mr-1 w-11/12" id="treqs" name="treqs" v-model="audit.tech_requirements[i]">
 								<option :key="`TR-${index}`" v-for="(option, index) in tech_requirements_src">{{option}}</option>
 							</select>
-							<Button aria-label="remove this technology requirement from the audit" class="ml-1" :hover="true" @click.native.prevent="removeTechReq(i)"><i class="fas fa-trash-alt"></i></Button>
+							<button aria-label="remove this technology requirement from the audit" class="standard alert ml-1" @click.prevent="removeTechReq(i)"><i class="fas fa-trash-alt"></i></button>
 						</div>
 						
-						<Button :hover="true" @click.native.prevent="addNewTechReq">Add New</Button>
+						<button class="standard" @click.prevent="addNewTechReq">Add New</button>
 					</Card>
 				</Label>
 				
@@ -158,32 +158,19 @@
 			
 		</div>
 		<Modal class="adjust-with-sidebars" :open="confirmModalOpen">
-			<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-					<div class="sm:flex sm:items-start">
-						<div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-							<!-- Heroicon name: outline/exclamation -->
-							<svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-							</svg>
-						</div>
-						<div class="mt-3 ml-4 xs:text-center xs:mt-3 xs:ml-0 text-left">
-							<h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Delete Audit</h3>
-							<div class="mt-2">
-								<p class="text-sm text-gray-500">
-									Are you sure you want to delete this audit? This will delete all associated working sample pages and issues as well. This action cannot be undone.
-								</p>
-							</div>
-						</div>
-					</div>
+			<button @click="confirmModalOpen = false" type="button" class="standard absolute top-4 right-4">X</button>
+			<div class="bg-white">
+				<delete-confirm-icon></delete-confirm-icon>
+						
+				<h3 class="subheadline" id="modal-title">Delete Audit</h3>
+				<div class="mt-2">
+					<p>
+						Are you sure you want to delete this audit? This will delete all associated working sample pages and issues as well. This action cannot be undone.
+					</p>
+				</div>
 			</div>
-			<div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-				<button @click="deleteAudit" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-				Delete
-				</button>
-				<button @click="confirmModalOpen = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-				Cancel
-				</button>
-			</div>
+			
+			<button @click="deleteAudit" type="button" class="standard alert mt-2">Delete</button>
 		</Modal>
 	</div>
 </template>
@@ -197,6 +184,7 @@ import Label from '../../components/Label'
 import Button from '../../components/Button'
 import DatePicker from '../../components/Date'
 import Textarea from '../../components/TextArea'
+import DeleteConfirmIcon from '../../components/DeleteConfirmIcon.vue'
 export default {
 	data: () => ({
 		statusSrc: [
@@ -343,7 +331,8 @@ export default {
 		Button,
 		Card,
 		DatePicker,
-		Modal
+		Modal,
+		DeleteConfirmIcon
 	},
 }
 </script>
