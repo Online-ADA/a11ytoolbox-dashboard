@@ -183,6 +183,7 @@
 			},
 			chooseYes(){
 				this.reset()
+				this.$store.state.projects.tool.type = "media_audit"
 				EventBus.closeModal(()=>{ EventBus.$emit('deployMediaAuditModal', false) })
 				this.$router.push({path: `/media-audits/${this.$store.state.mediaAudits.all[this.$store.state.mediaAudits.all.length - 1].id}`})
 			},

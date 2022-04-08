@@ -35,7 +35,7 @@
                         </span>
                         <div class="block">
                             <ul>
-                                <li :class="[(mediaAudits.audit && mediaAudits.audit.id === item.id) ? 'selected' : '']" class="text-sm py-2 text-white" v-for="item in mediaAudits.all" :key="item.id">
+                                <li :class="[(mediaAudits.audit && mediaAudits.audit.id === item.id) ? 'selected' : '']" class="text-sm py-2 text-white" v-for="item in mediaAudits" :key="item.id">
                                     <button class="" @click="updateMediaAudit(item)">{{getTitle(item)}}</button>
                                 </li>
                             </ul>
@@ -81,7 +81,7 @@ export default {
     name: 'secondary-sidebar',
     computed: {
         mediaAudits() {
-            return this.$store.state.mediaAudits
+            return this.$store.state.mediaAudits.all
         },
         colorSwatches(){
             if( this.$store.state.projects.project ){
@@ -154,7 +154,11 @@ export default {
                 this.$store.state.audits.all = []
                 return
             }
-            this.expanded = []
+            
+            if( !this.$store.state.projects.tool || !this.$store.state.projects.tool.type ){
+                this.expanded = []
+            }
+            
             this.setProjectMeta()
 
             if( (oldVal === false || oldVal === undefined) && newVal !== false ){
@@ -180,6 +184,7 @@ export default {
         },
     },
     mounted() {
+        console.log(this.$store.state.projects.project);
         if( this.$store.state.projects.tool.type === 'audit' ){
             this.expanded.push('audit')
         }

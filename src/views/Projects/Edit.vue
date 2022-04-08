@@ -48,13 +48,13 @@
     </form>
 
     <Modal class="adjust-with-sidebars" :open="confirmModalOpen">
-      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+      <div class="bg-white">
           <button @click="confirmModalOpen = false" type="button" aria-label="Close Delete Confirmation modal" class="standard absolute top-4 right-4">X</button>
           <div class="sm:flex sm:items-start">
               <DeleteConfirmIcon></DeleteConfirmIcon>
-              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+              <div class="mt-3">
                   <h3 class="subheadline" id="modal-title">Delete Project</h3>
-                  <div class="mt-2">
+                  <div class="my-2">
                       <p>
                           Are you sure you want to delete this project? This will delete all associated domains and tools as well. This action cannot be undone.
                       </p>
