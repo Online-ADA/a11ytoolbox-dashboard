@@ -276,6 +276,7 @@
 			},
 			chooseYes(){
 				this.reset()
+				this.$store.state.projects.tool.type = "audit"
 				EventBus.$emit('deployWCAGAuditModal', false)
 				this.$router.push({path: `/audits/${this.$store.state.audits.all[this.$store.state.audits.all.length - 1].id}`})
 			},
@@ -341,6 +342,7 @@
 				this.selectedSoftware = false		
 				this.software_loading = false,
 				this.software_feedback = '',	
+				this.domain_feedback = '',	
 
 				this.assigned = []
 				this.unassigned = []
