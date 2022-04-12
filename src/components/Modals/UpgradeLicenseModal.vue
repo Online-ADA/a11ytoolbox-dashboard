@@ -389,7 +389,9 @@
 		},
 		watch:{
 			open(val) {
-				console.log('opening or closing: ',val)
+				if(val) {
+					gtag('event', 'conversion', {'send_to': 'AW-343018477/7wrrCNzFs7IDEO2XyKMB'});
+				}
 			}
 		},
 		created(){
