@@ -65,10 +65,10 @@ class Request {
         if( args.async && args.async === false ){
             return await new Promise( (resolve, reject)=> {
                 Vue.prototype.$http.get(url, args.params || {}).then(response =>{
-                    this.checkForRedirect(response)
+                    // this.checkForRedirect(response)
                     resolve(response)
                 }).catch( response => {
-                    this.checkForRedirect(response)
+                    // this.checkForRedirect(response)
                     reject(response)
                 })
             })

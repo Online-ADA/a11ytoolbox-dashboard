@@ -16,7 +16,7 @@ export default {
     API: "",
     token: Cookies.get('oada_UID') || false,
     token_expire: Cookies.get('oada_UID_expire') || false,
-    token_check_every: 600000, //2 minutes = 120000, 600000 = 10 minutes
+    token_check_every: 600000, //600000 = 10 minutes
     account: parseInt(Cookies.get('toolboxAccount')) || false,
     license: false,
     authMessage: "",
@@ -92,67 +92,13 @@ export default {
     },
   },
   actions: {
-    check({state, rootState,commit}, args) {
-      console.log("Running Auth Check");
-      const url_params = new URLSearchParams(window.location.search)
-      const license_id = url_params.get('license') ? url_params.get('license') : Cookies.get('toolboxLicense')
-      Request.getPromise(`${state.API}/state/init`,{params: {license:license_id}})
-      .then( response => {
-        commit('setState',{key:'user',value:response.data.details.user})
-        commit('setState',{key:'license',value:response.data.details.license})
-        commit('setState',{key:'account',value:parseInt(response.data.details.license.account.id)})
-
-        //If the toolbox client cookie IS set and there are clients in the global vuex store, then set the current client to the one from the cookie
-        if( Cookies.get("toolboxClient") && rootState.clients.all.length ){
-          rootState.clients.client = rootState.clients.all.find(cl=>cl.id == Cookies.get("toolboxClient"))
-        }
-        //If the toolbox client cookie is NOT set but there are clients, set the cookie and the global client to the first client
-        if( !Cookies.get("toolboxClient") && rootState.clients.all.length){
-          rootState.clients.client = rootState.clients.all[0]
-          Cookies.set("toolboxClient", rootState.clients.all[0].id)
-        }
-        //If the toolbox client cookie is not set but there aren't any clients in the global store, go get the clients from the API and set them like above from what is returned
-        if( !Cookies.get("toolboxClient") && !rootState.clients.all.length ){
-          Request.getPromise(`${state.API}/l/${rootState.auth.license.id}/clients`)
-          .then(response=>{
-            if( response.data.details.length ){
-              rootState.clients.all = response.data.details
-              rootState.clients.client = rootState.clients.all[0]
-              Cookies.set("toolboxClient", rootState.clients.all[0].id)
-            }
-          })
-          .catch()
-        }
-
-        Cookies.set("loggingIn", false)
-
-        if( state.license ){
-          if(args.payload.redirect) {
-            args.payload.router.push({path: args.payload.redirect})
-          }else{
-            args.payload.router.push({path: state.redirect})
-          }
-        }
-      })
-      .catch(re => console.log(re.response.data))
-      .finally( ()=>{
-        if( !state.user && !Cookies.get('oada_UID')){
-          window.location = state.accapi + "/signin"
-        }
-      })
-    },
-    login({state}, redirect){
-      console.log("Running login...");
-      if( redirect ){
-        state.redirect = redirect
-      }
-      let auth_redirect = encodeURIComponent(`/auth`)
-      Cookies.set("loggingIn", true)
+    login({state}){
+      let auth_redirect = encodeURIComponent(`/`) //To change to current route?
       window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route="+auth_redirect
     },
     setToken({state, dispatch}, payload){
       state.dispatch = dispatch
-      console.log("Setting token", payload)
+      console.log("Setting token", payload, payload.token_expire)
       Cookies.set('oada_UID', payload.token, 365)
 
       //Confusingly storing the expire value for 365 days. It is the value itself we check against though, not the existence of the value
@@ -162,7 +108,7 @@ export default {
       state.checkTokenExpire(state)
 
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
-      dispatch("check", {payload: payload})
+      // dispatch("check", {payload: payload})
     },
     logout({state, dispatch}){
       state.token = false
