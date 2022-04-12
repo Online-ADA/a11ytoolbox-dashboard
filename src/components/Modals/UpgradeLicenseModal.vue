@@ -12,7 +12,7 @@
 			</p>
 		</div>
 		<div v-show="!loading" class="w-full min-h-[500px]">
-			<div :class="[{'translate-x-0':tab == 'options','translate-x-[250%] invisible absolute': tab != 'options'},'min-w-full bg-pallette-white w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
+			<div :class="[{'translate-x-0':tab == 'options','translate-x-[250%] invisible absolute': tab != 'options'},'min-w-full w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
 				<div >
 					<h1 class="headline text-center">Upgrade License</h1>
 				</div>
@@ -34,7 +34,7 @@
 					</div>
 				</template>
 			</div>
-			<div :class="[{'translate-x-0':tab == 'payment','translate-x-[250%] invisible absolute': tab != 'payment'},'min-w-full bg-pallette-white  w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
+			<div :class="[{'translate-x-0':tab == 'payment','translate-x-[250%] invisible absolute': tab != 'payment'},'min-w-full  w-full options-tab transform transition ease-in-out duration-500 sm:duration-700']">
 				<div v-if="payment_screen != 'success'" >
 					<h1 class="headline text-center">Payment Information</h1>
 				</div>				
@@ -355,6 +355,7 @@
 						'transaction_id': ''
 					});
 				}
+				location.reload()
 			},
 			Failure(response) {
 				if(response.data.success == '0') {
@@ -387,6 +388,11 @@
 			},
 		},
 		watch:{
+			open(val) {
+				if(val) {
+					gtag('event', 'conversion', {'send_to': 'AW-343018477/7wrrCNzFs7IDEO2XyKMB'});
+				}
+			}
 		},
 		created(){
 			this.current_year = parseInt(moment().format('YYYY'))
