@@ -32,7 +32,16 @@ const routes = [
       },
     ]
   },
-  
+  {
+    path: "/logs",
+    component: () => import(/* webpackChunkName: "logs" */ '../views/Logs/Index.vue'),
+    children:[
+      {
+        path: "/activity",
+        component: () => import(/* webpackChunkName: "logs" */ '../views/Logs/ActivityLogs.vue'),
+      },
+    ]
+  },
   {
     path: "/color-reports",
     component: () => import(/* webpackChunkName: "swatches" */ '../views/Swatches/Index.vue'),
