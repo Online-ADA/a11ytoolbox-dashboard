@@ -242,6 +242,7 @@ export default {
 		}
 	},
 	mounted() {
+		gtag('event', 'conversion', {'send_to': 'AW-343018477/f_37CP_rrrIDEO2XyKMB'});
 		this.$root.$on('menuClick', (menuOpen) => {
 			this.sidebarExpanded = menuOpen;
 			
