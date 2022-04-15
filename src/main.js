@@ -66,6 +66,8 @@ store.state.auth.toolboxapi = apiHost
 store.state.auth.API = `${apiHost}/api`
 store.state.auth.dashboard = dashboard
 
+store.state.auth.dispatch = store.dispatch
+
 async function run(){
   if(params.get('oada_auth') && params.get('oada_auth') != ''){
   
@@ -87,9 +89,9 @@ async function run(){
     }
   })
 
-  await store.commit('auth/setState',{key:'user',value:state_response.data.details.user})
-  await store.commit('auth/setState',{key:'license',value:state_response.data.details.license})
-  await store.commit('auth/setState',{key:'account',value:parseInt(state_response.data.details.license.account.id)})
+  store.commit('auth/setState',{key:'user',value:state_response.data.details.user})
+  store.commit('auth/setState',{key:'license',value:state_response.data.details.license})
+  store.commit('auth/setState',{key:'account',value:parseInt(state_response.data.details.license.account.id)})
 
   let clients_response = await Vue.prototype.$http.get(store.state.auth.API+`/l/${store.state.auth.license.id}/clients`).catch( re=>{})
 
@@ -119,7 +121,7 @@ async function run(){
 
   store.state.auth.checkTokenExpire()
 
-  if( store.state.auth.license ){
+  if( store.state.auth.license && params.get('oada_auth') ){
     history.replaceState(null, '', "/")
   }
 
@@ -131,10 +133,10 @@ async function run(){
 
   router.beforeEach( (to, from, next) => {
     //Let's do nothing if it's hitting the authentication route. Everything is handled within and will run us back through here once authentication attempt is completed
-    if(to.name == 'auth') {
-      next()
-      return
-    }
+    // if(to.name == 'auth') {
+    //   next()
+    //   return
+    // }
     //Route Heirarchy:check account has been selected, check roles and permissions, then check roles, then check permissions, then check logged in
     if( !store.getters["auth/account"] && to.path != "/" ){
       next("/")

@@ -92,19 +92,6 @@ export default {
 			})
 			.then( ()=> state.loading = false)
 		},
-		// getAllPropertiesForLicense({state, rootState}, args){
-		// 	state.loading = true
-			
-		// 	Request.getPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/properties` )
-		// 	.then( re => {
-		// 		state.all.software = re.data.details.software
-		// 		state.all.domains = re.data.details.domains
-		// 	})
-		// 	.catch( re => {
-		// 		console.log(re)
-		// 	})
-		// 	.then( ()=> state.loading = false)
-		// },
 		getAllPropertiesForClient({state, rootState}, args){
 			state.loading = true
 			

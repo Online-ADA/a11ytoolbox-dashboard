@@ -3,22 +3,14 @@
 		<div v-if="!complete">
 			<Loader v-if="loading" :local="true"></Loader>
 			<h1 class="headline">Create New Client</h1>
-			<Form @submit.native.prevent>
-				<Label class="subheadline text-lg" for="client-name">Client Name</Label>
-				<TextInput id="client-name" name="client-name" v-model="client.name" />
-				
-				<Label class="subheadline text-lg" for="client-email">Client Email</Label>
-				<TextInput id="client-email" name="client-email" v-model="client.email" />
+			
+			<button aria-label="Close Create New Client modal" class="standard absolute top-4 right-4" @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('createClientModal', false)})">X</button>
+			<form @submit.prevent>
+				<Label class="block" for="client-title">Client Title</Label>
+				<TextInput class="block" id="client-title" name="client-title" v-model="client.name" />
 
-				<Label class="subheadline text-lg" for="client-status">Status</Label>
-				
-				<select name="client-status" id="client-status" aria-label="Select client status" class="m-2 p-1" v-model="client.status">
-					<option :value="option.value" v-for="(option, index) in statusSrc" :key="'client-status-'+index">{{option.name}}</option>
-				</select>
-
-				<button class="standard mr-2" @click.prevent="createClient">Create</button>
-				<button class="standard" @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('createClientModal', false)})">Cancel</button>
-			</Form>
+				<button class="standard mt-2 mr-2 block" @click.prevent="createClient">Create</button>
+			</form>
 		</div>
 		
 		<template v-if="complete">

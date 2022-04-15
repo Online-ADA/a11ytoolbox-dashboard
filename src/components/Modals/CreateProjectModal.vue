@@ -5,14 +5,14 @@
 				<h1 class="headline">Create New Project</h1>
 				<button aria-label="Close Create New WCAG Audit modal" class="standard absolute top-4 right-4 " @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('createProjectModal', false)})">X</button>
 				
-				<Label for="project-name">Name</Label>
-				<TextInput id="project-name" name="project-name" v-model="project.name" />
+				<Label for="project-title">Title</Label>
+				<TextInput id="project-title" name="project-title" v-model="project.name" />
 
-				<Label for="project-status">Status</Label>
+				<!-- <Label for="project-status">Status</Label>
 				
 				<select name="project-status" id="project-status" aria-label="Select project status" class="p-1" v-model="project.status">
 					<option :value="option.value" v-for="(option, index) in statusSrc" :key="'project-status-'+index">{{option.name}}</option>
-				</select>
+				</select> -->
 
 				<!-- <template v-if="isManager">
 					<div class="flex my-3 xs:flex-wrap">
@@ -36,7 +36,7 @@
 					</div>
 				</template> -->
 
-				<button class="standard mr-2 mt-2" @click.prevent="createProject">Create</button>
+				<button class="standard mr-2 mt-2 block" @click.prevent="createProject">Create</button>
 		</template>
 		<template v-if="complete">
 			<h1 class="pb-5 headline">Do you want to deploy a tool?</h1>

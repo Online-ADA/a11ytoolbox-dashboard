@@ -34,7 +34,7 @@ export default {
 	},
 	actions: {
 		resetState({commit}) {
-         commit('resetState')
+            commit('resetState')
         },
         GetPayments({state,rootState},args) {
             state.loading = true
@@ -71,7 +71,7 @@ export default {
         },
         UpgradeLicense({state,rootState},args) {
             state.loading = true
-            Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/upgrade/license`,{params:{
+            Request.patchPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/upgrade/license`,{params:{
                 upgrade: args.upgrade
             }})
             .then( re=>{
@@ -123,7 +123,7 @@ export default {
             })
             .then( ()=> state.loading = false)
         },
-        CreatePaymentMethod({state,commit,rootState}) {
+        CreatePaymentMethod({state,rootState}) {
             Request.postPromise(`${rootState.auth.accapi}/api/methods/create`,{
                 params: {
 

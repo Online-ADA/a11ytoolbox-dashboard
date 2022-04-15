@@ -29,24 +29,22 @@ export default {
     checkTokenExpire: function(){
       //Check the total minutes remaining until expire
       let minutesLeft = this.getTimeLeft()
-      console.log("Checking for token expire. Minutes left is: ", minutesLeft);
+      console.log("Checking for token expire. Minutes left: ", minutesLeft)  
 
       //If more than 10 minutes remaining, check every 10 minutes
       if( minutesLeft > 10 ){
         if( this.token_check_every != 600000 && this.timeCheckInterval !== false ){
-          clearInterval(state.timeCheckInterval)
+          clearInterval(this.timeCheckInterval)
           this.timeCheckInterval = false
         }
 
         if(this.timeCheckInterval === false){
-          console.log("Setting time check interval to 10 minutes");
           this.timeCheckInterval = setInterval((state) => {
             state.checkTokenExpire()
           }, this.token_check_every, this)
         }
       }
       else if( minutesLeft <= 10 && minutesLeft > 0 ){
-        console.log("Session will log out in less than 10 minutes");
         if( this.token_check_every != 60000 && this.timeCheckInterval !== false ){
           clearInterval(this.timeCheckInterval)
           this.timeCheckInterval = false
@@ -55,15 +53,15 @@ export default {
         this.token_check_every = 60000
         if(this.timeCheckInterval === false){
           this.timeCheckInterval = setInterval((state) => {
-            state.checkTokenExpire(state)
+            state.checkTokenExpire()
           }, this.token_check_every, this)
         }
-        
       }
       else{ //We are less than 0 seconds. Logout
         clearInterval(this.timeCheckInterval)
         this.timeCheckInterval = false
-        this.dispatch("logout")
+        
+        this.dispatch("auth/logout")
       }
     },
     getTimeLeft: function(){
@@ -98,17 +96,25 @@ export default {
     },
     setToken({state, dispatch}, payload){
       state.dispatch = dispatch
+      let token_expire =  payload.token_expire * 1000
+      // let token_expire =  Date.now() + 120000 // now plus 2 minutes for testing
+
       console.log("Setting token", payload, payload.token_expire)
       Cookies.set('oada_UID', payload.token, 365)
 
       //Confusingly storing the expire value for 365 days. It is the value itself we check against though, not the existence of the value
-      Cookies.set('oada_UID_expire', payload.token_expire * 1000, 365) 
+      Cookies.set('oada_UID_expire', token_expire, 365)
       state.token = payload.token
-      state.token_expire = payload.token_expire * 1000
-      state.checkTokenExpire(state)
+      
+      state.token_expire = token_expire
+      state.checkTokenExpire()
 
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
-      // dispatch("check", {payload: payload})
+    },
+    resetTokenExpire({state}){
+      state.token_expire = Date.now() + 86400000 // now + 24 hours
+      Cookies.set('oada_UID_expire', state.token_expire, 365)
+      state.checkTokenExpire()
     },
     logout({state, dispatch}){
       state.token = false

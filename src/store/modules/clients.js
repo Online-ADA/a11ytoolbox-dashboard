@@ -101,7 +101,7 @@ export default {
 			}
 		},
 		createClient({state, rootState}, args){
-			state.loading = true;
+			state.loading = true
 			Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/clients`, {
 				params:{
 					client: args.client
@@ -199,8 +199,8 @@ export default {
 						state.loading = false
 					}
 				}
-			};
-			Request.post(`${rootState.auth.API}/l/${rootState.auth.license.id}/clients/${args.id}`, requestArgs)
+			}
+			Request.patch(`${rootState.auth.API}/l/${rootState.auth.license.id}/clients/${args.id}`, requestArgs)
 		},
 	},
 	getters: { 
