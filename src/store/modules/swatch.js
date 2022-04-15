@@ -49,7 +49,7 @@ export default {
 		saveSwatch({state, rootState}, args){
 			state.loading = true
 
-			Request.postPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/swatch/${args.swatch.id}`, {
+			Request.patchPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/swatch/${args.swatch.id}`, {
 				params: args.swatch
 			})
 			.then( re => {

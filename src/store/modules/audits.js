@@ -331,7 +331,7 @@ export default {
 						position: 'bottom right'
 					}
 				};
-				Request.post(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.id}`, requestArgs)
+				Request.patch(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.id}`, requestArgs)
 			},
 			getStructuredSample({state, rootState}){
 				state.loading = true
@@ -389,7 +389,7 @@ export default {
 			},
 			updateIssue({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.audit_id}/issues/${args.issue.id}`, {params: {issue: args.issue, pagination: args.pagination}})
+				Request.patchPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.audit_id}/issues/${args.issue.id}`, {params: {issue: args.issue, pagination: args.pagination}})
 				.then( re=>{
 					state.audit.issues = re.data.details
 				})

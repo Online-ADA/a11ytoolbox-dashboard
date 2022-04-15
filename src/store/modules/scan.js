@@ -25,41 +25,41 @@ export default {
 	},
 	actions: {
 		resetState({commit}) {
-            commit('resetState')
-        },
-        initiateScan({rootState}, args){
-            Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/scan/init`, {params: { scan_options: args.config, id: args.id, appends: args.appends,pages:args.pages,sitemap:args.sitemap}})
-				.then( re=>{
-					if(re.data.success == 'error') {
-						args.callback('error')
-						Vue.notify({
-							title: "ERROR",
-							text: re.data.message,
-							type: "error",
-							position: 'bottom right'
-						})
-					}else if(re.data.success == 'upgrade') {
-						args.callback('upgrade')
-						Vue.notify({
-							title: "Warning",
-							text: re.data.message,
-							type: "warn",
-							position: 'bottom right'
-						})
-					}
-					else{
-						args.callback('success')
-						Vue.notify({
-							title: "Success",
-							text: "A scan has been initiated.",
-							type: "success",
-							position: 'bottom right'
-						})
-					}
-				})
-				.catch( re=>console.log(re))
-				.then()
-        },
+			commit('resetState')
+		},
+		initiateScan({rootState}, args){
+			Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/scan/init`, {params: { scan_options: args.config, id: args.id, appends: args.appends,pages:args.pages,sitemap:args.sitemap}})
+			.then( re=>{
+				if(re.data.success == 'error') {
+					args.callback('error')
+					Vue.notify({
+						title: "ERROR",
+						text: re.data.message,
+						type: "error",
+						position: 'bottom right'
+					})
+				}else if(re.data.success == 'upgrade') {
+					args.callback('upgrade')
+					Vue.notify({
+						title: "Warning",
+						text: re.data.message,
+						type: "warn",
+						position: 'bottom right'
+					})
+				}
+				else{
+					args.callback('success')
+					Vue.notify({
+						title: "Success",
+						text: "A scan has been initiated.",
+						type: "success",
+						position: 'bottom right'
+					})
+				}
+			})
+			.catch( re=>console.log(re))
+			.then()
+		},
 		getProjectScans({state, rootState}, args){
 			state.loading = true
 			
@@ -70,10 +70,10 @@ export default {
 			})
 			.then( ()=> state.loading = false)
 		},
-		getAccountScans({state, rootState}, args){
+		getClientScans({state, rootState}, args){
 			state.loading = true
 			
-			Request.getPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/scan/all` )
+			Request.getPromise( `${rootState.auth.API}/l/${rootState.auth.license.id}/scan/all`, {params: {client_id: args.client_id}} )
 			.then( re => state.all = re.data.details )
 			.catch( re => {
 				console.log(re)

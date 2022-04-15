@@ -16,7 +16,7 @@ export default {
     API: "",
     token: Cookies.get('oada_UID') || false,
     token_expire: Cookies.get('oada_UID_expire') || false,
-    token_check_every: 600000, //2 minutes = 120000, 600000 = 10 minutes
+    token_check_every: 600000, //600000 = 10 minutes
     account: parseInt(Cookies.get('toolboxAccount')) || false,
     license: false,
     authMessage: "",
@@ -29,24 +29,22 @@ export default {
     checkTokenExpire: function(){
       //Check the total minutes remaining until expire
       let minutesLeft = this.getTimeLeft()
-      console.log("Checking for token expire. Minutes left is: ", minutesLeft);
+      console.log("Checking for token expire. Minutes left: ", minutesLeft)  
 
       //If more than 10 minutes remaining, check every 10 minutes
       if( minutesLeft > 10 ){
         if( this.token_check_every != 600000 && this.timeCheckInterval !== false ){
-          clearInterval(state.timeCheckInterval)
+          clearInterval(this.timeCheckInterval)
           this.timeCheckInterval = false
         }
 
         if(this.timeCheckInterval === false){
-          console.log("Setting time check interval to 10 minutes");
           this.timeCheckInterval = setInterval((state) => {
             state.checkTokenExpire()
           }, this.token_check_every, this)
         }
       }
       else if( minutesLeft <= 10 && minutesLeft > 0 ){
-        console.log("Session will log out in less than 10 minutes");
         if( this.token_check_every != 60000 && this.timeCheckInterval !== false ){
           clearInterval(this.timeCheckInterval)
           this.timeCheckInterval = false
@@ -55,15 +53,15 @@ export default {
         this.token_check_every = 60000
         if(this.timeCheckInterval === false){
           this.timeCheckInterval = setInterval((state) => {
-            state.checkTokenExpire(state)
+            state.checkTokenExpire()
           }, this.token_check_every, this)
         }
-        
       }
       else{ //We are less than 0 seconds. Logout
         clearInterval(this.timeCheckInterval)
         this.timeCheckInterval = false
-        this.dispatch("logout")
+        
+        this.dispatch("auth/logout")
       }
     },
     getTimeLeft: function(){
@@ -92,77 +90,31 @@ export default {
     },
   },
   actions: {
-    check({state, rootState,commit}, args) {
-      console.log("Running Auth Check");
-      const url_params = new URLSearchParams(window.location.search)
-      const license_id = url_params.get('license') ? url_params.get('license') : Cookies.get('toolboxLicense')
-      Request.getPromise(`${state.API}/state/init`,{params: {license:license_id}})
-      .then( response => {
-        commit('setState',{key:'user',value:response.data.details.user})
-        commit('setState',{key:'license',value:response.data.details.license})
-        commit('setState',{key:'account',value:parseInt(response.data.details.license.account.id)})
-
-        //If the toolbox client cookie IS set and there are clients in the global vuex store, then set the current client to the one from the cookie
-        if( Cookies.get("toolboxClient") && rootState.clients.all.length ){
-          rootState.clients.client = rootState.clients.all.find(cl=>cl.id == Cookies.get("toolboxClient"))
-        }
-        //If the toolbox client cookie is NOT set but there are clients, set the cookie and the global client to the first client
-        if( !Cookies.get("toolboxClient") && rootState.clients.all.length){
-          rootState.clients.client = rootState.clients.all[0]
-          Cookies.set("toolboxClient", rootState.clients.all[0].id)
-        }
-        //If the toolbox client cookie is not set but there aren't any clients in the global store, go get the clients from the API and set them like above from what is returned
-        if( !Cookies.get("toolboxClient") && !rootState.clients.all.length ){
-          Request.getPromise(`${state.API}/l/${rootState.auth.license.id}/clients`)
-          .then(response=>{
-            if( response.data.details.length ){
-              rootState.clients.all = response.data.details
-              rootState.clients.client = rootState.clients.all[0]
-              Cookies.set("toolboxClient", rootState.clients.all[0].id)
-            }
-          })
-          .catch()
-        }
-
-        Cookies.set("loggingIn", false)
-
-        if( state.license ){
-          if(args.payload.redirect) {
-            args.payload.router.push({path: args.payload.redirect})
-          }else{
-            args.payload.router.push({path: state.redirect})
-          }
-        }
-      })
-      .catch(re => console.log(re.response.data))
-      .finally( ()=>{
-        if( !state.user && !Cookies.get('oada_UID')){
-          window.location = state.accapi + "/signin"
-        }
-      })
-    },
-    login({state}, redirect){
-      console.log("Running login...");
-      if( redirect ){
-        state.redirect = redirect
-      }
-      let auth_redirect = encodeURIComponent(`/auth`)
-      Cookies.set("loggingIn", true)
+    login({state}){
+      let auth_redirect = encodeURIComponent(`/`) //To change to current route?
       window.location = state.accapi + "/signin/?oada_redirect=" + state.redirect + "&oada_site=" + state.site + "&oada_auth_route="+auth_redirect
     },
     setToken({state, dispatch}, payload){
       state.dispatch = dispatch
-      console.log("Setting token", payload)
+      let token_expire =  payload.token_expire * 1000
+      // let token_expire =  Date.now() + 120000 // now plus 2 minutes for testing
+
+      console.log("Setting token", payload, payload.token_expire)
       Cookies.set('oada_UID', payload.token, 365)
 
       //Confusingly storing the expire value for 365 days. It is the value itself we check against though, not the existence of the value
-      Cookies.set('oada_UID_expire', payload.token_expire * 1000, 365) 
+      Cookies.set('oada_UID_expire', token_expire, 365)
       state.token = payload.token
-      state.token_expire = payload.token_expire * 1000
-      state.checkTokenExpire(state)
+      
+      state.token_expire = token_expire
+      state.checkTokenExpire()
 
       axios.defaults.headers.common['Authorization'] = "Bearer "+payload.token
-      dispatch("check", {payload: payload})
+    },
+    resetTokenExpire({state}){
+      state.token_expire = Date.now() + 86400000 // now + 24 hours
+      Cookies.set('oada_UID_expire', state.token_expire, 365)
+      state.checkTokenExpire()
     },
     logout({state, dispatch}){
       state.token = false

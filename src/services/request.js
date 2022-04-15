@@ -86,6 +86,7 @@ class Request {
         }
     }
     async postPromise(url, args = {params: {}}){
+        store.dispatch("auth/resetTokenExpire")
         if( args.async === false ){
             return await new Promise( (resolve, reject)=> {
                 Vue.prototype.$http.post(url, args.params || {}).then(response =>{
@@ -116,6 +117,7 @@ class Request {
         }
     }
     async destroyPromise(url, args = {params: {}}){
+        store.dispatch("auth/resetTokenExpire")
         if( args.async === false ){
             return await new Promise( (resolve, reject)=> {
                 Vue.prototype.$http.delete(url, args.params || {}).then(response =>{
@@ -141,6 +143,7 @@ class Request {
     }
 
     async patchPromise(url, args = {params: {}}){
+        store.dispatch("auth/resetTokenExpire")
         if( args.async === false ){
             return await new Promise( (resolve, reject)=> {
                 Vue.prototype.$http.patch(url, args.params || {}).then(response =>{
@@ -201,13 +204,51 @@ class Request {
         
     }
     post(url, args = {onSuccess: true, onError: true, onInfo: true, onWarn: true}){
-
+        store.dispatch("auth/resetTokenExpire")
         let requestArgs = {}
         requestArgs.params = args.params || {}
         requestArgs.config = {}
         requestArgs.config.headers = {...Vue.prototype.$http.defaults.headers.common, ...args.headers || {}}
         
         Vue.prototype.$http.post(url, requestArgs.params, requestArgs.config)
+        .then(response => {
+            this.checkForRedirect(response)
+            if( response.data.success && args.onSuccess ){
+                if( args.onSuccess.type == undefined ){
+                    args.onSuccess.type = "success"
+                    args.onSuccess.position = "bottom right"
+                }
+                this.parseArgs(args.onSuccess, response)
+            }
+            if( !response.data.success && args.onWarn ){
+                if( args.onWarn.type == undefined ){
+                    args.onWarn.type = "warn"
+                    args.onWarn.position = "bottom right"
+                }
+                this.parseArgs(args.onWarn, response)
+                return
+            }
+        }).catch(error => {
+            this.checkForRedirect(error)
+            console.log(error)
+            if( args.onError ){
+                if( args.onError.type == undefined ){
+                    args.onError.type = "error"
+                    args.onError.position = "bottom right"
+                }
+                this.parseArgs(args.onError, error)
+            }
+        })
+        
+    }
+    patch(url, args = {onSuccess: true, onError: true, onInfo: true, onWarn: true}){
+        store.dispatch("auth/resetTokenExpire")
+        let requestArgs = {}
+        requestArgs.params = args.params || {}
+        requestArgs.config = {}
+        requestArgs.config.headers = {...Vue.prototype.$http.defaults.headers.common, ...args.headers || {}}
+        
+        Vue.prototype.$http.patch(url, requestArgs.params, requestArgs.config)
         .then(response => {
             this.checkForRedirect(response)
             if( response.data.success && args.onSuccess ){
@@ -258,7 +299,7 @@ class Request {
     checkForRedirect(response){
         if( response.response != undefined && response.response.data.message == "Unauthenticated." ){
             //TODO: Need to retest this scenario. This condition was randomly giving me trouble again.
-            if( ( !Cookies.get("loggingIn") || Cookies.get("loggingIn") === "false" ) ) store.dispatch("auth/login")
+            store.dispatch("auth/login")
             return
         }
         if(response.response != undefined && response.response.data.message == 'No Account Access') {

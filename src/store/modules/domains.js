@@ -430,7 +430,7 @@ export default {
 			},
 			saveDomain({state, rootState}, args){
 				state.loading = true
-				Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}`, {params: {domain: args.domain}})
+				Request.patchPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}`, {params: {domain: args.domain}})
 				.then( re=>{
 					state.domain = re.data.details
 					if( !Request.muted() ){
@@ -457,34 +457,6 @@ export default {
 					state.loading = false
 				})
 			},
-			// getAudits({state, rootState}, args){
-			// 	state.loading = true
-			// 	Request.getPromise(`${rootState.auth.API}/${rootState.auth.account}/domains/${args.id}/sampleEmpty`)
-			// 	.then( response => {
-			// 		if( !Request.muted() ){
-			// 			Vue.notify({
-			// 				title: "Success",
-			// 				text: "Structured sample deleted",
-			// 				type: "success",
-			// 				position: 'bottom right'
-			// 			})
-			// 		}
-			// 		state.domain = response.data.details
-			// 	})
-			// 	.catch( response => {
-			// 		if( !Request.muted() ){
-			// 			Vue.notify({
-			// 				title: "Error",
-			// 				text: response.error,
-			// 				type: "error",
-			// 				position: 'bottom right'
-			// 			})
-			// 		}
-			// 	})
-			// 	.then( () => {
-			// 		state.loading = false
-			// 	})
-			// },
 		},
 		getters: { 
 			
