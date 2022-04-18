@@ -1,13 +1,13 @@
 <template>
 	<div class="flex flex-col relative table-container-container" :class="{'px-5': $route.name != 'AuditShow'}">
 		
-		<div :class="{'pagination': showPagination}" tabindex="-1" @mousemove="moving" v-dragscroll.x class="overflow-x-auto w-full relative border border-black table-container">
+		<div :class="{'pagination': showPagination}" tabindex="-1" @mousemove="moving" v-dragscroll.x class="w-full relative border border-black table-container">
 			<a v-if="rows.length" :class="`skip-headers-row-${audit_id}`" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
 			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense, 'issues-table':issuesTable}">
 				<thead>
 					<tr>
 						<th 
-						class="capitalize pt-5" 
+						class="capitalize pt-[25px]" 
 						v-show="columnsToShow.includes(header.key) && !header.hidePermanent" 
 						:ref="'header-' + index" 
 						:style="header.style" 
@@ -17,16 +17,16 @@
 						v-for="(header, index) in headers" 
 						:key="`header-${index}`">
 							<div class="flex absolute top-1 justify-between w-full">
-								<button @click="moveColumn(index, index-1)" :class="[index !== 0 && !header.sticky && canMoveLeft(index) ? 'visible' : 'invisible']" aria-label="Move this column 1 space to the left" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+								<button @click="moveColumn(index, index-1)" :class="[index !== 0 && !header.sticky && canMoveLeft(index) ? 'visible' : 'invisible']" aria-label="Move this column 1 space to the left" class="mx-1 standard inverted text-xs">
 									<i class="fas fa-arrow-left"></i>
 								</button>
 
 								<div class="flex">
-									<button @click="freezeColumn(header, index)" v-if="!header.sticky && canFreeze(index)" aria-label="Freeze this column so it does not scroll horizontally" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+									<button @click="freezeColumn(header, index)" v-if="!header.sticky && canFreeze(index)" aria-label="Freeze this column so it does not scroll horizontally" class="mx-1 standard inverted text-xs">
 										<i class="far fa-snowflake"></i>
 									</button>
 
-									<button @click="freezeColumn(header, index)" v-else-if="header.sticky && canFreeze(index)" aria-label="Unfreeze this column so it will scroll horizontally" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+									<button @click="freezeColumn(header, index)" v-else-if="header.sticky && canFreeze(index)" aria-label="Unfreeze this column so it will scroll horizontally" class="mx-1 standard inverted text-xs">
 										<i class="far fa-fire-alt"></i>
 									</button>
 
@@ -34,26 +34,26 @@
 										@click="sort(header.key)" 
 										v-if="!sortData.reference.includes(header.key)" 
 										:aria-label="`Currently unsorted. Click to sort column ${header.display} by ascending`" 
-										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+										class="mx-1 standard inverted text-xs">
 										<i class="fas fa-sort"></i>
 									</button>
 									<button 
 										@click="sort(header.key)"
 										v-if="sortData.reference.includes(header.key) && sortData.orders[ sortData.reference.indexOf(header.key) ] == 'asc'"
 										:aria-label="`Currently sorted by ascending. Click to sort column ${header.display} descending`" 
-										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+										class="mx-1 standard inverted text-xs">
 										<i class="fas fa-sort-up"></i>
 									</button>
 									<button 
 										@click="sort(header.key)"
 										v-if="sortData.reference.includes(header.key) && sortData.orders[ sortData.reference.indexOf(header.key) ] == 'desc'"
 										:aria-label="`Currently sorted by descending. Click to remove sorting for ${header.display} column`" 
-										class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+										class="mx-1 standard inverted text-xs">
 										<i class="fas fa-sort-down"></i>
 									</button>
 								</div>
 								
-								<button @click="moveColumn(index, index+1)" :class="[index !== headers.length - 1 && !header.sticky ? 'visible' : 'invisible']" aria-label="Move this column 1 space to the right" class="px-1 font-button rounded uppercase transition-colors duration-100 mx-1 bg-white text-pallette-grey border border-pallette-grey border-opacity-40 shadow hover:bg-pallette-orange hover:text-white text-xs">
+								<button @click="moveColumn(index, index+1)" :class="[index !== headers.length - 1 && !header.sticky ? 'visible' : 'invisible']" aria-label="Move this column 1 space to the right" class="mx-1 standard inverted text-xs">
 									<i class="fas fa-arrow-right"></i>
 								</button>
 							</div>
@@ -802,14 +802,9 @@
 <style scoped>
 	.audit-show .table-container-container{
 		height: 100vh;
-		max-height: calc(100vh - 106px);
+		max-height: calc(100vh - 123px);
 	}
-	.audit-show .table-container-container .table-container{
-		flex-basis: auto;
-		flex-grow: 1;
-		flex-shrink: 0;
-		max-height: 100%;
-	}
+	
 	.audit-show .table-container-container .table-container.pagination{
 		max-height: calc(100% - 55px);
 	}
@@ -817,5 +812,9 @@
 		flex-basis: 55px;
 		flex-grow: 0;
 		flex-shrink: 0;
+	}
+	.issues-table button{
+		padding: 3px;
+		border: none;
 	}
 </style>

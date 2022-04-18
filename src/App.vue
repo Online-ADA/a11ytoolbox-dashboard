@@ -13,34 +13,31 @@
 			</transition>
 		</div>
 	
-		<div id="content" class="flex ml-auto h-full">
-			<div class="w-full h-full max-w-full">
-				<div class="flex h-full">
-					<div class="max-w-full flex flex-1">
-						<CanvasToolbar :tool="tool"></CanvasToolbar>
-						<div
-						class="flex-1"
-						:class="{'info-sidebar-expanded':infoSidebarExpanded, 'px-6': $route.name != 'AuditShow', 'audit-show': $route.name == 'AuditShow'}"
-						id="main-content"
-						>
-							<router-view></router-view>
-							<CreateClientModal style="z-index:999" :open="show.ClientCreationModal"></CreateClientModal>
-							<CreateProjectModal style="z-index:999" :open="show.ProjectCreationModal"></CreateProjectModal>
-							<DeployToolModal style="z-index:999" :open="show.ToolDeployModal"></DeployToolModal>
-							<CreateWCAGAuditModal style="z-index:999" :open="show.DeployWCAGAuditModal"></CreateWCAGAuditModal>
-							<CreateColorSwatchModal style="z-index:999" :open="show.CreateColorSwatchModal"></CreateColorSwatchModal>
-							<CreateMediaAuditModal style="z-index:999" :open="show.DeployMediaAuditModal"></CreateMediaAuditModal>
-							<AddUsersToLicenseModal style="z-index:999" v-if="show.AddUsersToLicenseModal" :open="show.AddUsersToLicenseModal"></AddUsersToLicenseModal>
-							<ColorContrastQuickToolModal style="z-index:999" :open="show.ColorContrastModal"></ColorContrastQuickToolModal>
-							<UpgradeLicenseModal style="z-index:999" :open="show.UpgradeLicenseModal"/>
-						</div>
-						<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
-							<span v-html="tool.info"></span>
-						</div>
-						
-					</div>
+		<div id="content" class="flex ml-auto h-screen">
+			<div :class="{'ml-6': $route.name != 'AuditShow'}" class="max-w-full flex flex-1 overflow-auto">
+				<CanvasToolbar :tool="tool"></CanvasToolbar>
+				<div
+				class="flex-1 canvas"
+				:class="{'info-sidebar-expanded':infoSidebarExpanded, 'audit-show': $route.name == 'AuditShow'}"
+				id="main-content"
+				>
+					<router-view></router-view>
+					<CreateClientModal style="z-index:999" :open="show.ClientCreationModal"></CreateClientModal>
+					<CreateProjectModal style="z-index:999" :open="show.ProjectCreationModal"></CreateProjectModal>
+					<DeployToolModal style="z-index:999" :open="show.ToolDeployModal"></DeployToolModal>
+					<CreateWCAGAuditModal style="z-index:999" :open="show.DeployWCAGAuditModal"></CreateWCAGAuditModal>
+					<CreateColorSwatchModal style="z-index:999" :open="show.CreateColorSwatchModal"></CreateColorSwatchModal>
+					<CreateMediaAuditModal style="z-index:999" :open="show.DeployMediaAuditModal"></CreateMediaAuditModal>
+					<AddUsersToLicenseModal style="z-index:999" v-if="show.AddUsersToLicenseModal" :open="show.AddUsersToLicenseModal"></AddUsersToLicenseModal>
+					<ColorContrastQuickToolModal style="z-index:999" :open="show.ColorContrastModal"></ColorContrastQuickToolModal>
+					<UpgradeLicenseModal style="z-index:999" :open="show.UpgradeLicenseModal"/>
 				</div>
+				<div :class="{expanded:infoSidebarExpanded}" class="flex-1 info-sidebar fixed right-0 w-40 shadow-lg" v-if="tool">
+					<span v-html="tool.info"></span>
+				</div>
+				
 			</div>
+			
 		</div>
 	</div>
 </template>
@@ -172,6 +169,7 @@ export default {
 		"$store.state.clients.client": function(newVal){
 			this.$store.state.audits.all = []
 			this.$store.state.projects.project = false
+			
 			if( newVal !== false && newVal !== undefined && newVal !== null ){
 				Cookies.set('toolboxClient', parseInt(this.$store.state.clients.client.id))
 				this.$store.dispatch("projects/getProjects")
@@ -189,6 +187,7 @@ export default {
 
 				if( this.$route.name === "AuditShow" || this.$route.name === "AuditEdit" ){
 					let that = this
+					
 					this.$store.state.projects.project = newVal.find(p=>p.id == that.$store.state.audits.audit.project_id)
 					return
 				}
@@ -322,6 +321,9 @@ export default {
 
 <style scoped>
 
+.canvas.audit-show{
+	padding-top:0 !important;
+}
 .slideright-enter, .slideright-leave-to {
   transform: translateX(-200px);
 }
@@ -419,9 +421,7 @@ export default {
 }
 #main-content{
 	transition:margin 150ms ease;
-	margin-right:0px;
-	max-width:100%;
-	margin-top:63px;
+	margin-right:24px;
 }
 #main-content.audit-show{
 	margin-top:46px;

@@ -11,6 +11,8 @@
 					<div class="flex items-center justify-end">
 						<div class="flex items-center text-13">
 							<span class="w-auto mr-2 flex justify-end items-center">
+								<router-link class="mr-3.5" title="Go to Automation History" :to="'/automations/history'" ><i class="far fa-scroll"></i></router-link>
+
 								<router-link class="mr-3.5" title="Go to Client Overview" :to="{name:'ClientShow', params:{id:$route.params.id}}" v-if="isClientEdit || isProperties"><i class="far fa-arrow-left"></i></router-link>
 
 								<router-link class="mr-3.5" title="Manage Properties" v-if="!isProperties" :to="{name: 'ClientProperties', params:{id:$route.params.id}}"><i class="far fa-atlas"></i></router-link>

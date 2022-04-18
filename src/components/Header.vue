@@ -31,10 +31,6 @@
             <div class="border mx-3 divider"></div>
             <div v-if="$store.state.projects.project" class="text-white capitalize">{{$store.state.projects.project.name}}</div>
         </div>
-        
-        <template v-if="false">
-            <!-- Quick Tools does not currently dropdown, only 1 tool -->
-        </template>
 
         <div ref="quickToolsDropdown" role="button" tabindex="0" @click.prevent="EventBus.openModal('colorContrastModal', $event)" class="text-center settings-dropdown dropdown-container dropdown-w-label relative flex flex-col ml-auto mr-5 items-end">
             <div class="dropdown relative mx-auto mt-auto mb-auto transition-transform right-align">
@@ -70,9 +66,9 @@
                     </li>
                 </template>
                 
-                <li class="hover:bg-pallette-grey-light">
+                <!-- <li class="hover:bg-pallette-grey-light">
                     <router-link :to="'/automations/history'" class="block w-full">Automated Tool Logs</router-link>
-                </li>
+                </li> -->
             </ul>
             <span id="management-label" class="sub-label text-white uppercase"><div>Global</div>Settings</span>
         </div>
