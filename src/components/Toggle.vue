@@ -1,9 +1,9 @@
 <template>
-    <label class="label switch flex items-center">
+    <label class="label pt-0 switch flex items-center">
         <input v-model="checked" @change="$emit('changed', checked)" type="checkbox">
-        <span style="font-size:12px;" class="subheadline">{{labelLeft}}</span>
-        <span style="font-size:12px;" :class="{'checked':checked}" class="slider round mx-3"></span>
-        <span style="font-size:12px;" class="subheadline">{{labelRight}}</span>
+        <span :class="{ 'text-normal': fontSize == 'normal', 'text-[12px]' : fontSize == 'small' }" class="subheadline">{{labelLeft}}</span>
+        <span :class="{'checked':checked}" class="slider round mx-3"></span>
+        <span :class="{ 'text-normal': fontSize == 'normal', 'text-[12px]' : fontSize == 'small' }" class="subheadline">{{labelRight}}</span>
     </label>
 </template>
 
@@ -16,6 +16,10 @@
             }
         },
         props:{
+            fontSize:{
+                type: String,
+                default: "normal"
+            },
             value: {
                 type: Boolean,
                 default: false
@@ -28,6 +32,8 @@
                 type: String,
                 default: ''
             },
+        },
+        mounted(){
         },
         methods:{
             

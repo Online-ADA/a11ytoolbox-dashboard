@@ -3,7 +3,6 @@
 		<Loader v-if="loading"></Loader>
 		
 		<template v-if="audit">
-			<!-- <h2 class="mb-1 text-xl">{{audit.title}}</h2> -->
 			<template v-if="audit.status == 'running_automation'">
 				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>An automated audit is currently running and could take a couple of minutes. Data will be refreshed on completion.
 			</template>
@@ -12,7 +11,7 @@
 			class="xs:mt-[65px]" 
 			@sort="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-sortedBy`, payload) }" 
 			@hideColumns="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-visible`, payload) }" 
-			@moveColumn="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-positions`, payload) }" 
+			@moveColumn="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-positions`, payload) }"
 			:defaultSortData="tableDefaultSortBy" 
 			@freezeColumn="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-stickied`, payload) }" 
 			:issuesTable="true" 
@@ -34,16 +33,20 @@
 		</template>
 		
 		<Modal style="z-index:71;" size="full" :open="issueModalOpen">
-			<div style="padding-bottom:60px;" class="bg-white">
+			<div class="bg-white">
 				<button aria-label="Close add issue modal" @click.prevent="EventBus.closeModal( ()=>{issueModalOpen = false} )" class="absolute top-4 right-4 standard">X</button>
-				<h2 class="headline">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
+				<div class="flex items-center">
+					<h2 class="headline mr-5">{{issue.id ? "Edit Issue" : "Add Issue"}}</h2>
+					<Toggle :value="issueModalAdvancedView" class="whitespace-nowrap" v-if="audit.property_type == 'website'" @changed="changeView" :labelLeft="'Simple View'" :labelRight="'Advanced View'" ></Toggle>
+					<!-- <Toggle class="whitespace-nowrap" v-if="audit.property_type == 'website'" @changed="((ev)=>{ issueModalAdvancedView = ev })" :labelLeft="'Simple View'" :labelRight="'Advanced View'" ></Toggle> -->
+				</div>
+				
 				<div v-show="showValidationAlert" role="alert" id="validation-alert-box" class="text-red-600" >
 					<strong>The following validation errors are present on the add issue form: </strong>
 					<div v-for="(prop, index) of failedValidation" :key="'validation-error-'+index">{{validationMessages[ prop ]}}</div>
 				</div>
 
 				<form class="flex items-start mt-3 text-left w-full flex-wrap">
-					
 					<!-- Row 1 -->
 					<div class="flex w-full mt-2 flex-wrap">
 						<div class="w-[493.48px] max-[493.48px]">
@@ -57,7 +60,7 @@
 						<div class="pr-2 flex-1 h-[220px]">
 							<div class="flex justify-between">
 								<Label class="text-lg leading-6 w-full subheadline" :stacked="false" for="pages">Pages</Label>
-								<Toggle class="whitespace-nowrap" v-if="audit.property_type == 'website'" @changed="((ev)=>{ useSitemap = ev })" :labelLeft="'Working Sample'" :labelRight="'Sitemap'" ></Toggle>
+								<Toggle fontSize="small" class="whitespace-nowrap" v-if="audit.property_type == 'website'" @changed="((ev)=>{ useSitemap = ev })" :labelLeft="'Working Sample'" :labelRight="'Sitemap'" ></Toggle>
 							</div>
 							
 							<template v-if="audit.property_type == 'website'">
@@ -87,7 +90,7 @@
 								</select>
 							</div>
 							<div>
-								<div v-show="filteredTechniques.length" class="mx-2 flex-1">
+								<div v-show="filteredTechniques.length && issueModalAdvancedView" class="mx-2 flex-1">
 									<Label class="text-lg leading-6 w-full subheadline" for="techniques">Add Techniques</Label>
 									<div class="overflow-y-auto max-h-[50px] h-[50px]">
 										<div class="flex justify-start items-center" v-for="(technique, index) in filteredTechniques" :key="'technique-'+index">
@@ -108,28 +111,28 @@
 								</select>
 							</div>
 							<div>
+								<Label class="subheadline text-lg" for="priority">Priority</Label>
+								<select class="w-full p-[2.5px]" id="priority" v-model="issue.priority" name="priority">
+									<option :value="option" v-for="(option, index) in ['Minor', 'Moderate', 'Serious', 'Critical']" :key="'priority-' + index">{{option}}</option>
+								</select>
+							</div>
+							<div v-if="issueModalAdvancedView">
 								<Label class="subheadline text-lg" for="effort">Effort</Label>
 								<select class="w-full p-[2.5px]" id="effort" v-model="issue.effort" name="effort">
 									<option :value="option" v-for="(option, index) in ['Low', 'Medium', 'High']" :key="'effort-' + index">{{option}}</option>
 								</select>
 							</div>
-							<div>
-								<Label class="subheadline text-lg" for="priority">Potential User Impact</Label>
-								<select class="w-full p-[2.5px]" id="priority" v-model="issue.priority" name="priority">
-									<option :value="option" v-for="(option, index) in ['Minor', 'Moderate', 'Serious', 'Critical']" :key="'priority-' + index">{{option}}</option>
-								</select>
-							</div>
 						</div>
 						<div class="mx-2 flex-1">
-							<div>
+							<div v-if="issueModalAdvancedView">
 								<Label class="text-lg leading-6 w-full subheadline" for="audit_status">States</Label>
 								<select id="audit_status" class="w-full min-w-[200px] h-[70px]" v-model="issue.audit_states" multiple>
 									<option :value="status" v-for="(status, index) in audit_states" :key="'audit_status-'+index">{{status}}</option>
 								</select>
 							</div>
 
-							<div v-show="audit.essential_functionality && audit.essential_functionality.length">
-							<!-- <div> for testing -->
+							<div v-show="audit.essential_functionality && audit.essential_functionality.length && issueModalAdvancedView">
+							
 								<Label class="text-lg leading-6 w-full subheadline" for="essential_functionalities">Essential Functionalities</Label>
 								<select class="w-full min-w-[200px] h-[70px]" multiple id="essential_functionalities" name="essential_functionalities" v-model="issue.essential_functionality">
 									<option v-for="(option, index) in audit.essential_functionality" :key="'essentials-'+index">{{option}}</option>
@@ -148,7 +151,7 @@
 							
 							<div class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" ref="descriptionEditor" style="max-height:324px;min-height:324px;overflow-y:auto;" id="editor1"></div>
 						</div>
-						<div class="flex flex-col px-2 flex-1">
+						<div v-if="issueModalAdvancedView" class="flex flex-col px-2 flex-1">
 							<Label :stacked="false" class="text-lg leading-6 w-full subheadline" for="issue_description">Issue Description</Label>
 							<textarea style="max-height:392px;min-height:392px;overflow-y:auto;" class="shadow appearance-none bg-white border border-gray-300 focus:border-transparent placeholder-gray-400 px-4 py-2 rounded-b text-base text-gray-700 w-full" rows="14" v-model="issue.issue_description"></textarea>
 						</div>
@@ -163,7 +166,7 @@
 						</div>
 					</div>
 					<!-- Row 4 -->
-					<div class="flex w-full flex-wrap justify-evenly mt-2">
+					<div v-if="issueModalAdvancedView" class="flex w-full flex-wrap justify-evenly mt-2">
 						<div class="xs:w-full sm:w-full flex-wrap w-2/3 flex items-center">
 							<div class="flex flex-col xs:w-full">
 								<div class="flex-1 mx-2 flex flex-col">
@@ -195,7 +198,7 @@
 						</div>
 					</div>
 					<!-- Row 5 -->
-					<div class="flex w-full flex-wrap mt-2">
+					<div v-if="issueModalAdvancedView" class="flex w-full flex-wrap mt-2">
 						<div class="flex-1 pr-2 max-w-full">
 							<Label class="text-lg leading-6 subheadline">
 								Screenshots
@@ -230,7 +233,7 @@
 						</div>
 					</div>
 					<!-- Row 6 -->
-					<div class="flex w-full mt-2">
+					<div v-if="issueModalAdvancedView" class="flex w-full mt-2">
 						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pr-2">
 							<Label class="text-lg leading-6 w-full subheadline" for="auditor_notes">Auditor Notes</Label>
 							<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
@@ -247,7 +250,7 @@
 					
 				</form>
 			</div>
-			<div class="bg-gray-50 px-4 py-3 flex">
+			<div class="mt-3 flex">
 				<button @click="confirmDeleteModalOpen = true" v-if="selectedRows.length && issue.id" class="mx-2 standard alert">
 					Delete
 				</button>
@@ -331,6 +334,7 @@ import Checkbox from "../../components/Checkbox"
 
 export default {
 	data: () => ({
+		issueModalAdvancedView: false,
 		prevSelectedArticles: [],
 		paginationData: {page:1, limit:100},
 		shouldCondense: false,
@@ -519,14 +523,23 @@ export default {
 				return arr
 			}
 
-			let headers = Object.keys(this.audit.issues[0])
+			// let headers = Object.keys(this.audit.issues[0])
+			//This array has been implemented to adjust the default order of the headers
+			let headers = ['id', 'issue_number', 'target', 'pages', 'status', 'levels', 'articles', 'techniques', 'issue_description', 'descriptions', 'recommendations', 'audit_states', 'priority', 'effort', 'how_discovered', 'screenshots', 'resources', 'browser_combos', 'essential_functionality', 'actrs', 'created_by', 'audit_id', 'auditor_notes', 'second_audit_comments', 'third_audit_comments', 'date_created']
 			
 			let hide = [
 				"id",
+				'issue_number',
+				'issue_description',
+				'essential_functionality',
+				'third_audit_comments',
+				'audit_states',
+				'auditor_notes',
+				'techniques',
 				"screenshots",
+				'second_audit_comments',
 				"resources",
 				"effort",
-				"priority",
 				"browser_combos",
 				"audit_id",
 				"created_at",
@@ -571,6 +584,12 @@ export default {
 					auditMeta.issues.columns != undefined && 
 					auditMeta.issues.columns.positions != undefined ){
 						columnPositions = auditMeta.issues.columns.positions
+				}
+
+				if( auditMeta.issues != undefined && 
+					auditMeta.issues.modal != undefined && 
+					auditMeta.issues.modal.advanced ){
+						this.issueModalAdvancedView = auditMeta.issues.modal.advanced
 				}
 			}
 			
@@ -667,6 +686,10 @@ export default {
 		EventBus.$off('toolbarEmit')
 	},
 	methods: {
+		changeView(data){
+			this.issueModalAdvancedView = data
+			this.metaEvent('audit', `${this.$route.params.id}-issues-modal-advanced`, data)
+		},
 		toolbarEmit(action, $event){
 			EventBus.$emit('toolbarEmit', {action: action, data: null, $event: $event})
 		},

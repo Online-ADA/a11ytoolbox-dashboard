@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="outer-toolbar-container" v-if="showing">
         <WcagAuditToolbar v-if="tool.type === 'audit' || $route.name == 'NewScan'" v-on:classupdate="UpdateClasses"/>
         <ColorSwatchToolbar v-if="tool.type === 'color_swatch'" v-on:classupdate="UpdateClasses"/>
         <MediaAuditToolbar v-if="tool.type === 'media-audit'" v-on:classupdate="UpdateClasses"/>
@@ -52,6 +52,18 @@ export default {
     watch:{
     },
     computed: {
+        showing(){
+            if(this.tool.type ||
+            this.$route.name == 'NewScan' ||
+            this.projectPages.includes(this.$route.name) ||
+            this.clientPages.includes(this.$route.name) ||
+            this.propertyPages.includes(this.$route.name)
+            ){
+                return true
+            }
+
+            return false
+        }
     },
     methods: {
         UpdateClasses(classes) {

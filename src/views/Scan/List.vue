@@ -1,9 +1,8 @@
 <template>
-    <div class="mt-[-30px]">
+    <div>
         <Loader v-if="loading"></Loader>
-        
+        <h2 class="headline">Automation History</h2>
         <div class="w-full flex flex-col" v-if="scans && scans.length">
-            <h2 class="headline">Automated Audit Logs</h2>
             <button v-show="filtering" @click.prevent="filtering=false" class="w-[125px] text-xs flex bg-white rounded-full items-center leading-relaxed">
                 <div class="rounded-full bg-[#a3a3a3] w-3 h-3 text-[9px] flex relative mx-[5px]" >
                     <span class="absolute left-1 bottom-0.5 leading-none">x</span>

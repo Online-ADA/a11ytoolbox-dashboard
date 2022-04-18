@@ -253,6 +253,9 @@ export default {
 				this.$store.dispatch("user/getUsers", {vm: this})
 				this.$store.dispatch("audits/getSitemap")
 				this.$store.dispatch("audits/getStructuredSample")
+				if( !this.$store.state.projects.project ){
+					this.$store.state.projects.project = this.$store.state.projects.all.find(p=>p.id == newVal.project_id)
+				}
 			}
 		},
 	},

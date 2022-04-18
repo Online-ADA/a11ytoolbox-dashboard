@@ -10,8 +10,8 @@
                         <button class="w-full h-full py-2 text-left pl-2.5" @click.prevent="launchCreateProjectModal">Create Project</button>
                     </li>
                     <li 
-                    :aria-current="[$store.state.projects.project !== false && selectedProject.id === project.id  ? 'true' : false]" 
-                    :class="[$store.state.projects.project !== false && selectedProject.id === project.id  ? 'selected' : '']" 
+                    :aria-current="[$store.state.projects.project !== false && selectedProject && selectedProject.id === project.id  ? 'true' : false]" 
+                    :class="[$store.state.projects.project !== false && selectedProject && selectedProject.id === project.id  ? 'selected' : '']" 
                     class="flex" 
                     v-for="project in projects" :key="project.id">
                         <button class="w-full h-full py-2 text-left pl-2.5" @click="setCurrentProject(project.id)">{{project.name}}</button>

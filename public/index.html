@@ -78,6 +78,13 @@
         outline-offset: 1px;
       }
 
+      .sidebarOpen ~ #content #toolbar-container{
+        left: calc(0px + 200px);
+      }
+      .sidebarOpen.subSidebarExpanded ~ #content #toolbar-container{
+        left: calc(0px + 400px);
+      }
+
       .sidebarOpen.subSidebarExpanded ~ #content .adjust-with-sidebars{
         max-width:calc(100% - 400px);
         margin-left:auto;
@@ -91,6 +98,10 @@
       }
       .barlow{
         font-family: 'Barlow';
+      }
+
+      #outer-toolbar-container ~ #main-content{
+        padding-top:47px;
       }
       
     </style>
