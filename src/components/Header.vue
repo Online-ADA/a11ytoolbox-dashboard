@@ -85,7 +85,10 @@
                 
             <ul class="mt-0 absolute border border-gray-400 bg-white whitespace-nowrap pt-1 pb-1">
                 <li class="hover:bg-pallette-grey-light">
-                    <router-link :to="profileLink" class="block w-full">User Profile</router-link>
+                    <router-link :to="'/user/profile'" class="block w-full">User Profile</router-link>
+                </li>
+                <li class="hover:bg-pallette-grey-light">
+                    <router-link :to="'/user/settings'" class="block w-full">User Settings</router-link>
                 </li>
                 <li class="hover:bg-pallette-grey-light" v-for="(child, index) in userDropdown" :key="index">
                     <template v-if="child.type == 'router-link'">
@@ -164,9 +167,6 @@ export default {
         },
         isManager(){
             return this.$store.getters['auth/isManager']
-        },
-        profileLink() {
-            return `/user/profile`
         },
     },
     watch: {

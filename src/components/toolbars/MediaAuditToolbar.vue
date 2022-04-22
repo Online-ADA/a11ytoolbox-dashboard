@@ -4,52 +4,30 @@
             <!-- Audit Toolbar -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center text-13">
-                    
+                    <div class="xs:hidden sm:hidden flex items-center">
+                        <span style="font-size:16px;" class="toolbar-headline">{{pageTitle}}</span>
+                        <div class="border border-black mx-3.5 divider"></div>
+                    </div>
+
                     <span v-if="audit.domain">
                         <router-link :to="`/domains/${audit.domain.id}/edit`">
                             {{audit.domain.url}}<template v-if="audit.domain.root">/{{audit.domain.root}}</template>
                         </router-link>
                     </span>
-                    <template v-if="isAuditShowPage">
+                    <template v-if="isMediaAuditShowPage">
                         <div class="border border-black mx-3.5 divider"></div>
-                        <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span>
+                        <!-- <span class="mr-3.5">Issues Selected: {{auditRowsSelected}}</span> -->
                         <span>Total Issues: {{totalRows}}</span>
                     </template>
                 </div>
                 <span class="w-auto mr-2 flex items-center">
-                    <!-- <template>
-                        Search Audit 
-                        <button class="ml-3.5 bg-transparent" @click.prevent="searchBarOpen = !searchBarOpen">
-                            <span title="Search Audit" ><i class="far fa-search"></i></span>
-                        </button>
-                        <div class="border border-black mx-3.5 divider"></div>
-                    </template> -->
-                    <!-- Audit Tools 
-                    <button class="ml-3.5 bg-transparent" @click="$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
-                    -->
                     <button class="ml-3.5 bg-transparent" @click="InitAudit">
                         <span title="Initiate an Automated Audit" ><i class="far fa-barcode-scan"></i></span>
                     </button>
                 </span>
             </div>
         </div>
-        <!--
-        <div class="search-bar justify-end items-center flex w-full shadow-lg p-1 bg-white text-13" :class="{open: searchBarOpen}" >
-            <label class="flex mx-5 items-center">
-                <span class="pr-2">Search Column:</span>
-                <select class="p-0 border-black border-l-0 border-r-0 border-t-0 shadow-none rounded-none" v-model="searchData.column" name="search-column">
-                    <option v-for="(column, index) in searchColumns" :value="column.value" :key="'search-columns-'+index">{{column.display}}</option>
-                </select>
-            </label>
-            <label for="search-criteria mr-5 items-center">
-                <span class="pr-2">Keyword:</span>
-                <input class="px-1 border border-black border-l-0 border-r-0 border-t-0" style="max-height:39px;font-size:12px;" v-model="searchData.term" name="search-criteria" />
-            </label>
-            
-            <button class="ml-5 standard" @click.prevent="toolbarEmit('audit-search')" >Submit</button>
-            <button title="Close Search Bar" class="ml-3.5 mr-5 standard" @click.prevent="searchBarOpen = false" >X</button>
-        </div>
-        -->
+        
     </div>
     
 </template>
@@ -57,7 +35,6 @@
 
 <script>
 import Checkbox from "../Checkbox.vue"
-// import { EventBus } from '../../services/eventBus'
 
 export default {
     props:{
@@ -143,23 +120,19 @@ export default {
     mounted(){
     },
     watch:{
-        // searchBarOpen: function(newVal){
-        //     if( newVal ){
-        //         this.auditFilteredRows = this.audit.issues.length
-        //     }
-        //     if( !newVal ){
-        //         this.auditFilteredRows = 0
-        //         this.toolbarEmit('audit-search')
-        //     }
-        //     this.$emit('updateclasses',{'search-bar-open':newVal})
-        // },
-        // issueStatus:function(newVal, oldVal){
-        //     if( oldVal !== false && newVal !== false && newVal !== oldVal ){
-        //         EventBus.$emit('toolbarEmit', {action: 'audit-issue-status-change', data: newVal})
-        //     }
-        // }
+        
     },
     computed: {
+        pageTitle(){
+            switch( this.$route.name ){
+                case "MediaAuditEdit":
+                    return "Edit Media Audit"
+                    break;
+                case "MediaAuditShow":
+                    return "Media Audit"
+                    break;
+            }
+        },
         audit(){
             return this.$store.state.mediaAudits.audit
         },
@@ -174,11 +147,11 @@ export default {
                 return 0
             }
         },
-        isAuditEditPage(){
-            return this.$route.name === "AuditEdit"
+        isMediaAuditEditPage(){
+            return this.$route.name === "MediaAuditEdit"
         },
-        isAuditShowPage(){
-            return this.$route.name === "AuditShow"
+        isMediaAuditShowPage(){
+            return this.$route.name === "MediaAuditShow"
         }
     },
     methods: {
@@ -188,34 +161,6 @@ export default {
         showToolbar(){
             return this.tool.type === 'media-audit' && this.audit
         },
-        // toolbarEmit(action){
-        //     let data = null
-        //     if( action=='audit-condense' ){
-        //         this.toggle(action)
-        //     }
-        //     if( action=='audit-search' ){
-        //         if( this.searchBarOpen ){
-        //             data = this.searchData
-        //             action='audit-search-open'
-        //         }
-        //         if( !this.searchBarOpen ){
-        //             action='audit-search-close'
-        //         }
-        //     }
-        //     EventBus.$emit('toolbarEmit', {action: action, data: data})
-        // },
-        // toggle(data){
-        //     if(this.toggled.includes(data)){
-        //         let index = this.toggled.indexOf(data)
-        //         this.toggled.splice(index, 1)
-        //         return
-        //     }
-        //     if( !this.toggled.includes(data) ){
-        //         this.toggled.push(data)
-        //         return
-        //     }
-            
-        // }
     },
     components:{
         Checkbox

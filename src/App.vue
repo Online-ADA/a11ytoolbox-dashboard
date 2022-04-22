@@ -14,11 +14,11 @@
 		</div>
 	
 		<div id="content" class="flex ml-auto h-screen">
-			<div :class="{'ml-6': $route.name != 'AuditShow' && $route.name != 'SwatchShow'}" class="max-w-full flex flex-1 overflow-auto">
+			<div :class="{'ml-6': $route.name != 'AuditShow' && $route.name != 'SwatchShow' && $route.name != 'MediaAuditShow'}" class="max-w-full flex flex-1 overflow-auto">
 				<CanvasToolbar :tool="tool"></CanvasToolbar>
 				<div
 				class="flex-1 canvas"
-				:class="{'info-sidebar-expanded':infoSidebarExpanded, 'fullscreen': $route.name == 'AuditShow' || $route.name == 'SwatchShow'}"
+				:class="{'info-sidebar-expanded':infoSidebarExpanded, 'fullscreen': $route.name == 'AuditShow' || $route.name == 'SwatchShow' || $route.name == 'MediaAuditShow'}"
 				id="main-content"
 				>
 					<router-view></router-view>

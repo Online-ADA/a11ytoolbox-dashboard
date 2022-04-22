@@ -110,13 +110,13 @@
                     <!-- Info Sidebar -->
                     <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="EventBus.$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
 
-                    <!-- <button class="graph-toggle transition transition-transform rotate-0 ml-3.5" 
+                    <button class="graph-toggle transition transition-transform rotate-0 ml-3.5" 
                     @click.prevent="toggleGraphs" 
                     :class="{'rotate-90': graphShowing}" 
                     v-if="isAuditShowPage"
                     title="Measurables" >
                         <i class="far fa-chevron-right"></i>
-                    </button> -->
+                    </button>
                 </span>
             </div>
         </div>

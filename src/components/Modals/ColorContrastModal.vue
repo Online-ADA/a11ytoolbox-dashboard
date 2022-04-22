@@ -1,8 +1,9 @@
 <template>
 	<Modal :valign="'top'" style="z-index:999" :size="'creation'" :open="open">
 		<h1 class="headline mb-5">Quick Contrast Checker</h1>
+		<button aria-label="Close Quick Contrast Checker modal" class="standard absolute top-4 right-4" @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('colorContrastModal', false)})" >X</button>
 		
-		<div class="flex">
+		<div class="flex mb-5">
 			<ColorPicker
 			:remove_button="false"
 			:color="color_1"
@@ -36,10 +37,6 @@
 				<div class="text-2xl font-extrabold" :style="`color:${color_1}`">Aa</div>
 			</div>
 		</div>
-		
-		
-		
-		<button @click.prevent="EventBus.closeModal(()=>{EventBus.$emit('colorContrastModal', false)})" class="standard mt-2">Close</button>
 	</Modal>
 </template>
 

@@ -7,24 +7,10 @@
 				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>Audit is currently running and could take a couple of minutes. Data will be refreshed on audit completion.
 			</template>
 			<Table :defaultSortData="tableDefaultSortBy"  :issuesTable="true" :condense="shouldCondense" :locked="false" @selectAll="selectAll" @deselectAll="deselectAll" ref="issuesTable" :selected="selectedRows" @rowClick="selectRow" v-else-if="issues && issues.length" :rowsData="issues" :headersData="headers"></Table>
-			<template v-else>
+			<div class="flex justify-center items-center mt-14" v-else>
 				There are no issues currently.
-			</template>
+			</div>
 		</template>
-		<Modal style="z-index:73;" :open="open.add_issue">
-			<div class="bg-white px-4 pt-5 pb-4 p-6">
-				<button aria-label="Close select descriptions modal" @click.prevent="confirmDeleteModalOpen = false" class="absolute top-4 right-4 standard">X</button>
-			</div>
-			<div class="bg-gray-50 px-4 py-3 flex">
-				<button class="standard mr-3">
-					Add
-				</button>
-				<button class="standard mr-3">
-					Cancel
-				</button>
-			</div>
-			
-		</Modal>
 	</div>
 </template>
 
@@ -33,7 +19,6 @@ import Loader from '../../components/Loader'
 import A from '../../components/Link'
 import Button from '../../components/Button'
 import Table from '../../components/Table'
-import Modal from '../../components/Modal'
 import Card from '../../components/Card'
 import Label from '../../components/Label'
 import TextInput from '../../components/TextInput'
@@ -42,9 +27,6 @@ import { EventBus } from '../../services/eventBus'
 
 export default {
 	data: () => ({
-		open: {
-			add_issue: false,
-		},
 		shouldCondense: false,
 		selectedRows: [],
 		statuses: [
@@ -63,18 +45,6 @@ export default {
 		selectedReference: { audit: null, issue: null, issues: [], linkText: "" },
 		issueDefaults: {},
 		issue:false,
-		failedValidation: [],
-		validationMessages: {
-			audit_states: "The states field is required",
-			descriptions: "The descriptions field is required",
-			pages: "The pages field is required",
-			recommendations: "The recommendations field is required",
-			articles: "The success criteria field is required",
-			target: "The target field is required",
-			status: "The status field is required",
-			effort: "The effort field is required",
-			priority: "The priority field is required",
-		},
 		tableDefaultSortBy: {
 			columns: ["id"],
 			orders: ["asc"],
@@ -226,7 +196,6 @@ export default {
 		A,
 		Table,
 		Button,
-		Modal,
 		Card,
 		Label,
 		TextInput,
