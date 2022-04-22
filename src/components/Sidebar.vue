@@ -57,7 +57,19 @@ export default {
         },
     },
     computed: {
+        user(){
+			return this.$store.state.auth.user
+		},
+		license(){
+			return this.$store.state.auth.license
+		},
         projects(){
+            if( this.user.meta.license && this.user.meta.license[this.license.id].project_filter ){
+                let that = this
+                return this.$store.state.projects.all.filter(p=>{
+                    p.assignees.map(a=>a.id).includes(that.user.id)
+                })
+            }
             return this.$store.state.projects.all
         },
         selectedProject(){

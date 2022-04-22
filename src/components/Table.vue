@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col relative table-container-container" :class="{'px-5': $route.name != 'AuditShow'}">
+	<div class="flex flex-col relative table-container-container" :class="{'px-5': $route.name != 'AuditShow' && $route.name != 'MediaAuditShow'}">
 		
 		<div :class="{'pagination': showPagination}" tabindex="-1" @mousemove="moving" v-dragscroll.x class="w-full relative border border-black table-container">
 			<a v-if="rows.length" :class="`skip-headers-row-${audit_id}`" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
