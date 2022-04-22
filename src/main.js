@@ -10,9 +10,11 @@ import orderBy from 'lodash/orderBy'
 import cloneDeep from 'lodash/cloneDeep'
 import VueDragscroll from 'vue-dragscroll'
 import Cookies from './services/cookies'
+import VueCompositionAPI from '@vue/composition-api'
 
 Vue.use(VueDragscroll)
 Vue.use(VueLodash, { lodash: { orderBy, cloneDeep } })
+Vue.use(VueCompositionAPI)
 
 Vue.use(Notifications)
 window.Request = request

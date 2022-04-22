@@ -5,7 +5,12 @@
                 <!-- Left side -->
                 <div class="flex items-center text-13 xs:basis-full xs:flex-wrap">
                     <span style="font-size:16px;" class="toolbar-headline">{{pageTitle}}</span>
+                    <div class="divider border border-black mx-3.5"></div>
+                    <div class="text-normal">
+                        {{$store.state.swatch.swatch.title}}
+                    </div>
                 </div>
+                
                 <!-- Right side -->
                 <div class="flex items-center justify-end">
                     <div class="flex items-center text-13">
