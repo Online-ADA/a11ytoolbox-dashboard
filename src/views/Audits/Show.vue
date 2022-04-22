@@ -6,6 +6,10 @@
 			<template v-if="audit.status == 'running_automation'">
 				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>An automated audit is currently running and could take a couple of minutes. Data will be refreshed on completion.
 			</template>
+
+			<div :class="{'h-[220px]': showMeasurables, 'h-0': !showMeasurables}" class="bg-white transition-[height]">
+				<!-- <Graph :chartId="'line-chart'"></Graph> -->
+			</div>
 			
 			<Table
 			class="xs:mt-[65px]" 
@@ -332,8 +336,10 @@ import { EventBus } from '../../services/eventBus'
 import Utility from '../../services/utility'
 import Checkbox from "../../components/Checkbox"
 
+
 export default {
 	data: () => ({
+		showMeasurables: false,
 		issueModalAdvancedView: false,
 		prevSelectedArticles: [],
 		paginationData: {page:1, limit:100},
@@ -444,7 +450,7 @@ export default {
 			reference: ["id"]
 		},
 		useSitemap:false,
-		EventBus: EventBus
+		EventBus: EventBus,
 	}),
 	computed: {
 		pagesSrc(){
@@ -1455,6 +1461,9 @@ export default {
 				this.issue = found
 				this.saveIssue()
 			}
+			if( payload.action == 'toggle-measurables' ){
+				that.showMeasurables = !that.showMeasurables
+			}
 		})
 		
 	},
@@ -1486,7 +1495,7 @@ export default {
 		TextInput,
 		TextArea,
 		Toggle,
-		Checkbox
+		Checkbox,
 	},
 }
 

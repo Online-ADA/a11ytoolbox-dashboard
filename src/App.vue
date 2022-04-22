@@ -14,11 +14,11 @@
 		</div>
 	
 		<div id="content" class="flex ml-auto h-screen">
-			<div :class="{'ml-6': $route.name != 'AuditShow'}" class="max-w-full flex flex-1 overflow-auto">
+			<div :class="{'ml-6': $route.name != 'AuditShow' && $route.name != 'SwatchShow'}" class="max-w-full flex flex-1 overflow-auto">
 				<CanvasToolbar :tool="tool"></CanvasToolbar>
 				<div
 				class="flex-1 canvas"
-				:class="{'info-sidebar-expanded':infoSidebarExpanded, 'audit-show': $route.name == 'AuditShow'}"
+				:class="{'info-sidebar-expanded':infoSidebarExpanded, 'fullscreen': $route.name == 'AuditShow' || $route.name == 'SwatchShow'}"
 				id="main-content"
 				>
 					<router-view></router-view>
@@ -321,7 +321,7 @@ export default {
 
 <style scoped>
 
-.canvas.audit-show{
+.canvas.fullscreen{
 	padding-top:0 !important;
 }
 .slideright-enter, .slideright-leave-to {
@@ -421,9 +421,9 @@ export default {
 }
 #main-content{
 	transition:margin 150ms ease;
-	margin-right:24px;
+	/* margin-right:24px; */
 }
-#main-content.audit-show{
+#main-content.fullscreen{
 	margin-top:46px;
 }
 

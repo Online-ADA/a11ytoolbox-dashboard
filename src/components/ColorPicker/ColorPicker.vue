@@ -792,7 +792,8 @@ while the specifcitity for `.vacp-color-space` is 10.
   ;
 
   /* max-width: var(--vacp-color-space-width); */
-  padding: var(--vacp-spacing);
+  padding: 0px;
+  /* padding: var(--vacp-spacing); */
   /* display: grid; */
   /* grid-gap: var(--vacp-spacing); */
   /* grid-template-columns: 1fr min-content; */

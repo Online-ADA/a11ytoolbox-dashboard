@@ -23,17 +23,7 @@
 					<div>{{user.phone}}</div>
 				</div>
 			</div>
-			<!-- Row -->
-			<div class="w-full mt-3">
-				<h2 class="subheadline">Accounts</h2>
-				<ul>
-					<li class="border border-black p-2 my-3" v-for="(account, index) in accounts" :key="'account-index-'+index">
-						<div><h3 class="text-base subheadline pr-3 inline-block">Account Name:</h3><span class="text-base">{{account.name}}</span></div>
-						<div><h3 class="text-base subheadline pr-3 inline-block">Account Status:</h3><span class="text-base">{{account.status}}</span></div>
-						<div><h3 class="text-base subheadline pr-3 inline-block">Role:</h3><span class="text-base capitalize">{{textRole(account.pivot.role_id)}}</span></div>
-					</li>
-				</ul>
-			</div>
+			
 			<div class="mt-3">
 				<h2 class="subheadline">Avatar</h2>
 				<File @input="handleAvatar" class="block w-auto pb-3" accept="image/*,.svg"></File>

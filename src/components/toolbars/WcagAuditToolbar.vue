@@ -82,28 +82,59 @@
 
                     <!-- Audit Tools -->
                     <router-link class="mr-3.5" v-if="!isAuditShowPage" title="Go to Audit" :to="{name:'AuditShow', params:{id:$route.params.id}}"><i class="far fa-arrow-left"></i></router-link>
+                    <!-- Start a scan -->
                     <router-link class="xs:ml-0 mr-3.5" :to="{path: `/automations/${$route.params.id}/new`}" title="Initiate an Automated Audit"><i class="far fa-barcode-scan"></i></router-link>
 
+                    <!-- Automation History -->
                     <router-link title="Automated Audits History" :class="{ 'mr-3.5': isAuditShowPage }"
                         v-if="(isAuditEditPage || isAuditShowPage) &&
                          ($store.state.audits.audit && $store.state.audits.audit.automations && $store.state.audits.audit.automations.length)" 
                         :to="{name: 'ScanHistory', params: {automations: $store.state.audits.audit.automations } }"
                     ><i class="far fa-scroll"></i></router-link>
 
+                    <!-- Edit -->
                     <router-link v-if="!isAuditEditPage" :to="{path: `/audits/${audit.id}/edit`}" title="Audit Settings"><i class="far fa-cog"></i></router-link>
 
+                    <!-- Download Issues Modal -->
                     <button v-if="isAuditShowPage && $store.state.audits.audit && $store.state.audits.audit.issues && $store.state.audits.audit.issues.length" class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="toolbarEmit('audit-issues-download', $event)" title="Open Download Issues Modal"><i class="far fa-file-download"></i></button>
 
+                    <!-- Import Page -->
                     <router-link class="xs:ml-0 ml-3.5" :to="{path: `/audits/${audit.id}/import`}" title="Import Issues"><i class="far fa-file-import"></i></router-link>
 
+                    <!-- Mark Complete -->
                     <button title="Mark Audit Complete" v-if="!audit.locked && isAuditShowPage" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-complete', $event)"><i class="fas fa-lock-open-alt"></i></button>
                     
+                    <!-- Start Next Audit in Sequence (#2, #3) -->
                     <button title="Create Next Audit" v-if="audit.locked && audit.number > 0 < 3 && isAuditShowPage" class="xs:ml-0 ml-3.5 pointer-only" @click="toolbarEmit('audit-next', $event)"><i class="far fa-hand-point-right"></i></button>
                     
+                    <!-- Info Sidebar -->
                     <button class="xs:ml-0 ml-3.5 bg-transparent pointer-only" @click="EventBus.$emit('showInfoSidebar')" title="Show Information Sidebar"><i class="far fa-info-circle"></i></button>
+
+                    <!-- <button class="graph-toggle transition transition-transform rotate-0 ml-3.5" 
+                    @click.prevent="toggleGraphs" 
+                    :class="{'rotate-90': graphShowing}" 
+                    v-if="isAuditShowPage"
+                    title="Measurables" >
+                        <i class="far fa-chevron-right"></i>
+                    </button> -->
                 </span>
             </div>
         </div>
+
+        <div :class="{'h-[220px]': showMeasurables, 'h-0': !showMeasurables}" class="bg-white transition-[height] overflow-hidden">
+            <Graph 
+            :labels="[
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+            ]"
+            :chartType="'line'" 
+            :chartId="'line-chart'" />
+        </div>
+
         <div class="search-bar xs:h-auto justify-end items-center flex w-full shadow-lg p-1 bg-white text-13 xs:flex-wrap sm:flex-wrap" :class="{open: searchBarOpen}" >
             <!-- <label class="flex items-center">
                 <span class="pr-1">Case Sensitive:</span>
@@ -162,6 +193,7 @@
 import Checkbox from "../Checkbox.vue"
 import Modal from "../Modal.vue"
 import { EventBus } from '../../services/eventBus'
+import Graph from '../../components/Charts/Graph'
 
 export default {
     props:{
@@ -169,6 +201,8 @@ export default {
     },
     data() {
         return {
+            showMeasurables: false,
+            graphShowing: false,
             EventBus: EventBus,
             toggled: [],
             issueStatus: false,
@@ -316,6 +350,10 @@ export default {
         }
     },
     methods: {
+        toggleGraphs(){
+            this.graphShowing = !this.graphShowing
+            this.toolbarEmit("toggle-measurables")
+        },
         deleteAudit(){
             let project_id = this.$store.state.projects.project.id
             this.$store.dispatch("audits/deleteAudit", {audit_id: this.$route.params.id})
@@ -325,7 +363,6 @@ export default {
             return this.tool.type === 'audit' && this.audit
         },
         toolbarEmit(action, $event){
-            
             let data = null
             if( action=='audit-condense' ){
                 this.toggle(action)
@@ -338,6 +375,9 @@ export default {
                 if( !this.searchBarOpen ){
                     action='audit-search-close'
                 }
+            }
+            if( action == 'toggle-measurables' ){
+                this.showMeasurables = !this.showMeasurables
             }
             EventBus.$emit('toolbarEmit', {action: action, data: data, $event: $event})
         },
@@ -356,7 +396,8 @@ export default {
     },
     components:{
         Checkbox,
-        Modal
+        Modal,
+        Graph
     },
     created() {
         let that = this

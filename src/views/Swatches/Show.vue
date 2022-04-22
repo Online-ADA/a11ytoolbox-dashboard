@@ -1,32 +1,30 @@
 <template>
-	<div class="pb-24">
+	<div >
 		<Loader v-if="loading"></Loader>
-
-		<h2 class="mb-1 headline">{{swatch.title}}</h2>
 
 		<div class="w-full flex xs:flex-wrap sm:flex-wrap">
 			
-			<Card :gutters="false" :center="false" class="w-full my-3">
+			<Card :gutters="false" :center="false" class="w-full">
 				<div class="matrix overflow-x-auto relative">
-					<div class="flex ml-[250px] items-center">
+					<div class="flex items-center">
 						<ColorPicker 
 						:color="color"
 						@removePicker="removePicker(index)" 
-						class="max-w-[230px] min-w-[230px] w-[230px]" 
+						class="max-w-[230px] min-w-[230px] w-[230px] mr-2.5" 
 						v-for="(color, index) in colors" 
 						v-model="colors[index]" 
 						:key="`color-${index}`"></ColorPicker>
 					
-						<button v-if="colors.length < 5" @click="newColor" class="border border-black h-20 min-w-[80px] mx-1">
+						<button v-if="colors.length < 6" @click="newColor" class="border border-black h-20 min-w-[80px] mx-1">
 							<span class="text-3xl"><i class="fal fa-plus"></i></span>
 						</button>
 					</div>
-					<table cellpadding="0" cellspacing="0" class="border-0">
+					<table cellpadding="0" cellspacing="0" class="border-0 ml-[-30px]" style="border-spacing:10px">
 						<thead>
 							<tr>
-								<td class="w-[250px] min-w-[250px] border-0" scope="col"></td>
+								<td class="border-0" scope="col"></td>
 								<td class="w-[230px] min-w-[230px] border-0" scope="col" v-for="(color, index) in colors" :key="`matrix-header-${index+1}`">
-									<div style="margin-bottom:-15px;" class="text-center">
+									<div class="text-center">
 										<!-- <div class="text-xl flex-1">{{color}}</div> -->
 										<div class="text-2xl font-extrabold" :style="`-webkit-text-stroke: 1px black;color:${color}`">Aa</div>
 									</div>
@@ -34,15 +32,14 @@
 							</tr>
 						</thead>
 						<tbody>
-
 							<tr v-for="(background_color, index) in colors" :key="`matrix-row-${index+1}`" >
 								<td class="border-0" scope="row">
-									<div class="text-center">{{background_color}}</div>
-									<div class="w-[125px] h-[125px] mx-auto border border-black" :style="`background-color:${background_color}`"></div>
+									<div class="font-bold text-center -rotate-90 mr-[-80px]">{{background_color}}</div>
+									<!-- <div class="w-[125px] h-[125px] mx-auto border border-black" :style="`background-color:${background_color}`"></div> -->
 								</td>
 
 								<td class="border-0" v-for="(foreground_color, index) in colors" :set="ratio = Utility.computeRatio(foreground_color, background_color)" :key="`comparison-column-${index}`" role="presentation">
-									<div class="border border-black w-[125px] mx-auto mt-[21px]" :title="`The combination of ${foreground_color} on top of ${background_color} is ${ratio}:1`">
+									<div class="border border-black w-[125px] mx-auto" :title="`The combination of ${foreground_color} on top of ${background_color} is ${ratio}:1`">
 										<!-- Showing the background and foreground color combinations -->
 										<div class="text-lg font-bold flex items-center justify-center flex-col h-[125px] w-full" :style="`color:${foreground_color}; background-color:${background_color}`" aria-hiddden="true">
 											<div>{{ratio}}:1</div>
@@ -60,9 +57,9 @@
 						</tbody>
 					</table>
 				</div>
+				<button @click="saveSwatch" class="standard mt-3">Save</button>
 			</Card>
 		</div>
-		<button @click="saveSwatch" class="standard">Save</button>
 	</div>
 </template>
 
