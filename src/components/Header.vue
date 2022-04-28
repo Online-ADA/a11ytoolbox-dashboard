@@ -69,9 +69,11 @@
                         </router-link>
                     </li>
                 </template>
-                
                 <li class="hover:bg-pallette-grey-light">
                     <router-link :to="'/automations/history'" class="block w-full">Automated Tool Logs</router-link>
+                </li>
+                <li class="hover:bg-pallette-grey-light">
+                    <router-link :to="'/logs/activity'" class="block w-full">Activity Logs</router-link>
                 </li>
             </ul>
             <span id="management-label" class="sub-label text-white uppercase"><div>Global</div>Settings</span>

@@ -37,7 +37,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "logs" */ '../views/Logs/Index.vue'),
     children:[
       {
-        path: "/activity",
+        path: "activity",
         component: () => import(/* webpackChunkName: "logs" */ '../views/Logs/ActivityLogs.vue'),
       },
     ]

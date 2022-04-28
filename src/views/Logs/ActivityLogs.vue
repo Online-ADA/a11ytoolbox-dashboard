@@ -15,7 +15,7 @@ export default {
     }),
     computed: {
         loading() {
-            return false
+          return false
         },
     },
     props: [],
@@ -30,8 +30,6 @@ export default {
     },
     components: {
       Loader,
-      A,
-      DT,
     },
 }
 </script>
