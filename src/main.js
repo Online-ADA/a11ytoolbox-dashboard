@@ -11,6 +11,18 @@ import cloneDeep from 'lodash/cloneDeep'
 import VueDragscroll from 'vue-dragscroll'
 import Cookies from './services/cookies'
 import VueCompositionAPI from '@vue/composition-api'
+import Rollbar from 'rollbar';
+
+Vue.prototype.$rollbar = new Rollbar({
+  accessToken: 'cf58f53ab52a400cbc8739034ed0ec74',
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+});
+
+Vue.config.errorHandler = (err, vm, info) => {
+  vm.$rollbar.error(err);
+  throw err; // rethrow
+};
 
 Vue.use(VueDragscroll)
 Vue.use(VueLodash, { lodash: { orderBy, cloneDeep } })
