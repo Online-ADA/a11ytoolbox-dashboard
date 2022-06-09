@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { EventBus } from '../../services/eventBus'
 
 const getDefaultState = () => {
 	return {
@@ -628,7 +629,7 @@ export default {
 				commit("upgrade/setState",{key:'trigger',value: 'AddUsers'},{root:true})
 				let plural = rootState.user.user_limit > 1 ? 's' : ''
 				commit("upgrade/setState",{key:'message',value: `You have reached the maximum of ${rootState.user.user_limit} user${plural} for this license.`},{root:true})
-				this.EventBus.openModal('UpgradeLicenseModal',false)
+				EventBus.openModal('UpgradeLicenseModal',false)
 				return	
 			}
 			state.loading.users = true;
@@ -672,12 +673,12 @@ export default {
 				}
 			})
 		},
-		addUsers({state,rootState},args) {
-			if(rootState.user.user_limit >= rootState.user.all.length){
+		addUsers({state,rootState,commit},args) {
+			if(rootState.user.all.length >= rootState.user.user_limit ){
 				commit("upgrade/setState",{key:'trigger',value: 'AddUsers'},{root:true})
 				let plural = rootState.user.user_limit > 1 ? 's' : ''
 				commit("upgrade/setState",{key:'message',value: `You have reached the maximum of ${rootState.user.user_limit} user${plural} for this license.`},{root:true})
-				this.EventBus.openModal('UpgradeLicenseModal',false)
+				EventBus.openModal('UpgradeLicenseModal',false)
 				return	
 			}
 			state.loading.users = true;
