@@ -35,10 +35,11 @@ Vue.config.productionTip = false
 Vue.prototype.$http = Axios;
 const token = Cookies.get('oada_UID')
 
-var apiHost = "https://apitoolbox.ngrok.io"
-var accountHost = "https://oadaaccounts.ngrok.io"
-var site = "toolboxdashboard.ngrok.io"
-var dashboard = "https://oadadashboard.ngrok.io"
+var apiHost = "https://api.a11ytoolbox.io"
+var accountHost = "https://accounts.onlineada.com"
+var site = "app.a11ytoolbox.io"
+var dashboard = "https://dashboard.onlineada.com"
+
 Vue.prototype.$http.defaults.headers.common['Accept'] = "application/json"
 
 if( Cookies.get("loggingIn") == undefined ){
@@ -56,22 +57,21 @@ if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = "Bearer "+token
 }
 
-if( window.location.hostname == "app.a11ytoolbox.io" ){
-  apiHost = "https://api.a11ytoolbox.io"
-  accountHost = "https://accounts.onlineada.com"
-  site = "app.a11ytoolbox.io"
-  dashboard = "https://dashboard.onlineada.com"
-}
-if( window.location.hostname == "dashboardtoolbox.ngrok.io" ){
+if( window.location.hostname == "toolboxdashboard.ngrok.io" ){
   apiHost = "https://toolboxapi.ngrok.io"
-  accountHost = "https://accountstoolbox.ngrok.io"
-  site = "dashboardtoolbox.ngrok.io"
-}
-if( window.location.hostname == "toolboxdashboardd.ngrok.io" ){
-  apiHost = "https://toolboxapii.ngrok.io"
-  accountHost = "https://oadaaccountss.ngrok.io"
-  site = "toolboxdashboardd.ngrok.io"
-  dashboard = "https://oadadashboardd.ngrok.io"
+  accountHost = "https://oadaaccounts.ngrok.io"
+  site = "toolboxdashboard.ngrok.io"
+  dashboard = "https://oadadashboard.ngrok.io"
+} else if( window.location.hostname == "toolboxdashboard2.ngrok.io" ){
+  apiHost = "https://toolboxapi2.ngrok.io"
+  accountHost = "https://oadaaccounts2.ngrok.io"
+  site = "toolboxdashboard2.ngrok.io"
+  dashboard = "https://oadadashboard2.ngrok.io"
+} else if( window.location.hostname == "toolboxdashboard3.ngrok.io" ){
+  apiHost = "https://toolboxapi3.ngrok.io"
+  accountHost = "https://oadaaccounts3.ngrok.io"
+  site = "toolboxdashboard3.ngrok.io"
+  dashboard = "https://oadadashboard3.ngrok.io"
 }
 
 store.state.auth.site = site
