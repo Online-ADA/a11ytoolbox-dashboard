@@ -25,6 +25,8 @@
         "no-return-assign": "off",
         "no-empty": "off",
         "no-tabs": "off",
-        "no-restricted-syntax": "off"
+        "no-restricted-syntax": "off",
+        "no-return-await": "off",
+        "no-underscore-dangle": "off"
     }
 }

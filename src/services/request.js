@@ -176,7 +176,7 @@ class Request {
       .then((response) => {
         this.checkForRedirect(response);
         if (response.data.success && args.onSuccess) {
-          if (args.onSuccess.type == undefined) {
+          if (args.onSuccess.type === undefined) {
             args.onSuccess.type = 'success';
             args.onSuccess.position = 'bottom right';
           }
@@ -184,7 +184,7 @@ class Request {
           return;
         }
         if (!response.data.success && args.onWarn) {
-          if (args.onWarn.type == undefined) {
+          if (args.onWarn.type === undefined) {
             args.onWarn.type = 'warn';
             args.onWarn.position = 'bottom right';
           }
@@ -194,7 +194,7 @@ class Request {
         this.checkForRedirect(error);
         console.log(error);
         if (args.onError) {
-          if (args.onError.type == undefined) {
+          if (args.onError.type === undefined) {
             args.onError.type = 'error';
             args.onError.position = 'bottom right';
           }
@@ -216,14 +216,14 @@ class Request {
       .then((response) => {
         this.checkForRedirect(response);
         if (response.data.success && args.onSuccess) {
-          if (args.onSuccess.type == undefined) {
+          if (args.onSuccess.type === undefined) {
             args.onSuccess.type = 'success';
             args.onSuccess.position = 'bottom right';
           }
           this.parseArgs(args.onSuccess, response);
         }
         if (!response.data.success && args.onWarn) {
-          if (args.onWarn.type == undefined) {
+          if (args.onWarn.type === undefined) {
             args.onWarn.type = 'warn';
             args.onWarn.position = 'bottom right';
           }
@@ -233,7 +233,7 @@ class Request {
         this.checkForRedirect(error);
         console.log(error);
         if (args.onError) {
-          if (args.onError.type == undefined) {
+          if (args.onError.type === undefined) {
             args.onError.type = 'error';
             args.onError.position = 'bottom right';
           }
@@ -255,14 +255,14 @@ class Request {
       .then((response) => {
         this.checkForRedirect(response);
         if (response.data.success && args.onSuccess) {
-          if (args.onSuccess.type == undefined) {
+          if (args.onSuccess.type === undefined) {
             args.onSuccess.type = 'success';
             args.onSuccess.position = 'bottom right';
           }
           this.parseArgs(args.onSuccess, response);
         }
         if (!response.data.success && args.onWarn) {
-          if (args.onWarn.type == undefined) {
+          if (args.onWarn.type === undefined) {
             args.onWarn.type = 'warn';
             args.onWarn.position = 'bottom right';
           }
@@ -272,7 +272,7 @@ class Request {
         this.checkForRedirect(error);
         console.log(error);
         if (args.onError) {
-          if (args.onError.type == undefined) {
+          if (args.onError.type === undefined) {
             args.onError.type = 'error';
             args.onError.position = 'bottom right';
           }
@@ -297,31 +297,32 @@ class Request {
     }
   }
 
-  checkForRedirect(response) {
-    if (response.response != undefined && response.response.data.message == 'Unauthenticated.') {
+  static checkForRedirect(response) {
+    if (response.response !== undefined && response.response.data.message === 'Unauthenticated.') {
       // TODO: Need to retest this scenario. This condition was randomly giving me trouble again.
       store.dispatch('auth/login');
       return;
     }
-    if (response.response != undefined && response.response.data.message == 'No Account Access') {
+    if (response.response !== undefined && response.response.data.message === 'No Account Access') {
       window.location = `${window.App.$store.state.auth.accapi}/signin/?oada_redirect=/`;
     }
-    if (response.data != undefined && response.data.message == 'No Account Access') {
+    if (response.data !== undefined && response.data.message === 'No Account Access') {
       window.location = `${window.App.$store.state.auth.accapi}/signin/?oada_redirect=/`;
     }
-    if (response.data != undefined && response.data.success === 'upgrade') {
+    if (response.data !== undefined && response.data.success === 'upgrade') {
       store.commit('upgrade/setState', { key: 'trigger', value: response.data.trigger });
       store.commit('upgrade/setState', { key: 'message', value: response.data.message });
       EventBus.openModal('UpgradeLicenseModal', false);
       return;
     }
-    if (response.data != undefined && response.data.success === 'error') {
+    if (response.data !== undefined && response.data.success === 'error') {
       return;
     }
-    if (response.data != undefined && response.data.success === 'alert') {
+    if (response.data !== undefined && response.data.success === 'alert') {
+      // eslint-disable-next-line
       alert(response.data.message);
     }
-    if (response.data.details == 'incorrect_permissions' || response.data.details == 'incorrect_role') {
+    if (response.data.details === 'incorrect_permissions' || response.data.details === 'incorrect_role') {
       // window.App.$store.dispatch("auth/logout")
       // if( window.App.$router.currentRoute.path != "/" ){
       //     this.mute = true

@@ -1,5 +1,5 @@
 class Utility {
-  getScanRules() {
+  static getScanRules() {
     return [
       { value: 'accesskeys', description: 'Ensures every accesskey attribute value is unique' },
       { value: 'area-alt', description: 'Ensures <area> elements of image maps have alternate text' },
@@ -106,7 +106,7 @@ class Utility {
     // Loop over every audit and check if meta property "sortedBy" is set
     const auditsMeta = Object.values(data.audit);
     const metaKeys = Object.keys(data.audit);
-    for (let x = 0; x < auditsMeta.length; x++) {
+    for (let x = 0; x < auditsMeta.length; x += 1) {
       const val = auditsMeta[x];
 
       if (val.issues && val.issues.columns && val.issues.columns.sortedBy) {
@@ -126,9 +126,9 @@ class Utility {
             && metaData.issues.columns.sortedBy
             && metaData.issues.columns.sortedBy.columns
             && metaData.issues.columns.sortedBy.columns.includes('function')) {
-      for (let x = 0; x < metaData.issues.columns.sortedBy.columns.length; x++) {
+      for (let x = 0; x < metaData.issues.columns.sortedBy.columns.length; x += 1) {
         const column = metaData.issues.columns.sortedBy.columns[x];
-        if (column == 'function') {
+        if (column === 'function') {
           metaData.issues.columns.sortedBy.columns[x] = this.getSortValue(metaData.issues.columns.sortedBy.reference[x], vm);
         }
       }
@@ -137,13 +137,13 @@ class Utility {
     return metaData;
   }
 
-  getSortValue(column, vm) {
+  static getSortValue(column, vm) {
     let data = column;
     // String reference is necessary because sometimes our column becomes an anonymous function
-    if (column == 'levels') {
+    if (column === 'levels') {
       data = ((item) => item.levels.join(' '));
     }
-    if (column == 'priority') {
+    if (column === 'priority') {
       data = ((item) => {
         let output = '';
         switch (item.priority.toLowerCase()) {
@@ -166,10 +166,10 @@ class Utility {
         return output;
       });
     }
-    if (column == 'success_criteria') {
+    if (column === 'success_criteria') {
       data = ((item) => {
         let output = '';
-        for (let x = 0; x < item.articles.length; x++) {
+        for (let x = 0; x < item.articles.length; x += 1) {
           const article = item.articles[x];
           output += ` ${article.display}`;
         }
@@ -177,17 +177,17 @@ class Utility {
         return output;
       });
     }
-    if (column == 'techniques') {
+    if (column === 'techniques') {
       data = ((item) => {
         let output = '';
-        for (let x = 0; x < item.techniques.length; x++) {
+        for (let x = 0; x < item.techniques.length; x += 1) {
           const technique = item.techniques[x];
           output += technique.display;
         }
         return output;
       });
     }
-    if (column == 'pages') {
+    if (column === 'pages') {
       data = ((item) => {
         if (item.pages) {
           let domain = vm.$store.state.audits.audit.domain.url.replace(/\/$/gm, '');
@@ -196,7 +196,7 @@ class Utility {
             domain = `${domain}/${vm.$store.state.audits.audit.domain.root.replace(/\/$/gm, '')}`;
           }
           let output = '';
-          for (let x = 0; x < item.pages.length; x++) {
+          for (let x = 0; x < item.pages.length; x += 1) {
             const page = item.pages[x];
             if (page.title) {
               output += page.title;
@@ -206,7 +206,7 @@ class Utility {
             }
             if (page.url) {
               let { url } = page;
-              if (url == '/') {
+              if (url === '/') {
                 url = '';
               }
               output += `${domain}/${url}`;
@@ -222,19 +222,19 @@ class Utility {
     return data;
   }
 
-  convertHexToRgb(hex) {
+  static convertHexToRgb(hex) {
     let r = 0; let g = 0; let
       b = 0;
 
     // 3 digits
-    if (hex.length == 4) {
+    if (hex.length === 4) {
       r = `0x${hex[1]}${hex[1]}`;
       g = `0x${hex[2]}${hex[2]}`;
       b = `0x${hex[3]}${hex[3]}`;
     }
 
     // 6 digits
-    if (hex.length == 7) {
+    if (hex.length === 7) {
       r = `0x${hex[1]}${hex[2]}`;
       g = `0x${hex[3]}${hex[4]}`;
       b = `0x${hex[5]}${hex[6]}`;
@@ -277,7 +277,7 @@ class Utility {
     return parseFloat(ratio.toFixed(2));
   }
 
-  calculateLuminance(R8bit, G8bit, B8bit) {
+  static calculateLuminance(R8bit, G8bit, B8bit) {
     const RsRGB = R8bit / 255;
     const GsRGB = G8bit / 255;
     const BsRGB = B8bit / 255;
