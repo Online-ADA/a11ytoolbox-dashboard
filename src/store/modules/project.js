@@ -46,7 +46,7 @@ export default {
           state.project = re.data.details;
 
           if (rootState.clients.client.id !== re.data.details.client_id) {
-            rootState.clients.client = rootState.clients.all.find((c) => c.id == re.data.details.client_id);
+            rootState.clients.client = rootState.clients.all.find((c) => c.id === re.data.details.client_id);
             rootState.clients.clientID = rootState.clients.client.id;
           }
           if (args.vm) {
@@ -74,7 +74,7 @@ export default {
         },
       })
         .then((re) => {
-          if (re.data.success == 'error') {
+          if (re.data.success === 'error') {
             Vue.notify({
               title: 'Warning',
               text: re.data.error,
@@ -82,7 +82,7 @@ export default {
               position: 'bottom right',
             });
           }
-          if (re.data.success == '1') {
+          if (parseInt(re.data.success, 10) === 1) {
             Vue.notify({
               title: 'Success',
               text: 'Project created',
@@ -111,7 +111,7 @@ export default {
             // This will trigger an update of the projects because of the watcher on App.vue
             if (rootState.clients.client.id !== re.data.details.client_id) {
               rootState.projects.project = false;
-              rootState.clients.client = rootState.clients.all.find((c) => c.id == re.data.details.client_id);
+              rootState.clients.client = rootState.clients.all.find((c) => c.id === re.data.details.client_id);
               rootState.clients.clientID = rootState.clients.client.id;
             }
 
@@ -188,7 +188,7 @@ export default {
       Request.patchPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.id}`, requestArgs)
         .then((re) => {
           if (rootState.clients.client.id !== re.data.details.client_id) {
-            rootState.clients.client = rootState.clients.all.find((c) => c.id == re.data.details.client_id);
+            rootState.clients.client = rootState.clients.all.find((c) => c.id === re.data.details.client_id);
             rootState.clients.clientID = rootState.clients.client.id;
           }
         })
@@ -218,7 +218,7 @@ export default {
     },
     deleteProject({ state, rootState }, args) {
       state.loading = true;
-      const index = state.all.findIndex((p) => p.id == args.project_id);
+      const index = state.all.findIndex((p) => p.id === args.project_id);
       Request.destroyPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/projects/${args.project_id}`)
         .then((re) => {
           state.loading = false;

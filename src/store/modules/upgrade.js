@@ -38,10 +38,10 @@ export default {
       state.loading = true;
       Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/upgrade/payment`)
         .then((re) => {
-          if (re.data.success == '1') {
+          if (parseInt(re.data.success, 10) === 1) {
             state.payments = re.data.details.payments;
             if (args.Success) args.Success(re.data);
-          } else if (re.data.success == '0' && (re.data.details == 'incorrect_team' || re.data.details == 'incorrect_role')) {
+          } else if (parseInt(re.data.success, 10) === 0 && (re.data.details === 'incorrect_team' || re.data.details === 'incorrect_role')) {
             state.message = 'You do not have proper permissions to upgrade this license.';
           }
         })
@@ -54,11 +54,11 @@ export default {
       state.loading = true;
       Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/upgrade/license`)
         .then((re) => {
-          if (re.data.success == '1') {
+          if (parseInt(re.data.success, 10) === 1) {
             state.license = re.data.license_data.license;
             state.tier = re.data.license_data.tier;
             state.tier_data = re.data.license_data.tier_data;
-          } else if (re.data.success == '0' && (re.data.details == 'incorrect_team' || re.data.details == 'incorrect_role')) {
+          } else if (parseInt(re.data.success, 10) === 0 && (re.data.details === 'incorrect_team' || re.data.details === 'incorrect_role')) {
             state.message = 'You do not have proper permissions to upgrade this license.';
           }
         })
@@ -75,9 +75,9 @@ export default {
         },
       })
         .then((re) => {
-          if (re.data.success == '1') {
+          if (parseInt(re.data.success, 10) === 1) {
             if (args.Success) args.Success(re);
-          } else if (re.data.success == '0' && (re.data.details == 'incorrect_role' || re.data.details == 'incorrect_team')) {
+          } else if (parseInt(re.data.success, 10) === 0 && (re.data.details === 'incorrect_role' || re.data.details === 'incorrect_team')) {
             if (args.Failure) args.Failure(re);
             Vue.notify({
               title: 'ERROR',
@@ -109,7 +109,7 @@ export default {
     AuthDotNet({ state, commit, rootState }) {
       Request.getPromise(`${rootState.auth.accapi}/api/authdotnet`)
         .then((re) => {
-          if (re.data.success == '1') {
+          if (parseInt(re.data.success, 10) === 1) {
             commit('setState', {
               key: 'authdotnet',
               value: {
@@ -131,7 +131,7 @@ export default {
         },
       })
         .then((re) => {
-          if (re.data.success == '1') {
+          if (parseInt(re.data.success, 10) === 1) {
 
           }
         })

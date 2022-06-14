@@ -4,8 +4,8 @@ import { EventBus } from '../../services/eventBus';
 const CheckAuditState = (state, id, api, license) => {
   Request.getPromise(`${api}/l/${license}/media-audits/${id}/status`)
     .then((re) => {
-      if (re.data.success == '1') {
-        if (re.data.details == 'Complete') {
+      if (parseInt(re.data.success, 10) === 1) {
+        if (re.data.details === 'Complete') {
           if (state.intervals[id]) clearInterval(state.intervals[id]);
           EventBus.$emit('MediaAudit/Complete', { data: id });
         }
@@ -77,7 +77,7 @@ export default {
               state.audit.issues = re.data.details;
             } else {
               // All of these lines are here to trigger the watcher on Import.vue
-              const index = state.all.findIndex((a) => a.id == args.audit_id);
+              const index = state.all.findIndex((a) => a.id === args.audit_id);
               const copy = state.all[index];
               copy.issues = re.data.details;
               state.all[index] = copy;
@@ -101,7 +101,7 @@ export default {
         },
       })
         .then((re) => {
-          if (re.data.success == 0) {
+          if (parseInt(re.data.success, 10) === 0) {
             if (!Request.muted()) {
               Vue.notify({
                 title: 'Error',
@@ -113,7 +113,7 @@ export default {
           } else {
             state.all = re.data.details;
             for (const i in state.all) {
-              if (state.all[i].status == 'in_progress') {
+              if (state.all[i].status === 'in_progress') {
                 state.intervals[state.all[i].id] = setInterval(
                   CheckAuditState,
                   5000,
@@ -152,7 +152,7 @@ export default {
       state.loading = true;
       Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/media-audits/${args.audit_id}/init`)
         .then((re) => {
-          if (re.data.success != '1') {
+          if (parseInt(re.data.success, 10) !== 1) {
             if (!Request.muted()) {
               Vue.notify({
                 title: 'Error',
@@ -165,7 +165,7 @@ export default {
             // TODO: No good way to handle this globally seeing as the media audits store is reset
             // let audit = state.all.find((item)=> {return item.id == args.audit_id})
             // if(audit) audit.status = 'in_progress'
-            if (state.audit)state.audit.status = 'in_progress';
+            if (state.audit) state.audit.status = 'in_progress';
             state.intervals[args.audit_id] = setInterval(
               CheckAuditState,
               5000,
@@ -202,7 +202,7 @@ export default {
       state.loading = true;
       Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/media-audits`, { params: { audit: args.audit } })
         .then((re) => {
-          if (re.data.success != '1') {
+          if (parseInt(re.data.success, 10) !== 1) {
             if (!Request.muted()) {
               Vue.notify({
                 title: 'Error',

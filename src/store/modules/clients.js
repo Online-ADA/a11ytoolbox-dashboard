@@ -60,7 +60,7 @@ export default {
     },
     getClient({ state, rootState }, args) {
       state.loading = true;
-      if (args.id == -1) {
+      if (args.id === -1) {
         state.client = false;
         state.clientID = false;
         state.loading = false;
@@ -105,14 +105,14 @@ export default {
       })
         .then((re) => {
           state.loading = false;
-          if (re.data.success == '1') {
+          if (parseInt(re.data.success, 10) === 1) {
             state.client = re.data.created;
             state.all = re.data.details;
             if (args.callback) {
               args.callback();
             }
           }
-          if (re.data.success == 'error') {
+          if (re.data.success === 'error') {
             Vue.notify({
               title: 'Warning',
               text: re.data.error,
@@ -144,8 +144,9 @@ export default {
 
             if (state.all.length) {
               if (state.clientID) {
-                state.client = state.all.find((ob) => ob.id == parseInt(state.clientID));
+                state.client = state.all.find((ob) => ob.id === parseInt(state.clientID, 10));
               } else {
+                // eslint-disable-next-line
                 state.client = state.all[0];
                 state.clientID = state.client.id;
               }

@@ -303,7 +303,7 @@ export default {
       Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/domains/${args.id}/sitemapGenerate`)
         .then((response) => {
           if (!Request.muted()) {
-            if (response.data.success == '1') {
+            if (parseInt(response.data.success, 10) === 1) {
               Vue.notify({
                 title: 'Success',
                 text: 'Sitemap generation queued',

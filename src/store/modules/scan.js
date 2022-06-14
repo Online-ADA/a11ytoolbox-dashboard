@@ -32,7 +32,7 @@ export default {
         },
       })
         .then((re) => {
-          if (re.data.success == 'error') {
+          if (re.data.success === 'error') {
             args.callback('error');
             Vue.notify({
               title: 'ERROR',
@@ -40,7 +40,7 @@ export default {
               type: 'error',
               position: 'bottom right',
             });
-          } else if (re.data.success == 'upgrade') {
+          } else if (re.data.success === 'upgrade') {
             args.callback('upgrade');
             Vue.notify({
               title: 'Warning',

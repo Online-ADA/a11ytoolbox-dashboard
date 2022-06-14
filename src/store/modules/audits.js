@@ -4,8 +4,8 @@ import { EventBus } from '../../services/eventBus';
 const CheckAuditState = (state, id, api, license) => {
   Request.getPromise(`${api}/l/${license}/audits/${id}/status`)
     .then((re) => {
-      if (re.data.success == '1') {
-        if (re.data.details != 'running_automation') {
+      if (parseInt(re.data.success, 10) === 1) {
+        if (re.data.details !== 'running_automation') {
           if (state.intervals[id]) clearInterval(state.intervals[id]);
           EventBus.$emit('Audit/Automation/Complete', { data: id });
         }
@@ -83,7 +83,7 @@ export default {
               rootState.audits.audit.issues = re.data.details;
             } else {
               // All of these lines are here to trigger the watcher on Import.vue
-              const index = rootState.projects.project.audits.findIndex((a) => a.id == args.audit_id);
+              const index = rootState.projects.project.audits.findIndex((a) => a.id === args.audit_id);
               const copy = rootState.projects.project.audits[index];
               copy.issues = re.data.details;
               rootState.projects.project.audits[index] = copy;
@@ -156,7 +156,7 @@ export default {
       Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/${args.id}`, { params: { withIssues: args.withIssues } })
         .then((re) => {
           state.audit = re.data.details;
-          if (!state.intervals[state.audit.id] && state.audit.status == 'running_automation') {
+          if (!state.intervals[state.audit.id] && state.audit.status === 'running_automation') {
             state.intervals[state.audit.id] = setInterval(
               CheckAuditState,
               5000,
@@ -258,7 +258,7 @@ export default {
           }
 
           for (const i in state.all) {
-            if (!state.intervals[state.all[i].id] && state.all[i].status == 'running_automation') {
+            if (!state.intervals[state.all[i].id] && state.all[i].status === 'running_automation') {
               state.intervals[state.all[i].id] = setInterval(
                 CheckAuditState,
                 5000,

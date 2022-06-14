@@ -271,12 +271,13 @@ export default {
           obj = 'assistive_techs';
           text = 'Assistive Technology';
           break;
+        default:
       }
       Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/${path}`, {
         params: args.object,
       })
         .then((re) => {
-          if (args.object.identifier == 'audit_state') {
+          if (args.object.identifier === 'audit_state') {
             rootState.audits.audit_states = re.data.details;
           } else {
             state[`${obj}`] = re.data.details;
@@ -344,13 +345,14 @@ export default {
           obj = 'assistive_techs';
           text = 'Assistive Technology';
           break;
+        default:
       }
 
       Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/${path}/${args.object.id}`, {
         params: args.object,
       })
         .then((re) => {
-          if (args.object.identifier == 'audit_state') {
+          if (args.object.identifier === 'audit_state') {
             rootState.audits.audit_states = re.data.details;
           } else {
             state[`${obj}`] = re.data.details;

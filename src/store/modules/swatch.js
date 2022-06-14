@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 const getDefaultState = () => ({
   loading: false,
   all: [],

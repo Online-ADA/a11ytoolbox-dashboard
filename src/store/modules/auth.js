@@ -17,7 +17,7 @@ export default {
     token: Cookies.get('oada_UID') || false,
     token_expire: Cookies.get('oada_UID_expire') || false,
     token_check_every: 600000, // 600000 = 10 minutes
-    account: parseInt(Cookies.get('toolboxAccount')) || false,
+    account: parseInt(Cookies.get('toolboxAccount'), 10) || false,
     license: false,
     authMessage: '',
     authMessages: {
@@ -33,7 +33,7 @@ export default {
 
       // If more than 10 minutes remaining, check every 10 minutes
       if (minutesLeft > 10) {
-        if (this.token_check_every != 600000 && this.timeCheckInterval !== false) {
+        if (this.token_check_every !== 600000 && this.timeCheckInterval !== false) {
           clearInterval(this.timeCheckInterval);
           this.timeCheckInterval = false;
         }
@@ -44,7 +44,7 @@ export default {
           }, this.token_check_every, this);
         }
       } else if (minutesLeft <= 10 && minutesLeft > 0) {
-        if (this.token_check_every != 60000 && this.timeCheckInterval !== false) {
+        if (this.token_check_every !== 60000 && this.timeCheckInterval !== false) {
           clearInterval(this.timeCheckInterval);
           this.timeCheckInterval = false;
         }
@@ -73,11 +73,11 @@ export default {
   },
   mutations: {
     setState(state, payload) {
-      if (payload.key == 'account') {
+      if (payload.key === 'account') {
         Cookies.set('toolboxAccount', payload.value, 365);
         axios.defaults.headers.common.oadatbaccount = payload.value;
       }
-      if (payload.key == 'license') {
+      if (payload.key === 'license') {
         Cookies.set('toolboxLicense', payload.value.id, 365);
         axios.defaults.headers.common.oadatblicense = payload.value.id;
       }

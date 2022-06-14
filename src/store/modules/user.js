@@ -69,17 +69,18 @@ export default {
       if (state.loading) return;
       state.loading = true;
       state.all = [];
+      // eslint-disable-next-line
       state.byTeam = {
         1: [],
         2: [],
         3: [],
         4: [],
-      },
+      };
       Request.getPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/users`)
         .then((re) => {
           state.all = Object.values(re.data.details);
           state.user_limit = re.data.limit;
-          for (let i = 0; i < re.data.details.length; i++) {
+          for (let i = 0; i < re.data.details.length; i += 1) {
             const user = re.data.details[i];
             if (user.roleInfo != null && user.roleInfo.team_id != null) {
               state.byTeam[user.roleInfo.team_id].push(user.id);
@@ -97,7 +98,7 @@ export default {
           }
         })
         .catch((re) => console.log(re))
-        .then(() => state.loading = false);
+        .then(() => state.loading = false); // eslint-disable-line
     },
     getUser({ state, rootState }, args) {
       state.loading = true;
