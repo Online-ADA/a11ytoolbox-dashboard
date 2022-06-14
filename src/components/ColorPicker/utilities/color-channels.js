@@ -1,6 +1,6 @@
 /** @typedef {import('../../types/index').VueAccessibleColorPicker.SupportedColorFormat} SupportedColorFormat */
 
-import { CssValues } from './css-values.js'
+import { CssValues } from './css-values.js';
 
 /**
  * @typedef {Object} HslChannels
@@ -99,4 +99,4 @@ export const colorChannels = {
     //   from: CssValues.fromAlpha,
     // },
   },
-}
+};

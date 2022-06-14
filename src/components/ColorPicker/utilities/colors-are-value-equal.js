@@ -11,16 +11,16 @@
  * @param {ColorHex | ColorHsl | ColorHsv | ColorHwb | ColorRgb} colorB
  * @returns {boolean}
  */
-export function colorsAreValueEqual (colorA, colorB) {
+export function colorsAreValueEqual(colorA, colorB) {
   if (typeof colorA === 'string' || typeof colorB === 'string') {
-    return colorA === colorB
+    return colorA === colorB;
   }
 
   for (const channelA in colorA) {
     if (colorA[channelA] !== colorB[channelA]) {
-      return false
+      return false;
     }
   }
 
-  return true
+  return true;
 }

@@ -12,14 +12,13 @@
  * @param {ColorHsl | ColorHsv | ColorHwb | ColorRgb} color
  * @returns {SupportedColorFormat}
  */
-export function detectFormat (color) {
+export function detectFormat(color) {
   if (Object.prototype.hasOwnProperty.call(color, 'r')) {
-    return 'rgb'
-  } else if (Object.prototype.hasOwnProperty.call(color, 'w')) {
-    return 'hwb'
-  } else if (Object.prototype.hasOwnProperty.call(color, 'v')) {
-    return 'hsv'
-  } else {
-    return 'hsl'
+    return 'rgb';
+  } if (Object.prototype.hasOwnProperty.call(color, 'w')) {
+    return 'hwb';
+  } if (Object.prototype.hasOwnProperty.call(color, 'v')) {
+    return 'hsv';
   }
+  return 'hsl';
 }

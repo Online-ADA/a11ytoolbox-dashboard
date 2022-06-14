@@ -7,20 +7,20 @@
  * @param {string} colorString
  * @returns {string}
  */
-export function getCssColorAsRgbString (colorString) {
-  const tempElement = document.createElement('span')
-  tempElement.style.display = 'none'
-  tempElement.style.color = colorString
+export function getCssColorAsRgbString(colorString) {
+  const tempElement = document.createElement('span');
+  tempElement.style.display = 'none';
+  tempElement.style.color = colorString;
 
   // `colorString` is not a valid CSS color value
   if (tempElement.style.color === '') {
-    return ''
+    return '';
   }
 
-  document.body.appendChild(tempElement)
-  const rgbColorString = getComputedStyle(tempElement).color
+  document.body.appendChild(tempElement);
+  const rgbColorString = getComputedStyle(tempElement).color;
 
-  tempElement.remove()
+  tempElement.remove();
 
-  return rgbColorString
+  return rgbColorString;
 }

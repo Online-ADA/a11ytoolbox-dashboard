@@ -1,23 +1,19 @@
+// range from 1 to 21
+// (L1 + 0.05) / (L2 + 0.05)
+// L1 is the relative luminance of the lighter of the colors
+// L2 is the relative luminance of the darker of the colors.
+// 1.4.3 Contrast (Minimum): The visual presentation of text and images of text has a contrast ratio of at least 4.5:1, except for the following: (Level AA)
+// Large Text: Large-scale text and images of large-scale text have a contrast ratio of at least 3:1;
 
+// If using hex color values, we have to convert them to 8bit sRGB values first.
+// Use Utility function convert-hex-to-rgb, but it currently appears to output RGB into the 16-bit colorspace.
 
-//range from 1 to 21
-//(L1 + 0.05) / (L2 + 0.05)
-//L1 is the relative luminance of the lighter of the colors
-//L2 is the relative luminance of the darker of the colors.
-//1.4.3 Contrast (Minimum): The visual presentation of text and images of text has a contrast ratio of at least 4.5:1, except for the following: (Level AA)
-//Large Text: Large-scale text and images of large-scale text have a contrast ratio of at least 3:1;
-
-
-//If using hex color values, we have to convert them to 8bit sRGB values first.
-//Use Utility function convert-hex-to-rgb, but it currently appears to output RGB into the 16-bit colorspace.
-
-/*Step One:
+/* Step One:
 Convert all sRGB 8 bit integer values to decimal 0.0-1.0
 
 vR = sR / 255;
 vG = sG / 255;
 vB = sB / 255;
-
 
 function sRGBtoLin(colorChannel) {
 	// Send this function a decimal sRGB gamma encoded color value

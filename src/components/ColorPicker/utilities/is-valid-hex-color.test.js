@@ -1,4 +1,4 @@
-import { isValidHexColor } from './is-valid-hex-color.js'
+import { isValidHexColor } from './is-valid-hex-color.js';
 
 describe('isValidHexColor', () => {
   test.each([
@@ -16,6 +16,6 @@ describe('isValidHexColor', () => {
     ['#ggg', false],
     ['#01234567', true],
   ])('of “%s” returns %s', (hex, expectedResult) => {
-    expect(isValidHexColor(hex)).toBe(expectedResult)
-  })
-})
+    expect(isValidHexColor(hex)).toBe(expectedResult);
+  });
+});
