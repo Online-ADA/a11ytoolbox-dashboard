@@ -7,11 +7,11 @@
  * @param {ColorHsv} hsv
  * @returns {ColorHwb}
  */
-export function convertHsvToHwb (hsv) {
+export function convertHsvToHwb(hsv) {
   return {
     h: hsv.h,
     w: (1 - hsv.s) * hsv.v,
     b: 1 - hsv.v,
     // a: hsv.a,
-  }
+  };
 }

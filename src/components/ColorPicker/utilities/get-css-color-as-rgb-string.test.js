@@ -1,4 +1,4 @@
-import { getCssColorAsRgbString } from './get-css-color-as-rgb-string.js'
+import { getCssColorAsRgbString } from './get-css-color-as-rgb-string.js';
 
 describe('getCssColorAsRgbString', () => {
   test.each([
@@ -29,6 +29,6 @@ describe('getCssColorAsRgbString', () => {
     ['rgb(255.12 255.23 255.34)', 'rgb(255, 255, 255)'],
     ['rgb(50% 75% 12.5%)', 'rgb(128, 191, 32)'], */
   ])('works', (cssColor, rgbColorString) => {
-    expect(getCssColorAsRgbString(cssColor)).toEqual(rgbColorString)
-  })
-})
+    expect(getCssColorAsRgbString(cssColor)).toEqual(rgbColorString);
+  });
+});

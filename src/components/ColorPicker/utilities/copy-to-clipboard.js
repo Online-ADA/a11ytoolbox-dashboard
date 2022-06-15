@@ -10,42 +10,41 @@
  * @returns {boolean}
  */
 
-const copyToClipboard = str => {
-  if(navigator && navigator.clipboard && navigator.clipboard.writeText){
-    return navigator.clipboard.writeText(str)
+const copyToClipboard = (str) => {
+  if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(str);
   }
 
-  return copyToClipboardLegacy(str)
-}
-export default copyToClipboard
+  return copyToClipboardLegacy(str);
+};
+export default copyToClipboard;
 
-
-function copyToClipboardLegacy (str) {
+function copyToClipboardLegacy(str) {
   if (
     !(typeof document.queryCommandSupported === 'function' && document.queryCommandSupported('copy'))
   ) {
-    return false
+    return false;
   }
 
-  const textarea = document.createElement('textarea')
-  textarea.textContent = str
+  const textarea = document.createElement('textarea');
+  textarea.textContent = str;
 
   // Prevent scrolling to bottom of page in MS Edge.
-  textarea.style.position = 'fixed'
+  textarea.style.position = 'fixed';
 
-  document.body.appendChild(textarea)
-  textarea.select()
+  document.body.appendChild(textarea);
+  textarea.select();
 
-  let result
+  let result;
 
   try {
-    result = document.execCommand('copy')
+    result = document.execCommand('copy');
   } catch {
     // Copying to the clipboard failed.
-    result = false
+    result = false;
   } finally {
-    document.body.removeChild(textarea)
+    document.body.removeChild(textarea);
   }
 
-  return result
+  return result;
 }
