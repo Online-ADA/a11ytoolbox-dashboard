@@ -1,5 +1,6 @@
 class Utility {
-  static getScanRules() {
+  // eslint-disable-next-line
+  getScanRules() {
     return [
       { value: 'accesskeys', description: 'Ensures every accesskey attribute value is unique' },
       { value: 'area-alt', description: 'Ensures <area> elements of image maps have alternate text' },
@@ -136,8 +137,8 @@ class Utility {
 
     return metaData;
   }
-
-  static getSortValue(column, vm) {
+  // eslint-disable-next-line
+  getSortValue(column, vm) {
     let data = column;
     // String reference is necessary because sometimes our column becomes an anonymous function
     if (column === 'levels') {
@@ -221,8 +222,8 @@ class Utility {
 
     return data;
   }
-
-  static convertHexToRgb(hex) {
+  // eslint-disable-next-line
+  convertHexToRgb(hex) {
     let r = 0; let g = 0; let
       b = 0;
 
@@ -276,8 +277,8 @@ class Utility {
 
     return parseFloat(ratio.toFixed(2));
   }
-
-  static calculateLuminance(R8bit, G8bit, B8bit) {
+  // eslint-disable-next-line
+  calculateLuminance(R8bit, G8bit, B8bit) {
     const RsRGB = R8bit / 255;
     const GsRGB = G8bit / 255;
     const BsRGB = B8bit / 255;

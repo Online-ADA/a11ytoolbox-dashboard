@@ -301,7 +301,8 @@ class Request {
     }
   }
 
-  static checkForRedirect(response) {
+  // eslint-disable-next-line
+  checkForRedirect(response) {
     if (response.response !== undefined && response.response.data.message === 'Unauthenticated.') {
       // TODO: Need to retest this scenario. This condition was randomly giving me trouble again.
       store.dispatch('auth/login');
