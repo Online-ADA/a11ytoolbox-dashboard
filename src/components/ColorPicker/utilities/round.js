@@ -7,6 +7,6 @@
  * @param {number} [decimalPrecision]
  * @returns {string}
  */
-export function round (value, decimalPrecision = 2) {
-  return value.toFixed(decimalPrecision).replace(/0+$/, '').replace(/\.$/, '')
+export function round(value, decimalPrecision = 2) {
+  return value.toFixed(decimalPrecision).replace(/0+$/, '').replace(/\.$/, '');
 }

@@ -1,22 +1,20 @@
-
-
 module.exports = {
-  content: ["../src/**/*.{html,js,vue}"],
+  content: ['../src/**/*.{html,js,vue}'],
   theme: {
     screens: {
-      'xs': [
-        {'min': '320px', 'max': '639px'}
+      xs: [
+        { min: '320px', max: '639px' },
       ],
       // => @media (min-width: 320px) and (max-width: 639px) { ... }
-      'sm': [
-        {'min': '640px', 'max':'767px'}
+      sm: [
+        { min: '640px', max: '767px' },
       ],
       // => @media (min-width: 640px) and (max-width: 767px) { ... }
-      'md': '768px',
+      md: '768px',
       // => @media (min-width: 768px) { ... }
-      'lg': '1024px',
+      lg: '1024px',
       // => @media (min-width: 1024px) { ... }
-      'xl': '1280px',
+      xl: '1280px',
       // => @media (min-width: 1280px) { ... }
     },
     boxShadow: {
@@ -40,63 +38,63 @@ module.exports = {
       fontFamily: {
         button: ['Barlow', 'sans-serif'],
         body: ['Open Sans', 'sans-serif'],
-        'headline':['Oswald', 'sans-serif'],
-        'subheadline':['Barlow', 'sans-serif'],
-        'navigation':['Montserrat', 'sans-serif'],
+        headline: ['Oswald', 'sans-serif'],
+        subheadline: ['Barlow', 'sans-serif'],
+        navigation: ['Montserrat', 'sans-serif'],
       },
       colors: {
         pallette: {
-          alert:{
-            DEFAULT: "#840002",
-            hover: "#c80a00"
+          alert: {
+            DEFAULT: '#840002',
+            hover: '#c80a00',
           },
           grey: {
-            light: "#F0F0F0",
-            DEFAULT: "#616161",
-            dark: "#424242",
-            bg: "#CACACA"
+            light: '#F0F0F0',
+            DEFAULT: '#616161',
+            dark: '#424242',
+            bg: '#CACACA',
           },
           yellow: {
             light: '#feead1',
             DEFAULT: '#f9a51a',
-            dark: "#a46311"
+            dark: '#a46311',
           },
           purple: {
             DEFAULT: '#3f3244',
           },
           red: {
-            light: "#EC3723",
-            DEFAULT: "#C80A00",
-            dark: "#9c0800"
+            light: '#EC3723',
+            DEFAULT: '#C80A00',
+            dark: '#9c0800',
           },
           green: {
-            DEFAULT: "#0c793d",
+            DEFAULT: '#0c793d',
           },
           blue: {
-            light: "#005E86",
-            DEFAULT: "#004458",
-            dark: "#004f70"
+            light: '#005E86',
+            DEFAULT: '#004458',
+            dark: '#004f70',
           },
           gold: {
-            DEFAULT: "#F9A51A"
+            DEFAULT: '#F9A51A',
           },
-          button:{
-            DEFAULT: "#004458",
-            hover: "#005e86"
+          button: {
+            DEFAULT: '#004458',
+            hover: '#005e86',
           },
-          white:{
+          white: {
             DEFAULT: '#ffffff',
-            hover: '#ffffff'
+            hover: '#ffffff',
           },
         },
       },
-      fontSize:{
-        'headline': ['44px', { lineHeight: '1.3' }],
+      fontSize: {
+        headline: ['44px', { lineHeight: '1.3' }],
         'headline-2': ['20px', { lineHeight: '1' }],
-        'subheadline': ['20px', { lineHeight: '1' }],
-        body: ["14px", { lineHeight: '1' }],
-        'navigation':['16px', { lineHeight: '1' }],
-      }
+        subheadline: ['20px', { lineHeight: '1' }],
+        body: ['14px', { lineHeight: '1' }],
+        navigation: ['16px', { lineHeight: '1' }],
+      },
     },
   },
-}
+};

@@ -4,17 +4,17 @@
  * @param {string} hexColor
  * @returns {boolean}
  */
-export function isValidHexColor (hexColor) {
+export function isValidHexColor(hexColor) {
   if (!hexColor.startsWith('#')) {
-    return false
+    return false;
   }
 
   if (![3, 4, 6].includes(hexColor.length - 1)) {
-    return false
+    return false;
   }
   // if (![3, 4, 6, 8].includes(hexColor.length - 1)) {
   //   return false
   // }
 
-  return /^#[0-9A-Fa-f]+$/.test(hexColor)
+  return /^#[0-9A-Fa-f]+$/.test(hexColor);
 }
