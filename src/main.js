@@ -57,21 +57,21 @@ if (token) {
   Vue.prototype.$http.defaults.headers.common.Authorization = `Bearer ${token}`;
 }
 
-if (window.location.hostname === 'toolboxdashboard.ngrok.io') {
-  apiHost = 'https://toolboxapi.ngrok.io';
-  accountHost = 'https://oadaaccounts.ngrok.io';
-  site = 'toolboxdashboard.ngrok.io';
-  dashboard = 'https://oadadashboard.ngrok.io';
-} else if (window.location.hostname === 'toolboxdashboard2.ngrok.io') {
-  apiHost = 'https://toolboxapi2.ngrok.io';
-  accountHost = 'https://oadaaccounts2.ngrok.io';
-  site = 'toolboxdashboard2.ngrok.io';
-  dashboard = 'https://oadadashboard2.ngrok.io';
-} else if (window.location.hostname === 'toolboxdashboard3.ngrok.io') {
-  apiHost = 'https://toolboxapi3.ngrok.io';
-  accountHost = 'https://oadaaccounts3.ngrok.io';
-  site = 'toolboxdashboard3.ngrok.io';
-  dashboard = 'https://oadadashboard3.ngrok.io';
+if (window.location.hostname === 'toolbox.devproxy.onlineada.com') {
+  apiHost = 'https://toolboxapi.devproxy.onlineada.com';
+  accountHost = 'https://accounts.devproxy.onlineada.com';
+  site = 'toolbox.devproxy.onlineada.com';
+  dashboard = 'https://dashboard.devproxy.onlineada.com';
+} else if (window.location.hostname === 'toolbox2.devproxy.onlineada.com') {
+  apiHost = 'https://toolboxapi2.devproxy.onlineada.com';
+  accountHost = 'https://accounts2.devproxy.onlineada.com';
+  site = 'toolbox2.devproxy.onlineada.com';
+  dashboard = 'https://dashboard2.devproxy.onlineada.com';
+} else if (window.location.hostname === 'toolbox3.devproxy.onlineada.com') {
+  apiHost = 'https://toolboxapi3.devproxy.onlineada.com';
+  accountHost = 'accounts3.devproxy.onlineada.com';
+  site = 'toolbox3.devproxy.onlineada.com';
+  dashboard = 'https://dashboard3.devproxy.onlineada.com';
 }
 
 store.state.auth.site = site;

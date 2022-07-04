@@ -921,7 +921,7 @@ export default {
 			EventBus.$emit('auditSelectedRowsUpdated', this.selectedRows.length)
 		},
 		// createReferenceLink(){
-		// 	let builder = `<a href="https://toolboxdashboard.ngrok.io/audits/${this.selectedReference.audit}/overview#${this.selectedReference.issue.issue_number}" target="_blank" rel="nofollow">${this.selectedReference.linkText}</a>`
+		// 	let builder = `<a href="https://toolbox.devproxy.onlineada.com/audits/${this.selectedReference.audit}/overview#${this.selectedReference.issue.issue_number}" target="_blank" rel="nofollow">${this.selectedReference.linkText}</a>`
 
 		// 	this.descriptionsQuill.root.innerHTML += builder
 		// 	EventBus.closeModal(()=>{this.addIssueReferenceLinkModalOpen = false})
