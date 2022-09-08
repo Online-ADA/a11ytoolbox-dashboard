@@ -62,11 +62,11 @@ if (window.location.hostname === 'toolbox-alex.devproxy.onlineada.com') {
   accountHost = 'https://accounts-alex.devproxy.onlineada.com';
   site = 'toolbox-alex.devproxy.onlineada.com';
   dashboard = 'https://dashboard-alex.devproxy.onlineada.com';
-} else if (window.location.hostname === 'toolbox2.devproxy.onlineada.com') {
-  apiHost = 'https://toolboxapi2.devproxy.onlineada.com';
-  accountHost = 'https://accounts2.devproxy.onlineada.com';
-  site = 'toolbox2.devproxy.onlineada.com';
-  dashboard = 'https://dashboard2.devproxy.onlineada.com';
+} else if (window.location.hostname === 'toolbox-ross.devproxy.onlineada.com') {
+  apiHost = 'https://toolboxapi-ross.devproxy.onlineada.com';
+  accountHost = 'https://accounts-ross.devproxy.onlineada.com';
+  site = 'toolbox-ross.devproxy.onlineada.com';
+  dashboard = 'https://dashboard-ross.devproxy.onlineada.com';
 } else if (window.location.hostname === 'toolbox3.devproxy.onlineada.com') {
   apiHost = 'https://toolboxapi3.devproxy.onlineada.com';
   accountHost = 'accounts3.devproxy.onlineada.com';
