@@ -57,11 +57,11 @@ if (token) {
   Vue.prototype.$http.defaults.headers.common.Authorization = `Bearer ${token}`;
 }
 
-if (window.location.hostname === 'toolbox.devproxy.onlineada.com') {
-  apiHost = 'https://toolboxapi.devproxy.onlineada.com';
-  accountHost = 'https://accounts.devproxy.onlineada.com';
-  site = 'toolbox.devproxy.onlineada.com';
-  dashboard = 'https://dashboard.devproxy.onlineada.com';
+if (window.location.hostname === 'toolbox-alex.devproxy.onlineada.com') {
+  apiHost = 'https://toolboxapi-alex.devproxy.onlineada.com';
+  accountHost = 'https://accounts-alex.devproxy.onlineada.com';
+  site = 'toolbox-alex.devproxy.onlineada.com';
+  dashboard = 'https://dashboard-alex.devproxy.onlineada.com';
 } else if (window.location.hostname === 'toolbox2.devproxy.onlineada.com') {
   apiHost = 'https://toolboxapi2.devproxy.onlineada.com';
   accountHost = 'https://accounts2.devproxy.onlineada.com';
