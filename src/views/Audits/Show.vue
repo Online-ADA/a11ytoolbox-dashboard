@@ -10,7 +10,7 @@
 			<div :class="{'h-[220px]': showMeasurables, 'h-0': !showMeasurables}" class="bg-white transition-[height]">
 				<!-- <Graph :chartId="'line-chart'"></Graph> -->
 			</div>
-			
+
 			<Table
 			class="xs:mt-[65px]" 
 			@sort="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-sortedBy`, payload) }" 

@@ -2,6 +2,7 @@
     <div id="toolbar-container" :class="{'search-bar-open': searchBarOpen}" class="fixed xs:absolute sm:absolute z-50 w-full xs:h-auto sm:h-auto" v-if="showToolbar">
         <div id="toolbar" class="w-full pl-4 p-2 shadow-custom bg-white">
             <!-- Audit Toolbar -->
+<!--          {{ this.defaultNewIssues}}-->
             <div class="flex items-center justify-between xs:flex-wrap">
                 <div class="flex items-center text-13 xs:basis-full xs:flex-wrap">
                     <div class="xs:hidden sm:hidden flex items-center">
@@ -122,17 +123,13 @@
         </div>
 
         <div :class="{'h-[220px]': showMeasurables, 'h-0': !showMeasurables}" class="bg-white transition-[height] overflow-hidden">
-            <Graph 
-            :labels="[
-                'January',
-                'February',
-                'March',
-                'April',
-                'May',
-                'June',
-            ]"
+            <Graph
+                :v-if="this.$store.state.audits.audit.issues !== undefined"
+                :defaultLabels="getLastThirtyDays"
+                :defaultNewIssues="newIssues"
+                :defaultResIssues="resIssues"
             :chartType="'line'" 
-            :chartId="'line-chart'" />
+            :chartId="'line-chart'"/>
         </div>
 
         <div class="search-bar xs:h-auto justify-end items-center flex w-full shadow-lg p-1 bg-white text-13 xs:flex-wrap sm:flex-wrap" :class="{open: searchBarOpen}" >
@@ -194,6 +191,7 @@ import Checkbox from "../Checkbox.vue"
 import Modal from "../Modal.vue"
 import { EventBus } from '../../services/eventBus'
 import Graph from '../../components/Charts/Graph'
+import moment from "moment";
 
 export default {
     props:{
@@ -347,7 +345,96 @@ export default {
                     return "Import Issues"
                     break;
             }
+        },
+      newIssues(){
+
+        let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD'));
+        let graphLabels = lastThirtyDays.reverse();
+        let allNewIssues = this.aggregateNewIssues;
+        //create empty array with correct increments, assign it to new issues
+        let newIssues = [...new Array(graphLabels.length)];
+
+        for(let i = 0; i <= graphLabels.length - 1; i++){
+          let issueCount = 0;
+          for(let j = 0; j <= allNewIssues.length - 1; j++){
+            let thisIssue = allNewIssues[j];
+            let checkExp = thisIssue.date_created.slice(5,10);
+
+            // console.log(checkExp +' '+ this.graphLabels[i]);
+            if(graphLabels[i] === checkExp){
+              issueCount += 1;
+            }else{
+              issueCount += 0;
+            }
+            newIssues[i] = issueCount;
+          }
         }
+        return newIssues;
+      },
+      aggregateNewIssues(){
+        if(this.$store.state.audits.audit.issues == undefined){
+          return false
+        }
+        let issuesObject = this.$store.state.audits.audit.issues;
+        let newIssues = issuesObject.filter(item =>{
+          return item.status === 'New';
+        })
+
+        //right now (11/4/22) the automated scan feature doesn't include this date_created prop,
+        //we'll add it but all legacy entries will need to be filtered through this or
+        //changed to a single date by a sql query or something
+        let issuesWithDates = newIssues.filter(issue =>{
+          return issue.date_created !== null;
+        })
+        return issuesWithDates;
+      },
+      resIssues(){
+
+        let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD'));
+        let graphLabels = lastThirtyDays.reverse();
+        let allResIssues = this.aggregateResIssues;
+        //create empty array with correct increments, assign it to new issues
+        let resIssues = [...new Array(graphLabels.length)];
+
+        for(let i = 0; i <= graphLabels.length - 1; i++){
+          let issueCount = 0;
+          for(let j = 0; j <= allResIssues.length - 1; j++){
+            let thisIssue = allResIssues[j];
+            let checkExp = thisIssue.date_created.slice(5,10);
+
+            // console.log(checkExp +' '+ this.graphLabels[i]);
+            if(graphLabels[i] === checkExp){
+              issueCount += 1;
+            }else{
+              issueCount += 0;
+            }
+            resIssues[i] = issueCount;
+          }
+        }
+        return resIssues;
+      },
+      aggregateResIssues(){
+        // if(this.$store.state.audits.audit.issues == undefined){
+        //   return false
+        // }
+        let issuesObject = this.$store.state.audits.audit.issues;
+        let resIssues = issuesObject.filter(item =>{
+          return item.status === 'Resolved';
+        })
+
+        //right now (11/4/22) the automated scan feature doesn't include this date_created prop,
+        //we'll add it but all legacy entries will need to be filtered through this or
+        //changed to a single date by a sql query or something
+        let issuesWithDates = resIssues.filter(issue =>{
+          return issue.date_created !== null;
+        })
+        return issuesWithDates;
+      },
+      getLastThirtyDays(){
+       let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD')).reverse();
+
+       return lastThirtyDays;
+      }
     },
     methods: {
         toggleGraphs(){
@@ -392,7 +479,8 @@ export default {
                 return
             }
             
-        }
+        },
+
     },
     components:{
         Checkbox,
