@@ -632,7 +632,7 @@ export default {
       });
     },
     inviteUsers({ state, rootState, commit }, args) {
-      if (rootState.user.user_limit >= rootState.user.all.length) {
+      if (rootState.user.all.length >= rootState.user.user_limit) {
         commit('upgrade/setState', { key: 'trigger', value: 'AddUsers' }, { root: true });
         const plural = rootState.user.user_limit > 1 ? 's' : '';
         commit('upgrade/setState', { key: 'message', value: `You have reached the maximum of ${rootState.user.user_limit} user${plural} for this license.` }, { root: true });
