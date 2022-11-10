@@ -124,11 +124,12 @@
 
         <div :class="{'h-[220px]': showMeasurables, 'h-0': !showMeasurables}" class="bg-white transition-[height] overflow-hidden">
             <Graph
+                :key="forceRenderKey"
                 :v-if="this.$store.state.audits.audit.issues !== undefined"
                 :defaultLabels="getLastThirtyDays"
                 :defaultNewIssues="newIssues"
                 :defaultResIssues="resIssues"
-            :chartType="'line'" 
+            :chartType="'line'"
             :chartId="'line-chart'"/>
         </div>
 
@@ -199,6 +200,7 @@ export default {
     },
     data() {
         return {
+            forceRenderKey: 0,
             showMeasurables: false,
             graphShowing: false,
             EventBus: EventBus,
@@ -307,6 +309,12 @@ export default {
             if( oldVal !== false && newVal !== false && newVal !== oldVal ){
                 EventBus.$emit('toolbarEmit', {action: 'audit-issue-status-change', data: newVal})
             }
+        },
+        "$store.state.projects.project":{
+          deep: true,
+          handler(newVal){
+            this.forceRenderKey += 1
+          }
         }
     },
     computed: {
@@ -348,25 +356,25 @@ export default {
         },
       newIssues(){
 
-        let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD'));
-        let graphLabels = lastThirtyDays.reverse();
-        let allNewIssues = this.aggregateNewIssues;
+        let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD'))
+        let graphLabels = lastThirtyDays.reverse()
+        let allNewIssues = this.aggregateNewIssues
         //create empty array with correct increments, assign it to new issues
-        let newIssues = [...new Array(graphLabels.length)];
+        let newIssues = [...new Array(graphLabels.length)]
 
         for(let i = 0; i <= graphLabels.length - 1; i++){
           let issueCount = 0;
           for(let j = 0; j <= allNewIssues.length - 1; j++){
-            let thisIssue = allNewIssues[j];
-            let checkExp = thisIssue.date_created.slice(5,10);
+            let thisIssue = allNewIssues[j]
+            let checkExp = thisIssue.date_created.slice(5,10)
 
             // console.log(checkExp +' '+ this.graphLabels[i]);
             if(graphLabels[i] === checkExp){
-              issueCount += 1;
+              issueCount += 1
             }else{
-              issueCount += 0;
+              issueCount += 0
             }
-            newIssues[i] = issueCount;
+            newIssues[i] = issueCount
           }
         }
         return newIssues;
@@ -375,65 +383,64 @@ export default {
         if(this.$store.state.audits.audit.issues == undefined){
           return false
         }
-        let issuesObject = this.$store.state.audits.audit.issues;
+        let issuesObject = this.$store.state.audits.audit.issues
         let newIssues = issuesObject.filter(item =>{
-          return item.status === 'New';
+          return item.status === 'New'
         })
 
         //right now (11/4/22) the automated scan feature doesn't include this date_created prop,
         //we'll add it but all legacy entries will need to be filtered through this or
         //changed to a single date by a sql query or something
         let issuesWithDates = newIssues.filter(issue =>{
-          return issue.date_created !== null;
+          return issue.date_created !== null
         })
-        return issuesWithDates;
+        return issuesWithDates
       },
       resIssues(){
-
-        let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD'));
-        let graphLabels = lastThirtyDays.reverse();
-        let allResIssues = this.aggregateResIssues;
+        let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD'))
+        let graphLabels = lastThirtyDays.reverse()
+        let allResIssues = this.aggregateResIssues
         //create empty array with correct increments, assign it to new issues
-        let resIssues = [...new Array(graphLabels.length)];
+        let resIssues = [...new Array(graphLabels.length)]
 
         for(let i = 0; i <= graphLabels.length - 1; i++){
-          let issueCount = 0;
+          let issueCount = 0
           for(let j = 0; j <= allResIssues.length - 1; j++){
-            let thisIssue = allResIssues[j];
-            let checkExp = thisIssue.date_created.slice(5,10);
+            let thisIssue = allResIssues[j]
+            let checkExp = thisIssue.date_created.slice(5,10)
 
             // console.log(checkExp +' '+ this.graphLabels[i]);
             if(graphLabels[i] === checkExp){
-              issueCount += 1;
+              issueCount += 1
             }else{
-              issueCount += 0;
+              issueCount += 0
             }
-            resIssues[i] = issueCount;
+            resIssues[i] = issueCount
           }
         }
-        return resIssues;
+        return resIssues
       },
       aggregateResIssues(){
-        // if(this.$store.state.audits.audit.issues == undefined){
-        //   return false
-        // }
-        let issuesObject = this.$store.state.audits.audit.issues;
+        if(this.$store.state.audits.audit.issues == undefined){
+          return false
+        }
+        let issuesObject = this.$store.state.audits.audit.issues
         let resIssues = issuesObject.filter(item =>{
-          return item.status === 'Resolved';
+          return item.status === 'Resolved'
         })
 
         //right now (11/4/22) the automated scan feature doesn't include this date_created prop,
         //we'll add it but all legacy entries will need to be filtered through this or
         //changed to a single date by a sql query or something
         let issuesWithDates = resIssues.filter(issue =>{
-          return issue.date_created !== null;
+          return issue.date_created !== null
         })
-        return issuesWithDates;
+        return issuesWithDates
       },
       getLastThirtyDays(){
-       let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD')).reverse();
+       let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD')).reverse()
 
-       return lastThirtyDays;
+       return lastThirtyDays
       }
     },
     methods: {

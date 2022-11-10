@@ -4,20 +4,35 @@
 		<div class="flex justify-between items-center ">
 			<!-- left buttons -->
 			<div class="flex items-center">
-<!--				{{ test() }}-->
 				<label class="flex items-center mr-3">
 					<div class="bg-pallette-blue h-3 w-6 mr-1"></div>
-					<select v-model="first_select" name="first_select">
-						<option value="new">New</option>
-						<option value="resolved">Resolved</option>
+					<select v-model="first_select" name="first_select" id="first_select" @change="changeIncrement()">
+            <option value="New">New</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Partly Resolved">Partly Resolved</option>
+            <option value="Remains">Remains</option>
+            <option value="Regression">Regression</option>
+            <option value="Best Practice">Best Practice</option>
+            <option value="Third party problem">Third party problem</option>
+            <option value="Resolved by removal">Resolved by removal</option>
+            <option value="Usability Problem">Usability Problem</option>
+            <option value="Duplicate">Duplicate</option>
 					</select>
 				</label>
 
 				<label class="flex items-center">
 					<div class="bg-pallette-red-dark h-3 w-6 mr-1"></div>
-					<select v-model="second_select" name="second_select">
-						<option value="new">New</option>
-						<option value="resolved">Resolved</option>
+					<select v-model="second_select" name="second_select" id="second_select" @change="changeIncrement()">
+						<option value="New">New</option>
+						<option value="Resolved">Resolved</option>
+            <option value="Partly Resolved">Partly Resolved</option>
+            <option value="Remains">Remains</option>
+            <option value="Regression">Regression</option>
+            <option value="Best Practice">Best Practice</option>
+            <option value="Third party problem">Third party problem</option>
+            <option value="Resolved by removal">Resolved by removal</option>
+            <option value="Usability Problem">Usability Problem</option>
+            <option value="Duplicate">Duplicate</option>
 					</select>
 				</label>
 			</div>
@@ -35,7 +50,7 @@
 				<button 
 				title="Graph type"
 				:aria-label="type == 'line' ? 'Change to bar graph' : 'Change to line graph'"
-				@click="type == 'line' ? type = 'bar' : type = 'line'" 
+				@click="type == 'line' ? type = 'bar' : type = 'line';"
 				class="mr-3">
 					<div class="w-[15px] mx-auto">
 						<img v-if="type == 'line'" class="w-full" src="/assets/chart-line-light.svg" />
@@ -56,8 +71,8 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, watch, reactive, computed } from '@vue/composition-api';
-import moment from "moment";
+import { defineComponent, ref, onMounted, watch, reactive, computed } from '@vue/composition-api'
+import moment from "moment"
 
 export default defineComponent({
 	name: "Graph",
@@ -80,13 +95,16 @@ export default defineComponent({
     return{
       dateRange:"Last 30 Days",
       graphLabels:null,
-      newIssues:[],
-      resolvedIssues:[]
+      secondSelectIssues:[],
+      firstSelectIssues:[],
+      firstSelectStatus:'Resolved',
+      secondSelectStatus:'New',
+      currentChartType:''
     }
   },
 	setup(props) {
-		const first_select = ref("resolved")
-		const second_select = ref("new")
+		const first_select = ref("Resolved")
+		const second_select = ref("New")
 		const type = ref(props.chartType)
 
 		const chartData = ref({
@@ -115,7 +133,15 @@ export default defineComponent({
 				plugins: {
 					legend: {
 						display:false
-					}
+					},
+          scales:{
+            y:{
+              beginAtZero: true
+            },
+            x:{
+              beginAtZero:true
+            }
+          }
 				}
 			},
 		})
@@ -145,276 +171,275 @@ export default defineComponent({
 		return { chartData, config, lineChart, graph, first_select, second_select, type }
 	},
 	methods:{
-    changeIncrement(){
-      let increment = document.getElementById('dateRange');
-      let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD'));
-      let lastThreeMonths = [...new Array(3)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'));
-      let lastSixMonths = [...new Array(6)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'));
-      let lastTwelveMonths = [...new Array(12)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'));
+    changeIncrement(type){
+      let increment = document.getElementById('dateRange')
+      let currentFirstSelectStatus = first_select.value
+      let currentSecondSelectStatus = second_select.value
+      let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD'))
+      let lastThreeMonths = [...new Array(3)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'))
+      let lastSixMonths = [...new Array(6)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'))
+      let lastTwelveMonths = [...new Array(12)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'))
       let incrementValue = increment.value;
-      let allNewIssues = this.aggregateNewIssues;
-      let allResIssues = this.aggregateResolvedIssues;
+
+      //set this.secondSelectStatus before call this.aggregateSecondSelectedIssues
+      this.firstSelectStatus = currentFirstSelectStatus
+      this.secondSelectStatus = currentSecondSelectStatus
+      let allSecondSelectedIssues = this.aggregateSecondSelectedIssues
+      let allFirstSelectedIssues = this.aggregateFirstSelectedIssues
 
       if(incrementValue == 1){
-        this.dateRange = 'Last 30 Days';
-        this.getChartData(lastThirtyDays, allNewIssues, allResIssues)
+        this.dateRange = 'Last 30 Days'
+        this.getChartData(lastThirtyDays, allSecondSelectedIssues, allFirstSelectedIssues)
       }
       if(incrementValue == 2){
-        this.dateRange = 'Last 3 Months';
-        this.getChartData2(lastThreeMonths, allNewIssues, allResIssues)
+        this.dateRange = 'Last 3 Months'
+        this.getChartData2(lastThreeMonths, allSecondSelectedIssues, allFirstSelectedIssues)
       }
       if(incrementValue == 3){
-        this.dateRange = 'Last 6 Months';
-        this.getChartData2(lastSixMonths, allNewIssues, allResIssues)
+        this.dateRange = 'Last 6 Months'
+        this.getChartData2(lastSixMonths, allSecondSelectedIssues, allFirstSelectedIssues)
       }
       if(incrementValue == 4){
-        this.dateRange = 'Last 12 Months';
-        this.getChartData2(lastTwelveMonths, allNewIssues, allResIssues)
+        this.dateRange = 'Last 12 Months'
+        this.getChartData2(lastTwelveMonths, allSecondSelectedIssues, allFirstSelectedIssues)
       }
-      //updating graph labels--this returns a promise? settimeout makes it work
-      setTimeout(()=>{
-        this.lineChart.config._config.data.labels = this.graphLabels;
+      //updating graph labels
+        this.lineChart.config._config.data.labels = this.graphLabels
         //call chart update
-        this.lineChart.update();
-      }, 100)
+        this.lineChart.update()
 
-      return this.dateRange;
+      return this.dateRange
     },
     getChartData(dateRange, newIssues, resIssues){
       this.graphLabels = dateRange.reverse();
-      //create empty array with correct increments, assign it to new issues
-      this.newIssues = [...new Array(this.graphLabels.length)];
-
-      //new issues
+      //create empty array with correct increments, assign it to selected issues
+      this.secondSelectIssues = [...new Array(this.graphLabels.length)]
+      //second select issues
       for(let i = 0; i <= this.graphLabels.length - 1; i++){
-        let issueCount = 0;
+        let issueCount = 0
         for(let j = 0; j <= newIssues.length - 1; j++){
-          let thisIssue = newIssues[j];
-          let checkExp = thisIssue.date_created.slice(5,10);
+          let thisIssue = newIssues[j]
+          let checkExp = thisIssue.date_created.slice(5,10)
 
-          // console.log(checkExp +' '+ this.graphLabels[i]);
+          // console.log(checkExp +' '+ this.graphLabels[i])
           if(this.graphLabels[i] === checkExp){
             issueCount += 1;
           }else{
             issueCount += 0;
           }
-          this.newIssues[i] = issueCount;
+          this.secondSelectIssues[i] = issueCount
         }
       }
-      //end new issues
+      //end second select issues
 
-      //resolved issues
-      //create empty array with correct increments, assign it to resolved issues
-      this.resolvedIssues = [...new Array(this.graphLabels.length)];
+      //first select issues
+      //create empty array with correct increments, assign it to selected issues
+      this.firstSelectIssues = [...new Array(this.graphLabels.length)]
 
       for(let i = 0; i <= this.graphLabels.length - 1; i++){
         let issueCount = 0;
         for(let j = 0; j <= resIssues.length - 1; j++){
-          let thisIssue = resIssues[j];
-          let checkExp = thisIssue.date_created.slice(5,10);
+          let thisIssue = resIssues[j]
+          let checkExp = thisIssue.date_created.slice(5,10)
 
-          // console.log(checkExp +' '+ this.graphLabels[i]);
+          // console.log(checkExp +' '+ this.graphLabels[i])
           if(this.graphLabels[i] === checkExp){
-            issueCount += 1;
+            issueCount += 1
           }else{
-            issueCount += 0;
+            issueCount += 0
           }
-          this.resolvedIssues[i] = issueCount;
+          this.firstSelectIssues[i] = issueCount
         }
       }
-      setTimeout(()=>{
-        this.lineChart.config._config.data.datasets[0].data = this.newIssues;
-        this.lineChart.config._config.data.datasets[1].data = this.resolvedIssues;
+      //end first select issues
+      // console.log(this.type)
+      //   this.lineChart.config._config.type = this.type
+        this.lineChart.config._config.data.datasets[0].data = this.secondSelectIssues
+        this.lineChart.config._config.data.datasets[1].data = this.firstSelectIssues
         //call chart update
-        this.lineChart.update();
-      }, 100)
-      //end resolved issues
+        this.lineChart.update()
+
     },
     getChartData2(dateRange, newIssues, resIssues){
-      this.graphLabels = dateRange.reverse();
-      //create empty array with correct increments, assign it to new issues
-      this.newIssues = [...new Array(this.graphLabels.length)];
+      this.graphLabels = dateRange.reverse()
+      //create empty array with correct increments, assign it to selected issues
+      this.secondSelectIssues = [...new Array(this.graphLabels.length)]
 
-      //start new issues
+      //start second selected issues
       for(let i = 0; i <= this.graphLabels.length - 1; i++){
-        let issueCount = 0;
+        let issueCount = 0
         for(let j = 0; j <= newIssues.length - 1; j++){
-          let thisIssue = newIssues[j];
-          let checkExp = thisIssue.date_created.slice(5,7);
+          let thisIssue = newIssues[j]
+          let checkExp = thisIssue.date_created.slice(5,7)
           //formatting the month to match the graphLabels in order to see if they match
           switch (checkExp){
             case '01':
-              checkExp = 'January';
-              break;
+              checkExp = 'January'
+              break
             case '02':
-              checkExp = 'February';
-              break;
+              checkExp = 'February'
+              break
             case '03':
-              checkExp = 'March';
-              break;
+              checkExp = 'March'
+              break
             case '04':
-              checkExp = 'April';
-              break;
+              checkExp = 'April'
+              break
             case '05':
-              checkExp = 'May';
-              break;
+              checkExp = 'May'
+              break
             case '06':
-              checkExp = 'June';
-              break;
+              checkExp = 'June'
+              break
             case '07':
-              checkExp = 'July';
-              break;
+              checkExp = 'July'
+              break
             case '08':
-              checkExp = 'August';
-              break;
+              checkExp = 'August'
+              break
             case '09':
-              checkExp = 'September';
-              break;
+              checkExp = 'September'
+              break
             case '10':
-              checkExp = 'October';
-              break;
+              checkExp = 'October'
+              break
             case '11':
-              checkExp = 'November';
-              break;
+              checkExp = 'November'
+              break
             case '12':
-              checkExp = 'December';
-              break;
+              checkExp = 'December'
+              break
             default:
               checkExp = 'October'
           }
-          // console.log(checkExp +' '+ this.graphLabels[i]);
+          // console.log(checkExp +' '+ this.graphLabels[i])
           if(this.graphLabels[i] === checkExp){
-            issueCount += 1;
+            issueCount += 1
           }else{
-            issueCount += 0;
+            issueCount += 0
           }
-          this.newIssues[i] = issueCount;
+          this.secondSelectIssues[i] = issueCount
         }
       }
-      //end new issues
-      //start resolved issues
-      //create empty array with correct increments, assign it to resolved issues
-      this.resolvedIssues = [...new Array(this.graphLabels.length)];
+      //end second selected issues
+
+      //start first selected issues
+      //create empty array with correct increments, assign it to selected issues
+      this.firstSelectIssues = [...new Array(this.graphLabels.length)]
 
       for(let i = 0; i <= this.graphLabels.length - 1; i++){
-        let issueCount = 0;
+        let issueCount = 0
         for(let j = 0; j <= resIssues.length - 1; j++){
-          let thisIssue = resIssues[j];
-          let checkExp = thisIssue.date_created.slice(5,7);
+          let thisIssue = resIssues[j]
+          let checkExp = thisIssue.date_created.slice(5,7)
 
           //formatting the month to match the graphLabels in order to see if they match
           switch (checkExp){
             case '01':
-              checkExp = 'January';
-              break;
+              checkExp = 'January'
+              break
             case '02':
-              checkExp = 'February';
-              break;
+              checkExp = 'February'
+              break
             case '03':
-              checkExp = 'March';
-              break;
+              checkExp = 'March'
+              break
             case '04':
-              checkExp = 'April';
-              break;
+              checkExp = 'April'
+              break
             case '05':
-              checkExp = 'May';
-              break;
+              checkExp = 'May'
+              break
             case '06':
-              checkExp = 'June';
-              break;
+              checkExp = 'June'
+              break
             case '07':
-              checkExp = 'July';
-              break;
+              checkExp = 'July'
+              break
             case '08':
-              checkExp = 'August';
-              break;
+              checkExp = 'August'
+              break
             case '09':
-              checkExp = 'September';
-              break;
+              checkExp = 'September'
+              break
             case '10':
-              checkExp = 'October';
-              break;
+              checkExp = 'October'
+              break
             case '11':
-              checkExp = 'November';
-              break;
+              checkExp = 'November'
+              break
             case '12':
-              checkExp = 'December';
-              break;
+              checkExp = 'December'
+              break
             default:
               checkExp = 'October'
           }
-          // console.log(checkExp +' '+ this.graphLabels[i]);
+          // console.log(checkExp +' '+ this.graphLabels[i])
           if(this.graphLabels[i] === checkExp){
-            issueCount += 1;
+            issueCount += 1
           }else{
-            issueCount += 0;
+            issueCount += 0
           }
-          this.resolvedIssues[i] = issueCount;
+          this.firstSelectIssues[i] = issueCount
         }
       }
-      // end resolved issues
-      setTimeout(()=>{
-        this.lineChart.config._config.data.datasets[0].data = this.newIssues;
-        this.lineChart.config._config.data.datasets[1].data = this.resolvedIssues;
+      //end first selected issues
+        this.lineChart.config._config.data.datasets[0].data = this.secondSelectIssues
+        this.lineChart.config._config.data.datasets[1].data = this.firstSelectIssues
         //call chart update
-        this.lineChart.update();
-      }, 100)
-    }
+        this.lineChart.update()
+    },
 	},
   computed:{
-    aggregateNewIssues(){
-      let issuesObject = this.$store.state.audits.audit.issues;
-      // let status = ref('first-select')
-      console.log(ref('first-select').value)
-
-      let newIssues = issuesObject.filter(item =>{
-        return item.status === 'New';
+    aggregateSecondSelectedIssues(){
+      let issuesObject = this.$store.state.audits.audit.issues
+      let issues = issuesObject.filter(item =>{
+        return item.status === this.secondSelectStatus
       })
 
       //right now (11/4/22) the automated scan feature doesn't include this date_created prop,
       //we'll add it but all legacy entries will need to be filtered through this or
       //changed to a single date by a sql query or something
-      let issuesWithDates = newIssues.filter(issue =>{
-        return issue.date_created !== null;
+      let issuesWithDates = issues.filter(issue =>{
+        return issue.date_created !== null
       })
-      return issuesWithDates;
+      return issuesWithDates
     },
-    aggregateResolvedIssues(){
-      let issuesObject = this.$store.state.audits.audit.issues;
-      let resolvedIssues = issuesObject.filter(item =>{
-        return item.status === 'Resolved';
+    aggregateFirstSelectedIssues(){
+      let issuesObject = this.$store.state.audits.audit.issues
+      let issues = issuesObject.filter(item =>{
+        return item.status === this.firstSelectStatus
       })
 
       //right now (11/4/22) the automated scan feature doesn't include this date_created prop,
       //we'll add it but all legacy entries will need to be filtered through this or
       //changed to a single date by a sql query or something
-      let issuesWithDates = resolvedIssues.filter(issue =>{
-        return issue.date_created !== null;
+      let issuesWithDates = issues.filter(issue =>{
+        return issue.date_created !== null
       })
-      return issuesWithDates;
+      return issuesWithDates
     },
     spanText(){
       //text that gets displayed next to date selector
-      let today = moment().format('MM/DD/YYYY');
-      let thirtyDaysPrior = moment().subtract(30, 'days').format('MM/DD/YYYY');
-      let threeMonthsPrior = moment().subtract(3, 'months').format('MM/DD/YYYY');
-      let sixMonthsPrior = moment().subtract(6, 'months').format('MM/DD/YYYY');
-      let twelveMonthsPrior = moment().subtract(12, 'months').format('MM/DD/YYYY');
+      let todayDays = moment().format('MM/DD/YYYY')
+      let todayMonths = moment().format('MM/YYYY')
+      let thirtyDaysPrior = moment().subtract(29, 'days').format('MM/DD/YYYY')
+      let threeMonthsPrior = moment().subtract(2, 'months').format('MM/YYYY')
+      let sixMonthsPrior = moment().subtract(5, 'months').format('MM/YYYY')
+      let twelveMonthsPrior = moment().subtract(11, 'months').format('MM/YYYY')
 
       if (this.dateRange == 'Last 30 Days'){
-        return `${thirtyDaysPrior}-${today}`;
+        return `${thirtyDaysPrior}-${todayDays}`
       }else if(this.dateRange == 'Last 3 Months'){
-        return `${threeMonthsPrior}-${today}`;
+        return `${threeMonthsPrior}-${todayMonths}`
       }else if(this.dateRange == 'Last 6 Months'){
-        return `${sixMonthsPrior}-${today}`;
+        return `${sixMonthsPrior}-${todayMonths}`
       }else {
-        return `${twelveMonthsPrior}-${today}`;
+        return `${twelveMonthsPrior}-${todayMonths}`
       }
-    },
+    }
   },
   created(){
-
   }
-
 })
 </script>
