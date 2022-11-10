@@ -1,6 +1,5 @@
 <template>
 	<div class="p-3">
-<!--      -->
 		<div class="flex justify-between items-center ">
 			<!-- left buttons -->
 			<div class="flex items-center">
