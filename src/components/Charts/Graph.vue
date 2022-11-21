@@ -46,17 +46,17 @@
             <option value="4">Last 12 Months</option>
 					</select>
 				</label>
-				<button 
-				title="Graph type"
-				:aria-label="type == 'line' ? 'Change to bar graph' : 'Change to line graph'"
-				@click="type == 'line' ? type = 'bar' : type = 'line';"
-				class="mr-3">
-					<div class="w-[15px] mx-auto">
-						<img v-if="type == 'line'" class="w-full" src="/assets/chart-line-light.svg" />
-						<img v-if="type == 'bar'" class="w-full" src="/assets/chart-column-light.svg" />
-					</div>
-					<div class="uppercase text-[10px]">Graph Type</div>
-				</button>
+<!--				<button -->
+<!--				title="Graph type"-->
+<!--				:aria-label="type == 'line' ? 'Change to bar graph' : 'Change to line graph'"-->
+<!--				@click="type == 'line' ? type = 'bar' : type = 'line';"-->
+<!--				class="mr-3">-->
+<!--					<div class="w-[15px] mx-auto">-->
+<!--						<img v-if="type == 'line'" class="w-full" src="/assets/chart-line-light.svg" />-->
+<!--						<img v-if="type == 'bar'" class="w-full" src="/assets/chart-column-light.svg" />-->
+<!--					</div>-->
+<!--					<div class="uppercase text-[10px]">Graph Type</div>-->
+<!--				</button>-->
 <!--				<button :aria-label="graphIncrement" class="mr-3">-->
 <!--					<div class="w-[15px] mx-auto"><img class="w-full" src="/assets/sliders-light.svg" /></div>-->
 <!--					<div class="uppercase text-[10px]">Adjust</div>-->
@@ -388,6 +388,9 @@ export default defineComponent({
         //call chart update
         this.lineChart.update()
     },
+    test(){
+      console.log(this.$store.state.audits.audit.issues)
+    }
 	},
   computed:{
     aggregateSecondSelectedIssues(){
