@@ -110,13 +110,11 @@ export default defineComponent({
 			labels: props.defaultLabels,
 			datasets: [
 				{
-					label: 'New',
 					backgroundColor: '#9c0800',
 					borderColor: '#9c0800',
 					data: props.defaultNewIssues,
 				},
 				{
-					label: 'Resolved',
 					backgroundColor: '#004458',
 					borderColor: '#004458',
 					data: props.defaultResIssues,
@@ -169,12 +167,37 @@ export default defineComponent({
 
 		return { chartData, config, lineChart, graph, first_select, second_select, type }
 	},
+  watch:{
+    "$store.state.audits.audit.issues":{
+      deep: true,
+      handler(){
+        //handles dynamic updating for the chart when new issues are added manually or by auto audit
+        let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().utc().subtract(idx, "days").format('MM-DD'))
+        let lastThreeMonths = [...new Array(3)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'))
+        let lastSixMonths = [...new Array(6)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'))
+        let lastTwelveMonths = [...new Array(12)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'))
+        let allSecondSelectedIssues = this.aggregateSecondSelectedIssues
+        let allFirstSelectedIssues = this.aggregateFirstSelectedIssues
+
+        if(this.dateRange == 'Last 30 Days'){
+          this.getChartData(lastThirtyDays, allSecondSelectedIssues, allFirstSelectedIssues)
+        }else if(this.dateRange == 'Last 3 Months'){
+          this.getChartData2(lastThreeMonths, allSecondSelectedIssues, allFirstSelectedIssues)
+        }else if(this.dateRange == 'Last 6 Months'){
+          this.getChartData2(lastSixMonths, allSecondSelectedIssues, allFirstSelectedIssues)
+        }else if(this.dateRange == 'Last 12 Months'){
+          this.getChartData2(lastTwelveMonths, allSecondSelectedIssues, allFirstSelectedIssues)
+        }
+      }
+    }
+  },
 	methods:{
-    changeIncrement(type){
+    changeIncrement(){
+      //handles dynamic updating for the chart when dates/issues are changed
       let increment = document.getElementById('dateRange')
       let currentFirstSelectStatus = first_select.value
       let currentSecondSelectStatus = second_select.value
-      let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().startOf("day").subtract(idx, "days").format('MM-DD'))
+      let lastThirtyDays = [...new Array(30)].map((i, idx) => moment().utc().subtract(idx, "days").format('MM-DD'))
       let lastThreeMonths = [...new Array(3)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'))
       let lastSixMonths = [...new Array(6)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'))
       let lastTwelveMonths = [...new Array(12)].map((i, idx) => moment().startOf("month").subtract(idx, "months").format('MMMM'))
@@ -223,8 +246,6 @@ export default defineComponent({
           // console.log(checkExp +' '+ this.graphLabels[i])
           if(this.graphLabels[i] === checkExp){
             issueCount += 1;
-          }else{
-            issueCount += 0;
           }
           this.secondSelectIssues[i] = issueCount
         }
@@ -244,8 +265,6 @@ export default defineComponent({
           // console.log(checkExp +' '+ this.graphLabels[i])
           if(this.graphLabels[i] === checkExp){
             issueCount += 1
-          }else{
-            issueCount += 0
           }
           this.firstSelectIssues[i] = issueCount
         }
@@ -314,8 +333,6 @@ export default defineComponent({
           // console.log(checkExp +' '+ this.graphLabels[i])
           if(this.graphLabels[i] === checkExp){
             issueCount += 1
-          }else{
-            issueCount += 0
           }
           this.secondSelectIssues[i] = issueCount
         }
@@ -376,8 +393,6 @@ export default defineComponent({
           // console.log(checkExp +' '+ this.graphLabels[i])
           if(this.graphLabels[i] === checkExp){
             issueCount += 1
-          }else{
-            issueCount += 0
           }
           this.firstSelectIssues[i] = issueCount
         }
@@ -388,9 +403,6 @@ export default defineComponent({
         //call chart update
         this.lineChart.update()
     },
-    test(){
-      console.log(this.$store.state.audits.audit.issues)
-    }
 	},
   computed:{
     aggregateSecondSelectedIssues(){
@@ -399,9 +411,7 @@ export default defineComponent({
         return item.status === this.secondSelectStatus
       })
 
-      //right now (11/4/22) the automated scan feature doesn't include this date_created prop,
-      //we'll add it but all legacy entries will need to be filtered through this or
-      //changed to a single date by a sql query or something
+      //all legacy entries previous to 11/4/22 do not have dates and will not be shown on this graph component
       let issuesWithDates = issues.filter(issue =>{
         return issue.date_created !== null
       })
