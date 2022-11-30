@@ -18,7 +18,6 @@
             <option value="Duplicate">Duplicate</option>
 					</select>
 				</label>
-
 				<label class="flex items-center">
 					<div class="bg-pallette-red-dark h-3 w-6 mr-1"></div>
 					<select v-model="second_select" name="second_select" id="second_select" @change="changeIncrement()">
@@ -147,12 +146,12 @@ export default defineComponent({
 		const lineChart = ref(null)
 
 		function generateGraph(){
-			if( !lineChart.value ){
+			if ( !lineChart.value ) {
 				lineChart.value = new Chart(
 					graph.value,
 					config.value
 				)
-			}else{
+			} else {
 				lineChart.value.update()
 			}
 		}
@@ -179,13 +178,13 @@ export default defineComponent({
         let allSecondSelectedIssues = this.aggregateSecondSelectedIssues
         let allFirstSelectedIssues = this.aggregateFirstSelectedIssues
 
-        if(this.dateRange == 'Last 30 Days'){
+        if( this.dateRange == 'Last 30 Days' ){
           this.getChartData(lastThirtyDays, allSecondSelectedIssues, allFirstSelectedIssues)
-        }else if(this.dateRange == 'Last 3 Months'){
+        }else if( this.dateRange == 'Last 3 Months' ){
           this.getChartData2(lastThreeMonths, allSecondSelectedIssues, allFirstSelectedIssues)
-        }else if(this.dateRange == 'Last 6 Months'){
+        }else if( this.dateRange == 'Last 6 Months' ){
           this.getChartData2(lastSixMonths, allSecondSelectedIssues, allFirstSelectedIssues)
-        }else if(this.dateRange == 'Last 12 Months'){
+        }else if( this.dateRange == 'Last 12 Months' ){
           this.getChartData2(lastTwelveMonths, allSecondSelectedIssues, allFirstSelectedIssues)
         }
       }
@@ -209,19 +208,19 @@ export default defineComponent({
       let allSecondSelectedIssues = this.aggregateSecondSelectedIssues
       let allFirstSelectedIssues = this.aggregateFirstSelectedIssues
 
-      if(incrementValue == 1){
+      if ( incrementValue == 1 ) {
         this.dateRange = 'Last 30 Days'
         this.getChartData(lastThirtyDays, allSecondSelectedIssues, allFirstSelectedIssues)
       }
-      if(incrementValue == 2){
+      if ( incrementValue == 2 ) {
         this.dateRange = 'Last 3 Months'
         this.getChartData2(lastThreeMonths, allSecondSelectedIssues, allFirstSelectedIssues)
       }
-      if(incrementValue == 3){
+      if ( incrementValue == 3 ) {
         this.dateRange = 'Last 6 Months'
         this.getChartData2(lastSixMonths, allSecondSelectedIssues, allFirstSelectedIssues)
       }
-      if(incrementValue == 4){
+      if ( incrementValue == 4 ) {
         this.dateRange = 'Last 12 Months'
         this.getChartData2(lastTwelveMonths, allSecondSelectedIssues, allFirstSelectedIssues)
       }
@@ -237,14 +236,14 @@ export default defineComponent({
       //create empty array with correct increments, assign it to selected issues
       this.secondSelectIssues = [...new Array(this.graphLabels.length)]
       //second select issues
-      for(let i = 0; i <= this.graphLabels.length - 1; i++){
+      for ( let i = 0; i <= this.graphLabels.length - 1; i++ ) {
         let issueCount = 0
-        for(let j = 0; j <= newIssues.length - 1; j++){
+        for ( let j = 0; j <= newIssues.length - 1; j++ ) {
           let thisIssue = newIssues[j]
           let checkExp = thisIssue.date_created.slice(5,10)
 
           // console.log(checkExp +' '+ this.graphLabels[i])
-          if(this.graphLabels[i] === checkExp){
+          if ( this.graphLabels[i] === checkExp ) {
             issueCount += 1;
           }
           this.secondSelectIssues[i] = issueCount
@@ -256,14 +255,14 @@ export default defineComponent({
       //create empty array with correct increments, assign it to selected issues
       this.firstSelectIssues = [...new Array(this.graphLabels.length)]
 
-      for(let i = 0; i <= this.graphLabels.length - 1; i++){
+      for ( let i = 0; i <= this.graphLabels.length - 1; i++ ) {
         let issueCount = 0;
-        for(let j = 0; j <= resIssues.length - 1; j++){
+        for ( let j = 0; j <= resIssues.length - 1; j++ ) {
           let thisIssue = resIssues[j]
           let checkExp = thisIssue.date_created.slice(5,10)
 
           // console.log(checkExp +' '+ this.graphLabels[i])
-          if(this.graphLabels[i] === checkExp){
+          if ( this.graphLabels[i] === checkExp ) {
             issueCount += 1
           }
           this.firstSelectIssues[i] = issueCount
@@ -284,7 +283,7 @@ export default defineComponent({
       this.secondSelectIssues = [...new Array(this.graphLabels.length)]
 
       //start second selected issues
-      for(let i = 0; i <= this.graphLabels.length - 1; i++){
+      for ( let i = 0; i <= this.graphLabels.length - 1; i++ ) {
         let issueCount = 0
         for(let j = 0; j <= newIssues.length - 1; j++){
           let thisIssue = newIssues[j]
@@ -331,7 +330,7 @@ export default defineComponent({
               checkExp = 'October'
           }
           // console.log(checkExp +' '+ this.graphLabels[i])
-          if(this.graphLabels[i] === checkExp){
+          if ( this.graphLabels[i] === checkExp ) {
             issueCount += 1
           }
           this.secondSelectIssues[i] = issueCount
@@ -343,9 +342,9 @@ export default defineComponent({
       //create empty array with correct increments, assign it to selected issues
       this.firstSelectIssues = [...new Array(this.graphLabels.length)]
 
-      for(let i = 0; i <= this.graphLabels.length - 1; i++){
+      for ( let i = 0; i <= this.graphLabels.length - 1; i++ ) {
         let issueCount = 0
-        for(let j = 0; j <= resIssues.length - 1; j++){
+        for ( let j = 0; j <= resIssues.length - 1; j++ ) {
           let thisIssue = resIssues[j]
           let checkExp = thisIssue.date_created.slice(5,7)
 
@@ -440,13 +439,13 @@ export default defineComponent({
       let sixMonthsPrior = moment().subtract(5, 'months').format('MM/YYYY')
       let twelveMonthsPrior = moment().subtract(11, 'months').format('MM/YYYY')
 
-      if (this.dateRange == 'Last 30 Days'){
+      if ( this.dateRange == 'Last 30 Days' ) {
         return `${thirtyDaysPrior}-${todayDays}`
-      }else if(this.dateRange == 'Last 3 Months'){
+      } else if ( this.dateRange == 'Last 3 Months' ){
         return `${threeMonthsPrior}-${todayMonths}`
-      }else if(this.dateRange == 'Last 6 Months'){
+      } else if ( this.dateRange == 'Last 6 Months' ){
         return `${sixMonthsPrior}-${todayMonths}`
-      }else {
+      } else {
         return `${twelveMonthsPrior}-${todayMonths}`
       }
     }
