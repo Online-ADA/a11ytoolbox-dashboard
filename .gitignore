@@ -3,6 +3,7 @@ node_modules
 /dist
 /public/tailwind.css
 .firebaserc
+.env
 
 # local env files
 .env.local
