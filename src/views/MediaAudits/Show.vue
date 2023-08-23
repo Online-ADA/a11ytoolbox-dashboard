@@ -1,7 +1,7 @@
 <template>
 	<div class="media-audit text-center mx-auto">
 		<Loader v-if="loading"></Loader>
-		
+
 		<template v-if="audit">	
 			<template v-if="audit.status == 'in_progress'">
 				<div class="mr-2"><i class="fas fa-circle-notch fa-spin"></i></div>Audit is currently running and could take a couple of minutes. Data will be refreshed on audit completion.
@@ -11,6 +11,22 @@
 				There are no issues currently.
 			</div>
 		</template>
+    <Modal style="z-index:72;" :open="whichCSVModalOpen">
+      <div class="bg-white">
+        <button aria-label="Close select descriptions modal" @click.prevent="EventBus.closeModal(()=>{whichCSVModalOpen = false})" class="absolute top-4 right-4 standard">X</button>
+        <h2 class="subheadline">Which item do you want to export?</h2>
+        <div class="flex mt-4 justify-center">
+          <button @click.prevent="getIssuesCSV" class="mx-2 standard">Issues (.xlsx spreadsheet)</button>
+          <button @click.prevent="getSampleCSV" class="mx-2 standard">Working Sample (CSV)</button>
+        </div>
+      </div>
+      <!-- <div class="bg-gray-50 px-4 py-3 flex">
+        <button @click="EventBus.closeModal(()=>{whichCSVModalOpen = false})" class="standard">
+          Cancel
+        </button>
+      </div> -->
+
+    </Modal>
 	</div>
 </template>
 
@@ -24,6 +40,7 @@ import Label from '../../components/Label'
 import TextInput from '../../components/TextInput'
 import TextArea from '../../components/TextArea'
 import { EventBus } from '../../services/eventBus'
+import Modal from '../../components/Modal'
 
 export default {
 	data: () => ({
@@ -50,8 +67,12 @@ export default {
 			orders: ["asc"],
 			reference: ["id"]
 		},
+    whichCSVModalOpen: false,
 	}),
 	computed: {
+    EventBus() {
+      return EventBus
+    },
 		isManager(){
 			return this.$store.getters["auth/isManager"]
 		},
@@ -173,7 +194,30 @@ export default {
 			}
 
 			return id
-		}
+		},
+    getIssuesCSV(){
+      this.$store.state.mediaAudits.loading = true
+      Request.postPromise(`${this.$store.state.auth.API}/l/${this.$store.state.auth.license.id}/audits/${this.$route.params.id}/media_meta`, {params: {key: "sort", value: this.$refs.issuesTable.columnData.map( o=> o.id)}})
+          .then( (re)=> {
+            this.$store.state.mediaAudits.loading = false
+            if(re.data.success == '1') {
+              window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.license.id}/${this.$store.state.auth.user.id}/audits/${this.$route.params.id}/csv/media_issues/?app_origin=${window.location.href}`
+            }
+            if(re.data.success == 'error') {
+              this.$notify({
+                title:"Warning",
+                text:re.data.error,
+                type: "warn",
+                position: 'bottom right'
+              })
+            }
+          })
+          .catch()
+          .then( ()=> this.$store.state.mediaAudits.loading = false )
+    },
+    getSampleCSV(){
+      window.location.href = `${this.$store.state.auth.toolboxapi}/user/${this.$store.state.auth.license.id}/audits/${this.$route.params.id}/csv/media_sample/?app_origin=${window.location.href}`
+    },
 	},
 	created() {
 		if( this.$store.state.mediaAudits && this.$store.state.auth.license){
@@ -185,6 +229,11 @@ export default {
 				that.shouldCondense = !that.shouldCondense
 				return
 			}
+      if( payload.action == 'audit-issues-download' ){
+        EventBus.openModal( false, payload.$event, ()=>{that.whichCSVModalOpen = true})
+        // that.openModal(()=>{that.whichCSVModalOpen = true})
+        return
+      }
 		})
 		
 	},
@@ -199,7 +248,8 @@ export default {
 		Card,
 		Label,
 		TextInput,
-		TextArea
+		TextArea,
+    Modal
 	},
 }
 
