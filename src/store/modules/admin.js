@@ -350,7 +350,7 @@ export default {
           break;
       }
 
-      Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/${path}/${args.object.id}`, {
+      Request.patchPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/${path}/${args.object.id}`, {
         params: args.object,
       })
         .then((re) => {
