@@ -10,6 +10,7 @@ export default {
     redirect: '/',
     site: '',
     accapi: '',
+    sso: '',
     toolboxapi: '',
     dashboard: '',
     user: false,
@@ -90,7 +91,7 @@ export default {
   actions: {
     login({ state }) {
       const authRedirect = encodeURIComponent('/'); // To change to current route?
-      window.location = `${state.accapi}/signin/?oada_redirect=${state.redirect}&oada_site=${state.site}&oada_auth_route=${authRedirect}`;
+      window.location = `${state.sso}/?oada_redirect=${state.redirect}&oada_site=${state.site}&oada_auth_route=${authRedirect}`;
     },
     setToken({ state, dispatch }, payload) {
       state.dispatch = dispatch;

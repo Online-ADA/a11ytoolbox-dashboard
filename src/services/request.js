@@ -309,10 +309,10 @@ class Request {
       return;
     }
     if (response.response !== undefined && response.response.data.message === 'No Account Access') {
-      window.location = `${window.App.$store.state.auth.accapi}/signin/?oada_redirect=/`;
+      window.location = `${window.App.$store.state.auth.sso}/?oada_redirect=/`;
     }
     if (response.data !== undefined && response.data.message === 'No Account Access') {
-      window.location = `${window.App.$store.state.auth.accapi}/signin/?oada_redirect=/`;
+      window.location = `${window.App.$store.state.auth.sso}/?oada_redirect=/`;
     }
     if (response.data !== undefined && response.data.success === 'upgrade') {
       store.commit('upgrade/setState', { key: 'trigger', value: response.data.trigger });
