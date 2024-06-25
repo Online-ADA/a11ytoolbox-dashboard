@@ -37,6 +37,7 @@ const token = Cookies.get('oada_UID');
 
 let apiHost = 'https://api.a11ytoolbox.io';
 let accountHost = 'https://accounts.onlineada.com';
+let ssoHost = 'https://sso.onlineada.com';
 let site = 'app.a11ytoolbox.io';
 let dashboard = 'https://dashboard.onlineada.com';
 
@@ -62,16 +63,19 @@ if (window.location.hostname === 'toolbox-alex.devproxy.onlineada.com') {
   accountHost = 'https://accounts-alex.devproxy.onlineada.com';
   site = 'toolbox-alex.devproxy.onlineada.com';
   dashboard = 'https://dashboard-alex.devproxy.onlineada.com';
+  ssoHost = 'https://sso-alex.devproxy.onlineada.com';
 } else if (window.location.hostname === 'toolbox-ross.devproxy.onlineada.com') {
   apiHost = 'https://toolboxapi-ross.devproxy.onlineada.com';
   accountHost = 'https://accounts-ross.devproxy.onlineada.com';
   site = 'toolbox-ross.devproxy.onlineada.com';
   dashboard = 'https://dashboard-ross.devproxy.onlineada.com';
+  ssoHost =  'https://sso-ross.devproxy.onlineada.com';
 } else if (window.location.hostname === 'toolbox3.devproxy.onlineada.com') {
   apiHost = 'https://toolboxapi3.devproxy.onlineada.com';
   accountHost = 'accounts3.devproxy.onlineada.com';
   site = 'toolbox3.devproxy.onlineada.com';
   dashboard = 'https://dashboard3.devproxy.onlineada.com';
+  ssoHost = 'https://sso3.devproxy.onlineada.com';
 }
 
 store.state.auth.site = site;
@@ -79,6 +83,7 @@ store.state.auth.accapi = accountHost;
 store.state.auth.toolboxapi = apiHost;
 store.state.auth.API = `${apiHost}/api`;
 store.state.auth.dashboard = dashboard;
+store.state.auth.sso = ssoHost;
 
 store.state.auth.dispatch = store.dispatch;
 
