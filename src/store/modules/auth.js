@@ -135,8 +135,8 @@ export default {
       dispatch('projects/resetState', null, { root: true });
       dispatch('scan/resetState', null, { root: true });
 
-      window.location = `${state.sso}/?oada_signout=1&oada_redirect=/&oada_site=toolbox-ross.devproxy.onlineada.com`;
-      // window.location = `${state.sso}/?oada_signout=1&oada_redirect=/&oada_site=app.a11ytoolbox.io`;
+      // window.location = `${state.sso}/?oada_signout=1&oada_redirect=/&oada_site=toolbox-ross.devproxy.onlineada.com`;
+      window.location = `${state.sso}/?oada_signout=1&oada_redirect=/&oada_site=app.a11ytoolbox.io`;
     },
   },
   getters: {
