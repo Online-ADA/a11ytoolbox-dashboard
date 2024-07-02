@@ -10,6 +10,7 @@ export default {
     redirect: '/',
     site: '',
     accapi: '',
+    sso: '',
     toolboxapi: '',
     dashboard: '',
     user: false,
@@ -27,40 +28,40 @@ export default {
     timeCheckInterval: false,
     dispatch: false,
     checkTokenExpire() {
-      // Check the total minutes remaining until expire
-      const minutesLeft = this.getTimeLeft();
-      console.log('Checking for token expire. Minutes left: ', minutesLeft);
-
-      // If more than 10 minutes remaining, check every 10 minutes
-      if (minutesLeft > 10) {
-        if (this.token_check_every !== 600000 && this.timeCheckInterval !== false) {
-          clearInterval(this.timeCheckInterval);
-          this.timeCheckInterval = false;
-        }
-
-        if (this.timeCheckInterval === false) {
-          this.timeCheckInterval = setInterval((state) => {
-            state.checkTokenExpire();
-          }, this.token_check_every, this);
-        }
-      } else if (minutesLeft <= 10 && minutesLeft > 0) {
-        if (this.token_check_every !== 60000 && this.timeCheckInterval !== false) {
-          clearInterval(this.timeCheckInterval);
-          this.timeCheckInterval = false;
-        }
-        // Set interval timer to 1 minute instead of 10
-        this.token_check_every = 60000;
-        if (this.timeCheckInterval === false) {
-          this.timeCheckInterval = setInterval((state) => {
-            state.checkTokenExpire();
-          }, this.token_check_every, this);
-        }
-      } else { // We are less than 0 seconds. Logout
-        clearInterval(this.timeCheckInterval);
-        this.timeCheckInterval = false;
-
-        this.dispatch('auth/logout');
-      }
+      // // Check the total minutes remaining until expire
+      // const minutesLeft = this.getTimeLeft();
+      // console.log('Checking for token expire. Minutes left: ', minutesLeft);
+      //
+      // // If more than 10 minutes remaining, check every 10 minutes
+      // if (minutesLeft > 10) {
+      //   if (this.token_check_every !== 600000 && this.timeCheckInterval !== false) {
+      //     clearInterval(this.timeCheckInterval);
+      //     this.timeCheckInterval = false;
+      //   }
+      //
+      //   if (this.timeCheckInterval === false) {
+      //     this.timeCheckInterval = setInterval((state) => {
+      //       state.checkTokenExpire();
+      //     }, this.token_check_every, this);
+      //   }
+      // } else if (minutesLeft <= 10 && minutesLeft > 0) {
+      //   if (this.token_check_every !== 60000 && this.timeCheckInterval !== false) {
+      //     clearInterval(this.timeCheckInterval);
+      //     this.timeCheckInterval = false;
+      //   }
+      //   // Set interval timer to 1 minute instead of 10
+      //   this.token_check_every = 60000;
+      //   if (this.timeCheckInterval === false) {
+      //     this.timeCheckInterval = setInterval((state) => {
+      //       state.checkTokenExpire();
+      //     }, this.token_check_every, this);
+      //   }
+      // } else { // We are less than 0 seconds. Logout
+      //   clearInterval(this.timeCheckInterval);
+      //   this.timeCheckInterval = false;
+      //
+      //   this.dispatch('auth/logout');
+      // }
     },
     getTimeLeft() {
       const currentDate = Date.now();
@@ -90,7 +91,8 @@ export default {
   actions: {
     login({ state }) {
       const authRedirect = encodeURIComponent('/'); // To change to current route?
-      window.location = `${state.accapi}/signin/?oada_redirect=${state.redirect}&oada_site=${state.site}&oada_auth_route=${authRedirect}`;
+      // window.location = `${state.accapi}/signin/?oada_redirect=${state.redirect}&oada_site=${state.site}&oada_auth_route=${authRedirect}`;
+      window.location = `${state.sso}/?oada_redirect=${state.redirect}&oada_site=${state.site}`;
     },
     setToken({ state, dispatch }, payload) {
       state.dispatch = dispatch;
@@ -101,11 +103,11 @@ export default {
       Cookies.set('oada_UID', payload.token, 365);
 
       // Confusingly storing the expire value for 365 days. It is the value itself we check against though, not the existence of the value
-      Cookies.set('oada_UID_expire', tokenExpire, 365);
+      // Cookies.set('oada_UID_expire', tokenExpire, 365);
       state.token = payload.token;
 
-      state.token_expire = tokenExpire;
-      state.checkTokenExpire();
+      // state.token_expire = tokenExpire;
+      // state.checkTokenExpire();
 
       axios.defaults.headers.common.Authorization = `Bearer ${payload.token}`;
     },
@@ -133,7 +135,8 @@ export default {
       dispatch('projects/resetState', null, { root: true });
       dispatch('scan/resetState', null, { root: true });
 
-      window.location = state.dashboard;
+      window.location = `${state.sso}/?oada_signout=1&oada_redirect=/&oada_site=toolbox-ross.devproxy.onlineada.com`;
+      // window.location = `${state.sso}/?oada_signout=1&oada_redirect=/&oada_site=app.a11ytoolbox.io`;
     },
   },
   getters: {
