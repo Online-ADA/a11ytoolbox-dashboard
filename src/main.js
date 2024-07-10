@@ -37,6 +37,8 @@ const token = Cookies.get('oada_UID');
 
 let apiHost = 'https://api.a11ytoolbox.io';
 let accountHost = 'https://accounts.onlineada.com';
+// let ssoHost = 'http://localhost:5173';
+let ssoHost = 'https://sso.onlineada.com';
 let site = 'app.a11ytoolbox.io';
 let dashboard = 'https://dashboard.onlineada.com';
 
@@ -79,6 +81,7 @@ store.state.auth.accapi = accountHost;
 store.state.auth.toolboxapi = apiHost;
 store.state.auth.API = `${apiHost}/api`;
 store.state.auth.dashboard = dashboard;
+store.state.auth.sso = ssoHost;
 
 store.state.auth.dispatch = store.dispatch;
 
