@@ -13,6 +13,9 @@ import store from './store';
 import router from './router';
 import App from './App.vue';
 
+
+
+
 Vue.prototype.$rollbar = new Rollbar({
   accessToken: 'cf58f53ab52a400cbc8739034ed0ec74',
   captureUncaught: true,
