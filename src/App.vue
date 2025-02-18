@@ -23,6 +23,7 @@
 				>
 					<router-view></router-view>
 					<CreateClientModal style="z-index:999" :open="show.ClientCreationModal"></CreateClientModal>
+          <DeleteClientModal style="z-index:999" :open="show.ClientDeletionModal"></DeleteClientModal>
 					<CreateProjectModal style="z-index:999" :open="show.ProjectCreationModal"></CreateProjectModal>
 					<DeployToolModal style="z-index:999" :open="show.ToolDeployModal"></DeployToolModal>
 					<CreateWCAGAuditModal style="z-index:999" :open="show.DeployWCAGAuditModal"></CreateWCAGAuditModal>
@@ -56,6 +57,7 @@ import { EventBus } from "./services/eventBus"
 // import Utility from "./services/utility.js"
 import CreateClientModal from "./components/Modals/CreateClientModal"
 import CreateProjectModal from "./components/Modals/CreateProjectModal"
+import DeleteClientModal from "./components/Modals/DeleteClientModal.vue";
 import CreateWCAGAuditModal from "./components/Modals/CreateWCAGAuditModal"
 import DeployToolModal from "./components/Modals/DeployToolModal"
 import CreateMediaAuditModal from './components/Modals/CreateMediaAuditModal'
@@ -71,6 +73,7 @@ export default {
 			infoSidebarExpanded: false,
 			show: {
 				ClientCreationModal: false,
+        ClientDeletionModal: false,
 				ProjectCreationModal: false,
 				ToolDeployModal: false,
 				DeployWCAGAuditModal: false,
@@ -169,7 +172,6 @@ export default {
 		"$store.state.clients.client": function(newVal){
 			this.$store.state.audits.all = []
 			this.$store.state.projects.project = false
-			
 			if( newVal !== false && newVal !== undefined && newVal !== null ){
 				Cookies.set('toolboxClient', parseInt(this.$store.state.clients.client.id))
 				this.$store.dispatch("projects/getProjects")
@@ -257,6 +259,9 @@ export default {
 		EventBus.$on("createClientModal", (payload)=>{
 			that.show.ClientCreationModal = payload
 		})
+    EventBus.$on("deleteClientModal", (payload)=>{
+      that.show.ClientDeletionModal = payload
+    })
 		EventBus.$on("createProjectModal", (payload)=>{
 			that.show.ProjectCreationModal = payload
 		})
@@ -307,6 +312,7 @@ export default {
 		Modal,
 		Btn,
 		CreateClientModal,
+    DeleteClientModal,
 		CreateProjectModal,
 		CreateWCAGAuditModal,
 		DeployToolModal,
