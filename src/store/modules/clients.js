@@ -127,6 +127,48 @@ export default {
           state.loading = false;
         });
     },
+    deleteClient({ state, rootState, dispatch }, args) {
+      state.loading = true;
+      Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/clients/delete`, {
+        params:{
+          client_id: args.client.id
+        }
+      })
+          .then((re) => {
+            if (parseInt(re.data.success, 10) === 1) {
+              Cookies.remove('toolboxClient');
+
+              Vue.notify({
+                title: 'Success',
+                text: 'Client successfully deleted',
+                type: 'success',
+              });
+
+              dispatch('getClients');
+
+              if ( state.all.length > 0 ) {
+                state.client = state.all[0];
+              } else {
+                state.client = false;
+              }
+
+              args.eventBus.closeModal( ()=>{ args.eventBus.$emit('deleteClientModal', false)})
+              args.router.push({path:'/'});
+            } else {
+              Vue.notify({
+                title: 'Warning',
+                text: re.data.error,
+                type: 'warning',
+              });
+            }
+          })
+          .catch((re) => {
+            console.log(re);
+          })
+          .finally(() => {
+            state.loading = false;
+          });
+    },
     getClients({ state, rootState }) {
       state.loading = true;
       Request.get(`${rootState.auth.API}/l/${rootState.auth.license.id}/clients`, {
