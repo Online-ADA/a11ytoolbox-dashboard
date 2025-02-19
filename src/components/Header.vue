@@ -5,10 +5,13 @@
 
         <div class="flex items-center">
             <div class="mb-auto mt-auto">
-                <div ref="clientDropdown" role="button" tabindex="0" :aria-expanded="[ dropdownsExpanded.includes('clientDropdown') ? 'true' : 'false' ]" @keyup.enter.space="expandDropdown('clientDropdown')" @click.prevent="expandDropdown('clientDropdown')" :class="{expanded: dropdownsExpanded.includes('clientDropdown')}" class="dropdown-container dropdown-nolabel client-dropdown relative flex flex-col pl-8">
-                    <div v-if="$store.state.auth.user" class="flex items-center dropdown relative ml-5 mt-auto mb-auto transition-transform right-align">
-                        <span @click.prevent class="block whitespace-no-wrap no-underline text-white" >
-                            {{selectedClient}}
+                <button class="inline-flex ml-5 pl-6 cursor-pointer" @click.prevent="EventBus.openModal('deleteClientModal', $event)">
+                  <i class="fa fa-trash" style="color:red;font-size:20px;"></i>
+                </button>
+                <div ref="clientDropdown" role="button" tabindex="0" :aria-expanded="[ dropdownsExpanded.includes('clientDropdown') ? 'true' : 'false' ]" @keyup.enter.space="expandDropdown('clientDropdown')" @click.prevent="expandDropdown('clientDropdown')" :class="{expanded: dropdownsExpanded.includes('clientDropdown')}" class="dropdown-container dropdown-nolabel client-dropdown relative inline-flex flex-col pl-4">
+                    <div v-if="$store.state.auth.user" class="flex items-center dropdown relative mt-auto mb-auto transition-transform right-align">
+                        <span @click.prevent class="block whitespace-no-wrap no-underline text-white">
+                          {{selectedClient}}
                         </span>
                         <i class="fas fa-caret-down pl-1 text-white"></i>
                     </div>
@@ -129,8 +132,6 @@ export default {
         }
     },
     name: 'ada-header',
-    mounted(){
-    },
     computed: {
         license_title(){
             if( this.license ){
