@@ -1,8 +1,7 @@
 <template>
 	<div class="flex flex-col relative table-container-container" :class="{'px-5': $route.name != 'AuditShow' && $route.name != 'MediaAuditShow'}">
-		
 		<div :class="{'pagination': showPagination}" tabindex="-1" @mousemove="moving" v-dragscroll.x class="w-full relative border border-black table-container">
-			<a v-if="rows.length" :class="`skip-headers-row-${audit_id}`" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
+			<a v-if="rows.length && !importing" :class="`skip-headers-row-${audit_id}`" class="skip-headers-row absolute top-2.5 left-2.5 p-3 rounded border border-black block bg-white z-10" :href="'#'+rows[0]['issue_number']">Skip headers row</a>
 			<table v-show="rows.length && headers.length" class="w-full" :class="{'table-fixed': fixed, 'condensed': condense, 'issues-table':issuesTable}">
 				<thead>
 					<tr>
@@ -73,7 +72,7 @@
 					@mouseup="up(data, $event)" 
 					v-for="(data, index) in rows" 
 					:key="'row-'+index">
-
+					
 						<td
 						tabindex="-1" 
 						class="p-2"
@@ -198,7 +197,13 @@
 				type: Boolean,
 				default: false
 			},
-			defaultSortData: {}
+			defaultSortData: {},
+			importedIssues: {
+				type: Array,
+				default: function(){
+					return []
+				}
+			}
 		},
 		data(){
 			return {
@@ -296,7 +301,8 @@
 				let that = this
 				
 				return this.$store.state.projects.project.audits.find( a=>a.id == that.audit_id )
-			}
+			},
+			
 		},
 		methods: {
 			changePage($event){
@@ -536,6 +542,9 @@
 										url = element.url 
 									}
 									if(this.$route.name == 'AuditShow' || this.$route.name == 'AuditImport') {
+										//when an audit has been imported from a project with different root domain,
+										//it incorrectly prefixes the old url
+										//
 										let domain = this.$store.state.audits.audit.domain.url.replace(/\/$/gm, "")
 										
 										if( this.$store.state.audits.audit.domain.root ){
@@ -573,11 +582,11 @@
 						output += "</li></ul>"
 					}
 					
-					return output
+					return output;
 				}
 				if( this.specialKeys.includes(key) ){
 					let source = this.$store.state.audits.articles
-					if( key == "techniques" ){
+					if( key == "techniques" && !this.importing ){
 						source = this.$store.state.audits.techniques
 					}
 					let output = ""
@@ -600,11 +609,11 @@
 							output += "</li></ul>"
 						}else{
 							let urlOb = source.find( a=>a.id == data[0].id )
-							if( urlOb && urlOb.ext_url ){
-								output += `<a target="_blank" href='${urlOb.ext_url}'>${data[0].display}</a>`
-							}else{
-								output += data[0].display
-							}
+								if ( urlOb && urlOb.ext_url ){
+									output += `<a target="_blank" href='${urlOb.ext_url}'>${data[0].display}</a>`
+								} else {
+									output += data[0].display
+								}
 						}
 					}
 					
@@ -705,12 +714,23 @@
 					let imported = data.hasOwnProperty('unique')
 					imported && this.selected.includes(data.unique) ? classes.push('selected') : ''
 					!imported ? classes.push("no-select") : ''
+					
+					if ( this.checkIfImported(data) === true ) {
+						classes.push('imported')
+					}
 				}else{
 					this.selected.includes(data.id) ? classes.push('selected') : ''
 				}
 				classes.push( data.status.toLowerCase().replaceAll(/[ ]/g, "-") )
 				return classes.join(" ")
 			},
+			checkIfImported(issue) {
+				let foundOb = this.importedIssues.find( importedIssue => issue.issue_number === importedIssue.issue_number);
+				if ( foundOb ) {
+					return true;
+				}
+				return false;
+			}
 		},
 		mounted(){
 			if( window.screen.width < 1024 ){

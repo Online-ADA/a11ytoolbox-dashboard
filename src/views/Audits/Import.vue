@@ -1,35 +1,42 @@
 <template>
-  <div>
+  <div style="position: relative;">
     <Loader v-if="loading"></Loader>
-    <!-- <h1 class="headline mb-3">Import Issues</h1> -->
+
+    <div class="mb-6" style="display: flex; align-items: center;">
+        <h1 class="headline" style="width:fit-content;display:inline-block">Import Issues</h1>
+        <span class="" style="margin-left:35px">
+            <button @click.prevent="uploadCSVModalOpen = true" class="standard mx-2">Upload CSV</button>
+        </span>
+    </div>
+
     <div class="mb-5 w-full flex">
         <div class="w-full flex flex-wrap">
-            <h2 class="subheadline pb-3 w-full">Choose which audits to compare</h2>
+            <h2 class="subheadline pb-3 w-full">Import From Previous Audit</h2>
             <Btn @click.native.prevent="showingAudits.includes(primaryAudit.id) ? showingAudits.splice(showingAudits.indexOf(primaryAudit.id), 1) : showingAudits.push(primaryAudit.id)" class="font-semibold mr-2" :color="showingAudits.includes(primaryAudit.id) ? 'yellow' : 'white'" :hover="true">{{primaryAudit.title}}</Btn>
             <Btn v-for="(audit, index) in audits" :key="'showAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="font-semibold mx-2" :color="showingAudits.includes(audit.id) ? 'yellow' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
     </div>
-    <!-- <div class="mb-5 w-full flex">
+    <div class="mb-5 w-full flex">
         <div class="w-full flex flex-wrap">
-            <h3 class="subheadline pb-3 w-full">Choose which temporary audits to compare</h3>
+            <h3 v-if="temporary_audits.length > 0" class="subheadline pb-3 w-full">Import from CSV</h3>
             <Btn v-for="(audit, index) in temporary_audits" :key="'showTempAudit-'+index" @click.native.prevent="showingAudits.includes(audit.id) ? showingAudits.splice(showingAudits.indexOf(audit.id), 1) : showingAudits.push(audit.id)" class="mx-2" :color="showingAudits.includes(audit.id) ? 'yellow' : 'white'" :hover="true">{{audit.title}}</Btn>
         </div>
-    </div> -->
-
+    </div>
     <div class="w-full flex flex-wrap items-center mb-14">
         <div
         class="audit-window"
         v-for="(audit, index) in filteredAudits" 
         :key="'audit-'+index" 
         :class="[auditFullscreen === audit.id ? 'fullscreen' : 'w-1/2 my-3']" >
-            <div 
-            class="bg-white border border-pallette-grey h-auto p-4 text-center mx-1.5">
-                <div class="flex pr-2 items-center">
-                    <h2 class="text-medium font-bold flex-1">{{audit.title}}</h2>
+            <div class="bg-white border border-pallette-grey h-auto p-4 text-center mx-1.5 overflow-auto">
+                <div class="flex px-5 items-center mb-6 sticky-top">
+                    <!-- <h2 class="text-medium font-bold flex-1">{{audit.title}}</h2> -->
                     <Btn v-if="auditFullscreen !== audit.id" aria-label="Expand this audit to full screen" @click.native.prevent="setFullscreen(audit.id)" :hover="true" color="white"><i class="fas fa-expand"></i></Btn>
                     <Btn v-if="auditFullscreen === audit.id" aria-label="Compress this audit back down" @click.native.prevent="setFullscreen(false)" :hover="true" color="white"><i class="fas fa-compress"></i></Btn>
+                    <Btn @click.native.prevent="selectAllIssues($event)" class="standard mx-2">Select All</Btn>
+                    <Btn @click.native.prevent="deselectAllIssues($event)" class="standard mx-2">Deselect All</Btn>
                 </div>
-                
+
                 <Table 
                 v-if="audit.id !== primaryAudit.id"
                 :importing="true" 
@@ -47,8 +54,10 @@
                 @selectAll="selectAll" 
                 @rowClick="selectAuditRow" 
                 :rowsData="audit.issues" 
-                :headersData="headers"></Table>
-                
+                :headersData="headers"
+                :importedIssues="importedIssues"
+                ></Table>
+            
                 <Table 
                 v-else
                 :importing="true" 
@@ -68,24 +77,22 @@
                 @selectAll="primarySelectAll" 
                 :headersData="headers" 
                 @rowClick="selectImportRow" 
-                :selected="selectedImportRows"></Table>
+                :selected="selectedImportRows"
+                ></Table>
 
                 <button v-if="selectedImportRows.length > 0 && audit.id === primaryAudit.id" @click.prevent="removeFromImport(selectedImportRows)" class="alert standard mx-2" >Remove selected</button>
             </div>
         </div>
     </div>
     <div class="w-full flex fixed bottom-0 left-0 right-0 px-3 py-3 bg-white border-t" style="z-index:25;max-width:calc(100% - 400px);margin-left:auto;">
-        <div class="w-1/3">
-            <button v-if="selectedAuditRows.length > 0" @click.prevent="addSelectedToAudit()" class="standard mx-2">Import selected</button>
+        <div class="w-1/2">
+            <button v-if="selectedAuditRows.length > 0" @click.prevent="addSelectedToAudit()" class="standard mx-2">Select Issues</button>
         </div>
-        <!-- <div class="w-1/3">
-            <button @click.prevent="uploadCSVModalOpen = true" class="standard mx-2">Upload CSV</button>
-        </div> -->
-        <div class="w-1/3">
-            <button @click.prevent="finishImport" class="standard mx-2" >Finish and go to audit</button>
+        <div v-if="importedIssues.length > 0" class="w-1/2">
+            <button @click.prevent="finishImport" class="standard mx-2">Import and Go To Audit</button>
         </div>
     </div>
-    <!-- <Modal class="z-50" :open="uploadCSVModalOpen">
+    <Modal class="z-50" :open="uploadCSVModalOpen">
         <div class="bg-white px-4 pt-5 pb-4 p-6">
             <button aria-label="Close upload CSV modal" @click.prevent="uploadCSVModalOpen = false" class="absolute top-4 right-4 standard">X</button>
             <h2 class="subheadline pb-3">Choose a CSV of issues to load</h2>
@@ -95,11 +102,11 @@
             <button @click.prevent="uploadCSV" type="button" class="mr-2 standard">
                 Upload
             </button>
-            <button @click.prevent="compareIssuesModalOpen = false" type="button" class="standard alert">
+            <button @click.prevent="uploadCSVModalOpen = false" type="button" class="standard alert">
                 Cancel
             </button>
         </div>
-    </Modal> -->
+    </Modal>
     <Modal size="full" class="z-50" :open="compareIssuesModalOpen">
         <div class="bg-white px-4 pt-5 pb-4 p-6">
             <button aria-label="Close compare issues modal" @click.prevent="compareIssuesModalOpen = false" class="standard absolute top-4 right-4">X</button>
@@ -125,6 +132,8 @@ import Table from '../../components/Table'
 import Btn from '../../components/Button'
 import Modal from '../../components/Modal'
 import FileInput from '../../components/FileInput'
+import { EventBus } from '../../services/eventBus'
+
 export default {
     data: ()=>({
         selectedCompareRows: [], //Rows selected whilst comparing issues
@@ -401,6 +410,9 @@ export default {
             let self = this
             return this.allIssues.filter( i => self.selectedAuditRows.includes(i.unique) )
         },
+        importedIssues(){
+            return this.importing;
+        }
     },
     props: [],
     watch: {
@@ -509,6 +521,7 @@ export default {
             this.selectedImportRows = []
         },
         finishImport(){
+            console.log('fired this')
             this.$store.dispatch("audits/importIssues", {issues: this.allIssues.filter( i => this.issuesToImport.includes(i.unique) ), audit_id: this.$route.params.id, router: this.$router})
         },
         selectCompareRow(issue){
@@ -547,6 +560,12 @@ export default {
 				this.selectedAuditRows.push( issue.unique )
 			}
         },
+        selectAllIssues($event) {
+            EventBus.$emit('toolbarEmit', {action: 'selectAll', data: null, $event: $event});
+        },
+        deselectAllIssues($event) {
+            EventBus.$emit('toolbarEmit', {action: 'deselectAll', data: null, $event: $event});
+        },
     },
     created() {
         
@@ -583,8 +602,8 @@ export default {
     margin-bottom: 12px;
 }
 .audit-window:not(.fullscreen) > div{
-    height:100%;
-    max-height:100%;
+    height:96%;
+    max-height:96%;
 }
 .audit-window.fullscreen{
     position:fixed;

@@ -36,6 +36,10 @@ tr.selected:focus td{
     background-color:#1Dacd6 !important;
 }
 
+tr.imported td {
+    background-color: #05db57 !important;
+}
+
 tr:not(.selected):not(.no-select):focus:before,
 tr:not(.selected):not(.no-select):focus:after{
     background: #000;
