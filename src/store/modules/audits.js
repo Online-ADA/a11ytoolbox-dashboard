@@ -100,6 +100,7 @@ export default {
     uploadIssuesCSV({ rootState, state }, args) {
       const formData = new FormData();
       formData.append('upload', args.file);
+
       const myHeaders = { ...Vue.prototype.$http.defaults.headers.common, 'Content-Type': 'multipart/form-data' };
       Request.postPromise(`${rootState.auth.API}/l/${rootState.auth.license.id}/audits/uploadCSV`, { params: formData, headers: myHeaders })
         .then((re) => {
@@ -116,6 +117,7 @@ export default {
             issues: re.data.details,
             issue_count: re.data.details.length,
           };
+
           state.temporary_audits.push(newTemp);
         })
         .catch()
