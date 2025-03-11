@@ -837,4 +837,7 @@
 		padding: 3px;
 		border: none;
 	}
+	tr.imported td {
+    background-color: #05db57 !important;
+	}
 </style>
