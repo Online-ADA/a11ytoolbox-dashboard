@@ -981,9 +981,14 @@ export default {
 			if( string == "issue_description" ){
 				return "issue description"
 			}
-
 			if( string == "created_by" ){
 				return "last saved by"
+			}
+			if( string == "second_audit_comments" ){
+				return "audit 2 comments"
+			}
+				if( string == "third_audit_comments" ){
+				return "audit 3 comments"
 			}
 			return string.replace(/[-_.]/gm, " ");
 		},
