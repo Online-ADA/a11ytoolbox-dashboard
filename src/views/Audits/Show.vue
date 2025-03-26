@@ -10,8 +10,8 @@
 			<div :class="{'h-[220px]': showMeasurables, 'h-0': !showMeasurables}" class="bg-white transition-[height]">
 				<!-- <Graph :chartId="'line-chart'"></Graph> -->
 			</div>
-
 			<Table
+			:key="$store.state.audits.audit.id"
 			class="xs:mt-[65px]" 
 			@sort="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-sortedBy`, payload) }" 
 			@hideColumns="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-visible`, payload) }" 
@@ -475,7 +475,6 @@ export default {
 			if( !this.audit ){
 				return []
 			}
-			
 			return this.$store.state.audits.audit.issues
 		},
 		audit_states(){
@@ -538,12 +537,10 @@ export default {
 				'issue_number',
 				'issue_description',
 				'essential_functionality',
-				'third_audit_comments',
 				'audit_states',
 				'auditor_notes',
 				'techniques',
 				"screenshots",
-				'second_audit_comments',
 				"resources",
 				"effort",
 				"browser_combos",
@@ -801,7 +798,6 @@ export default {
 				}
 				return finalOrder
 			}
-
 			return arr
 			
 		},
