@@ -10,8 +10,8 @@
 			<div :class="{'h-[220px]': showMeasurables, 'h-0': !showMeasurables}" class="bg-white transition-[height]">
 				<!-- <Graph :chartId="'line-chart'"></Graph> -->
 			</div>
-
 			<Table
+			:key="$store.state.audits.audit.id"
 			class="xs:mt-[65px]" 
 			@sort="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-sortedBy`, payload) }" 
 			@hideColumns="(payload)=>{ metaEvent('audit', `${$route.params.id}-issues-columns-visible`, payload) }" 
