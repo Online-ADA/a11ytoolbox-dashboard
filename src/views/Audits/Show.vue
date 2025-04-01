@@ -242,11 +242,11 @@
 							<Label class="text-lg leading-6 w-full subheadline" for="auditor_notes">Auditor Notes</Label>
 							<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
 						</div>
-						<div class="md:w-1/2 xs:w-full sm:w-full mt-2" v-if="audit.number == 2">
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2" v-if="audit.number == 2 || audit.number == 3">
 							<Label class="text-lg leading-6 w-full subheadline" for="second_audit_comments">Second Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="second_audit_comments" v-model="issue.second_audit_comments"></TextArea>
 						</div>
-						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-else-if="audit.number == 3">
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 3">
 							<Label class="text-lg leading-6 w-full subheadline" for="third_audit_comments">Third Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="third_audit_comments" v-model="issue.third_audit_comments"></TextArea>
 						</div>
