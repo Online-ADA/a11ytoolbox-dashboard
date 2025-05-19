@@ -237,21 +237,78 @@
 						</div>
 					</div>
 					<!-- Row 6 -->
-					<div v-if="issueModalAdvancedView" class="flex w-full mt-2">
+					<!-- edit issue-->
+					<div v-if="issueModalAdvancedView && issue.id" class="flex w-full mt-2">
 						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pr-2">
 							<Label class="text-lg leading-6 w-full subheadline" for="auditor_notes">Auditor Notes</Label>
 							<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
 						</div>
-						<div class="md:w-1/2 xs:w-full sm:w-full mt-2" v-if="audit.number == 2 || audit.number == 3">
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2" v-if="audit.number == 2 || issue.second_audit_comments != null">
 							<Label class="text-lg leading-6 w-full subheadline" for="second_audit_comments">Second Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="second_audit_comments" v-model="issue.second_audit_comments"></TextArea>
 						</div>
-						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 3">
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 3 || issue.third_audit_comments != null"> 
 							<Label class="text-lg leading-6 w-full subheadline" for="third_audit_comments">Third Audit Comments</Label>
 							<TextArea rows="14" class="w-full" id="third_audit_comments" v-model="issue.third_audit_comments"></TextArea>
 						</div>
 					</div>
-					
+					<!-- Row 7 -->
+					<!-- edit issue-->
+					<div v-if="issueModalAdvancedView && issue.id"  class="flex w-full mt-2">
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 4 || issue.fourth_audit_comments != null">
+							<Label class="text-lg leading-6 w-full subheadline" for="fourth_audit_comments">Fourth Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="fourth_audit_comments" v-model="issue.fourth_audit_comments"></TextArea>
+						</div>
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 5 || issue.fifth_audit_comments != null">
+							<Label class="text-lg leading-6 w-full subheadline" for="fifth_audit_comments">Fifth Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="fifth_audit_comments" v-model="issue.fifth_audit_comments"></TextArea>
+						</div>
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 6 || issue.sixth_audit_comments != null">
+							<Label class="text-lg leading-6 w-full subheadline" for="sixth_audit_comments">Sixth Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="sixth_audit_comments" v-model="issue.sixth_audit_comments"></TextArea>
+						</div>
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 7 || issue.seventh_audit_comments != null">
+							<Label class="text-lg leading-6 w-full subheadline" for="seventh_audit_comments">Seventh Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="seventh_audit_comments" v-model="issue.seventh_audit_comments"></TextArea>
+						</div>
+					</div>
+
+					<!-- Row 6 -->
+					<!-- new issue-->
+					<div v-if="issueModalAdvancedView && !issue.id" class="flex w-full mt-2">
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pr-2">
+							<Label class="text-lg leading-6 w-full subheadline" for="auditor_notes">Auditor Notes</Label>
+							<TextArea rows="14" class="w-full" id="auditor_notes" v-model="issue.auditor_notes"></TextArea>
+						</div>
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2" v-if="audit.number == 2">
+							<Label class="text-lg leading-6 w-full subheadline" for="second_audit_comments">Second Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="second_audit_comments" v-model="issue.second_audit_comments"></TextArea>
+						</div>
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 3"> 
+							<Label class="text-lg leading-6 w-full subheadline" for="third_audit_comments">Third Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="third_audit_comments" v-model="issue.third_audit_comments"></TextArea>
+						</div>
+					</div>
+					<!-- Row 7 -->
+					<!-- new issue-->
+					<div v-if="issueModalAdvancedView && !issue.id"  class="flex w-full mt-2">
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 4">
+							<Label class="text-lg leading-6 w-full subheadline" for="fourth_audit_comments">Fourth Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="fourth_audit_comments" v-model="issue.fourth_audit_comments"></TextArea>
+						</div>
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 5">
+							<Label class="text-lg leading-6 w-full subheadline" for="fifth_audit_comments">Fifth Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="fifth_audit_comments" v-model="issue.fifth_audit_comments"></TextArea>
+						</div>
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 6">
+							<Label class="text-lg leading-6 w-full subheadline" for="sixth_audit_comments">Sixth Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="sixth_audit_comments" v-model="issue.sixth_audit_comments"></TextArea>
+						</div>
+						<div class="md:w-1/2 xs:w-full sm:w-full mt-2 pl-2" v-if="audit.number == 7">
+							<Label class="text-lg leading-6 w-full subheadline" for="seventh_audit_comments">Seventh Audit Comments</Label>
+							<TextArea rows="14" class="w-full" id="seventh_audit_comments" v-model="issue.seventh_audit_comments"></TextArea>
+						</div>
+					</div>
 				</form>
 			</div>
 			<div class="mt-3 flex">
@@ -335,6 +392,7 @@ import Toggle from '../../components/Toggle'
 import { EventBus } from '../../services/eventBus'
 import Utility from '../../services/utility'
 import Checkbox from "../../components/Checkbox"
+import audits from '../../store/modules/audits'
 
 
 export default {
@@ -398,6 +456,10 @@ export default {
 			auditor_notes: "",
 			second_audit_comments: "",
 			third_audit_comments: "",
+			fourth_audit_comments: "",
+			fifth_audit_comments: "",
+			sixth_audit_comments: "",
+			seventh_audit_comments: "",
 			priority: "Minor",
 			effort: "Low",
 		},
@@ -422,6 +484,10 @@ export default {
 			auditor_notes: "",
 			second_audit_comments: "",
 			third_audit_comments: "",
+			fourth_audit_comments: "",
+			fifth_audit_comments: "",
+			sixth_audit_comments: "",
+			seventh_audit_comments: "",
 			priority: "Minor",
 			effort: "Low",
 		},
@@ -522,6 +588,9 @@ export default {
 			}
 			return false
 		},
+		audit(){
+			return this.$store.state.audits.audit || false
+		},
 		headers(){
 			let arr = []
 			if( !this.issues.length ){
@@ -530,7 +599,38 @@ export default {
 
 			// let headers = Object.keys(this.audit.issues[0])
 			//This array has been implemented to adjust the default order of the headers
-			let headers = ['id', 'issue_number', 'target', 'pages', 'status', 'levels', 'articles', 'techniques', 'issue_description', 'descriptions', 'recommendations', 'audit_states', 'priority', 'effort', 'how_discovered', 'screenshots', 'resources', 'browser_combos', 'essential_functionality', 'actrs', 'created_by', 'audit_id', 'auditor_notes', 'second_audit_comments', 'third_audit_comments', 'date_created']
+			let headers = [
+				'id', 
+				'issue_number', 
+				'target', 
+				'pages', 
+				'status', 
+				'levels', 
+				'articles', 
+				'techniques', 
+				'issue_description', 
+				'descriptions', 
+				'recommendations', 
+				'audit_states', 
+				'priority', 
+				'effort', 
+				'how_discovered', 
+				'screenshots', 
+				'resources', 
+				'browser_combos', 
+				'essential_functionality', 
+				'actrs', 
+				'created_by', 
+				'audit_id', 
+				'auditor_notes', 
+				'second_audit_comments',
+				'third_audit_comments', 
+				'fourth_audit_comments',
+				'fifth_audit_comments',
+				'sixth_audit_comments',
+				'seventh_audit_comments',
+				'date_created'
+				]
 			
 			let hide = [
 				"id",
@@ -551,7 +651,42 @@ export default {
 				"created_by",
 				"how_discovered",
 				"date_created"
-			]
+			] 
+
+			if ( this.audit.number == 1 ) {
+				hide.push("second_audit_comments");
+				hide.push("third_audit_comments");
+				hide.push("fourth_audit_comments");
+				hide.push("fifth_audit_comments");
+				hide.push("sixth_audit_comments");
+				hide.push("seventh_audit_comments");
+			}
+			if ( this.audit.number == 2 ) {
+				hide.push("third_audit_comments");
+				hide.push("fourth_audit_comments");
+				hide.push("fifth_audit_comments");
+				hide.push("sixth_audit_comments");
+				hide.push("seventh_audit_comments");
+			}
+			if ( this.audit.number == 3 ) {
+				hide.push("fourth_audit_comments");
+				hide.push("fifth_audit_comments");
+				hide.push("sixth_audit_comments");
+				hide.push("seventh_audit_comments");
+			}
+			if ( this.audit.number == 4 ) {
+				hide.push("fifth_audit_comments");
+				hide.push("sixth_audit_comments");
+				hide.push("seventh_audit_comments");
+			}
+			if ( this.audit.number == 5 ) {
+				hide.push("sixth_audit_comments");
+				hide.push("seventh_audit_comments");
+			} 
+			if ( this.audit.number == 6 ) {
+				hide.push("seventh_audit_comments");
+			} 
+			
 
 			let stickied = [
 				"id",
@@ -597,9 +732,6 @@ export default {
 			}
 			
 			return this.setHeaders(headers, hide, stickied, columnPositions)
-		},
-		audit(){
-			return this.$store.state.audits.audit || false
 		},
 		project(){
 			return this.$store.state.projects.project || false
@@ -773,6 +905,10 @@ export default {
 				auditor_notes: "300px",
 				second_audit_comments: "300px",
 				third_audit_comments: "300px",
+				fourth_audit_comments: "300px",
+				fifth_audit_comments: "300px",
+				sixth_audit_comments: "300px",
+				seventh_audit_comments: "300px",
 				effort: "150px",
 			}
 
@@ -987,9 +1123,22 @@ export default {
 			if( string == "second_audit_comments" ){
 				return "audit 2 comments"
 			}
-				if( string == "third_audit_comments" ){
-				return "audit 3 comments"
+			if( string == "third_audit_comments" ){
+			return "audit 3 comments"
 			}
+			if( string == "fourth_audit_comments" ){
+				return "audit 4 comments"
+			}
+			if( string == "fifth_audit_comments" ){
+				return "audit 5 comments"
+			}
+			if( string == "sixth_audit_comments" ){
+				return "audit 6 comments"
+			}
+			if( string == "seventh_audit_comments" ){
+				return "audit 7 comments"
+			}
+
 			return string.replace(/[-_.]/gm, " ");
 		},
 		validate(){
